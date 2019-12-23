@@ -3,25 +3,44 @@ from selenium.common.exceptions import *
 import time
 from datetime import datetime
 import logging
+import TestSteps.Exceptions
+from . import GlobalConstants as GC
 
 class CustBrowserHandling(BrowserDriver):
     def __init__(self):
         super().__init__()
         self.zipkinIDs = {}
+        self.toasts = ""
+        self.errorToasts = ""
 
     def CustomHandleToasts(self):
         """
         Custom module for handling NG-Toasts
         """
         toasts = self.driver.find_elements_by_css_selector("vigong-message-display")
-        if toasts.len() == 0:
+        if len(toasts) == 0:
             return
 
         # FIXME: Do something with the toasts.
+        # They must find their way back into the data structure
+
 
         # Click on each Toast:
         for element in toasts:
+            if "red" in element.style:
+                self.errorToasts = self.errorToasts + '\n' + element.text
+                raise TestSteps.Exceptions.pyFETestException
+            else:
+                self.toasts = self.toasts + '\n' + element.text
+            self._BrowserDriver__log(logging.WARN, "Toast handled: " + element.text)
             self.findByAndClick(xpath="(//mat-icon[contains(.,'close')])[1]")
+
+    def getToastsAsString(self):
+        l_return = {'Toasts': self.toasts,
+                    'ErrorToasts': self.errorToasts}
+        self.toasts = ""
+        self.errorToasts = ""
+        return l_return
 
     def CustomHandleZipkin(self):
         self.findBy(xpath="//span[@title='zipkinId.requestUrl']", loggingOn=False)
@@ -60,4 +79,18 @@ class CustBrowserHandling(BrowserDriver):
         # Schreibt die gefundenen Zipkin-IDs in das Zeitlog mit
         self.timing[self.currentTimingSection]["zipkinIDs"] = self.zipkinIDs.keys()
         self.CustomPrintZipkins()
+        self.CustomHandleToasts()
+
+    def returnTime(self):
+        # timingString = super().returnTime()
+        timingString = ""
+        for key,value in self.timing.items():
+            if "end" in value.keys():
+                timingString = timingString + "\n" + f'{key}: , since last call: ' \
+                                                     f'{value[GC.TIMING_END] - value[GC.TIMING_START]}'
+                if "zipkinIDs" in value.keys():
+                    timingString = timingString + ", ZIDs:[" + ", ".join(value["zipkinIDs"]) + "]"
+                if "timestamp" in value.keys():
+                    timingString = timingString + ", TS:" + str(value["timestamp"])
+        return timingString
 

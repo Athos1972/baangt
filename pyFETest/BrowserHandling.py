@@ -5,10 +5,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import *
 from selenium.webdriver.common import keys
+from . import GlobalConstants as GC
 import time
-from datetime import datetime
 from datetime import timedelta
 import logging
+import sys
 
 logger = logging.getLogger("pyC")
 
@@ -23,13 +24,11 @@ class BrowserDriver:
 
     def takeTime(self, timingName):
         if timingName in self.timing:
-            self.timing[timingName]["end"] = time.time()
-            return str(timedelta(seconds=self.timing[timingName]["end"] - self.timing[timingName]["start"]))
-            self.__log(logging.DEBUG,
-                       f'Duration for {timingName} : {self.timing[timingName]["end"] - self.timing[timingName]["start"]}')
+            self.timing[timingName][GC.TIMING_END] = time.time()
+            return str(timedelta(seconds=self.timing[timingName]["end"] - self.timing[timingName][GC.TIMING_START]))
         else:
             self.timing[timingName] = {}
-            self.timing[timingName]["start"] = time.time()
+            self.timing[timingName][GC.TIMING_START] = time.time()
             self.currentTimingSection = timingName
 
     def takeTimeSumOutput(self):
@@ -37,18 +36,17 @@ class BrowserDriver:
         print("Timing")
         for key, value in self.timing.items():
             if "end" in value.keys():
-                print(f'{key} : {value["end"] - value["start"]}')
-                self.__log(logging.INFO, f'{key} : {value["end"] - value["start"]}')
+                print(f'{key} : {value[GC.TIMING_END] - value[GC.TIMING_START]}')
+                self.__log(logging.INFO, f'{key} : {value[GC.TIMING_END] - value[GC.TIMING_START]}')
 
     def returnTime(self):
         timingString = ""
         for key,value in self.timing.items():
-            if "end" in value.keys():
-                timingString = timingString + "\n" + f'{key}: , since last call: {value["end"] - value["start"]}'
-                if "zipkinIDs" in value.keys():
-                    timingString = timingString + ", ZIDs:[" + ", ".join(value["zipkinIDs"]) + "]"
+            if GC.TIMING_END in value.keys():
+                timingString = timingString + "\n" + f'{key}: , since last call: ' \
+                                                     f'{value[GC.TIMING_END] - value[GC.TIMING_START]}'
                 if "timestamp" in value.keys():
-                    timingString = timingString + ", TS:" + str(value["timestamp"])
+                    timingString = timingString + ", TS:" + str(value[GC.TIMESTAMP])
         return timingString
 
     def resetTime(self):
@@ -60,20 +58,21 @@ class BrowserDriver:
             self.timing = {}
 
     def createNewBrowser(self, browserName):
+        self.takeTime("Browser Start")
         browserNames = {
-            "FF": webdriver.Firefox,
-            "FIREFOX": webdriver.Firefox,
-            "CHROME": webdriver.Chrome,
-            "SAFARI": webdriver.Safari}
+            GC.BROWSER_FIREFOX: webdriver.Firefox,
+            GC.BROWSER_CHROME: webdriver.Chrome,
+            GC.BROWSER_SAFARI: webdriver.Safari}
 
         if browserName in browserNames:
-            if browserName == "FF" or browserName == "FIREFOX":
+            if browserName == GC.BROWSER_FIREFOX :
                 self.driver = browserNames[browserName](executable_path=os.getcwd()+'/geckodriver')
-            elif browserName == "CHROME":
+            elif browserName == GC.BROWSER_CHROME:
                 self.driver = browserNames[browserName](executable_path=os.getcwd()+'/chromedriver')
         else:
             raise SystemExit("Browsername unknown")
-        pass
+
+        self.takeTime("Browser Start")
 
     def closeBrowser(self):
         self.driver.quit()
@@ -151,37 +150,50 @@ class BrowserDriver:
             time.sleep(0.5)
             duration = time.time() - start
 
+    def findByAndSetText(self,id = None,
+                       css = None,
+                       xpath = None,
+                       class_name = None,
+                       value = None,
+                       iframe = None,
+                       timeout = 20):
+        self.findBy(id=id,
+                    css=css,
+                    xpath=xpath,
+                    class_name=class_name,
+                    iframe=iframe)
+
+        self.doSomething(GC.CMD_SETTEXT, value=value, timeout=timeout)
+
     def findByAndClick(self, id = None,
                        css = None,
                        xpath = None,
                        class_name = None,
                        iframe = None):
-        self.findBy(id = id,
+        critical_error = self.findBy(id = id,
                     css = css,
                     xpath=xpath,
                     class_name = class_name,
-                    iframe=iframe,
-                    command='click')
+                    iframe=iframe)
+
+        self.doSomething(GC.CMD_CLICK)
 
     def findBy(self, id = None,
                css = None,
                xpath = None,
                class_name = None,
                iframe = None,
-               command = None,
-               value = None,
+               # command = None,
+               # value = None,
                loggingOn=True):
 
         if iframe:
             self.handleIframe(iframe)
 
         if loggingOn:
-            self.__log(logging.INFO, "Locating Element", **{'id':id, 'css':css, 'xpath':xpath, 'class_name':class_name, 'iframe':iframe, 'command':command, 'value':value })
+            self.__log(logging.INFO, "Locating Element", **{'id':id, 'css':css, 'xpath':xpath, 'class_name':class_name, 'iframe':iframe})
 
-        self.__tryAndRetry(id, css, xpath, class_name)
-
-        if command:
-            self.doSomething(command, value)
+        return self.__tryAndRetry(id, css, xpath, class_name)
 
     def __tryAndRetry(self, id = None,
                       css = None,
@@ -209,13 +221,26 @@ class BrowserDriver:
             except StaleElementReferenceException as e:
                 self.__log(logging.DEBUG, "Stale Element Exception - retrying")
                 time.sleep(0.5)
-                elapsed = time.time() - begin
             except ElementClickInterceptedException as e:
                 self.__log(logging.DEBUG, "ElementClickIntercepted - retrying")
                 time.sleep(0.5)
-                elapsed = time.time() - begin
             except TimeoutException as e:
                 self.__log(logging.WARNING, "TimoutException - retrying")
+                time.sleep(0.5)
+            except NoSuchElementException as e:
+                self.__log(logging.WARNING, "Retrying Webdriver Exception:" + str(e))
+                time.sleep(2)
+            except InvalidSessionIdException as e:
+                self.__log(logging.CRITICAL, "WebDriver Exception - terminating program: " + str(e))
+                sys.exit()
+            except NoSuchWindowException as e:
+                self.__log(logging.CRITICAL, "WebDriver Exception - terminating program: " + str(e))
+                sys.exit()
+            except WebDriverException as e:
+                self.__log(logging.ERROR, "Retrying WebDriver Exception: " + str(e))
+                time.sleep(2)
+
+            elapsed = time.time() - begin
 
     def findWaitNotVisible(self, xpath, timeout = 90):
         self.__log(logging.DEBUG, "Waiting for Element to disappear", **{"xpath":xpath, "timeout":timeout})
@@ -240,26 +265,29 @@ class BrowserDriver:
     def sleep(sleepTimeinSeconds):
         time.sleep(sleepTimeinSeconds)
 
-    def doSomething(self, command, value, timeout=20):
+    def doSomething(self, command, value=None, timeout=20):
         didWork = False
         elapsed = 0
         begin = time.time()
 
         while not didWork and elapsed < timeout:
             try:
-                if command.upper() == "SETTEXT":
+                if command.upper() == GC.CMD_SETTEXT:
                     self.element.send_keys(value)
-                elif command.upper() == 'CLICK':
+                elif command.upper() == GC.CMD_CLICK:
                     self.element.click()
                 didWork = True
+                return
             except ElementClickInterceptedException as e:
                 self.__log(logging.DEBUG, "doSomething: Element intercepted - retry")
                 time.sleep(0.2)
-                elapsed = time.time()-begin
             except StaleElementReferenceException as e:
                 self.__log(logging.DEBUG, "doSomething: Element stale - retry")
                 time.sleep(0.2)
-                elapsed = time.time()-begin
+            except NoSuchElementException as e:
+                self.__log(logging.DEBUG, "doSomething: Element not there yet - retry")
+                time.sleep(0.5)
+            elapsed = time.time()-begin
 
     def goToUrl(self, url):
         self.__log(logging.INFO, f'GoToUrl:{url}')
