@@ -4,6 +4,7 @@ class ProduktauswahlURL(TestStepMaster):
     def __init__(self, testcaseDataDict, browserSession):
         super().__init__(testcaseDataDict, browserSession)
         self.go2url()
+        self.teardown()
 
     def go2url(self):
         self.browserSession.takeTime("Testfall gesamt")

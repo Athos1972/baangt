@@ -3,6 +3,9 @@ from TestSteps.TestStepMaster import TestStepMaster
 class Dokumente(TestStepMaster):
     def __init__(self, testcaseDataDict, browserSession):
         super().__init__(testcaseDataDict, browserSession)
+        self.dokumenteOpen()
+        self.beilageBeratungsProtokollHochladen()
+        self.teardown()
 
     def dokumenteOpen(self):
         # Dokumente

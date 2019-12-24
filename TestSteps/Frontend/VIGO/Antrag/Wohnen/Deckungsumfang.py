@@ -6,6 +6,7 @@ class Deckungsumfang(TestStepMaster):
     def __init__(self, testcaseDataDict, browserSession):
         super().__init__(testcaseDataDict, browserSession)
         self.execute()
+        self.teardown()
 
     def execute(self):
         self.deckungsUmfangStart()
@@ -22,49 +23,39 @@ class Deckungsumfang(TestStepMaster):
 
         if self.testcaseDataDict['zu_hh_art'] != '':
             if self.browserSession.findBy(
-                    xpath='Page_VIGO Wohnen / Deckungen / Haushalt_zusatzdeckungen / hh_combobox_basis'):
+                    xpath='//*[@id="haushalt-BASIS-combobox"]', timeout=1):
                 self.browserSession.findByAndClick(
-                    xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/hh_combobox_basis')
+                    xpath='//*[@id="haushalt-BASIS-combobox"]')
 
             if self.browserSession.findBy(
-                    xpath='Page_VIGO Wohnen / Deckungen / Haushalt_zusatzdeckungen / hh_combobox_plus'):
+                    xpath='//*[@id="haushalt-PLUS-combobox"]', timeout=1):
                 self.browserSession.findByAndClick(
-                    xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/hh_combobox_plus')
+                    xpath='//*[@id="haushalt-PLUS-combobox"]')
 
             if self.browserSession.findBy(
-                    xpath='Page_VIGO Wohnen / Deckungen / Haushalt_zusatzdeckungen / hh_combobox_extra'):
-                self.browserSession.findByAndClick(xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/hh_combobox_extra')
+                    xpath='//*[@id="haushalt-EXTRA-combobox"]', timeout=1):
+                self.browserSession.findByAndClick(xpath='//*[@id="haushalt-EXTRA-combobox"]')
 
-            if self.testcaseDataDict['zu_hh_art'] == 'Basis':
-                self.browserSession.findByAndClick(
-                    xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/hh_combobox_value_basis')
+            self.browserSession.findByAndClick(xpath=f"//span[@class='mat-option-text'][contains(.,'{self.testcaseDataDict['zu_hh_art']}')]")
 
-            if self.testcaseDataDict['zu_hh_art'] == 'Extra':
-                self.browserSession.findByAndClick(
-                    xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/hh_combobox_value_extra')
-
-            if self.testcaseDataDict['zu_hh_art'] == 'Plus':
-                self.browserSession.findByAndClick(
-                    xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/hh_combobox_value_plus')
-
-            if self.testcaseDataDict['zu_hh_create'] == 'X':
-                if self.testcaseDataDict['Mandant'] == 'DON':
-                    if self.testcaseDataDict['zu_hh_art'] == 'Basis':
-                        self.browserSession.findByAndClick(
-                            xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_Zusatzdeckung-expansion_BASIS')
-                    else:
-                        self.browserSession.findByAndClick(
-                            xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_Zusatzdeckung-expansion_PLUS')
-
+        if self.testcaseDataDict['zu_hh_create'] == 'X':
+            if self.testcaseDataDict['Mandant'] == 'DON':
+                if self.testcaseDataDict['zu_hh_art'] == 'Basis':
+                    self.browserSession.findByAndClick(
+                        xpath="//div[@class='vigong-deckungs-umfang-box-checkbox-header-label'][contains(.,'Haushaltsversicherung Basis')]")
                 else:
-                    if self.testcaseDataDict['zu_hh_art'] == 'Basis':
-                        self.browserSession.findByAndClick(
-                            xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_Zusatzdeckung-expansion_BASIS')
-                    else:
-                        self.browserSession.findByAndClick(
-                            xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/wstv_hh_Zusatzdeckung-expansion_EXTRA')
+                    self.browserSession.findByAndClick(
+                        xpath="//div[@class='vigong-deckungs-umfang-box-checkbox-header-label'][contains(.,'Haushaltsversicherung Plus')]")
 
-                self.browserSession.sleep(0.2)
+            else:
+                if self.testcaseDataDict['zu_hh_art'] == 'Basis':
+                    self.browserSession.findByAndClick(
+                        xpath="//div[@class='vigong-deckungs-umfang-box-checkbox-header-label'][contains(.,'Haushaltsversicherung Basis')]")
+                else:
+                    self.browserSession.findByAndClick(
+                        xpath="//div[@class='vigong-deckungs-umfang-box-checkbox-header-label'][contains(.,'Haushaltsversicherung Extra')]")
+
+            self.browserSession.sleep(0.2)
 
             # FIXME
             # if self.testcaseDataDict['zu_hh_hochwasser'] == 'X':
@@ -92,8 +83,8 @@ class Deckungsumfang(TestStepMaster):
             #             xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_hochwasser_erh_erh3')
             #         break
 
-            if self.testcaseDataDict['zu_hh_erdbeben'] == 'X':
-                self.browserSession.findByAndClick(xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_erdbeben')
+            #if self.testcaseDataDict['zu_hh_erdbeben'] == 'X':
+            #    self.browserSession.findByAndClick(xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_erdbeben')
 
             # fixme
             # if self.testcaseDataDict['zu_hh_erdb_erhvar.toString().length() > 0:
@@ -120,102 +111,100 @@ class Deckungsumfang(TestStepMaster):
             #     break
 
             if self.testcaseDataDict['zu_hh_geld'] == 'X' and (self.testcaseDataDict['zu_hh_art'] != 'Basis'):
-                self.browserSession.findByAndClick(xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_geld')
+                self.browserSession.findByAndClick(xpath="//mat-checkbox[@id='EXTRA-HAUSHALT-GELD_GELDESWERTE-deckungs-eintrag-zusatzDeckung-checkbox']")
             elif self.testcaseDataDict['zu_hh_geld'] == 'X':
-                self.browserSession.findByAndClick(xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_geld_basis')
+                self.browserSession.findByAndClick(xpath="//mat-checkbox[contains(@id, 'BASIS-HAUSHALT-GELD_GELDESWERTE-deckungs-eintrag-zusatzDeckung-checkbox')]")
 
             if self.testcaseDataDict['zu_hh_schmuck'] == 'X' and (self.testcaseDataDict['zu_hh_art'] != 'Basis'):
-                self.browserSession.findByAndClick(xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_schmuck')
+                self.browserSession.findByAndClick(xpath="//mat-checkbox[@id='EXTRA-HAUSHALT-SCHMUCK_EDELSTEINE-deckungs-eintrag-zusatzDeckung-checkbox']")
             elif self.testcaseDataDict['zu_hh_schmuck'] == 'X':
-                self.browserSession.findByAndClick(xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_schmuck_basis')
+                self.browserSession.findByAndClick(xpath="//*[@id='BASIS-HAUSHALT-SCHMUCK_EDELSTEINE-deckungs-eintrag-zusatzDeckung-checkbox']")
 
             if self.testcaseDataDict['zu_hh_wertsachen'] == 'X':
                 if self.testcaseDataDict['zu_hh_art'] != 'Basis':
-                    self.browserSession.findByAndClick(xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_wertsachen')
-                    self.browserSession.findByAndSetText(xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_wertsachen_wert',
+                    self.browserSession.findByAndClick(xpath="//mat-checkbox[@id='EXTRA-HAUSHALT-WERTSACHEN-deckungs-eintrag-zusatzDeckung-checkbox']/label/div")
+                    self.browserSession.findByAndSetText(xpath="//input[@id='EXTRA-HAUSHALT-WERTSACHEN-deckungs-eintrag-zusatzDeckung-input']",
                                   value=self.testcaseDataDict['zu_hh_wert_wert'])
 
                 else:
-                    self.browserSession.findByAndClick(xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_wertsachen_basis')
-                    self.browserSession.findByAndSetText(xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_wertsachen_wert_basis',
+                    self.browserSession.findByAndClick(xpath="//mat-checkbox[@id='BASIS-HAUSHALT-WERTSACHEN-deckungs-eintrag-zusatzDeckung-checkbox']/label/div")
+                    self.browserSession.findByAndSetText(xpath="//input[@id='BASIS-HAUSHALT-WERTSACHEN-deckungs-eintrag-zusatzDeckung-input']",
                                   value=self.testcaseDataDict['zu_hh_wert_wert'])
 
             if self.testcaseDataDict['zu_hh_panzerk'] == 'X' and (self.testcaseDataDict['zu_hh_art'] != 'Basis'):
-                self.browserSession.findByAndClick(xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_panzerkassen')
+                self.browserSession.findByAndClick(xpath="//mat-checkbox[@id='EXTRA-HAUSHALT-WERTSACHEN_IN_KASSEN_EN2-deckungs-eintrag-zusatzDeckung-checkbox']")
 
-                self.browserSession.findByAndSetText(xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_panzerkassen_wert',
+                self.browserSession.findByAndSetText(xpath="//input[@id='EXTRA-HAUSHALT-WERTSACHEN_IN_KASSEN_EN2-deckungs-eintrag-zusatzDeckung-input']",
                                 value=self.testcaseDataDict['zu_hh_panzk_wert'])
             elif self.testcaseDataDict['zu_hh_panzerk'] == 'X':
                 self.browserSession.findByAndClick(
-                    xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_panzerkassen_basis')
+                    xpath="//*[@id='BASIS-HAUSHALT-WERTSACHEN_IN_KASSEN_EN2-deckungs-eintrag-zusatzDeckung-checkbox']")
 
-                self.browserSession.findByAndSetText(xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_panzerkassen_wert_basis',
+                self.browserSession.findByAndSetText(xpath="//*[@id='BASIS-HAUSHALT-WERTSACHEN_IN_KASSEN_EN2-deckungs-eintrag-zusatzDeckung-input']",
                     value=self.testcaseDataDict['zu_hh_panzk_wert'])
 
             if self.testcaseDataDict['zu_hh_elektronik'] == 'X':
                 if self.testcaseDataDict['zu_hh_art'] != 'Basis':
-                    self.browserSession.findByAndClick(xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_elektronik')
+                    self.browserSession.findByAndClick(xpath="//mat-checkbox[@id='EXTRA-HAUSHALT-UNTERHALTUNGSELEKTRONIK-deckungs-eintrag-zusatzDeckung-checkbox']/label/div")
                 else:
-                    self.browserSession.findByAndClick(xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_elektronik_basis')
+                    self.browserSession.findByAndClick(xpath="//*[@id='BASIS-HAUSHALT-UNTERHALTUNGSELEKTRONIK-deckungs-eintrag-zusatzDeckung-titel']")
 
             if self.testcaseDataDict['zu_hh_sport_jagd'] == 'X' and (self.testcaseDataDict['zu_hh_art'] != 'Basis'):
-                self.browserSession.findByAndClick(xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_sport_jagd')
+                self.browserSession.findByAndClick(xpath="//mat-checkbox[@id='EXTRA-HAUSHALT-SPORT_JAGD-deckungs-eintrag-zusatzDeckung-checkbox']/label/div")
             elif self.testcaseDataDict['zu_hh_sport_jagd'] == 'X':
-                self.browserSession.findByAndClick(xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_sport_jagd_basis')
+                self.browserSession.findByAndClick(xpath="//*[@id='BASIS-HAUSHALT-SPORT_JAGD-deckungs-eintrag-zusatzDeckung-titel']")
 
             if self.testcaseDataDict['zu_hh_sport_wert'] != '' and (self.testcaseDataDict['zu_hh_art'] != 'Basis'):
-                self.browserSession.findByAndSetText(xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_sport_jagd_wert',
+                self.browserSession.findByAndSetText(xpath="//input[@id='EXTRA-HAUSHALT-SPORT_JAGD-deckungs-eintrag-zusatzDeckung-input']",
                     value=self.testcaseDataDict['zu_hh_sport_wert'])
             elif self.testcaseDataDict['zu_hh_sport_wert'] != '':
-                self.browserSession.findByAndSetText(xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_sport_jagd_wert_basis',
+                self.browserSession.findByAndSetText(xpath="//*[@id='BASIS-HAUSHALT-SPORT_JAGD-deckungs-eintrag-zusatzDeckung-input']",
                     value=self.testcaseDataDict['zu_hh_sport_wert'])
 
             if self.testcaseDataDict['zu_hh_unbenannte'] == 'X' and (self.testcaseDataDict['zu_hh_art'] != 'Basis'):
-                self.browserSession.findByAndClick(xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_unbenannte')
+                self.browserSession.findByAndClick(xpath="//mat-checkbox[@id='EXTRA-HAUSHALT-UNBENANNTE_GEFAHREN-deckungs-eintrag-zusatzDeckung-checkbox']/label/div")
             elif self.testcaseDataDict['zu_hh_unbenannte'] == 'X':
                 self.browserSession.findByAndClick(
-                    xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_unbenannte_basis')
+                    xpath='//*[@id="BASIS-HAUSHALT-UNBENANNTE_GEFAHREN-deckungs-eintrag-zusatzDeckung-titel"]')
 
             if self.testcaseDataDict['zu_hh_sos'] == 'X' and (self.testcaseDataDict['zu_hh_art'] != 'Basis'):
-                self.browserSession.findByAndClick(xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_sos')
+                self.browserSession.findByAndClick(xpath="//mat-checkbox[@id='EXTRA-HAUSHALT-DONAUSOS-deckungs-eintrag-zusatzDeckung-checkbox']")
             elif self.testcaseDataDict['zu_hh_sos'] == 'X':
-                self.browserSession.findByAndClick(xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_sos_basis')
+                self.browserSession.findByAndClick(xpath="//mat-checkbox[@id='BASIS-HAUSHALT-DONAUSOS-deckungs-eintrag-zusatzDeckung-checkbox']")
 
             if self.testcaseDataDict['zu_hh_privhaftpfl'] == 'X':
                 self.browserSession.findByAndClick(
-                    xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_privhaftpfl_zus_person')
+                    xpath="//mat-checkbox[@id='BASIS-HAUSHALT-PRIVATHAFTPFLICHT-deckungs-eintrag-zusatzDeckung-checkbox']/label/div")
 
-                self.browserSession.findByAndSetText(xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_privhaftpfl_zus_person_count',
+                self.browserSession.findByAndSetText(xpath="//input[@id='BASIS-HAUSHALT-PRIVATHAFTPFLICHT-deckungs-eintrag-zusatzDeckung-input']",
                                value=self.testcaseDataDict['zu_hh_prihaftpf_person_count'])
 
-                self.browserSession.findByAndSetText(xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/don_hh_privhaftpfl_zus_person_names',
+                self.browserSession.findByAndSetText(xpath="//textarea[@id='BASIS-HAUSHALT-PRIVATHAFTPFLICHT-deckungs-eintrag-zusatzDeckung-textarea']",
                               value=self.testcaseDataDict['zu_hh_prihaftpf_person_name'])
 
             if self.testcaseDataDict['zu_hh_rasche_hilfe'] == 'X':
                 self.browserSession.findByAndClick(
-                    xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/wstv_hh_rasche_hilfe')
+                    xpath="//mat-checkbox[@id='EXTRA-HAUSHALT-RASCHE_HILFE-deckungs-eintrag-zusatzDeckung-checkbox']/label/div")
 
 
             if self.testcaseDataDict['zu_hh_tiefkuehl'] == 'X':
                 self.browserSession.findByAndClick(
-                    xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/wstv_hh_tiefkuehl')
-
+                    xpath="//*[@id='EXTRA-HAUSHALT-TIEFKUEHLBEHAELTER-deckungs-eintrag-zusatzDeckung-checkbox']")
 
             if self.testcaseDataDict['zu_hh_freizeitpaket'] == 'X':
                 self.browserSession.findByAndClick(
-                    xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/wstv_hh_freizeitpaket')
-
+                    xpath='//*[@id="EXTRA-HAUSHALT-FREIZEITPAKET-deckungs-eintrag-zusatzDeckung-checkbox"]')
 
             if self.testcaseDataDict['zu_hh_freizeit_wert'] != '' and (self.testcaseDataDict['zu_hh_art'] != 'Basis'):
-                self.browserSession.findByAndSetText(xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/wstv_hh_freizeit_wert',
+                self.browserSession.findByAndSetText(xpath="//input[@id='EXTRA-HAUSHALT-FREIZEITPAKET-deckungs-eintrag-zusatzDeckung-input']",
                                value=self.testcaseDataDict['zu_hh_freizeit_wert'])
             elif self.testcaseDataDict['zu_hh_freizeit_wert'] != '':
-                self.browserSession.findByAndSetText(xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/wstv_hh_freizeit_wert_basis',
+                self.browserSession.findByAndSetText(xpath="//input[@id='BASIS-HAUSHALT-FREIZEITPAKET-deckungs-eintrag-zusatzDeckung-input']",
                               value=self.testcaseDataDict['zu_hh_freizeit_wert'])
 
             if self.testcaseDataDict['zu_hh_erw_premium'] == 'X':
                 self.browserSession.findByAndClick(
-                    xpath='Page_VIGO Wohnen/Deckungen/Haushalt_zusatzdeckungen/wstv_hh_erw_premium')
+                    xpath="//*[@id='EXTRA-HAUSHALT-ERWEITERTE_PREMIUM_GEFAHREN-deckungs-eintrag-zusatzDeckung-checkbox']")
 
     def deckungsUmfangEnd(self):
         self.browserSession.takeTime("Deckungen")

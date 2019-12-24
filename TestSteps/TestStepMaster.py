@@ -12,3 +12,5 @@ class TestStepMaster:
         """Method is overwritten in all children"""
         pass
 
+    def teardown(self):
+        self.testcaseDataDict["Toasts"], self.testcaseDataDict["ToastsError"] = self.browserSession.getToastsAsString()

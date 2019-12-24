@@ -5,6 +5,7 @@ from datetime import datetime
 import logging
 import TestSteps.Exceptions
 from . import GlobalConstants as GC
+from bs4 import BeautifulSoup
 
 class CustBrowserHandling(BrowserDriver):
     def __init__(self):
@@ -21,19 +22,29 @@ class CustBrowserHandling(BrowserDriver):
         if len(toasts) == 0:
             return
 
-        # FIXME: Do something with the toasts.
-        # They must find their way back into the data structure
-
-
         # Click on each Toast:
         for element in toasts:
-            if "red" in element.style:
+            if "red" in self.__getAttributesOfElement(element):
                 self.errorToasts = self.errorToasts + '\n' + element.text
                 raise TestSteps.Exceptions.pyFETestException
             else:
                 self.toasts = self.toasts + '\n' + element.text
-            self._BrowserDriver__log(logging.WARN, "Toast handled: " + element.text)
+            self._BrowserDriver__log(logging.INFO, "Toast handled: " + element.text)
             self.findByAndClick(xpath="(//mat-icon[contains(.,'close')])[1]")
+
+    def __getAttributesOfElement(self, element):
+        #l_attrib = self.driver.execute_script('var items = {}; for (index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value }; return items;', element)
+        properties = self.driver.execute_script('return window.getComputedStyle(arguments[0], null);', element)
+        for property in properties:
+            print(element.value_of_css_property(property))
+        html_attribs = element.get_property("outerHTML")
+        print(html_attribs)
+        all_attribs = self.__getAttributesViaOuterHTML(html_attribs)
+        return all_attribs
+
+    def __getAttributesViaOuterHTML(self, html_attribs: str):
+        bs = BeautifulSoup(html_attribs, 'html.parser')
+        return bs.attrs
 
     def getToastsAsString(self):
         l_return = {'Toasts': self.toasts,
