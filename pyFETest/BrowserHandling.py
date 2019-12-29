@@ -6,6 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import *
 from selenium.webdriver.common import keys
 from . import GlobalConstants as GC
+from TestSteps import Exceptions
 import time
 from datetime import timedelta
 import logging
@@ -25,29 +26,30 @@ class BrowserDriver:
     def takeTime(self, timingName):
         if timingName in self.timing:
             self.timing[timingName][GC.TIMING_END] = time.time()
-            return str(timedelta(seconds=self.timing[timingName]["end"] - self.timing[timingName][GC.TIMING_START]))
+            return str(timedelta(seconds=self.timing[timingName][GC.TIMING_END] - self.timing[timingName][GC.TIMING_START]))
         else:
             self.timing[timingName] = {}
             self.timing[timingName][GC.TIMING_START] = time.time()
             self.currentTimingSection = timingName
 
     def takeTimeSumOutput(self):
-        print("-------------------")
-        print("Timing")
         for key, value in self.timing.items():
             if "end" in value.keys():
-                print(f'{key} : {value[GC.TIMING_END] - value[GC.TIMING_START]}')
-                self.__log(logging.INFO, f'{key} : {value[GC.TIMING_END] - value[GC.TIMING_START]}')
+                self.__log(logging.INFO, f'{key} : {BrowserDriver.__format_time(value)}')
 
     def returnTime(self):
         timingString = ""
         for key,value in self.timing.items():
             if GC.TIMING_END in value.keys():
                 timingString = timingString + "\n" + f'{key}: , since last call: ' \
-                                                     f'{value[GC.TIMING_END] - value[GC.TIMING_START]}'
+                                                     f'{BrowserDriver.__format_time(value)}'
                 if "timestamp" in value.keys():
                     timingString = timingString + ", TS:" + str(value[GC.TIMESTAMP])
         return timingString
+
+    @staticmethod
+    def __format_time(startAndEndTimeAsDict):
+        return format(startAndEndTimeAsDict[GC.TIMING_END] - startAndEndTimeAsDict[GC.TIMING_START], ".2f") + " s"
 
     def resetTime(self):
         if "Testrun complete" in self.timing:
@@ -156,27 +158,50 @@ class BrowserDriver:
                        class_name = None,
                        value = None,
                        iframe = None,
-                       timeout = 20):
+                       timeout = 60):
         self.findBy(id=id,
                     css=css,
                     xpath=xpath,
                     class_name=class_name,
-                    iframe=iframe)
+                    iframe=iframe,
+                    timeout=timeout)
 
-        self.doSomething(GC.CMD_SETTEXT, value=value, timeout=timeout)
+        self.__doSomething(GC.CMD_SETTEXT, value=value, timeout=timeout, xpath=xpath)
 
     def findByAndClick(self, id = None,
                        css = None,
                        xpath = None,
                        class_name = None,
-                       iframe = None):
+                       iframe = None,
+                       timeout = 60):
         critical_error = self.findBy(id = id,
                     css = css,
                     xpath=xpath,
                     class_name = class_name,
-                    iframe=iframe)
+                    iframe=iframe,
+                    timeout=timeout)
 
-        self.doSomething(GC.CMD_CLICK)
+        if critical_error:
+            return
+
+        self.__doSomething(GC.CMD_CLICK, xpath=xpath, timeout=timeout)
+
+    def findByAndForceText(self, id=None,
+                           css=None,
+                           xpath=None,
+                           class_name=None,
+                           value=None,
+                           iframe=None,
+                           timeout=60):
+
+        self.findBy(id=id,
+                    css=css,
+                    xpath=xpath,
+                    class_name=class_name,
+                    iframe=iframe,
+                    timeout=timeout)
+
+        self.__doSomething(GC.CMD_FORCETEXT, value=value, timeout=timeout, xpath=xpath)
 
     def findBy(self, id = None,
                css = None,
@@ -185,6 +210,7 @@ class BrowserDriver:
                iframe = None,
                # command = None,
                # value = None,
+               timeout = 60,
                loggingOn=True):
 
         if iframe:
@@ -193,7 +219,7 @@ class BrowserDriver:
         if loggingOn:
             self.__log(logging.INFO, "Locating Element", **{'id':id, 'css':css, 'xpath':xpath, 'class_name':class_name, 'iframe':iframe})
 
-        return self.__tryAndRetry(id, css, xpath, class_name)
+        return self.__tryAndRetry(id, css, xpath, class_name, timeout=timeout)
 
     def __tryAndRetry(self, id = None,
                       css = None,
@@ -232,10 +258,10 @@ class BrowserDriver:
                 time.sleep(2)
             except InvalidSessionIdException as e:
                 self.__log(logging.CRITICAL, "WebDriver Exception - terminating program: " + str(e))
-                sys.exit()
+                raise Exceptions.pyFETestException
             except NoSuchWindowException as e:
                 self.__log(logging.CRITICAL, "WebDriver Exception - terminating program: " + str(e))
-                sys.exit()
+                raise Exceptions.pyFETestException
             except WebDriverException as e:
                 self.__log(logging.ERROR, "Retrying WebDriver Exception: " + str(e))
                 time.sleep(2)
@@ -259,13 +285,13 @@ class BrowserDriver:
             except Exception as e:
                 # Element gone - exit
                 stillHere = False
-        self.__log(logging.INFO, f"Element was gone after {elapsed} seconds")
+        self.__log(logging.INFO, f"Element was gone after {format(elapsed, '.2f')} seconds")
 
     @staticmethod
     def sleep(sleepTimeinSeconds):
         time.sleep(sleepTimeinSeconds)
 
-    def doSomething(self, command, value=None, timeout=20):
+    def __doSomething(self, command, value=None, timeout=20, xpath=None):
         didWork = False
         elapsed = 0
         begin = time.time()
@@ -276,6 +302,19 @@ class BrowserDriver:
                     self.element.send_keys(value)
                 elif command.upper() == GC.CMD_CLICK:
                     self.element.click()
+                elif command.upper() == GC.CMD_FORCETEXT:
+                    self.__log(logging.DEBUG, f"Field had a value - trying to clear it out: {self.element.text}")
+                    for i in range(0, 10):
+                        self.element.send_keys(keys.Keys.BACKSPACE)
+                    time.sleep(0.1)
+                    self.element.send_keys(value)
+                    # if self.element.text != value and xpath:
+                    #     self.__log(logging.WARN, f"Field didn't take value - using JS-Hack to overwrite")
+                    #     xpath = str(xpath).replace("'", "\"")
+                    #     self.javaScript(
+                    #         "l_ = document.evaluate('" + xpath + "', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;"
+                    #                                              "l_.value= '" + value + "';");
+
                 didWork = True
                 return
             except ElementClickInterceptedException as e:
@@ -287,7 +326,11 @@ class BrowserDriver:
             except NoSuchElementException as e:
                 self.__log(logging.DEBUG, "doSomething: Element not there yet - retry")
                 time.sleep(0.5)
+            except InvalidSessionIdException as e:
+                self.__log(logging.ERROR, f"Invalid Session ID Exception caught - aborting... {e} ")
+                raise Exceptions.pyFETestException
             elapsed = time.time()-begin
+        raise Exceptions.pyFETestException
 
     def goToUrl(self, url):
         self.__log(logging.INFO, f'GoToUrl:{url}')

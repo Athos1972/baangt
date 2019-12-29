@@ -2,6 +2,7 @@ from pyFETest.HandleDatabase import HandleDatabase
 from pyFETest.CustBrowserHandling import CustBrowserHandling
 from pyFETest.utils import utils
 from pyFETest.ExportResults import ExportResults
+from pyFETest import GlobalConstants as GC
 
 class TestRun:
     def __init__(self, testRunName, browserName = None):
@@ -33,7 +34,7 @@ class TestRun:
     def getNextRecord(self):
         if self.testdataDataBase:
             if self.recordPointer > self.testrunAttributes[self.testRunName]["TO_LINE"]:
-                return None
+                return (None, None)
         else:
             self.__getDatabase()
 
@@ -56,7 +57,7 @@ class TestRun:
         self.outputDocument = ExportResults(self.__getOutputFileName())
 
     def finishTestCase(self):
-        self.dataRecord["TimeLog"] = self.browser.returnTime()
+        self.dataRecord[GC.TIMELOG] = self.browser.returnTime()
         self.browser.takeTimeSumOutput()
         self.outputDocument.addEntry(self.dataRecord)
         self.browser.resetTime()

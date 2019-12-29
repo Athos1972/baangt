@@ -16,6 +16,6 @@ class Beratungsprotokoll(TestStepMaster):
         self.browserSession.findByAndClick(xpath="//div[@class='mat-radio-label-content'][contains(.,'nicht gewünscht')]")
         self.browserSession.findByAndClick(xpath="//button[@id='nav-component-speichern-button']")
         self.browserSession.findWaitNotVisible(xpath="//div[contains(@class,'overlay-spinner ng-star-inserted')]")
-        self.browserSession.findByAndClick(css="#emailOeffnen_action")
+        # self.browserSession.findByAndClick(css="#emailOeffnen_action")
         self.browserSession.findWaitNotVisible(xpath="//div[contains(@class,'overlay-spinner ng-star-inserted')]")
         self.browserSession.takeTime("Beratungsprotokoll")

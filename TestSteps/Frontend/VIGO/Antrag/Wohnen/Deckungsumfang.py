@@ -16,7 +16,7 @@ class Deckungsumfang(TestStepMaster):
     def deckungsUmfangStart(self):
         # Deckungsumfang - weiter:
         self.browserSession.takeTime("Deckungen")
-        self.browserSession.findByAndClick(xpath="//mat-icon[contains(.,'keyboard_arrow_right')]")
+        self.browserSession.findByAndClick(xpath='//*[@id="deckungsumfang"]')
         self.browserSession.findWaitNotVisible(xpath=TSGC.NG_SPINNER)
 
     def haushalt_deckungen(self):
@@ -123,24 +123,24 @@ class Deckungsumfang(TestStepMaster):
             if self.testcaseDataDict['zu_hh_wertsachen'] == 'X':
                 if self.testcaseDataDict['zu_hh_art'] != 'Basis':
                     self.browserSession.findByAndClick(xpath="//mat-checkbox[@id='EXTRA-HAUSHALT-WERTSACHEN-deckungs-eintrag-zusatzDeckung-checkbox']/label/div")
-                    self.browserSession.findByAndSetText(xpath="//input[@id='EXTRA-HAUSHALT-WERTSACHEN-deckungs-eintrag-zusatzDeckung-input']",
+                    self.browserSession.findByAndForceText(xpath="//input[@id='EXTRA-HAUSHALT-WERTSACHEN-deckungs-eintrag-zusatzDeckung-input']",
                                   value=self.testcaseDataDict['zu_hh_wert_wert'])
 
                 else:
                     self.browserSession.findByAndClick(xpath="//mat-checkbox[@id='BASIS-HAUSHALT-WERTSACHEN-deckungs-eintrag-zusatzDeckung-checkbox']/label/div")
-                    self.browserSession.findByAndSetText(xpath="//input[@id='BASIS-HAUSHALT-WERTSACHEN-deckungs-eintrag-zusatzDeckung-input']",
+                    self.browserSession.findByAndForceText(xpath="//input[@id='BASIS-HAUSHALT-WERTSACHEN-deckungs-eintrag-zusatzDeckung-input']",
                                   value=self.testcaseDataDict['zu_hh_wert_wert'])
 
             if self.testcaseDataDict['zu_hh_panzerk'] == 'X' and (self.testcaseDataDict['zu_hh_art'] != 'Basis'):
                 self.browserSession.findByAndClick(xpath="//mat-checkbox[@id='EXTRA-HAUSHALT-WERTSACHEN_IN_KASSEN_EN2-deckungs-eintrag-zusatzDeckung-checkbox']")
 
-                self.browserSession.findByAndSetText(xpath="//input[@id='EXTRA-HAUSHALT-WERTSACHEN_IN_KASSEN_EN2-deckungs-eintrag-zusatzDeckung-input']",
+                self.browserSession.findByAndForceText(xpath="//input[@id='EXTRA-HAUSHALT-WERTSACHEN_IN_KASSEN_EN2-deckungs-eintrag-zusatzDeckung-input']",
                                 value=self.testcaseDataDict['zu_hh_panzk_wert'])
             elif self.testcaseDataDict['zu_hh_panzerk'] == 'X':
                 self.browserSession.findByAndClick(
                     xpath="//*[@id='BASIS-HAUSHALT-WERTSACHEN_IN_KASSEN_EN2-deckungs-eintrag-zusatzDeckung-checkbox']")
 
-                self.browserSession.findByAndSetText(xpath="//*[@id='BASIS-HAUSHALT-WERTSACHEN_IN_KASSEN_EN2-deckungs-eintrag-zusatzDeckung-input']",
+                self.browserSession.findByAndForceText(xpath="//*[@id='BASIS-HAUSHALT-WERTSACHEN_IN_KASSEN_EN2-deckungs-eintrag-zusatzDeckung-input']",
                     value=self.testcaseDataDict['zu_hh_panzk_wert'])
 
             if self.testcaseDataDict['zu_hh_elektronik'] == 'X':
@@ -155,10 +155,10 @@ class Deckungsumfang(TestStepMaster):
                 self.browserSession.findByAndClick(xpath="//*[@id='BASIS-HAUSHALT-SPORT_JAGD-deckungs-eintrag-zusatzDeckung-titel']")
 
             if self.testcaseDataDict['zu_hh_sport_wert'] != '' and (self.testcaseDataDict['zu_hh_art'] != 'Basis'):
-                self.browserSession.findByAndSetText(xpath="//input[@id='EXTRA-HAUSHALT-SPORT_JAGD-deckungs-eintrag-zusatzDeckung-input']",
+                self.browserSession.findByAndForceText(xpath="//input[@id='EXTRA-HAUSHALT-SPORT_JAGD-deckungs-eintrag-zusatzDeckung-input']",
                     value=self.testcaseDataDict['zu_hh_sport_wert'])
             elif self.testcaseDataDict['zu_hh_sport_wert'] != '':
-                self.browserSession.findByAndSetText(xpath="//*[@id='BASIS-HAUSHALT-SPORT_JAGD-deckungs-eintrag-zusatzDeckung-input']",
+                self.browserSession.findByAndForceText(xpath="//*[@id='BASIS-HAUSHALT-SPORT_JAGD-deckungs-eintrag-zusatzDeckung-input']",
                     value=self.testcaseDataDict['zu_hh_sport_wert'])
 
             if self.testcaseDataDict['zu_hh_unbenannte'] == 'X' and (self.testcaseDataDict['zu_hh_art'] != 'Basis'):
@@ -185,7 +185,6 @@ class Deckungsumfang(TestStepMaster):
             if self.testcaseDataDict['zu_hh_rasche_hilfe'] == 'X':
                 self.browserSession.findByAndClick(
                     xpath="//mat-checkbox[@id='EXTRA-HAUSHALT-RASCHE_HILFE-deckungs-eintrag-zusatzDeckung-checkbox']/label/div")
-
 
             if self.testcaseDataDict['zu_hh_tiefkuehl'] == 'X':
                 self.browserSession.findByAndClick(

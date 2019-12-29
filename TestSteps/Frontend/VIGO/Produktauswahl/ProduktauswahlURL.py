@@ -1,8 +1,9 @@
 from TestSteps.TestStepMaster import TestStepMaster
+from pyFETest import GlobalConstants as GC
 
 class ProduktauswahlURL(TestStepMaster):
-    def __init__(self, testcaseDataDict, browserSession):
-        super().__init__(testcaseDataDict, browserSession)
+    def __init__(self, testcaseDataDict, browserSession, **kwargs):
+        super().__init__(testcaseDataDict, browserSession, **kwargs)
         self.go2url()
         self.teardown()
 

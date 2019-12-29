@@ -7,5 +7,4 @@ class Dokumente(Dokumente):
         self.teardown()
 
     def execute(self):
-        super().dokumenteOpen()
         super().beilageBeratungsProtokollHochladen()

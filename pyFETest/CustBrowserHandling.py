@@ -5,6 +5,7 @@ from datetime import datetime
 import logging
 import TestSteps.Exceptions
 from . import GlobalConstants as GC
+from . import CustGlobalConstants as CGC
 from bs4 import BeautifulSoup
 
 class CustBrowserHandling(BrowserDriver):
@@ -23,32 +24,32 @@ class CustBrowserHandling(BrowserDriver):
             return
 
         # Click on each Toast:
+        self._BrowserDriver__log(logging.INFO, f"{len(toasts)} Toasts handled")
         for element in toasts:
             if "red" in self.__getAttributesOfElement(element):
                 self.errorToasts = self.errorToasts + '\n' + element.text
-                raise TestSteps.Exceptions.pyFETestException
             else:
                 self.toasts = self.toasts + '\n' + element.text
-            self._BrowserDriver__log(logging.INFO, "Toast handled: " + element.text)
+            self._BrowserDriver__log(logging.DEBUG, "Toast handled: " + element.text)
             self.findByAndClick(xpath="(//mat-icon[contains(.,'close')])[1]")
 
     def __getAttributesOfElement(self, element):
         #l_attrib = self.driver.execute_script('var items = {}; for (index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value }; return items;', element)
-        properties = self.driver.execute_script('return window.getComputedStyle(arguments[0], null);', element)
-        for property in properties:
-            print(element.value_of_css_property(property))
+        # properties = self.driver.execute_script('return window.getComputedStyle(arguments[0], null);', element)
+        # for property in properties:
+        #    print(element.value_of_css_property(property))
         html_attribs = element.get_property("outerHTML")
-        print(html_attribs)
-        all_attribs = self.__getAttributesViaOuterHTML(html_attribs)
-        return all_attribs
+        # print(html_attribs)
+        style = self.__getAttributesViaOuterHTML(html_attribs)
+        return style
 
     def __getAttributesViaOuterHTML(self, html_attribs: str):
         bs = BeautifulSoup(html_attribs, 'html.parser')
-        return bs.attrs
+        l_attr = bs.contents[0].contents[0].attrs["style"]
+        return l_attr
 
     def getToastsAsString(self):
-        l_return = {'Toasts': self.toasts,
-                    'ErrorToasts': self.errorToasts}
+        l_return = (self.toasts, self.errorToasts)
         self.toasts = ""
         self.errorToasts = ""
         return l_return

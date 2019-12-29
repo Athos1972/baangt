@@ -1,16 +1,15 @@
 from TestSteps.TestStepMaster import TestStepMaster
+from TestSteps import CustGlobalConstants as CGC
 
 class Dokumente(TestStepMaster):
     def __init__(self, testcaseDataDict, browserSession):
         super().__init__(testcaseDataDict, browserSession)
         self.dokumenteOpen()
-        self.beilageBeratungsProtokollHochladen()
-        self.teardown()
 
     def dokumenteOpen(self):
         # Dokumente
         self.browserSession.findByAndClick(xpath="//div[@id='dokumente']/div/div[2]")
-        self.browserSession.findWaitNotVisible(xpath="//div[contains(@class,'overlay-spinner ng-star-inserted')]")
+        self.browserSession.findWaitNotVisible(xpath=CGC.NG_SPINNER)
 
     def beilageBeratungsProtokollHochladen(self):
         # Upload Beilage

@@ -1,4 +1,5 @@
 from TestSteps.TestStepMaster import TestStepMaster
+from pyFETest import CustGlobalConstants as CGC
 
 class AntragSenden(TestStepMaster):
     def __init__(self, testcaseDataDict, browserSession):
@@ -26,8 +27,8 @@ class AntragSenden(TestStepMaster):
         self.browserSession.takeTime("Warten auf Senden an Bestand Button")
         self.browserSession.takeTime("Senden an Bestand")
         self.browserSession.findWaitNotVisible(xpath="//div[contains(@class,'overlay-spinner ng-star-inserted')]", timeout=120)
-        self.testcaseDataDict["SAPPOL"] = self.browserSession.findByAndWaitForValue(xpath='id("info-card-polizzennummer")')
-        self.testcaseDataDict["VIGOGF#"] = self.browserSession.findByAndWaitForValue(xpath='id("info-card-geschaeftsfallnummer")')
+        self.testcaseDataDict[CGC.SAPPOLNR] = self.browserSession.findByAndWaitForValue(xpath='id("info-card-polizzennummer")')
+        self.testcaseDataDict[CGC.VIGOGFNUMMER] = self.browserSession.findByAndWaitForValue(xpath='id("info-card-geschaeftsfallnummer")')
         self.testcaseDataDict["PRAEMIE"] = self.browserSession.findByAndWaitForValue(xpath='id("nav-component-praemie")')
         self.browserSession.takeTime("Senden an Bestand")
         self.browserSession.takeTime("Antrag fertigstellen")
