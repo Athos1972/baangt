@@ -2,8 +2,8 @@ from TestSteps.TestStepMaster import TestStepMaster
 from TestSteps import CustGlobalConstants as CGC
 
 class Praemienauskunft(TestStepMaster):
-    def __init__(self, testcaseDataDict, browserSession):
-        super().__init__(testcaseDataDict, browserSession)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.execute()
         self.teardown()
 

@@ -45,5 +45,6 @@ class ExportResults():
         if GC.TIMELOG in testRecordDict.keys():
             self.worksheet.write(self.nextline, 18, testRecordDict[GC.TIMELOG])
 
+
     def close(self):
         self.workbook.close()

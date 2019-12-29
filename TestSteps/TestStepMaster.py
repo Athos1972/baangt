@@ -3,13 +3,9 @@ import pyFETest.CustGlobalConstants as CGC
 import sys
 
 class TestStepMaster:
-    def __init__(self, testcaseDataDict, browserSession, **kwargs):
-        if GC.KWARGS_BROWSER in kwargs.keys():
-            self.testcaseDataDict = kwargs[GC.KWARGS_DATA]
-            self.browserSession = kwargs[GC.KWARGS_BROWSER]
-        else:
-            self.testcaseDataDict = testcaseDataDict
-            self.browserSession = browserSession
+    def __init__(self, **kwargs):
+        self.testcaseDataDict = kwargs[GC.KWARGS_DATA]
+        self.browserSession = kwargs[GC.KWARGS_BROWSER]
         self.testCaseStatus = None
         pass
 

@@ -1,9 +1,10 @@
 from TestSteps.TestStepMaster import TestStepMaster
 from pyFETest import CustGlobalConstants as CGC
+from pyFETest import GlobalConstants as GC
 
 class AntragSenden(TestStepMaster):
-    def __init__(self, testcaseDataDict, browserSession):
-        super().__init__(testcaseDataDict, browserSession)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.execute()
         self.teardown()
 
@@ -17,6 +18,9 @@ class AntragSenden(TestStepMaster):
         self.browserSession.takeTime("Antrag drucken")
         self.browserSession.findByAndClick(xpath="//button[@id='antrag_action']")
         self.browserSession.findWaitNotVisible(xpath="//div[contains(@class,'overlay-spinner ng-star-inserted')]", timeout=120)
+        if len(self.browserSession.errorToasts) > 0:
+            self.testcaseDataDict[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
+            return
         self.browserSession.takeTime("Antrag drucken")
         self.browserSession.findByAndClick(xpath='id("manuell_unterschreiben_action")')
         self.browserSession.sleep(0.2)
@@ -33,3 +37,4 @@ class AntragSenden(TestStepMaster):
         self.browserSession.takeTime("Senden an Bestand")
         self.browserSession.takeTime("Antrag fertigstellen")
         self.testcaseDataDict["Dauer"] = self.browserSession.takeTime("Testfall gesamt")
+        self.testcaseDataDict[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_SUCCESS

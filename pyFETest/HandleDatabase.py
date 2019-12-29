@@ -2,6 +2,7 @@ import logging
 import pandas as pd
 import json
 import pyFETest.CustGlobalConstants as CDC
+import pyFETest.GlobalConstants as GC
 
 logger = logging.getLogger("pyC")
 
@@ -40,6 +41,11 @@ class HandleDatabase():
                     and "m2" not in key:
                 logger.debug(f"Changed value - added ',00' to {key}, now value is: {value + ',00'} ")
                 self.record[key] = value + ",00"
+
+        self.globals[CDC.CUST_TOASTS] = []
+        self.globals[CDC.CUST_TOASTS_ERROR] = []
+        self.globals[CDC.DURATION] = ""
+        self.globals[GC.TIMELOG] = ""
 
         self.record.update(self.globals)
 

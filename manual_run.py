@@ -1,5 +1,6 @@
 from pyFETest.TestRun import TestRun
 from pyFETest import GlobalConstants as GC
+from TestSteps import Exceptions
 from TestSteps.Frontend.Portal.Login import Login
 from TestSteps.Frontend.VIGO.Antrag.Vermittler import Vermittler
 from TestSteps.Frontend.VIGO.Antrag.Wohnen.ObjektSeite import ObjektSeite
@@ -25,23 +26,20 @@ if __name__ == '__main__':
         try:
             kwargs = {GC.KWARGS_DATA: l_record,
                       GC.KWARGS_BROWSER: BrowserInterface}
-            ProduktauswahlURL(l_record, BrowserInterface, **kwargs)
-            if l_count == 1:
-                Login(l_record, BrowserInterface)
-
-            ProduktAuswahl(l_record, BrowserInterface)
-            ObjektSeite(l_record, BrowserInterface)
-            Empfehlungen(l_record, BrowserInterface)
-            Deckungsumfang(l_record, BrowserInterface)
-            Praemienauskunft(l_record, BrowserInterface)
-            Beratungsprotokoll(l_record, BrowserInterface)
-            VertragDaten(l_record, BrowserInterface)
-            AntragsFragen(l_record, BrowserInterface)
-            Vermittler(l_record, BrowserInterface)
-            Dokumente(l_record, BrowserInterface)
-            AntragSenden(l_record, BrowserInterface)
-            l_record[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_SUCCESS
-        except Exception as e:
+            ProduktauswahlURL(**kwargs)
+            Login(**kwargs)
+            ProduktAuswahl(**kwargs)
+            ObjektSeite(**kwargs)
+            Empfehlungen(**kwargs)
+            Deckungsumfang(**kwargs)
+            Praemienauskunft(**kwargs)
+            Beratungsprotokoll(**kwargs)
+            VertragDaten(**kwargs)
+            AntragsFragen(**kwargs)
+            Vermittler(**kwargs)
+            Dokumente(**kwargs)
+            AntragSenden(**kwargs)
+        except Exceptions.pyFETestException as e:
             BrowserInterface._BrowserDriver__log(logging.CRITICAL, "Unhandled Error happened: " + str(e))
             l_record[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
             pass

@@ -3,14 +3,15 @@ from TestSteps import CustGlobalConstants as TSGC
 
 
 class Deckungsumfang(TestStepMaster):
-    def __init__(self, testcaseDataDict, browserSession):
-        super().__init__(testcaseDataDict, browserSession)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.execute()
         self.teardown()
 
     def execute(self):
         self.deckungsUmfangStart()
         self.haushalt_deckungen()
+        self.haustechnik_deckungen()
         self.deckungsUmfangEnd()
 
     def deckungsUmfangStart(self):
@@ -204,6 +205,30 @@ class Deckungsumfang(TestStepMaster):
             if self.testcaseDataDict['zu_hh_erw_premium'] == 'X':
                 self.browserSession.findByAndClick(
                     xpath="//*[@id='EXTRA-HAUSHALT-ERWEITERTE_PREMIUM_GEFAHREN-deckungs-eintrag-zusatzDeckung-checkbox']")
+
+    def haustechnik_deckungen(self):
+        if self.testcaseDataDict['zu_htechn'] == 'X':
+            if self.testcaseDataDict['zu_htechn_create'] == 'X':
+                self.browserSession.findByAndClick(
+                    xpath="//label[contains(@for,'technik-BASIS-checkbox-input')]")
+
+            self.browserSession.findByAndClick(
+                xpath="//div[@class='vigong-deckungs-umfang-box-checkbox-header-label'][contains(.,'Haustechnikversicherung')]")
+            self.browserSession.sleep(0.5)
+
+            if self.testcaseDataDict['zu_htechn_kasko'] == 'X':
+                self.browserSession.findByAndClick(
+                    xpath="//label[@for='BASIS-TECHNIK-HAUSTECHNIKKASKO-deckungs-eintrag-zusatzDeckung-checkbox-input']")
+
+            if self.testcaseDataDict['zu_htechn_kasko_wert'] != '':
+                self.browserSession.sleep(0.2)
+                self.browserSession.findByAndForceText(
+                    xpath="//input[contains(@id,'BASIS-TECHNIK-HAUSTECHNIKKASKO-deckungs-eintrag-zusatzDeckung-input')]",
+                    value=self.testcaseDataDict['zu_htechn_kasko_wert'])
+
+            if self.testcaseDataDict['zu_htechn_heizkask'] == 'X':
+                self.browserSession.findByAndClick(
+                    xpath="//span[contains(@id,'BASIS-TECHNIK-HEIZUNGSKASKO-deckungs-eintrag-zusatzDeckung-titel')]")
 
     def deckungsUmfangEnd(self):
         self.browserSession.takeTime("Deckungen")

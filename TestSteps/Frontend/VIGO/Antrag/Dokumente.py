@@ -2,8 +2,8 @@ from TestSteps.TestStepMaster import TestStepMaster
 from TestSteps import CustGlobalConstants as CGC
 
 class Dokumente(TestStepMaster):
-    def __init__(self, testcaseDataDict, browserSession):
-        super().__init__(testcaseDataDict, browserSession)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.dokumenteOpen()
 
     def dokumenteOpen(self):

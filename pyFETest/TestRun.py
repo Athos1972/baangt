@@ -3,6 +3,7 @@ from pyFETest.CustBrowserHandling import CustBrowserHandling
 from pyFETest.utils import utils
 from pyFETest.ExportResults import ExportResults
 from pyFETest import GlobalConstants as GC
+from pyFETest import CustGlobalConstants as CGC
 
 class TestRun:
     def __init__(self, testRunName, browserName = None):
@@ -56,11 +57,18 @@ class TestRun:
     def __handleExcel(self):
         self.outputDocument = ExportResults(self.__getOutputFileName())
 
+    def startTestCase(self):
+        self.dataRecord[CGC.CUST_TOASTS_ERROR] = []
+        self.dataRecord[CGC.CUST_TOASTS] = []
+        self.dataRecord[CGC.DURATION] = ""
+        self.dataRecord[GC.TIMELOG] = ""
+
     def finishTestCase(self):
         self.dataRecord[GC.TIMELOG] = self.browser.returnTime()
         self.browser.takeTimeSumOutput()
         self.outputDocument.addEntry(self.dataRecord)
         self.browser.resetTime()
+        self.startTestCase()
 
     def __getOutputFileName(self):
         self.__getRecord(self.testrunAttributes[self.testRunName]["FROM_LINE"])
@@ -78,7 +86,7 @@ class TestRun:
                 "SHEET": 'Testcases',
                 "BROWSER": 'FF',
                 "FROM_LINE": 489,
-                "TO_LINE": 491
+                "TO_LINE": 500
             }
         }
         self.__getDatabase()

@@ -67,6 +67,26 @@ class CustBrowserHandling(BrowserDriver):
         zipkinString = "\n".join([str(elem) for elem in self.zipkinIDs.keys()])
         self._BrowserDriver__log(logging.INFO, "Found Zipkins: " + zipkinString)
 
+
+    def findBy(self, id = None,
+               css = None,
+               xpath = None,
+               class_name = None,
+               iframe = None,
+               timeout = 60,
+               loggingOn=True):
+
+        isSuccessful = super().findBy(id = id,
+               css = css,
+               xpath = xpath,
+               class_name = class_name,
+               iframe = iframe,
+               timeout = 60,
+               loggingOn=loggingOn)
+
+        if not isSuccessful:
+            self.CustomHandleToasts()
+
     def findWaitNotVisible(self, xpath, timeout = 90):
         self.zipkinIDs = {}
         self.CustomHandleZipkin()

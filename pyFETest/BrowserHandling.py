@@ -208,8 +208,6 @@ class BrowserDriver:
                xpath = None,
                class_name = None,
                iframe = None,
-               # command = None,
-               # value = None,
                timeout = 60,
                loggingOn=True):
 
@@ -221,17 +219,20 @@ class BrowserDriver:
 
         return self.__tryAndRetry(id, css, xpath, class_name, timeout=timeout)
 
+    def getURL(self):
+        return self.driver.current_url
+
     def __tryAndRetry(self, id = None,
                       css = None,
                       xpath = None,
                       class_name = None,
                       timeout = 20):
 
-        success = False
+        wasSuccessful = False
         begin = time.time()
         elapsed = 0
 
-        while not success and elapsed < timeout:
+        while not wasSuccessful and elapsed < timeout:
             try:
                 driverWait = WebDriverWait(self.driver, 20, poll_frequency=0.5)
 
@@ -243,7 +244,7 @@ class BrowserDriver:
                     self.element = self.driver.find_element_by_class_name(class_name)
                 elif xpath:
                     self.element = driverWait.until(ec.visibility_of_element_located((By.XPATH, xpath)))
-                success = True
+                wasSuccessful = True
             except StaleElementReferenceException as e:
                 self.__log(logging.DEBUG, "Stale Element Exception - retrying")
                 time.sleep(0.5)
@@ -267,6 +268,8 @@ class BrowserDriver:
                 time.sleep(2)
 
             elapsed = time.time() - begin
+
+        return wasSuccessful
 
     def findWaitNotVisible(self, xpath, timeout = 90):
         self.__log(logging.DEBUG, "Waiting for Element to disappear", **{"xpath":xpath, "timeout":timeout})
@@ -308,13 +311,6 @@ class BrowserDriver:
                         self.element.send_keys(keys.Keys.BACKSPACE)
                     time.sleep(0.1)
                     self.element.send_keys(value)
-                    # if self.element.text != value and xpath:
-                    #     self.__log(logging.WARN, f"Field didn't take value - using JS-Hack to overwrite")
-                    #     xpath = str(xpath).replace("'", "\"")
-                    #     self.javaScript(
-                    #         "l_ = document.evaluate('" + xpath + "', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;"
-                    #                                              "l_.value= '" + value + "';");
-
                 didWork = True
                 return
             except ElementClickInterceptedException as e:
