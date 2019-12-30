@@ -1,7 +1,7 @@
-from TestSteps.TestStepMaster import TestStepMaster
+from TestSteps.CustTestStepMaster import CustTestStepMaster
 from TestSteps import CustGlobalConstants as CGC
 
-class Praemienauskunft(TestStepMaster):
+class Praemienauskunft(CustTestStepMaster):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.execute()

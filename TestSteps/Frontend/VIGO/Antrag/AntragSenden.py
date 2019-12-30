@@ -1,8 +1,8 @@
-from TestSteps.TestStepMaster import TestStepMaster
+from TestSteps.CustTestStepMaster import CustTestStepMaster
 from pyFETest import CustGlobalConstants as CGC
 from pyFETest import GlobalConstants as GC
 
-class AntragSenden(TestStepMaster):
+class AntragSenden(CustTestStepMaster):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.execute()
@@ -36,5 +36,5 @@ class AntragSenden(TestStepMaster):
         self.testcaseDataDict["PRAEMIE"] = self.browserSession.findByAndWaitForValue(xpath='id("nav-component-praemie")')
         self.browserSession.takeTime("Senden an Bestand")
         self.browserSession.takeTime("Antrag fertigstellen")
-        self.testcaseDataDict["Dauer"] = self.browserSession.takeTime("Testfall gesamt")
+        self.testcaseDataDict[CGC.DURATION] = self.browserSession.takeTime("Testfall gesamt")
         self.testcaseDataDict[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_SUCCESS

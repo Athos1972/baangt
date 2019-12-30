@@ -1,6 +1,7 @@
-from TestSteps.TestStepMaster import TestStepMaster
+from TestSteps.CustTestStepMaster import CustTestStepMaster
 
-class AntragsFragen(TestStepMaster):
+
+class AntragsFragen(CustTestStepMaster):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.execute()

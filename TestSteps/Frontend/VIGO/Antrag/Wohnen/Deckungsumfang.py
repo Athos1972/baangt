@@ -1,8 +1,8 @@
-from TestSteps.TestStepMaster import TestStepMaster
+from TestSteps.CustTestStepMaster import CustTestStepMaster
 from TestSteps import CustGlobalConstants as TSGC
 
 
-class Deckungsumfang(TestStepMaster):
+class Deckungsumfang(CustTestStepMaster):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.execute()
@@ -196,10 +196,10 @@ class Deckungsumfang(TestStepMaster):
                     xpath='//*[@id="EXTRA-HAUSHALT-FREIZEITPAKET-deckungs-eintrag-zusatzDeckung-checkbox"]')
 
             if self.testcaseDataDict['zu_hh_freizeit_wert'] != '' and (self.testcaseDataDict['zu_hh_art'] != 'Basis'):
-                self.browserSession.findByAndSetText(xpath="//input[@id='EXTRA-HAUSHALT-FREIZEITPAKET-deckungs-eintrag-zusatzDeckung-input']",
+                self.browserSession.findByAndForceText(xpath="//input[@id='EXTRA-HAUSHALT-FREIZEITPAKET-deckungs-eintrag-zusatzDeckung-input']",
                                value=self.testcaseDataDict['zu_hh_freizeit_wert'])
             elif self.testcaseDataDict['zu_hh_freizeit_wert'] != '':
-                self.browserSession.findByAndSetText(xpath="//input[@id='BASIS-HAUSHALT-FREIZEITPAKET-deckungs-eintrag-zusatzDeckung-input']",
+                self.browserSession.findByAndForceText(xpath="//input[@id='BASIS-HAUSHALT-FREIZEITPAKET-deckungs-eintrag-zusatzDeckung-input']",
                               value=self.testcaseDataDict['zu_hh_freizeit_wert'])
 
             if self.testcaseDataDict['zu_hh_erw_premium'] == 'X':

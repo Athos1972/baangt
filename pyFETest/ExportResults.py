@@ -17,7 +17,7 @@ class ExportResults():
 
     def __setHeader(self):
         i = 0
-        columns = ["TF-Name", "Description", CGC.VIGOGFNUMMER, CGC.SAPPOLNR, "Vermittler", "VN", "Pol#Host",
+        columns = ["TF-Name", "Description", CGC.VIGOGFNUMMER, CGC.SAPPOLNR, CGC.VERMITTLER, "VN", "Pol#Host",
                    "BeratProt", "Warnmeldung BeratProt", "RefPrämie", "Fehler", "Screenshot", "TraceID",
                    "JSON", "Dauer", "Status", "Letzter Screnshot", "Letzte Meldung", "Zeit-Log"]
         for column in columns:
@@ -32,19 +32,23 @@ class ExportResults():
         self.worksheet.write(self.nextline, 1, testRecordDict["TFDescription"])
         self.worksheet.write(self.nextline, 2, testRecordDict[CGC.VIGOGFNUMMER])
         self.worksheet.write(self.nextline, 3, testRecordDict[CGC.SAPPOLNR])
-        self.worksheet.write(self.nextline, 4, testRecordDict["vermittler"])
-        self.worksheet.write(self.nextline, 5, testRecordDict["VN"])
-        self.worksheet.write(self.nextline, 6, testRecordDict[CGC.POLNRHOST])
-        self.worksheet.write(self.nextline, 9, testRecordDict[CGC.PRAEMIE])
-        self.worksheet.write(self.nextline, 10, str(testRecordDict[CGC.CUST_TOASTS]))
+        self.__writeCell(4, testRecordDict, CGC.VERMITTLER)
+        self.__writeCell(5, testRecordDict, "VN")
+        self.__writeCell(6, testRecordDict, CGC.POLNRHOST)
+        self.__writeCell(9, testRecordDict, CGC.PRAEMIE)
+        self.__writeCell(10, testRecordDict, CGC.CUST_TOASTS, strip=True)
         self.worksheet.write(self.nextline, 13, json.dumps(testRecordDict))
-        if CGC.DURATION in testRecordDict.keys():
-            self.worksheet.write(self.nextline, 14, testRecordDict[CGC.DURATION])
+        self.__writeCell(14, testRecordDict, CGC.DURATION)
         self.worksheet.write(self.nextline, 15, testRecordDict[GC.TESTCASESTATUS])
-        self.worksheet.write(self.nextline, 17, str(testRecordDict[CGC.CUST_TOASTS_ERROR]))
-        if GC.TIMELOG in testRecordDict.keys():
-            self.worksheet.write(self.nextline, 18, testRecordDict[GC.TIMELOG])
+        self.__writeCell(17, testRecordDict, CGC.CUST_TOASTS_ERROR, strip=True)
+        self.__writeCell(18, testRecordDict, GC.TIMELOG, strip=True)
 
+    def __writeCell(self, cellNumber, testRecordDict, fieldName, strip=False):
+        if fieldName in testRecordDict.keys():
+            if strip:
+                self.worksheet.write(self.nextline, cellNumber, testRecordDict[fieldName].strip())
+            else:
+                self.worksheet.write(self.nextline, cellNumber, testRecordDict[fieldName])
 
     def close(self):
         self.workbook.close()

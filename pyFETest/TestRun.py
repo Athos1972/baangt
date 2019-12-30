@@ -65,6 +65,8 @@ class TestRun:
 
     def finishTestCase(self):
         self.dataRecord[GC.TIMELOG] = self.browser.returnTime()
+        if len(self.dataRecord[CGC.DURATION]) == 0:
+            self.dataRecord[CGC.DURATION] = self.browser.takeTime("Testfall gesamt")
         self.browser.takeTimeSumOutput()
         self.outputDocument.addEntry(self.dataRecord)
         self.browser.resetTime()
@@ -81,12 +83,33 @@ class TestRun:
 
     def __initTestRun(self):
         self.testrunAttributes= {
-            "WSTV-Heartbeat": {
+            "Heartbeat": {
                 "DATAFILE": '/Users/bernhardbuhl/git/KatalonVIG/0testdateninput/testdata_wstv_fqa.xlsx',
                 "SHEET": 'Testcases',
                 "BROWSER": 'FF',
-                "FROM_LINE": 489,
-                "TO_LINE": 500
+                "FROM_LINE": 488,
+                "TO_LINE": 499
+            },
+            "WSTV-Single": {
+                "DATAFILE": '/Users/bernhardbuhl/git/KatalonVIG/0testdateninput/testdata_wstv_fqa.xlsx',
+                "SHEET": 'Testcases',
+                "BROWSER": 'FF',
+                "FROM_LINE": 488,
+                "TO_LINE": 488
+            },
+            "Partner": {
+                "DATAFILE": '/Users/bernhardbuhl/git/KatalonVIG/0testdateninput/testdata_wstv_fqa.xlsx',
+                "SHEET": 'TC_Partner',
+                "BROWSER": 'FF',
+                "FROM_LINE": 2,
+                "TO_LINE": 4
+            },
+            "SAP": {
+                "DATAFILE": '/Users/bernhardbuhl/git/KatalonVIG/0testdateninput/testdata_wstv_fqa.xlsx',
+                "SHEET": 'TC_Partner',
+                "BROWSER": 'FF',
+                "FROM_LINE": 2,
+                "TO_LINE": 2
             }
         }
         self.__getDatabase()

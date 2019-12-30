@@ -1,5 +1,6 @@
-from TestSteps.TestStepMaster import TestStepMaster
+from TestSteps.CustTestStepMaster import TestStepMaster
 from pyFETest import GlobalConstants as GC
+
 
 class ProduktauswahlURL(TestStepMaster):
     def __init__(self, **kwargs):

@@ -148,6 +148,7 @@ class BrowserDriver:
                 if len(self.element.text) > 0:
                     return self.element.text
             except Exception as e:
+                logger.debug(f"Exception during findByAndWaitForValue, but continuing {str(e)}")
                 pass
             time.sleep(0.5)
             duration = time.time() - start
@@ -168,6 +169,38 @@ class BrowserDriver:
 
         self.__doSomething(GC.CMD_SETTEXT, value=value, timeout=timeout, xpath=xpath)
 
+    def findByAndSetTextValidated(self,id = None,
+                       css = None,
+                       xpath = None,
+                       class_name = None,
+                       value = None,
+                       iframe = None,
+                       timeout = 60,
+                       retries = 5):
+
+        tries = 0
+
+        self.findBy(id=id,
+                    css=css,
+                    xpath=xpath,
+                    class_name=class_name,
+                    iframe=iframe,
+                    timeout=timeout)
+
+        while self.element.text != value and self.element.get_property("value") != value and tries < retries:
+
+            self.__log(logging.DEBUG, f"Verified trying of SetText - iteration {tries} of {retries}")
+
+            self.findByAndForceText(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe,
+                                    value=value, timeout=timeout)
+
+            self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
+
+            tries += 1
+
+    def submit(self):
+        self.element.submit()
+
     def findByAndClick(self, id = None,
                        css = None,
                        xpath = None,
@@ -182,34 +215,19 @@ class BrowserDriver:
                     timeout=timeout)
 
         if critical_error:
+            logger.debug("findBy didn't work in findByAndClick")
             return
 
         self.__doSomething(GC.CMD_CLICK, xpath=xpath, timeout=timeout)
 
-    def findByAndForceText(self, id=None,
-                           css=None,
-                           xpath=None,
-                           class_name=None,
-                           value=None,
-                           iframe=None,
-                           timeout=60):
+    def findByAndForceText(self, id=None, css=None, xpath=None, class_name=None, value=None,
+                           iframe=None, timeout=60):
 
-        self.findBy(id=id,
-                    css=css,
-                    xpath=xpath,
-                    class_name=class_name,
-                    iframe=iframe,
-                    timeout=timeout)
+        self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
 
         self.__doSomething(GC.CMD_FORCETEXT, value=value, timeout=timeout, xpath=xpath)
 
-    def findBy(self, id = None,
-               css = None,
-               xpath = None,
-               class_name = None,
-               iframe = None,
-               timeout = 60,
-               loggingOn=True):
+    def findBy(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=60, loggingOn=True):
 
         if iframe:
             self.handleIframe(iframe)
@@ -301,12 +319,12 @@ class BrowserDriver:
 
         while not didWork and elapsed < timeout:
             try:
+                self.__log(logging.DEBUG, f"Do_something {command} with {value}")
                 if command.upper() == GC.CMD_SETTEXT:
                     self.element.send_keys(value)
                 elif command.upper() == GC.CMD_CLICK:
                     self.element.click()
                 elif command.upper() == GC.CMD_FORCETEXT:
-                    self.__log(logging.DEBUG, f"Field had a value - trying to clear it out: {self.element.text}")
                     for i in range(0, 10):
                         self.element.send_keys(keys.Keys.BACKSPACE)
                     time.sleep(0.1)
@@ -330,7 +348,11 @@ class BrowserDriver:
 
     def goToUrl(self, url):
         self.__log(logging.INFO, f'GoToUrl:{url}')
-        self.driver.get(url)
+        try:
+            self.driver.get(url)
+        except WebDriverException as e:
+            self.__log(logging.ERROR, f"Webpage {url} not reached. Error was: {e}")
+            raise Exceptions.pyFETestException
         pass
 
     def javaScript(self, jsText):

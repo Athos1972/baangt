@@ -1,7 +1,7 @@
-from TestSteps.TestStepMaster import TestStepMaster
+from TestSteps.CustTestStepMaster import CustTestStepMaster
 import TestSteps.CustGlobalConstants as GC
 
-class Empfehlungen(TestStepMaster):
+class Empfehlungen(CustTestStepMaster):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.execute()

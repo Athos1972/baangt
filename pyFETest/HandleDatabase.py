@@ -14,8 +14,8 @@ class HandleDatabase():
             'user': '502266',
             'password': 'R(r6ayhr7EP3',
             'file_praemienauskunft': '/Users/bernhardbuhl/git/KatalonVIG/0testdateninput/Test_unterschrift_Beratungsprotokoll.pdf',
-            CDC.CUST_TOASTS: [],
-            CDC.CUST_TOASTS_ERROR: [],
+            CDC.CUST_TOASTS: "",
+            CDC.CUST_TOASTS_ERROR: "",
             CDC.VIGOGFNUMMER: "",
             CDC.SAPPOLNR: "",
             CDC.PRAEMIE: "",
@@ -42,8 +42,8 @@ class HandleDatabase():
                 logger.debug(f"Changed value - added ',00' to {key}, now value is: {value + ',00'} ")
                 self.record[key] = value + ",00"
 
-        self.globals[CDC.CUST_TOASTS] = []
-        self.globals[CDC.CUST_TOASTS_ERROR] = []
+        self.globals[CDC.CUST_TOASTS] = ""
+        self.globals[CDC.CUST_TOASTS_ERROR] = ""
         self.globals[CDC.DURATION] = ""
         self.globals[GC.TIMELOG] = ""
 

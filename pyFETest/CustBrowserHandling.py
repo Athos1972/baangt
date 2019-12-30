@@ -34,12 +34,7 @@ class CustBrowserHandling(BrowserDriver):
             self.findByAndClick(xpath="(//mat-icon[contains(.,'close')])[1]")
 
     def __getAttributesOfElement(self, element):
-        #l_attrib = self.driver.execute_script('var items = {}; for (index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value }; return items;', element)
-        # properties = self.driver.execute_script('return window.getComputedStyle(arguments[0], null);', element)
-        # for property in properties:
-        #    print(element.value_of_css_property(property))
         html_attribs = element.get_property("outerHTML")
-        # print(html_attribs)
         style = self.__getAttributesViaOuterHTML(html_attribs)
         return style
 
@@ -49,10 +44,18 @@ class CustBrowserHandling(BrowserDriver):
         return l_attr
 
     def getToastsAsString(self):
-        l_return = (self.toasts, self.errorToasts)
+        l_return = (CustBrowserHandling.__formatToasts(self.toasts),
+                    CustBrowserHandling.__formatToasts(self.errorToasts))
         self.toasts = ""
         self.errorToasts = ""
         return l_return
+
+    @staticmethod
+    def __formatToasts(toast_in):
+        toast_in = toast_in.replace("\ninfo\nInformation\n", "")
+        toast_in = toast_in.replace("\ninfo\nEs ist ein Fehler passiert!\n", "\nFehler:")
+        toast_in = toast_in.replace("\nclose", "\n")
+        return toast_in
 
     def CustomHandleZipkin(self):
         self.findBy(xpath="//span[@title='zipkinId.requestUrl']", loggingOn=False)
@@ -66,7 +69,6 @@ class CustBrowserHandling(BrowserDriver):
     def CustomPrintZipkins(self):
         zipkinString = "\n".join([str(elem) for elem in self.zipkinIDs.keys()])
         self._BrowserDriver__log(logging.INFO, "Found Zipkins: " + zipkinString)
-
 
     def findBy(self, id = None,
                css = None,

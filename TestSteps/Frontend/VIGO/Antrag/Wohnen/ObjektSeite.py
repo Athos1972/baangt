@@ -1,6 +1,6 @@
-from TestSteps.TestStepMaster import TestStepMaster
+from TestSteps.CustTestStepMaster import CustTestStepMaster
 
-class ObjektSeite(TestStepMaster):
+class ObjektSeite(CustTestStepMaster):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

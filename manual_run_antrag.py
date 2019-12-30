@@ -17,7 +17,8 @@ from TestSteps.Frontend.VIGO.Antrag.AntragSenden import AntragSenden
 import logging
 
 if __name__ == '__main__':
-    l_testRun = TestRun("WSTV-Heartbeat")
+    #l_testRun = TestRun("Heartbeat")
+    l_testRun = TestRun("WSTV-Single")
     BrowserInterface = l_testRun.getBrowser()
     l_first = True
     (l_record, l_count) = l_testRun.getNextRecord()
