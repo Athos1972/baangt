@@ -1,8 +1,8 @@
 import logging
 import pandas as pd
 import json
-import pyFETest.CustGlobalConstants as CDC
-import pyFETest.GlobalConstants as GC
+import baangt.CustGlobalConstants as CDC
+import baangt.GlobalConstants as GC
 
 logger = logging.getLogger("pyC")
 

@@ -1,6 +1,6 @@
 from TestSteps.CustTestStepMaster import CustTestStepMaster
-from pyFETest import CustGlobalConstants as CGC
-from pyFETest import GlobalConstants as GC
+from baangt import CustGlobalConstants as CGC
+from baangt import GlobalConstants as GC
 
 class AntragSenden(CustTestStepMaster):
     def __init__(self, **kwargs):

@@ -1,4 +1,4 @@
-import pyFETest.GlobalConstants as GC
+import baangt.GlobalConstants as GC
 import sys
 
 

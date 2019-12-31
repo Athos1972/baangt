@@ -1,9 +1,9 @@
-from pyFETest.HandleDatabase import HandleDatabase
-from pyFETest.CustBrowserHandling import CustBrowserHandling
-from pyFETest.utils import utils
-from pyFETest.ExportResults import ExportResults
-from pyFETest import GlobalConstants as GC
-from pyFETest import CustGlobalConstants as CGC
+from baangt.HandleDatabase import HandleDatabase
+from baangt.CustBrowserHandling import CustBrowserHandling
+from baangt.utils import utils
+from baangt.ExportResults import ExportResults
+from baangt import GlobalConstants as GC
+from baangt import CustGlobalConstants as CGC
 
 class TestRun:
     def __init__(self, testRunName, browserName = None):

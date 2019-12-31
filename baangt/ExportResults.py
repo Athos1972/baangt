@@ -1,8 +1,8 @@
 import xlsxwriter
 import logging
 import json
-import pyFETest.CustGlobalConstants as CGC
-import pyFETest.GlobalConstants as GC
+import baangt.CustGlobalConstants as CGC
+import baangt.GlobalConstants as GC
 
 logger = logging.getLogger("pyC")
 

@@ -1,5 +1,5 @@
-import pyFETest.GlobalConstants as GC
-import pyFETest.CustGlobalConstants as CGC
+import baangt.GlobalConstants as GC
+import baangt.CustGlobalConstants as CGC
 from TestSteps.TestStepMaster import TestStepMaster
 
 

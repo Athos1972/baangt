@@ -1,5 +1,5 @@
-from pyFETest.TestRun import TestRun
-from pyFETest import GlobalConstants as GC
+from baangt.TestRun import TestRun
+from baangt import GlobalConstants as GC
 from TestSteps import Exceptions
 from TestSteps.SAPWebGui.Login.LoginURL import LoginURL
 from TestSteps.SAPWebGui.Login.Login import Login

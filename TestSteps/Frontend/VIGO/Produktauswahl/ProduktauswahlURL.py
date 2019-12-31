@@ -1,5 +1,5 @@
 from TestSteps.CustTestStepMaster import TestStepMaster
-from pyFETest import GlobalConstants as GC
+from baangt import GlobalConstants as GC
 
 
 class ProduktauswahlURL(TestStepMaster):
