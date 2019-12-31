@@ -59,18 +59,22 @@ class BrowserDriver:
         else:
             self.timing = {}
 
-    def createNewBrowser(self, browserName):
+    def createNewBrowser(self, browserName, desiredCapabilities=None, **kwargs):
         self.takeTime("Browser Start")
         browserNames = {
             GC.BROWSER_FIREFOX: webdriver.Firefox,
             GC.BROWSER_CHROME: webdriver.Chrome,
-            GC.BROWSER_SAFARI: webdriver.Safari}
+            GC.BROWSER_SAFARI: webdriver.Safari,
+            GC.BROWSER_REMOTE: webdriver.Remote}
 
         if browserName in browserNames:
             if browserName == GC.BROWSER_FIREFOX :
                 self.driver = browserNames[browserName](executable_path=os.getcwd()+'/geckodriver')
             elif browserName == GC.BROWSER_CHROME:
                 self.driver = browserNames[browserName](executable_path=os.getcwd()+'/chromedriver')
+            elif browserName == GC.BROWSER_REMOTE:
+                self.driver = browserNames[browserName](command_executor='http://localhost:4444/wd/hub',
+                                                        desired_capabilities = desiredCapabilities)
         else:
             raise SystemExit("Browsername unknown")
 
