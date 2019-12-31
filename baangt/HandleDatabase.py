@@ -1,7 +1,7 @@
 import logging
 import pandas as pd
 import json
-import baangt.CustGlobalConstants as CDC
+import baangt.CustGlobalConstants as CGC
 import baangt.GlobalConstants as GC
 
 logger = logging.getLogger("pyC")
@@ -14,12 +14,13 @@ class HandleDatabase():
             'user': '502266',
             'password': 'R(r6ayhr7EP3',
             'file_praemienauskunft': '/Users/bernhardbuhl/git/KatalonVIG/0testdateninput/Test_unterschrift_Beratungsprotokoll.pdf',
-            CDC.CUST_TOASTS: "",
-            CDC.CUST_TOASTS_ERROR: "",
-            CDC.VIGOGFNUMMER: "",
-            CDC.SAPPOLNR: "",
-            CDC.PRAEMIE: "",
-            CDC.POLNRHOST: ""
+            CGC.CUST_TOASTS: "",
+            CGC.CUST_TOASTS_ERROR: "",
+            CGC.VIGOGFNUMMER: "",
+            CGC.SAPPOLNR: "",
+            CGC.PRAEMIE: "",
+            CGC.POLNRHOST: "",
+            GC.TESTCASESTATUS: ""
         }
         self.df_json = None
 
@@ -42,10 +43,11 @@ class HandleDatabase():
                 logger.debug(f"Changed value - added ',00' to {key}, now value is: {value + ',00'} ")
                 self.record[key] = value + ",00"
 
-        self.globals[CDC.CUST_TOASTS] = ""
-        self.globals[CDC.CUST_TOASTS_ERROR] = ""
-        self.globals[CDC.DURATION] = ""
+        self.globals[CGC.CUST_TOASTS] = ""
+        self.globals[CGC.CUST_TOASTS_ERROR] = ""
+        self.globals[CGC.DURATION] = ""
         self.globals[GC.TIMELOG] = ""
+        self.globals[GC.TESTCASESTATUS] = ""
 
         self.record.update(self.globals)
 

@@ -4,26 +4,34 @@ from baangt.utils import utils
 from baangt.ExportResults import ExportResults
 from baangt import GlobalConstants as GC
 from baangt import CustGlobalConstants as CGC
+import logging
+
+logger = logging.getLogger("pyC")
 
 class TestRun:
     def __init__(self, testRunName, browserName = None):
         self.testRunName = testRunName
         self.testdataDataBase : HandleDatabase = None
         self.testrunAttributes = None
-        self.browser = None
-        self.dataRecord = None
+        self.browser = {}
+        self.dataRecord = {}
         self.outputDocument = None
+        self.recordCounter = 0
         if browserName:
             self.testrunAttributes[self.testRunName]["BROWSER"] = browserName
         self.__initTestRun()
         self.recordPointer = self.testrunAttributes[self.testRunName]["FROM_LINE"]
-        self.recordCounter = 0
 
-    def tearDown(self):
-        self.browser.closeBrowser()
-        self.browser.takeTime("complete Testrun")
-        self.browser.takeTimeSumOutput()
-        self.outputDocument.close()
+
+    def tearDown(self, browserInstance=1):
+        self.browser[browserInstance].closeBrowser()
+        self.browser[browserInstance].takeTime("complete Testrun")
+        self.browser[browserInstance].takeTimeSumOutput()
+        try:
+            self.outputDocument.close()
+            logger.info("Wrote output document")
+        except Exception as e:
+            logger.info("Output Document already closed")
 
     def __getDatabase(self):
         if not self.testdataDataBase:
@@ -33,51 +41,52 @@ class TestRun:
         return self.testdataDataBase
 
     def getNextRecord(self):
+        self.recordCounter += 1
         if self.testdataDataBase:
             if self.recordPointer > self.testrunAttributes[self.testRunName]["TO_LINE"]:
                 return (None, None)
         else:
             self.__getDatabase()
 
-        self.dataRecord = self.testdataDataBase.readTestRecord(self.recordPointer)
+        self.dataRecord[self.recordCounter] = self.testdataDataBase.readTestRecord(self.recordPointer)
         self.recordPointer += 1
-        self.recordCounter += 1
-        return self.dataRecord, self.recordCounter
+        return self.dataRecord[self.recordCounter], self.recordCounter
 
     def __getRecord(self, recordNumber):
-        self.dataRecord = self.testdataDataBase.readTestRecord(recordNumber)
+        self.dataRecord[self.recordCounter] = self.testdataDataBase.readTestRecord(recordNumber)
 
-    def getBrowser(self):
-        if not self.browser:
-            self.browser = CustBrowserHandling()
-            self.browser.createNewBrowser(self.testrunAttributes[self.testRunName]["BROWSER"])
-            self.browser.takeTime("Complete TestRun")
-        return self.browser
+    def getBrowser(self, browserInstance=1):
+        if browserInstance not in self.browser.keys():
+            logger.warning(f"opening new instance of browser {browserInstance}")
+            self.browser[browserInstance] = CustBrowserHandling()
+            self.browser[browserInstance].createNewBrowser(
+                browserName=self.testrunAttributes[self.testRunName]["BROWSER"],
+                desiredCapabilities=self.testrunAttributes[self.testRunName]["BROWSER_ATTRIBUTES"])
+            self.browser[browserInstance].takeTime("Complete TestRun")
+        else:
+            logger.warning(f"Using existing instance of browser {browserInstance}")
+        return self.browser[browserInstance]
 
     def __handleExcel(self):
         self.outputDocument = ExportResults(self.__getOutputFileName())
 
-    def startTestCase(self):
-        self.dataRecord[CGC.CUST_TOASTS_ERROR] = []
-        self.dataRecord[CGC.CUST_TOASTS] = []
-        self.dataRecord[CGC.DURATION] = ""
-        self.dataRecord[GC.TIMELOG] = ""
-
-    def finishTestCase(self):
-        self.dataRecord[GC.TIMELOG] = self.browser.returnTime()
-        if len(self.dataRecord[CGC.DURATION]) == 0:
-            self.dataRecord[CGC.DURATION] = self.browser.takeTime("Testfall gesamt")
-        self.browser.takeTimeSumOutput()
-        self.outputDocument.addEntry(self.dataRecord)
-        self.browser.resetTime()
-        self.startTestCase()
+    def finishTestCase(self, browserInstance=1, dataRecordNumber=None):
+        if not dataRecordNumber:
+            dataRecordNumber = self.recordCounter
+        dataRecord = self.dataRecord[dataRecordNumber]
+        dataRecord[GC.TIMELOG] = self.browser[browserInstance].returnTime()
+        if len(dataRecord[CGC.DURATION]) == 0:
+            dataRecord[CGC.DURATION] = self.browser[browserInstance].takeTime("Testfall gesamt")
+        self.browser[browserInstance].takeTimeSumOutput()
+        self.outputDocument.addEntry(dataRecord)
+        self.browser[browserInstance].resetTime()
 
     def __getOutputFileName(self):
         self.__getRecord(self.testrunAttributes[self.testRunName]["FROM_LINE"])
         l_file = "/Users/bernhardbuhl/git/KatalonVIG/1testoutput/" + \
                  "pyTest_" + \
                  self.testrunAttributes[self.testRunName]["BROWSER"] + "_" + \
-                 utils.datetime_return() + "_" + self.dataRecord["base_url"] \
+                 utils.datetime_return() + "_" + self.dataRecord[self.recordCounter]["base_url"] \
                  + ".xlsx"
         return l_file
 
@@ -87,6 +96,7 @@ class TestRun:
                 "DATAFILE": '/Users/bernhardbuhl/git/KatalonVIG/0testdateninput/testdata_wstv_fqa.xlsx',
                 "SHEET": 'Testcases',
                 "BROWSER": 'FF',
+                "BROWSER_ATTRIBUTES": {GC.BROWSER_MODE_HEADLESS: True},
                 "FROM_LINE": 488,
                 "TO_LINE": 499
             },
@@ -94,6 +104,7 @@ class TestRun:
                 "DATAFILE": '/Users/bernhardbuhl/git/KatalonVIG/0testdateninput/testdata_wstv_fqa.xlsx',
                 "SHEET": 'Testcases',
                 "BROWSER": 'FF',
+                "BROWSER_ATTRIBUTES": "",
                 "FROM_LINE": 488,
                 "TO_LINE": 488
             },
@@ -101,6 +112,7 @@ class TestRun:
                 "DATAFILE": '/Users/bernhardbuhl/git/KatalonVIG/0testdateninput/testdata_wstv_fqa.xlsx',
                 "SHEET": 'TC_Partner',
                 "BROWSER": 'FF',
+                "BROWSER_ATTRIBUTES": "",
                 "FROM_LINE": 2,
                 "TO_LINE": 4
             },
@@ -108,6 +120,7 @@ class TestRun:
                 "DATAFILE": '/Users/bernhardbuhl/git/KatalonVIG/0testdateninput/testdata_wstv_fqa.xlsx',
                 "SHEET": 'TC_Partner',
                 "BROWSER": 'FF',
+                "BROWSER_ATTRIBUTES": "",
                 "FROM_LINE": 2,
                 "TO_LINE": 2
             }

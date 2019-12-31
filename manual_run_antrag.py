@@ -17,16 +17,15 @@ from TestSteps.Frontend.VIGO.Antrag.AntragSenden import AntragSenden
 import logging
 
 if __name__ == '__main__':
-    #l_testRun = TestRun("Heartbeat")
-    l_testRun = TestRun("WSTV-Single")
-    BrowserInterface = l_testRun.getBrowser()
-    l_first = True
+    #l_testRun = TestRun("WSTV-Single")
+    l_testRun = TestRun("Heartbeat")
+    browserInterface = l_testRun.getBrowser()
     (l_record, l_count) = l_testRun.getNextRecord()
 
     while l_record:
         try:
             kwargs = {GC.KWARGS_DATA: l_record,
-                      GC.KWARGS_BROWSER: BrowserInterface}
+                      GC.KWARGS_BROWSER: browserInterface}
             ProduktauswahlURL(**kwargs)
             Login(**kwargs)
             ProduktAuswahl(**kwargs)
@@ -41,13 +40,13 @@ if __name__ == '__main__':
             Dokumente(**kwargs)
             AntragSenden(**kwargs)
         except Exceptions.pyFETestException as e:
-            BrowserInterface._BrowserDriver__log(logging.CRITICAL, "Unhandled Error happened: " + str(e))
+            browserInterface._BrowserDriver__log(logging.CRITICAL, "Unhandled Error happened: " + str(e))
             l_record[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
             pass
         finally:
-            BrowserInterface.handleWindow(0, "close")
+            browserInterface.handleWindow(0, "close")
             l_testRun.finishTestCase()
-            BrowserInterface._BrowserDriver__log(logging.INFO, f"Setting Status {l_record[GC.TESTCASESTATUS]} on Testcase {l_count}")
+            browserInterface._BrowserDriver__log(logging.INFO, f"Setting Status {l_record[GC.TESTCASESTATUS]} on Testcase {l_count}")
             (l_record, l_count) = l_testRun.getNextRecord()
 
     l_testRun.tearDown()

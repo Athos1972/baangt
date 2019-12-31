@@ -3,6 +3,8 @@ from selenium import webdriver
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.chrome import options as ChromeOptions
+from selenium.webdriver.firefox import options as ffOptions
 from selenium.common.exceptions import *
 from selenium.webdriver.common import keys
 from . import GlobalConstants as GC
@@ -69,16 +71,41 @@ class BrowserDriver:
 
         if browserName in browserNames:
             if browserName == GC.BROWSER_FIREFOX :
-                self.driver = browserNames[browserName](executable_path=os.getcwd()+'/geckodriver')
+                self.driver = browserNames[browserName](options=self.__createOptions(browserName=browserName,
+                                                                                     desiredCapabilities=desiredCapabilities),
+                                                        executable_path=os.getcwd()+'/geckodriver')
             elif browserName == GC.BROWSER_CHROME:
-                self.driver = browserNames[browserName](executable_path=os.getcwd()+'/chromedriver')
+                self.driver = browserNames[browserName](options=self.__createOptions(browserName=browserName,
+                                                                                     desiredCapabilities=desiredCapabilities),
+                                                        executable_path=os.getcwd()+'/chromedriver')
             elif browserName == GC.BROWSER_REMOTE:
-                self.driver = browserNames[browserName](command_executor='http://localhost:4444/wd/hub',
+                self.driver = browserNames[browserName](options=self.__createOptions(browserName=browserName,
+                                                                                     desiredCapabilities=desiredCapabilities),
+                                                        command_executor='http://localhost:4444/wd/hub',
                                                         desired_capabilities = desiredCapabilities)
         else:
             raise SystemExit("Browsername unknown")
 
         self.takeTime("Browser Start")
+
+    def __createOptions(self, browserName, desiredCapabilities):
+        if browserName == GC.BROWSER_CHROME:
+            lOptions = ChromeOptions
+        elif browserName == GC.BROWSER_FIREFOX:
+            lOptions = ffOptions
+        else:
+            return None
+
+        if not desiredCapabilities:
+            return None
+
+        if not isinstance(desiredCapabilities, dict):
+            return None
+
+        if desiredCapabilities.get(GC.BROWSER_MODE_HEADLESS) == True:
+            lOptions.headless = True
+
+        return lOptions
 
     def closeBrowser(self):
         self.driver.quit()
