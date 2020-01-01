@@ -24,7 +24,7 @@ class CustBrowserHandling(BrowserDriver):
             return
 
         # Click on each Toast:
-        self._BrowserDriver__log(logging.INFO, f"{len(toasts)} Toasts handled")
+        self._BrowserDriver__log(logging.DEBUG, f"{len(toasts)} Toasts handled")
         for element in toasts:
             if "red" in self.__getAttributesOfElement(element):
                 self.errorToasts = self.errorToasts + '\n' + element.text
@@ -68,7 +68,7 @@ class CustBrowserHandling(BrowserDriver):
 
     def CustomPrintZipkins(self):
         zipkinString = "\n".join([str(elem) for elem in self.zipkinIDs.keys()])
-        self._BrowserDriver__log(logging.INFO, "Found Zipkins: " + zipkinString)
+        self._BrowserDriver__log(logging.DEBUG, "Found Zipkins: " + zipkinString)
 
     def findBy(self, id = None,
                css = None,
@@ -109,7 +109,7 @@ class CustBrowserHandling(BrowserDriver):
             except Exception as e:
                 # Element gone - exit
                 stillHere = False
-        self._BrowserDriver__log(logging.INFO, f"Element was gone after {elapsed} seconds")
+        self._BrowserDriver__log(logging.DEBUG, f"Element was gone after {elapsed} seconds")
         # Schreibt die gefundenen Zipkin-IDs in das Zeitlog mit
         self.timing[self.currentTimingSection]["zipkinIDs"] = self.zipkinIDs.keys()
         self.CustomPrintZipkins()

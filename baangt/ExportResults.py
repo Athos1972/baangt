@@ -24,9 +24,11 @@ class ExportResults():
             self.worksheet.write(0, i, column)
             i += 1
 
-    def addEntry(self, testRecordDict, sameLine=False):
+    def addEntry(self, testRecordDict, sameLine=False, lineNumber=None):
         if not sameLine:
             self.nextline += 1
+        if lineNumber:
+            self.nextline = lineNumber
         logger.info(f"Schreibe Zeile {self.nextline} in's Excel")
         self.worksheet.write(self.nextline, 0, testRecordDict["TFName"])
         self.worksheet.write(self.nextline, 1, testRecordDict["TFDescription"])

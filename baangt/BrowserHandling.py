@@ -3,8 +3,8 @@ from selenium import webdriver
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.chrome import options as ChromeOptions
-from selenium.webdriver.firefox import options as ffOptions
+from selenium.webdriver.chrome.options import Options as ChromeOptions
+from selenium.webdriver.firefox.options import Options as ffOptions
 from selenium.common.exceptions import *
 from selenium.webdriver.common import keys
 from . import GlobalConstants as GC
@@ -54,10 +54,10 @@ class BrowserDriver:
         return format(startAndEndTimeAsDict[GC.TIMING_END] - startAndEndTimeAsDict[GC.TIMING_START], ".2f") + " s"
 
     def resetTime(self):
-        if "Testrun complete" in self.timing:
-            buffer = self.timing["Testrun complete"]
+        if GC.TIMING_TESTRUN in self.timing:
+            buffer = self.timing[GC.TIMING_TESTRUN]
             self.timing = {}
-            self.timing["Testrun complete"] = buffer
+            self.timing[GC.TIMING_TESTRUN] = buffer
         else:
             self.timing = {}
 
@@ -90,9 +90,9 @@ class BrowserDriver:
 
     def __createOptions(self, browserName, desiredCapabilities):
         if browserName == GC.BROWSER_CHROME:
-            lOptions = ChromeOptions
+            lOptions = ChromeOptions()
         elif browserName == GC.BROWSER_FIREFOX:
-            lOptions = ffOptions
+            lOptions = ffOptions()
         else:
             return None
 
@@ -158,7 +158,11 @@ class BrowserDriver:
             self.driver.close()
             self.driver.switch_to.window(self.driver.window_handles[0])
         else:
-            self.driver.switch_to.window(self.driver.window_handles[windowNumber])
+            try:
+                self.driver.switch_to.window(self.driver.window_handles[windowNumber])
+            except Exception as e:
+                logger.critical(f"Tried to switch to Window {windowNumber} but it's not there")
+                raise Exceptions.pyFETestException(f"Window {windowNumber} doesn't exist")
 
     def findByAndWaitForValue(self, id = None,
                        css = None,
@@ -264,7 +268,7 @@ class BrowserDriver:
             self.handleIframe(iframe)
 
         if loggingOn:
-            self.__log(logging.INFO, "Locating Element", **{'id':id, 'css':css, 'xpath':xpath, 'class_name':class_name, 'iframe':iframe})
+            self.__log(logging.DEBUG, "Locating Element", **{'id':id, 'css':css, 'xpath':xpath, 'class_name':class_name, 'iframe':iframe})
 
         return self.__tryAndRetry(id, css, xpath, class_name, timeout=timeout)
 
@@ -337,7 +341,7 @@ class BrowserDriver:
             except Exception as e:
                 # Element gone - exit
                 stillHere = False
-        self.__log(logging.INFO, f"Element was gone after {format(elapsed, '.2f')} seconds")
+        self.__log(logging.DEBUG, f"Element was gone after {format(elapsed, '.2f')} seconds")
 
     @staticmethod
     def sleep(sleepTimeinSeconds):

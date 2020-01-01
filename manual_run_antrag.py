@@ -44,7 +44,6 @@ if __name__ == '__main__':
             l_record[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
             pass
         finally:
-            browserInterface.handleWindow(0, "close")
             l_testRun.finishTestCase()
             browserInterface._BrowserDriver__log(logging.INFO, f"Setting Status {l_record[GC.TESTCASESTATUS]} on Testcase {l_count}")
             (l_record, l_count) = l_testRun.getNextRecord()
