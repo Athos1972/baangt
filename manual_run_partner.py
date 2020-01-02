@@ -21,7 +21,7 @@ if __name__ == '__main__':
             PartnerURL(**kwargs)
             Login(**kwargs)
             PartnerCreate(**kwargs)
-        except Exceptions.pyFETestException as e:
+        except Exceptions.baangtTestStepException as e:
             BrowserInterface._BrowserDriver__log(logging.CRITICAL, "Unhandled Error happened: " + str(e))
             l_record[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
             pass

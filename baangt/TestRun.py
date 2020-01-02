@@ -1,13 +1,11 @@
 from baangt.HandleDatabase import HandleDatabase
+from baangt.BrowserHandling import BrowserDriver
 from baangt.CustBrowserHandling import CustBrowserHandling
 from baangt.ApiHandling import ApiHandling
 from baangt.utils import utils
 from baangt.ExportResults import ExportResults
 from baangt.Timing import Timing
-# from TestCaseSequence.TestCaseSequenceMaster import TestCaseSequenceMaster
-# from TestCase.TestCaseMaster import TestCaseMaster
 from baangt import GlobalConstants as GC
-from baangt import CustGlobalConstants as CGC
 import logging
 import sys
 
@@ -32,11 +30,13 @@ class TestRun:
         self.executeTestRun()
         self.tearDown()
 
-    def tearDown(self, browserInstance=1):
-        if self.browser.get(browserInstance):
+    def tearDown(self):
+        for browserInstance in self.browser.keys():
             self.browser[browserInstance].closeBrowser()
-            self.timing.takeTime(GC.TIMING_TESTRUN)
-            self.timing.takeTimeSumOutput()
+
+        self.timing.takeTime(GC.TIMING_TESTRUN)
+        self.timing.takeTimeSumOutput()
+
         if self.apiInstance:
             self.apiInstance.tearDown()
         try:
@@ -58,8 +58,8 @@ class TestRun:
 
     def getBrowser(self, browserInstance=1, browserName=None, browserAttributes=None):
         if browserInstance not in self.browser.keys():
-            logger.info(f"opening new instance {1} of browser {browserName}")
-            self.browser[browserInstance] = CustBrowserHandling(timing=self.timing)
+            logger.info(f"opening new instance {browserInstance} of browser {browserName}")
+            self._getBrowserInstance(browserInstance=browserInstance)
             self.browser[browserInstance].createNewBrowser(
                 browserName=browserName,
                 desiredCapabilities=browserAttributes)
@@ -67,6 +67,9 @@ class TestRun:
         else:
             logger.debug(f"Using existing instance of browser {browserInstance}")
         return self.browser[browserInstance]
+
+    def _getBrowserInstance(self, browserInstance):
+        self.browser[browserInstance] = BrowserDriver(timing=self.timing)
 
     def getAPI(self):
         if not self.apiInstance:

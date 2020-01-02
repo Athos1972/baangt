@@ -18,7 +18,7 @@ class ApiHandling:
         if not sessionNumber:
             # fixme: Get highest Session Number, add 1, etc.
             logger.critical("Method not implemented - aborting")
-            raise Exceptions.pyFETestException("Method not properly implemented")
+            raise Exceptions.baangtTestStepException("Method not properly implemented")
         else:
             self.session[sessionNumber] = requests.session()
 

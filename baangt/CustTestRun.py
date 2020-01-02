@@ -1,5 +1,6 @@
 from baangt.TestRun import TestRun
 from baangt import GlobalConstants as GC
+from baangt.CustBrowserHandling import CustBrowserHandling
 from baangt import CustGlobalConstants as CGC
 
 
@@ -17,9 +18,9 @@ class CustTestRun(TestRun):
                         1: [GC.CLASSES_TESTCASESEQUENCE, {
                             "DATAFILE": '/Users/bernhardbuhl/git/KatalonVIG/0testdateninput/testdata_wstv_fqa.xlsx',
                             "SHEET": 'Testcases',
-                            "PARALLEL_RUNS": 5,
+                            GC.EXECUTION_PARALLEL: 5,
                             GC.DATABASE_FROM_LINE: 488,
-                            GC.DATABASE_TO_LINE: 492,
+                            GC.DATABASE_TO_LINE: 499,
                             GC.STRUCTURE_TESTCASE: {
                                 1: [GC.CLASSES_TESTCASE,
                                     {GC.KWARGS_BROWSER: GC.BROWSER_FIREFOX,
@@ -54,13 +55,13 @@ class CustTestRun(TestRun):
                         1: [GC.CLASSES_TESTCASESEQUENCE, {
                             "DATAFILE": '/Users/bernhardbuhl/git/KatalonVIG/0testdateninput/testdata_wstv_fqa.xlsx',
                             "SHEET": 'Testcases',
-                            "PARALLEL_RUNS": 3,
+                            GC.EXECUTION_PARALLEL: 3,
                             GC.DATABASE_FROM_LINE: 488,
-                            GC.DATABASE_TO_LINE: 494,
+                            GC.DATABASE_TO_LINE: 492,
                             GC.STRUCTURE_TESTCASE: {
                                 1: [GC.CLASSES_TESTCASE,
                                     {GC.KWARGS_BROWSER: GC.BROWSER_FIREFOX,
-                                     "BROWSER_ATTRIBUTES": {GC.BROWSER_MODE_HEADLESS: True},
+                                     "BROWSER_ATTRIBUTES2": {GC.BROWSER_MODE_HEADLESS: True},
                                      GC.KWARGS_TESTCASETYPE: GC.KWARGS_BROWSER},
                                     {GC.STRUCTURE_TESTSTEP:
                                         {
@@ -91,7 +92,7 @@ class CustTestRun(TestRun):
                         1: [GC.CLASSES_TESTCASESEQUENCE, {
                             "DATAFILE": '/Users/bernhardbuhl/git/KatalonVIG/0testdateninput/testdata_wstv_fqa.xlsx',
                             "SHEET": 'Testcases',
-                            "PARALLEL_RUNS": 3,
+                            GC.EXECUTION_PARALLEL: 3,
                             GC.DATABASE_FROM_LINE: 491,
                             GC.DATABASE_TO_LINE: 491,
                             GC.STRUCTURE_TESTCASE: {
@@ -146,6 +147,10 @@ class CustTestRun(TestRun):
             }
         }
 
+    def _getBrowserInstance(self, browserInstance):
+        self.browser[browserInstance] = CustBrowserHandling(timing=self.timing)
+
 if __name__ == '__main__':
-    l_run = CustTestRun("Heartbeat")
+    #l_run = CustTestRun("Heartbeat")
+    l_run = CustTestRun("HB-Dark")
     #l_run = CustTestRun("Antrag-Single")

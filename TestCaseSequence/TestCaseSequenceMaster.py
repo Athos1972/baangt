@@ -1,6 +1,8 @@
 from baangt.HandleDatabase import HandleDatabase
+from TestCaseSequence.TestCaseSequenceParallel import TestCaseSequenceParallel
 import baangt.GlobalConstants as GC
 import baangt.CustGlobalConstants as CGC
+import multiprocessing
 import logging
 
 logger = logging.getLogger("pyC")
@@ -10,20 +12,25 @@ class TestCaseSequenceMaster:
     def __init__(self, **kwargs):
         self.name = None
         self.description = None
-        self.testdataDataBase : HandleDatabase = None
+        self.testdataDataBase: HandleDatabase = None
         self.testrunAttributes = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES)
         self.testRunInstance = kwargs.get(GC.KWARGS_TESTRUNINSTANCE)
         self.testRunName = self.testRunInstance.testRunName
         self.dataRecords = {}
         self.recordCounter = 0
         # Extract relevant data for this TestSequence:
-        self.testSequenceData = self.testrunAttributes[GC.KWARGS_TESTRUNATTRIBUTES][GC.STRUCTURE_TESTCASESEQUENCE].get(kwargs.get(GC.STRUCTURE_TESTCASESEQUENCE))[1]
+        self.testSequenceData = self.testrunAttributes[GC.KWARGS_TESTRUNATTRIBUTES][GC.STRUCTURE_TESTCASESEQUENCE].get(
+            kwargs.get(GC.STRUCTURE_TESTCASESEQUENCE))[1]
         self.recordPointer = self.testSequenceData[GC.DATABASE_FROM_LINE]
         self.testCaseSequence = self.testSequenceData[GC.STRUCTURE_TESTCASE]
         self.kwargs = kwargs
-        self.execute()
+        self.prepareExecution()
+        if self.testSequenceData.get(GC.EXECUTION_PARALLEL, 0) > 0:
+            self.execute_parallel(self.testSequenceData.get(GC.EXECUTION_PARALLEL, 0))
+        else:
+            self.execute()
 
-    def execute(self):
+    def prepareExecution(self):
         self.__getDatabase()
         recordPointer = 0
         # Read all Testrecords into l_testRecords:
@@ -34,13 +41,64 @@ class TestCaseSequenceMaster:
                 recordPointer -= 1
                 break
             recordPointer += 1
-        logger.info(f"{recordPointer+1} test records read for processing")
+        logger.info(f"{recordPointer + 1} test records read for processing")
 
+    def execute_parallel(self, parallelInstances):
+        # Usually the Testcases themselves would request Browser from Testrun
+        # In this case we need to request them, because the Testcases will run in their own
+        # Processes
+        browserInstances = {}
+        for n in range(0, parallelInstances):
+            # fixme: Browser should come from Testcase - not hardcoded
+            browserInstances[n] = self.testRunInstance.getBrowser(browserInstance=n, browserName=GC.BROWSER_FIREFOX)
+
+        processes = {}
+        processExecutions = {}
+        resultQueue = multiprocessing.Queue()
+
+        numberOfRecords = len(self.dataRecords)
+        for n in range(0, numberOfRecords, parallelInstances):
+            for x in range(0, parallelInstances):
+                if self.dataRecords.get(n + x):
+                    logger.debug(f"starting Process and Executions {x}. Value of n+x is {n + x}, "
+                                 f"Record = {str(self.dataRecords[n + x])[0:50]}")
+                    self.kwargs[GC.STRUCTURE_TESTCASESEQUENCE] = self.testSequenceData
+                    self.kwargs[GC.KWARGS_DATA] = self.dataRecords[n+x]
+                    self.kwargs[GC.KWARGS_BROWSER] = browserInstances[x]
+                    processes[x] = TestCaseSequenceParallel(sequenceNumber=x,
+                                                            tcNumber=n + x,
+                                                            testcaseSequence=self.testCaseSequence,
+                                                            **self.kwargs)
+                    processExecutions[x] = multiprocessing.Process(target=processes[x].one_sequence,
+                                                                   args=(resultQueue,))
+                else:
+                    # This is the case when we have e.g. 4 parallel runs and 5 testcases,
+                    # First iteration: all 4 are used. Second iteration: only 1 used, 3 are empty.
+                    processExecutions.pop(x)
+
+            for x in range(0, parallelInstances):
+                logger.info(f"starting execution of parallel instance {x}")
+                if processExecutions.get(x):
+                    processExecutions[x].start()
+
+            for x in range(0, parallelInstances):
+                if processExecutions.get(x):
+                    # Queue should be filled by now - take entries into Testrun-instance:
+                    while not resultQueue.empty():
+                        resultDict = resultQueue.get()
+                        for recordNumber, dataRecordAfterExecution in resultDict.items():
+                            self.testRunInstance.setResult(recordNumber, dataRecordAfterExecution)
+                    # Quit the running parallel process:
+                    logger.info(f"Stopping parallel instance {x}")
+                    processExecutions[x].join()
+
+    def execute(self):
         # Execute all Testcases:
         for key, value in self.dataRecords.items():
             self.kwargs[GC.STRUCTURE_TESTCASESEQUENCE] = self.testSequenceData
             self.kwargs[GC.KWARGS_DATA] = value
-            self.testRunInstance.executeDictSequenceOfClasses(self.testCaseSequence, GC.STRUCTURE_TESTCASE, **self.kwargs)
+            self.testRunInstance.executeDictSequenceOfClasses(self.testCaseSequence, GC.STRUCTURE_TESTCASE,
+                                                              **self.kwargs)
             # Write Result back to TestRun for later saving in export format
             self.testRunInstance.setResult(key, value)
 
@@ -71,7 +129,8 @@ class TestCaseSequenceMaster:
         if not self.testRunInstance.apiInstance:
             if len(dataRecord[GC.TIMING_DURATION]) == 0:
                 # This was a failed testcase - didn't reach the end. Still take overall time:
-                dataRecord[GC.TIMING_DURATION] = self.testRunInstance.browser[browserInstance].takeTime("Testfall gesamt")
+                dataRecord[GC.TIMING_DURATION] = self.testRunInstance.browser[browserInstance].takeTime(
+                    "Testfall gesamt")
             dataRecord[GC.TIMELOG] = self.testRunInstance.browser[browserInstance].returnTime()
             self.testRunInstance.browser[browserInstance].takeTimeSumOutput()
             self.testRunInstance.browser[browserInstance].resetTime()

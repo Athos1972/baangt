@@ -134,7 +134,7 @@ class BrowserDriver:
                 self.driver.switch_to.window(self.driver.window_handles[windowNumber])
             except Exception as e:
                 logger.critical(f"Tried to switch to Window {windowNumber} but it's not there")
-                raise Exceptions.pyFETestException(f"Window {windowNumber} doesn't exist")
+                raise Exceptions.baangtTestStepException(f"Window {windowNumber} doesn't exist")
 
     def findByAndWaitForValue(self, id = None,
                        css = None,
@@ -284,10 +284,10 @@ class BrowserDriver:
                 time.sleep(2)
             except InvalidSessionIdException as e:
                 self.__log(logging.CRITICAL, "WebDriver Exception - terminating program: " + str(e))
-                raise Exceptions.pyFETestException
+                raise Exceptions.baangtTestStepException
             except NoSuchWindowException as e:
                 self.__log(logging.CRITICAL, "WebDriver Exception - terminating program: " + str(e))
-                raise Exceptions.pyFETestException
+                raise Exceptions.baangtTestStepException
             except WebDriverException as e:
                 self.__log(logging.ERROR, "Retrying WebDriver Exception: " + str(e))
                 time.sleep(2)
@@ -349,9 +349,9 @@ class BrowserDriver:
                 time.sleep(0.5)
             except InvalidSessionIdException as e:
                 self.__log(logging.ERROR, f"Invalid Session ID Exception caught - aborting... {e} ")
-                raise Exceptions.pyFETestException
+                raise Exceptions.baangtTestStepException
             elapsed = time.time()-begin
-        raise Exceptions.pyFETestException
+        raise Exceptions.baangtTestStepException(f"Action not possible after {timeout} s")
 
     def goToUrl(self, url):
         self.__log(logging.INFO, f'GoToUrl:{url}')
@@ -359,7 +359,7 @@ class BrowserDriver:
             self.driver.get(url)
         except WebDriverException as e:
             self.__log(logging.ERROR, f"Webpage {url} not reached. Error was: {e}")
-            raise Exceptions.pyFETestException
+            raise Exceptions.baangtTestStepException
         pass
 
     def javaScript(self, jsText):

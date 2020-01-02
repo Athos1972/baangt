@@ -9,7 +9,7 @@ from TestSteps.Frontend.VIGO.Antrag.Wohnen.Empfehlungen import Empfehlungen
 from TestSteps.Frontend.VIGO.Antrag.Wohnen.Deckungsumfang import Deckungsumfang
 from TestSteps.Frontend.VIGO.Antrag.Wohnen.Praemienauskunft import Praemienauskunft
 from TestSteps.Frontend.VIGO.Antrag.Wohnen.Beratungsprotokoll import Beratungsprotokoll
-from TestSteps.Frontend.VIGO.Antrag.Wohnen.VertragsDaten import VertragDaten
+from TestSteps.Frontend.VIGO.Antrag.Wohnen.VertragsDaten import VertragsDaten
 from TestSteps.Frontend.VIGO.Antrag.Wohnen.Dokumente import Dokumente
 from TestSteps.Frontend.VIGO.Produktauswahl.ProduktAuswahl import ProduktAuswahl
 from TestSteps.Frontend.VIGO.Produktauswahl.ProduktauswahlURL import ProduktauswahlURL
@@ -46,7 +46,7 @@ class ParallelExecutionOfTestcaseStarter(object):
             kwargs = {GC.KWARGS_DATA: dataRecord,
                       GC.KWARGS_BROWSER: browserInterface}
             l_testRun.executeDictSequenceOfClasses(testcaseSequence, **kwargs)
-        except Exceptions.pyFETestException as e:
+        except Exceptions.baangtTestStepException as e:
             browserInterface._BrowserDriver__log(logging.CRITICAL, "Unhandled Error happened: " + str(e))
             dataRecord[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
         finally:
