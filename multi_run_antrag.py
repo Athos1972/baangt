@@ -1,10 +1,11 @@
-from baangt.TestRun import TestRun
+from baangt.CustTestRun import CustTestRun as TestRun
 from baangt import GlobalConstants as GC
+from baangt import CustGlobalConstants as CGC
 from TestSteps import Exceptions
 from TestSteps.Frontend.Portal.Login import Login
 from TestSteps.Frontend.VIGO.Antrag.Vermittler import Vermittler
 from TestSteps.Frontend.VIGO.Antrag.Wohnen.ObjektSeite import ObjektSeite
-from TestSteps.Frontend.VIGO.Antrag.Wohnen.Empfehlung import Empfehlungen
+from TestSteps.Frontend.VIGO.Antrag.Wohnen.Empfehlungen import Empfehlungen
 from TestSteps.Frontend.VIGO.Antrag.Wohnen.Deckungsumfang import Deckungsumfang
 from TestSteps.Frontend.VIGO.Antrag.Wohnen.Praemienauskunft import Praemienauskunft
 from TestSteps.Frontend.VIGO.Antrag.Wohnen.Beratungsprotokoll import Beratungsprotokoll
@@ -14,6 +15,7 @@ from TestSteps.Frontend.VIGO.Produktauswahl.ProduktAuswahl import ProduktAuswahl
 from TestSteps.Frontend.VIGO.Produktauswahl.ProduktauswahlURL import ProduktauswahlURL
 from TestSteps.Frontend.VIGO.Antrag.Wohnen.AntragsFragen import AntragsFragen
 from TestSteps.Frontend.VIGO.Antrag.AntragSenden import AntragSenden
+from baangt import CustBrowserHandling
 import logging
 import multiprocessing
 
@@ -24,13 +26,13 @@ class ParallelExecutionOfTestcaseStarter(object):
         self.sequenceNumber = sequenceNumber
         self.dataRecord = dataRecord
         self.tcNumber = tcNumber
-        self.browserInterface = browserInterface
+        self.browserInterface : CustBrowserHandling = browserInterface
         self.testcaseSequence = testcaseSequence
 
     def one_sequence(self, resultQueue: multiprocessing.Queue):
         dataRecord = self.dataRecord
         currentRecordNumber = self.tcNumber
-        browserInterface = self.browserInterface
+        browserInterface : CustBrowserHandling = self.browserInterface
         testcaseSequence = self.testcaseSequence
         parallelizationSequenceNumber = self.sequenceNumber
         logger.info(f"Starting one_sequence with SequenceNumber = {parallelizationSequenceNumber}, "
@@ -43,21 +45,23 @@ class ParallelExecutionOfTestcaseStarter(object):
         try:
             kwargs = {GC.KWARGS_DATA: dataRecord,
                       GC.KWARGS_BROWSER: browserInterface}
-            for key, value in testcaseSequence.items():
-                logger.info(f"Starting testcaseSequence: {key}, {value} ")
-                l_class = globals()[value]  # Value holds the Class name
-                l_class(**kwargs)  # Executes the class init
+            l_testRun.executeDictSequenceOfClasses(testcaseSequence, **kwargs)
         except Exceptions.pyFETestException as e:
             browserInterface._BrowserDriver__log(logging.CRITICAL, "Unhandled Error happened: " + str(e))
             dataRecord[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
         finally:
             # the result must be pushed into the queue:
             logger.debug(f"Starting to Put value in Queue {currentRecordNumber}. Len of datarecord: {len(str(dataRecord))}")
+            if len(dataRecord[CGC.DURATION]) == 0:
+                # This was a failed testcase - didn't reach the end. Still take overall time:
+                dataRecord[CGC.DURATION] = browserInterface.takeTime("Testfall gesamt")
+            dataRecord[GC.TIMELOG] = browserInterface.returnTime()
             resultQueue.put({self.tcNumber: dataRecord})
             logger.debug(f"Finished putting Value i Queue for TC {currentRecordNumber}")
 
 if __name__ == '__main__':
-    l_testRun = TestRun("Heartbeat")
+    #l_testRun = TestRun("Heartbeat")
+    l_testRun = TestRun("HB-Dark")
     logger = logging.getLogger('pyC')
 
     l_found = True

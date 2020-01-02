@@ -4,8 +4,9 @@ import sys
 
 class TestStepMaster:
     def __init__(self, **kwargs):
-        self.testcaseDataDict = kwargs[GC.KWARGS_DATA]
-        self.browserSession = kwargs[GC.KWARGS_BROWSER]
+        self.testcaseDataDict = kwargs.get(GC.KWARGS_DATA)
+        self.browserSession = kwargs.get(GC.KWARGS_BROWSER)
+        self.apiSession = kwargs.get(GC.KWARGS_API_SESSION)
         self.testCaseStatus = None
 
     def execute(self):

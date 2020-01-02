@@ -20,7 +20,7 @@ class AntragSenden(CustTestStepMaster):
         self.browserSession.findWaitNotVisible(xpath="//div[contains(@class,'overlay-spinner ng-star-inserted')]", timeout=120)
         if len(self.browserSession.errorToasts) > 0:
             self.testcaseDataDict[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
-            self.browserSession.handleWindow(0, "close")
+            self.tc_finalisieren()
             return
         self.browserSession.takeTime("Antrag drucken")
         self.browserSession.findByAndClick(xpath='id("manuell_unterschreiben_action")')
@@ -37,7 +37,10 @@ class AntragSenden(CustTestStepMaster):
         self.testcaseDataDict["PRAEMIE"] = self.browserSession.findByAndWaitForValue(xpath='id("nav-component-praemie")')
         self.browserSession.takeTime("Senden an Bestand")
         self.browserSession.takeTime("Antrag fertigstellen")
-        self.testcaseDataDict[CGC.DURATION] = self.browserSession.takeTime("Testfall gesamt")
         self.testcaseDataDict[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_SUCCESS
+        self.tc_finalisieren()
         # Close current Application window
+
+    def tc_finalisieren(self):
+        self.testcaseDataDict[GC.TIMING_DURATION] = self.browserSession.takeTime("Testfall gesamt")
         self.browserSession.handleWindow(0, "close")

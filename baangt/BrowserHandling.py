@@ -73,11 +73,11 @@ class BrowserDriver:
             if browserName == GC.BROWSER_FIREFOX :
                 self.driver = browserNames[browserName](options=self.__createOptions(browserName=browserName,
                                                                                      desiredCapabilities=desiredCapabilities),
-                                                        executable_path=os.getcwd()+'/geckodriver')
+                                                        executable_path=self.__findBrowserDriverPaths()+'/geckodriver')
             elif browserName == GC.BROWSER_CHROME:
                 self.driver = browserNames[browserName](options=self.__createOptions(browserName=browserName,
                                                                                      desiredCapabilities=desiredCapabilities),
-                                                        executable_path=os.getcwd()+'/chromedriver')
+                                                        executable_path=self.__findBrowserDriverPaths()+'/chromedriver')
             elif browserName == GC.BROWSER_REMOTE:
                 self.driver = browserNames[browserName](options=self.__createOptions(browserName=browserName,
                                                                                      desiredCapabilities=desiredCapabilities),
@@ -87,6 +87,12 @@ class BrowserDriver:
             raise SystemExit("Browsername unknown")
 
         self.takeTime("Browser Start")
+
+    def __findBrowserDriverPaths(self):
+        lCurPath = os.getcwd()
+        lCurPath = lCurPath.split("/baangt")[0]+"/baangt/browserDrivers/"
+
+        return lCurPath
 
     def __createOptions(self, browserName, desiredCapabilities):
         if browserName == GC.BROWSER_CHROME:

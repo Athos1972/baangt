@@ -1,4 +1,4 @@
-from baangt.TestRun import TestRun
+from baangt.CustTestRun import CustTestRun as TestRun
 from baangt import GlobalConstants as GC
 from TestSteps import Exceptions
 from TestSteps.Frontend.Portal.Login import Login

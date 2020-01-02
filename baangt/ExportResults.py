@@ -30,10 +30,10 @@ class ExportResults():
         if lineNumber:
             self.nextline = lineNumber
         logger.info(f"Schreibe Zeile {self.nextline} in's Excel")
-        self.worksheet.write(self.nextline, 0, testRecordDict["TFName"])
-        self.worksheet.write(self.nextline, 1, testRecordDict["TFDescription"])
-        self.worksheet.write(self.nextline, 2, testRecordDict[CGC.VIGOGFNUMMER])
-        self.worksheet.write(self.nextline, 3, testRecordDict[CGC.SAPPOLNR])
+        self.__writeCell(0, testRecordDict, "TFName")
+        self.__writeCell(1, testRecordDict, "TFDescription")
+        self.__writeCell(2, testRecordDict, CGC.VIGOGFNUMMER)
+        self.__writeCell(3, testRecordDict, CGC.SAPPOLNR)
         self.__writeCell(4, testRecordDict, CGC.VERMITTLER)
         self.__writeCell(5, testRecordDict, "VN")
         self.__writeCell(6, testRecordDict, CGC.POLNRHOST)

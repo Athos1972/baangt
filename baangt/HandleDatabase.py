@@ -34,7 +34,10 @@ class HandleDatabase():
         else:
             self.lineNumber += 1
 
-        self.record = json.loads(self.df_json["JSON"][self.lineNumber][1:-1])
+        try:
+            self.record = json.loads(self.df_json["JSON"][self.lineNumber][1:-1])  # 1:-1 to remove leading and traling "]"
+        except Exception as e:
+            return None
 
         # Dirty hack, um bei Zahlen ein Komma und zwei Nachkommastellen einzugeben:
         for key, value in self.record.items():
@@ -45,7 +48,7 @@ class HandleDatabase():
 
         self.globals[CGC.CUST_TOASTS] = ""
         self.globals[CGC.CUST_TOASTS_ERROR] = ""
-        self.globals[CGC.DURATION] = ""
+        self.globals[GC.TIMING_DURATION] = ""
         self.globals[GC.TIMELOG] = ""
         self.globals[GC.TESTCASESTATUS] = ""
 

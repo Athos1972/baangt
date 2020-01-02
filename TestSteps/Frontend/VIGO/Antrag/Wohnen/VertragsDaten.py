@@ -1,7 +1,7 @@
 from TestSteps.CustTestStepMaster import CustTestStepMaster
 
 
-class VertragDaten(CustTestStepMaster):
+class VertragsDaten(CustTestStepMaster):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.execute()
