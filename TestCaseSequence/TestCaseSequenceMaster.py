@@ -30,9 +30,11 @@ class TestCaseSequenceMaster:
         while True:
             self.dataRecords[recordPointer] = self.getNextRecord()
             if not self.dataRecords[recordPointer]:
+                self.dataRecords.pop(recordPointer)
+                recordPointer -= 1
                 break
             recordPointer += 1
-        logger.info(f"{recordPointer} test records read for processing")
+        logger.info(f"{recordPointer+1} test records read for processing")
 
         # Execute all Testcases:
         for key, value in self.dataRecords.items():
@@ -50,10 +52,9 @@ class TestCaseSequenceMaster:
         else:
             self.__getDatabase()
 
-        self.dataRecords[self.recordCounter] = self.testdataDataBase.readTestRecord(self.recordPointer)
+        lDataRecord = self.testdataDataBase.readTestRecord(self.recordPointer)
         self.recordPointer += 1
-        return self.dataRecords[self.recordCounter]
-
+        return lDataRecord
 
     def __getDatabase(self):
         if not self.testdataDataBase:

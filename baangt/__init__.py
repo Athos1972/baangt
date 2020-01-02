@@ -1,6 +1,5 @@
 import logging
 import os
-from time import time
 from datetime import datetime
 
 # fixme: Parameter für Logfile should include stage and browser()

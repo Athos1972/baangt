@@ -3,6 +3,7 @@ from baangt.CustBrowserHandling import CustBrowserHandling
 from baangt.ApiHandling import ApiHandling
 from baangt.utils import utils
 from baangt.ExportResults import ExportResults
+from baangt.Timing import Timing
 # from TestCaseSequence.TestCaseSequenceMaster import TestCaseSequenceMaster
 # from TestCase.TestCaseMaster import TestCaseMaster
 from baangt import GlobalConstants as GC
@@ -19,20 +20,23 @@ class TestRun:
         self.testrunAttributes = None
         self.browser = {}
         self.apiInstance = None
-        self.dataRecord = {}
+        self.dataRecords = {}
         self.outputDocument = None
         self.outputRecords = {}
         self.testType = None
+        self.timing = Timing()
         if browserName:
             # Overwrites the Browser-definition of the testcase
             self.testrunAttributes[self.testRunName][GC.KWARGS_BROWSER] = browserName
         self._initTestRun()
+        self.executeTestRun()
+        self.tearDown()
 
     def tearDown(self, browserInstance=1):
         if self.browser.get(browserInstance):
             self.browser[browserInstance].closeBrowser()
-            self.browser[browserInstance].takeTime(GC.TIMING_TESTRUN)
-            self.browser[browserInstance].takeTimeSumOutput()
+            self.timing.takeTime(GC.TIMING_TESTRUN)
+            self.timing.takeTimeSumOutput()
         if self.apiInstance:
             self.apiInstance.tearDown()
         try:
@@ -41,11 +45,11 @@ class TestRun:
             logger.info("Wrote output document")
             self.outputDocument = None
         except Exception as e:
-            logger.debug("Output Document already closed")
+            logger.debug(f"Output Document already closed. Error was {str(e)}")
 
     def __writeOutputRecords(self):
         self.__handleExcel()
-        for key, value in self.outputRecords.items():
+        for key, value in self.dataRecords.items():
             logger.debug(f"Writing output to XLS, line: {key}")
             self.outputDocument.addEntry(testRecordDict=value, sameLine=False, lineNumber=key)
 
@@ -55,11 +59,11 @@ class TestRun:
     def getBrowser(self, browserInstance=1, browserName=None, browserAttributes=None):
         if browserInstance not in self.browser.keys():
             logger.info(f"opening new instance {1} of browser {browserName}")
-            self.browser[browserInstance] = CustBrowserHandling()
+            self.browser[browserInstance] = CustBrowserHandling(timing=self.timing)
             self.browser[browserInstance].createNewBrowser(
                 browserName=browserName,
                 desiredCapabilities=browserAttributes)
-            self.browser[browserInstance].takeTime(GC.TIMING_TESTRUN)
+            self.timing.takeTime(GC.TIMING_TESTRUN)
         else:
             logger.debug(f"Using existing instance of browser {browserInstance}")
         return self.browser[browserInstance]
@@ -81,7 +85,7 @@ class TestRun:
 
     def setResult(self, recordNumber, dataRecordResult, browserInstance=1):
         logger.debug(f"Received new result for Testrecord {recordNumber}")
-        self.dataRecord[recordNumber] = dataRecordResult
+        self.dataRecords[recordNumber] = dataRecordResult
 
     def executeTestRun(self):
         """
@@ -96,6 +100,8 @@ class TestRun:
             kwargs[GC.KWARGS_TESTRUNATTRIBUTES] = self.getAllTestRunAttributes()
         if not kwargs.get(GC.KWARGS_TESTRUNINSTANCE):
             kwargs[GC.KWARGS_TESTRUNINSTANCE] = self
+        if not kwargs.get(GC.KWARGS_TIMING):
+            kwargs[GC.KWARGS_TIMING] = self.timing
         for key, value in dictSequenceOfClasses.items():
             logger.info(f"Starting {counterName}: {key}, {value} ")
             kwargs[counterName] = key

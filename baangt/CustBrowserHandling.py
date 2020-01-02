@@ -9,8 +9,8 @@ from . import CustGlobalConstants as CGC
 from bs4 import BeautifulSoup
 
 class CustBrowserHandling(BrowserDriver):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, timing=None):
+        super().__init__(timing=timing)
         self.zipkinIDs = {}
         self.toasts = ""
         self.errorToasts = ""
@@ -92,7 +92,7 @@ class CustBrowserHandling(BrowserDriver):
     def findWaitNotVisible(self, xpath, timeout = 90):
         self.zipkinIDs = {}
         self.CustomHandleZipkin()
-        self.timing[self.currentTimingSection]["timestamp"] = datetime.now()
+        self.timing.addAttribute(attribute="timestamp", value=datetime.now())
         self._BrowserDriver__log(logging.DEBUG, "Waiting for Element to disappear", **{"xpath":xpath, "timeout":timeout})
         time.sleep(0.5)
 
@@ -111,12 +111,15 @@ class CustBrowserHandling(BrowserDriver):
                 stillHere = False
         self._BrowserDriver__log(logging.DEBUG, f"Element was gone after {elapsed} seconds")
         # Schreibt die gefundenen Zipkin-IDs in das Zeitlog mit
-        self.timing[self.currentTimingSection]["zipkinIDs"] = self.zipkinIDs.keys()
+        self.timing.addAttribute(attribute="zipkinIDs", value=self.zipkinIDs.keys())
         self.CustomPrintZipkins()
         self.CustomHandleToasts()
 
     def returnTime(self):
         # timingString = super().returnTime()
+        # fixme: Correct the timing export string here for cust-Module.
+        l_time = self.timing.returnTime()
+        return l_time
         timingString = ""
         for key,value in self.timing.items():
             if "end" in value.keys():

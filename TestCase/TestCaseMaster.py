@@ -12,6 +12,7 @@ class TestCaseMaster:
         self.testSteps = self.testCaseSettings[2][GC.STRUCTURE_TESTSTEP]
         self.testCaseType = self.testCaseSettings[1][GC.KWARGS_TESTCASETYPE]
         self.kwargs = kwargs
+        self.timing = self.kwargs.get(GC.KWARGS_TIMING)
         if self.testCaseType == GC.KWARGS_BROWSER:
             self.browserType = self.testCaseSettings[1][GC.KWARGS_BROWSER]
             self.browserSettings = self.testCaseSettings[1]["BROWSER_ATTRIBUTES"]
@@ -24,6 +25,8 @@ class TestCaseMaster:
 
     def execute(self):
         self.testRunInstance.executeDictSequenceOfClasses(self.testSteps, GC.STRUCTURE_TESTSTEP, **self.kwargs)
+        self.kwargs[GC.KWARGS_DATA][GC.TIMELOG] = self.browser.returnTime()
+        self.kwargs[GC.KWARGS_TIMING].resetTime()
 
     def tearDown(self):
         pass

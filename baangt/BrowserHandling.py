@@ -7,59 +7,25 @@ from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.firefox.options import Options as ffOptions
 from selenium.common.exceptions import *
 from selenium.webdriver.common import keys
-from . import GlobalConstants as GC
+from baangt import GlobalConstants as GC
+from baangt.Timing import Timing
 from TestSteps import Exceptions
 import time
-from datetime import timedelta
 import logging
-import sys
 
 logger = logging.getLogger("pyC")
 
 class BrowserDriver:
-    def __init__(self):
+    def __init__(self, timing=None):
         self.driver : webdriver.Firefox = None
         self.iframe = None
         self.element = None
         self.timeout = 2000   # Default Timeout in Milliseconds
-        self.timing = {}
-        self.currentTimingSection = None
-
-    def takeTime(self, timingName):
-        if timingName in self.timing:
-            self.timing[timingName][GC.TIMING_END] = time.time()
-            return str(timedelta(seconds=self.timing[timingName][GC.TIMING_END] - self.timing[timingName][GC.TIMING_START]))
+        if timing:
+            self.timing = timing
         else:
-            self.timing[timingName] = {}
-            self.timing[timingName][GC.TIMING_START] = time.time()
-            self.currentTimingSection = timingName
-
-    def takeTimeSumOutput(self):
-        for key, value in self.timing.items():
-            if "end" in value.keys():
-                self.__log(logging.INFO, f'{key} : {BrowserDriver.__format_time(value)}')
-
-    def returnTime(self):
-        timingString = ""
-        for key,value in self.timing.items():
-            if GC.TIMING_END in value.keys():
-                timingString = timingString + "\n" + f'{key}: , since last call: ' \
-                                                     f'{BrowserDriver.__format_time(value)}'
-                if "timestamp" in value.keys():
-                    timingString = timingString + ", TS:" + str(value[GC.TIMESTAMP])
-        return timingString
-
-    @staticmethod
-    def __format_time(startAndEndTimeAsDict):
-        return format(startAndEndTimeAsDict[GC.TIMING_END] - startAndEndTimeAsDict[GC.TIMING_START], ".2f") + " s"
-
-    def resetTime(self):
-        if GC.TIMING_TESTRUN in self.timing:
-            buffer = self.timing[GC.TIMING_TESTRUN]
-            self.timing = {}
-            self.timing[GC.TIMING_TESTRUN] = buffer
-        else:
-            self.timing = {}
+            self.timing = Timing()
+        self.takeTime = self.timing.takeTime
 
     def createNewBrowser(self, browserName, desiredCapabilities=None, **kwargs):
         self.takeTime("Browser Start")

@@ -12,7 +12,7 @@ class ExportResults():
         self.filename = filenameWithPath
         self.workbook = xlsxwriter.Workbook(self.filename)
         self.worksheet = self.workbook.add_worksheet("Output")
-        self.nextline = 0
+        self.nextLine = 0
         self.__setHeader()
 
     def __setHeader(self):
@@ -26,10 +26,10 @@ class ExportResults():
 
     def addEntry(self, testRecordDict, sameLine=False, lineNumber=None):
         if not sameLine:
-            self.nextline += 1
+            self.nextLine += 1
         if lineNumber:
-            self.nextline = lineNumber
-        logger.info(f"Schreibe Zeile {self.nextline} in's Excel")
+            self.nextLine = lineNumber+1  # Because we have a header and everybody else counts starting with 0...
+        logger.info(f"Schreibe Zeile {self.nextLine} in's Excel")
         self.__writeCell(0, testRecordDict, "TFName")
         self.__writeCell(1, testRecordDict, "TFDescription")
         self.__writeCell(2, testRecordDict, CGC.VIGOGFNUMMER)
@@ -39,18 +39,18 @@ class ExportResults():
         self.__writeCell(6, testRecordDict, CGC.POLNRHOST)
         self.__writeCell(9, testRecordDict, CGC.PRAEMIE)
         self.__writeCell(10, testRecordDict, CGC.CUST_TOASTS, strip=True)
-        self.worksheet.write(self.nextline, 13, json.dumps(testRecordDict))
-        self.__writeCell(14, testRecordDict, CGC.DURATION)
-        self.worksheet.write(self.nextline, 15, testRecordDict[GC.TESTCASESTATUS])
+        self.worksheet.write(self.nextLine, 13, json.dumps(testRecordDict))
+        self.__writeCell(14, testRecordDict, GC.TIMING_DURATION)
+        self.__writeCell(15, testRecordDict, GC.TESTCASESTATUS)
         self.__writeCell(17, testRecordDict, CGC.CUST_TOASTS_ERROR, strip=True)
         self.__writeCell(18, testRecordDict, GC.TIMELOG, strip=True)
 
     def __writeCell(self, cellNumber, testRecordDict, fieldName, strip=False):
         if fieldName in testRecordDict.keys():
             if strip:
-                self.worksheet.write(self.nextline, cellNumber, testRecordDict[fieldName].strip())
+                self.worksheet.write(self.nextLine, cellNumber, testRecordDict[fieldName].strip())
             else:
-                self.worksheet.write(self.nextline, cellNumber, testRecordDict[fieldName])
+                self.worksheet.write(self.nextLine, cellNumber, testRecordDict[fieldName])
 
     def close(self):
         self.workbook.close()

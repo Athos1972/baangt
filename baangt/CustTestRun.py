@@ -38,7 +38,7 @@ class CustTestRun(TestRun):
                                         9: "TestSteps.Frontend.VIGO.Antrag.Wohnen.VertragsDaten",
                                         10: "TestSteps.Frontend.VIGO.Antrag.Wohnen.AntragsFragen",
                                         11: "TestSteps.Frontend.VIGO.Antrag.Vermittler",
-                                        12: "TestSteps.Frontend.VIGO.Antrag.Dokumente",
+                                        12: "TestSteps.Frontend.VIGO.Antrag.Wohnen.Dokumente",
                                         13: "TestSteps.Frontend.VIGO.Antrag.AntragSenden"
                                       },
                                     },
@@ -75,7 +75,7 @@ class CustTestRun(TestRun):
                                             9: "TestSteps.Frontend.VIGO.Antrag.Wohnen.VertragsDaten",
                                             10: "TestSteps.Frontend.VIGO.Antrag.Wohnen.AntragsFragen",
                                             11: "TestSteps.Frontend.VIGO.Antrag.Vermittler",
-                                            12: "TestSteps.Frontend.VIGO.Antrag.Dokumente",
+                                            12: "TestSteps.Frontend.VIGO.Antrag.Wohnen.Dokumente",
                                             13: "TestSteps.Frontend.VIGO.Antrag.AntragSenden"
                                         },
                                     },
@@ -97,7 +97,7 @@ class CustTestRun(TestRun):
                             GC.STRUCTURE_TESTCASE: {
                                 1: [GC.CLASSES_TESTCASE,
                                     {GC.KWARGS_BROWSER: GC.BROWSER_FIREFOX,
-                                     "BROWSER_ATTRIBUTES": {GC.BROWSER_MODE_HEADLESS: True},
+                                     "BROWSER_ATTRIBUTES": "",
                                      GC.KWARGS_TESTCASETYPE: GC.KWARGS_BROWSER},
                                     {GC.STRUCTURE_TESTSTEP:
                                         {
@@ -112,7 +112,7 @@ class CustTestRun(TestRun):
                                             9: "TestSteps.Frontend.VIGO.Antrag.Wohnen.VertragsDaten",
                                             10: "TestSteps.Frontend.VIGO.Antrag.Wohnen.AntragsFragen",
                                             11: "TestSteps.Frontend.VIGO.Antrag.Vermittler",
-                                            12: "TestSteps.Frontend.VIGO.Antrag.Dokumente",
+                                            12: "TestSteps.Frontend.VIGO.Antrag.Wohnen.Dokumente",
                                             13: "TestSteps.Frontend.VIGO.Antrag.AntragSenden"
                                         },
                                     },
@@ -147,6 +147,5 @@ class CustTestRun(TestRun):
         }
 
 if __name__ == '__main__':
-    #l_run = CustTestRun("Heartbeat")
-    l_run = CustTestRun("Antrag-Single")
-    l_run.executeTestRun()
+    l_run = CustTestRun("Heartbeat")
+    #l_run = CustTestRun("Antrag-Single")
