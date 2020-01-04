@@ -1,5 +1,6 @@
 from baangt.HandleDatabase import HandleDatabase
 from TestCaseSequence.TestCaseSequenceParallel import TestCaseSequenceParallel
+from baangt.Timing import Timing
 import baangt.GlobalConstants as GC
 import baangt.CustGlobalConstants as CGC
 import multiprocessing
@@ -12,6 +13,7 @@ class TestCaseSequenceMaster:
     def __init__(self, **kwargs):
         self.name = None
         self.description = None
+        self.timing : Timing = kwargs.get(GC.KWARGS_TIMING)
         self.testdataDataBase: HandleDatabase = None
         self.testrunAttributes = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES)
         self.testRunInstance = kwargs.get(GC.KWARGS_TESTRUNINSTANCE)
@@ -19,13 +21,14 @@ class TestCaseSequenceMaster:
         self.dataRecords = {}
         self.recordCounter = 0
         # Extract relevant data for this TestSequence:
-        self.testSequenceData = self.testrunAttributes[GC.KWARGS_TESTRUNATTRIBUTES][GC.STRUCTURE_TESTCASESEQUENCE].get(
+        self.testSequenceData = self.testrunAttributes[GC.STRUCTURE_TESTCASESEQUENCE].get(
             kwargs.get(GC.STRUCTURE_TESTCASESEQUENCE))[1]
         self.recordPointer = self.testSequenceData[GC.DATABASE_FROM_LINE]
-        self.testCaseSequence = self.testSequenceData[GC.STRUCTURE_TESTCASE]
+        self.testCases = self.testSequenceData[GC.STRUCTURE_TESTCASE]
         self.kwargs = kwargs
+        self.timingName = self.timing.takeTime(self.__class__.__name__,forceNew=True)
         self.prepareExecution()
-        if self.testSequenceData.get(GC.EXECUTION_PARALLEL, 0) > 0:
+        if self.testSequenceData.get(GC.EXECUTION_PARALLEL, 0) > 1:
             self.execute_parallel(self.testSequenceData.get(GC.EXECUTION_PARALLEL, 0))
         else:
             self.execute()
@@ -67,14 +70,15 @@ class TestCaseSequenceMaster:
                     self.kwargs[GC.KWARGS_BROWSER] = browserInstances[x]
                     processes[x] = TestCaseSequenceParallel(sequenceNumber=x,
                                                             tcNumber=n + x,
-                                                            testcaseSequence=self.testCaseSequence,
+                                                            testcaseSequence=self.testCases,
                                                             **self.kwargs)
                     processExecutions[x] = multiprocessing.Process(target=processes[x].one_sequence,
                                                                    args=(resultQueue,))
                 else:
                     # This is the case when we have e.g. 4 parallel runs and 5 testcases,
                     # First iteration: all 4 are used. Second iteration: only 1 used, 3 are empty.
-                    processExecutions.pop(x)
+                    if processExecutions.get(x):
+                        processExecutions.pop(x)
 
             for x in range(0, parallelInstances):
                 logger.info(f"starting execution of parallel instance {x}")
@@ -95,9 +99,9 @@ class TestCaseSequenceMaster:
     def execute(self):
         # Execute all Testcases:
         for key, value in self.dataRecords.items():
-            self.kwargs[GC.STRUCTURE_TESTCASESEQUENCE] = self.testSequenceData
+            # self.kwargs[GC.STRUCTURE_TESTCASESEQUENCE] = self.testSequenceData
             self.kwargs[GC.KWARGS_DATA] = value
-            self.testRunInstance.executeDictSequenceOfClasses(self.testCaseSequence, GC.STRUCTURE_TESTCASE,
+            self.testRunInstance.executeDictSequenceOfClasses(self.testCases, GC.STRUCTURE_TESTCASE,
                                                               **self.kwargs)
             # Write Result back to TestRun for later saving in export format
             self.testRunInstance.setResult(key, value)
@@ -117,8 +121,8 @@ class TestCaseSequenceMaster:
     def __getDatabase(self):
         if not self.testdataDataBase:
             self.testdataDataBase = HandleDatabase()
-            self.testdataDataBase.read_excel(fileName=self.testSequenceData["DATAFILE"],
-                                             sheetName=self.testSequenceData["SHEET"])
+            self.testdataDataBase.read_excel(fileName=self.testSequenceData[GC.DATABASE_FILENAME],
+                                             sheetName=self.testSequenceData[GC.DATABASE_SHEETNAME])
         return self.testdataDataBase
 
     def finishTestCase(self, browserInstance=1, dataRecordNumber=None):
@@ -140,4 +144,5 @@ class TestCaseSequenceMaster:
         self.testRunInstance.setResult()
 
     def tearDown(self):
+        self.timing.takeTime(self.timingName)
         pass

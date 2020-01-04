@@ -10,7 +10,12 @@ class Timing:
         self.timing = {}
         self.currentTimingSection = None
 
-    def takeTime(self, timingName):
+    def takeTime(self, timingName, forceNew=False):
+        if forceNew and timingName in self.timing.keys():
+            for x in range(0,1000000):
+                if not timingName + "_" + str(x) in self.timing.keys():
+                    timingName = timingName + "_" + str(x)
+                    break
         if timingName in self.timing:
             self.timing[timingName][GC.TIMING_END] = time()
             return str(timedelta(seconds=self.timing[timingName][GC.TIMING_END] - self.timing[timingName][GC.TIMING_START]))
@@ -18,6 +23,7 @@ class Timing:
             self.timing[timingName] = {}
             self.timing[timingName][GC.TIMING_START] = time()
             self.currentTimingSection = timingName
+        return timingName
 
     def addAttribute(self, attribute, value, timingSection=None):
         if not timingSection:

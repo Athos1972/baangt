@@ -48,6 +48,6 @@ class ApiHandling:
     def tearDown(self, sessionNumber=None):
         if not sessionNumber:
             for key, value in self.session.items():
-                self.session[key].close()
+                self.session[key].closeExcel()
         else:
-            self.session[sessionNumber].close()
+            self.session[sessionNumber].closeExcel()

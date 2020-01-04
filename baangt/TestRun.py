@@ -1,8 +1,5 @@
-from baangt.HandleDatabase import HandleDatabase
 from baangt.BrowserHandling import BrowserDriver
-from baangt.CustBrowserHandling import CustBrowserHandling
 from baangt.ApiHandling import ApiHandling
-from baangt.utils import utils
 from baangt.ExportResults import ExportResults
 from baangt.Timing import Timing
 from baangt import GlobalConstants as GC
@@ -19,10 +16,9 @@ class TestRun:
         self.browser = {}
         self.apiInstance = None
         self.dataRecords = {}
-        self.outputDocument = None
-        self.outputRecords = {}
         self.testType = None
         self.timing = Timing()
+        self.kwargs = {}
         if browserName:
             # Overwrites the Browser-definition of the testcase
             self.testrunAttributes[self.testRunName][GC.KWARGS_BROWSER] = browserName
@@ -39,22 +35,11 @@ class TestRun:
 
         if self.apiInstance:
             self.apiInstance.tearDown()
-        try:
-            self.__writeOutputRecords()
-            self.outputDocument.close()
-            logger.info("Wrote output document")
-            self.outputDocument = None
-        except Exception as e:
-            logger.debug(f"Output Document already closed. Error was {str(e)}")
 
-    def __writeOutputRecords(self):
-        self.__handleExcel()
-        for key, value in self.dataRecords.items():
-            logger.debug(f"Writing output to XLS, line: {key}")
-            self.outputDocument.addEntry(testRecordDict=value, sameLine=False, lineNumber=key)
+        ExportResults(**self.kwargs)
 
     def getAllTestRunAttributes(self):
-        return self.testrunAttributes[self.testRunName]
+        return self.testrunAttributes[self.testRunName][GC.KWARGS_TESTRUNATTRIBUTES]
 
     def getBrowser(self, browserInstance=1, browserName=None, browserAttributes=None):
         if browserInstance not in self.browser.keys():
@@ -75,16 +60,6 @@ class TestRun:
         if not self.apiInstance:
             self.apiInstance = ApiHandling()
         return self.apiInstance
-
-    def __handleExcel(self):
-        self.outputDocument = ExportResults(self.__getOutputFileName())
-
-    def __getOutputFileName(self):
-        l_file = "/Users/bernhardbuhl/git/KatalonVIG/1testoutput/" + \
-                 "baangt_" + self.testRunName + "_" + \
-                 utils.datetime_return() + \
-                 ".xlsx"
-        return l_file
 
     def setResult(self, recordNumber, dataRecordResult, browserInstance=1):
         logger.debug(f"Received new result for Testrecord {recordNumber}")
@@ -118,9 +93,19 @@ class TestRun:
             else:
                 l_class = globals()[lFullQualified]
             l_class(**kwargs)  # Executes the class __init__
+        self.kwargs = kwargs
 
     def _initTestRun(self):
         pass
+
+    def getSequenceByNumber(self, sequence):
+        return self.testrunAttributes[self.testRunName][GC.KWARGS_TESTRUNATTRIBUTES][GC.STRUCTURE_TESTCASESEQUENCE].get(sequence)
+
+    def getTestCaseByNumber(self, sequence, testcaseNumber):
+        return sequence[1][GC.STRUCTURE_TESTCASE][testcaseNumber]
+
+    def getTestStepByNumber(self, testCase, testStepNumber):
+        return testCase[2][GC.STRUCTURE_TESTSTEP].get(testStepNumber)
 
     @staticmethod
     def __dynamicImportClasses(fullQualifiedImportName):

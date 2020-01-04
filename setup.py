@@ -1,0 +1,22 @@
+import setuptools
+
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
+setuptools.setup(
+    name="baangt-YOUR-USERNAME-HERE", # Replace with your own username
+    version="2020.1.0b0",
+    author="Bernhard Buhl",
+    author_email="buhl@buhl-consulting.com.cy",
+    description="Basic And Advanced NextGeneration Testing",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    url="https://baangt.org",
+    packages=setuptools.find_packages(),
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+    ],
+    python_requires='>=3.6',
+)

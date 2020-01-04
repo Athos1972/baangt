@@ -34,7 +34,7 @@ class AntragSenden(CustTestStepMaster):
         self.browserSession.findWaitNotVisible(xpath="//div[contains(@class,'overlay-spinner ng-star-inserted')]", timeout=120)
         self.testcaseDataDict[CGC.SAPPOLNR] = self.browserSession.findByAndWaitForValue(xpath='id("info-card-polizzennummer")')
         self.testcaseDataDict[CGC.VIGOGFNUMMER] = self.browserSession.findByAndWaitForValue(xpath='id("info-card-geschaeftsfallnummer")')
-        self.testcaseDataDict["PRAEMIE"] = self.browserSession.findByAndWaitForValue(xpath='id("nav-component-praemie")')
+        self.testcaseDataDict[CGC.PRAEMIE] = self.browserSession.findByAndWaitForValue(xpath='id("nav-component-praemie")')
         self.browserSession.takeTime("Senden an Bestand")
         self.browserSession.takeTime("Antrag fertigstellen")
         self.testcaseDataDict[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_SUCCESS

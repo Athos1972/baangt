@@ -3,54 +3,53 @@ import logging
 import json
 import baangt.CustGlobalConstants as CGC
 import baangt.GlobalConstants as GC
+from baangt.utils import utils
 
 logger = logging.getLogger("pyC")
 
 class ExportResults():
-    def __init__(self, filenameWithPath):
-        logger.info("Export-Sheet für Ergebnisse: " + filenameWithPath)
-        self.filename = filenameWithPath
+    def __init__(self, **kwargs):
+        self.testRunName = kwargs.get(GC.KWARGS_TESTRUNINSTANCE).testRunName
+        self.filename = self.__getOutputFileName()
+        logger.info("Export-Sheet für Ergebnisse: " + self.filename)
         self.workbook = xlsxwriter.Workbook(self.filename)
         self.worksheet = self.workbook.add_worksheet("Output")
-        self.nextLine = 0
+        self.dataRecords = kwargs.get(GC.KWARGS_TESTRUNINSTANCE).dataRecords
+        self.fieldListExport = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.EXPORT_FORMAT)["Fieldlist"]
         self.__setHeader()
+        self._exportData()
+        self.closeExcel()
+
+    def __getOutputFileName(self):
+        l_file = "/Users/bernhardbuhl/git/KatalonVIG/1testoutput/" + \
+                 "baangt_" + self.testRunName + "_" + \
+                 utils.datetime_return() + \
+                 ".xlsx"
+        logger.debug(f"Filename for export: {l_file}")
+        return l_file
 
     def __setHeader(self):
         i = 0
-        columns = ["TF-Name", "Description", CGC.VIGOGFNUMMER, CGC.SAPPOLNR, CGC.VERMITTLER, "VN", "Pol#Host",
-                   "BeratProt", "Warnmeldung BeratProt", "RefPrämie", "Fehler", "Screenshot", "TraceID",
-                   "JSON", "Dauer", "Status", "Letzter Screnshot", "Letzte Meldung", "Zeit-Log"]
-        for column in columns:
+        for column in self.fieldListExport:
             self.worksheet.write(0, i, column)
             i += 1
+        self.worksheet.write(0, len(self.fieldListExport), "JSON")
 
-    def addEntry(self, testRecordDict, sameLine=False, lineNumber=None):
-        if not sameLine:
-            self.nextLine += 1
-        if lineNumber:
-            self.nextLine = lineNumber+1  # Because we have a header and everybody else counts starting with 0...
-        logger.info(f"Schreibe Zeile {self.nextLine} in's Excel")
-        self.__writeCell(0, testRecordDict, "TFName")
-        self.__writeCell(1, testRecordDict, "TFDescription")
-        self.__writeCell(2, testRecordDict, CGC.VIGOGFNUMMER)
-        self.__writeCell(3, testRecordDict, CGC.SAPPOLNR)
-        self.__writeCell(4, testRecordDict, CGC.VERMITTLER)
-        self.__writeCell(5, testRecordDict, "VN")
-        self.__writeCell(6, testRecordDict, CGC.POLNRHOST)
-        self.__writeCell(9, testRecordDict, CGC.PRAEMIE)
-        self.__writeCell(10, testRecordDict, CGC.CUST_TOASTS, strip=True)
-        self.worksheet.write(self.nextLine, 13, json.dumps(testRecordDict))
-        self.__writeCell(14, testRecordDict, GC.TIMING_DURATION)
-        self.__writeCell(15, testRecordDict, GC.TESTCASESTATUS)
-        self.__writeCell(17, testRecordDict, CGC.CUST_TOASTS_ERROR, strip=True)
-        self.__writeCell(18, testRecordDict, GC.TIMELOG, strip=True)
+    def _exportData(self):
+        for key, value in self.dataRecords.items():
+            for (n, column) in enumerate(self.fieldListExport):
+                self.__writeCell(key+1, n, value, column)
+            # Also write everything as JSON-String into the last column
+            self.worksheet.write(key+1, len(self.fieldListExport), json.dumps(value))
 
-    def __writeCell(self, cellNumber, testRecordDict, fieldName, strip=False):
-        if fieldName in testRecordDict.keys():
-            if strip:
-                self.worksheet.write(self.nextLine, cellNumber, testRecordDict[fieldName].strip())
+    def __writeCell(self, line, cellNumber, testRecordDict, fieldName, strip=False):
+        if fieldName in testRecordDict.keys() and testRecordDict[fieldName]:
+            if '/n' in testRecordDict[fieldName][0:5]:
+                testRecordDict[fieldName] = testRecordDict[fieldName].strip()
+            if isinstance(testRecordDict[fieldName], dict) or isinstance(testRecordDict[fieldName], list):
+                self.worksheet.write(line, cellNumber, testRecordDict[fieldName].strip())
             else:
-                self.worksheet.write(self.nextLine, cellNumber, testRecordDict[fieldName])
+                self.worksheet.write(line, cellNumber, testRecordDict[fieldName])
 
-    def close(self):
+    def closeExcel(self):
         self.workbook.close()
