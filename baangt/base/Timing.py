@@ -1,4 +1,4 @@
-from baangt import GlobalConstants as GC
+from baangt.base import GlobalConstants as GC
 from datetime import timedelta
 from time import time
 import logging

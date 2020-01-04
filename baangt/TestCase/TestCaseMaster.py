@@ -1,6 +1,6 @@
-from baangt import GlobalConstants as GC
-from baangt.Timing import Timing
-from TestSteps.Exceptions import *
+from baangt.base import GlobalConstants as GC
+from baangt.base.Timing import Timing
+from baangt.TestSteps.Exceptions import *
 
 class TestCaseMaster:
     def __init__(self, **kwargs):

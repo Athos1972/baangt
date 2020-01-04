@@ -1,8 +1,8 @@
 import logging
 import pandas as pd
 import json
-import baangt.CustGlobalConstants as CGC
-import baangt.GlobalConstants as GC
+import baangt.base.CustGlobalConstants as CGC
+import baangt.base.GlobalConstants as GC
 
 logger = logging.getLogger("pyC")
 

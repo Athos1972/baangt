@@ -7,9 +7,9 @@ from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.firefox.options import Options as ffOptions
 from selenium.common.exceptions import *
 from selenium.webdriver.common import keys
-from baangt import GlobalConstants as GC
-from baangt.Timing import Timing
-from TestSteps import Exceptions
+from baangt.base import GlobalConstants as GC
+from baangt.base.Timing import Timing
+from baangt.TestSteps import Exceptions
 import time
 import logging
 
@@ -74,7 +74,7 @@ class BrowserDriver:
         if not isinstance(desiredCapabilities, dict):
             return None
 
-        if desiredCapabilities.get(GC.BROWSER_MODE_HEADLESS) == True:
+        if desiredCapabilities.get(GC.BROWSER_MODE_HEADLESS):
             lOptions.headless = True
 
         return lOptions

@@ -1,6 +1,6 @@
-import baangt.GlobalConstants as GC
-from baangt.Timing import Timing
-from baangt.BrowserHandling import BrowserDriver
+import baangt.base.GlobalConstants as GC
+from baangt.base.Timing import Timing
+from baangt.base.BrowserHandling import BrowserDriver
 import sys
 
 

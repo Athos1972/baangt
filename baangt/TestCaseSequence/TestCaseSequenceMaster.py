@@ -1,8 +1,7 @@
-from baangt.HandleDatabase import HandleDatabase
-from TestCaseSequence.TestCaseSequenceParallel import TestCaseSequenceParallel
-from baangt.Timing import Timing
-import baangt.GlobalConstants as GC
-import baangt.CustGlobalConstants as CGC
+from baangt.base.HandleDatabase import HandleDatabase
+from baangt.TestCaseSequence.TestCaseSequenceParallel import TestCaseSequenceParallel
+from baangt.base.Timing import Timing
+import baangt.base.GlobalConstants as GC
 import multiprocessing
 import logging
 

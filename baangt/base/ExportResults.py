@@ -1,9 +1,8 @@
 import xlsxwriter
 import logging
 import json
-import baangt.CustGlobalConstants as CGC
-import baangt.GlobalConstants as GC
-from baangt.utils import utils
+import baangt.base.GlobalConstants as GC
+from baangt.base.utils import utils
 
 logger = logging.getLogger("pyC")
 

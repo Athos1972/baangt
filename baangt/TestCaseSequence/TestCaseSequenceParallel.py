@@ -1,7 +1,7 @@
 import multiprocessing
 import logging
-from TestSteps import Exceptions
-from baangt import GlobalConstants as GC
+from baangt.TestSteps import Exceptions
+from baangt.base import GlobalConstants as GC
 
 logger = logging.getLogger("pyC")
 

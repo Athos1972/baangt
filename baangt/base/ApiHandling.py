@@ -1,6 +1,6 @@
 import requests
-from . import GlobalConstants as GC
-from TestSteps import Exceptions
+from baangt.base import GlobalConstants as GC
+from baangt.TestSteps import Exceptions
 import logging
 
 logger = logging.getLogger("pyC")

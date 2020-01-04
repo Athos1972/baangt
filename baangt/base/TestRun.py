@@ -1,8 +1,8 @@
-from baangt.BrowserHandling import BrowserDriver
-from baangt.ApiHandling import ApiHandling
-from baangt.ExportResults import ExportResults
-from baangt.Timing import Timing
-from baangt import GlobalConstants as GC
+from baangt.base.BrowserHandling import BrowserDriver
+from baangt.base.ApiHandling import ApiHandling
+from baangt.base.ExportResults import ExportResults
+from baangt.base.Timing import Timing
+from baangt.base import GlobalConstants as GC
 import logging
 import sys
 
@@ -128,7 +128,7 @@ class TestRun:
         logger.debug(f"Imported module {fullQualifiedImportName}, result was {str(mod)}")
         retClass = getattr(mod, importClass)
         if not retClass:
-            logger.critical(f"Can't import module: {fullQualifiedImportName}, error: {e}")
+            logger.critical(f"Can't import module: {fullQualifiedImportName}")
             sys.exit("Critical Error in Class import - can't continue. "
                      "Please maintain proper classnames in Testrundefinition.")
         return retClass

@@ -1,6 +1,5 @@
 from datetime import datetime
 import ntpath
-import traceback
 
 class utils:
     def __init__(self):

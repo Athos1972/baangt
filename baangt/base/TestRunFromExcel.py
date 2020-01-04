@@ -1,7 +1,6 @@
-from baangt.TestRun import TestRun
-from baangt.utils import utils
-import baangt.GlobalConstants as GC
-import baangt.CustGlobalConstants as CGC
+from baangt.base.TestRun import TestRun
+from baangt.base.utils import utils
+import baangt.base.GlobalConstants as GC
 import xlrd
 import logging
 
@@ -80,8 +79,8 @@ class TestRunFromExcel(TestRun):
                                                      testStepNumber=execLine["TestStepNumber"])
 
             lTestStep[1][GC.STRUCTURE_TESTSTEPEXECUTION][execLine["TestStepExecutionNumber"]] = {}
-            for key, value in execLine.items():
-                lTestStep[1][GC.STRUCTURE_TESTSTEPEXECUTION][execLine["TestStepExecutionNumber"]][key] = value
+            for lkey, value in execLine.items():
+                lTestStep[1][GC.STRUCTURE_TESTSTEPEXECUTION][execLine["TestStepExecutionNumber"]][lkey] = value
                 pass
 
     def getRowsWithHeadersAsDict(self, xlsTab):
