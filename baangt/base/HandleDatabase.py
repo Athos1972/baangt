@@ -6,7 +6,7 @@ import baangt.base.GlobalConstants as GC
 
 logger = logging.getLogger("pyC")
 
-class HandleDatabase():
+class HandleDatabase:
     def __init__(self):
         self.lineNumber = 3
         self.globals = {

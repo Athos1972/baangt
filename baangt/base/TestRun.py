@@ -61,7 +61,7 @@ class TestRun:
             self.apiInstance = ApiHandling()
         return self.apiInstance
 
-    def setResult(self, recordNumber, dataRecordResult, browserInstance=1):
+    def setResult(self, recordNumber, dataRecordResult):
         logger.debug(f"Received new result for Testrecord {recordNumber}")
         self.dataRecords[recordNumber] = dataRecordResult
 

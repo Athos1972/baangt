@@ -1,6 +1,7 @@
 from baangt.base.TestRun import TestRun
 from baangt.base.utils import utils
 import baangt.base.GlobalConstants as GC
+import baangt.base.CustGlobalConstants as CGC
 import xlrd
 import logging
 
@@ -12,7 +13,7 @@ class TestRunFromExcel(TestRun):
         self.fileAndPathName = lExcelDefinitionFile
         self.fileName = utils.extractFileNameFromFullPath(self.fileAndPathName)
         if not self.excelFile:
-            raise(f"ConfigFile not found {lExcelDefinitionFile}")
+            raise BaseException(f"ConfigFile not found {lExcelDefinitionFile}")
         super().__init__(testRunName=self.fileName)
 
     def _initTestRun(self):
@@ -48,8 +49,6 @@ class TestRunFromExcel(TestRun):
                  GC.KWARGS_BROWSER: testCase["Browser"],
                  GC.BROWSER_ATTRIBUTES: testCase["BrowserAttributes"]
                  })
-            for field, value in testCase.items():
-                pass
 
         xlsTab = self._getTab("TestStep")
         lStepDict = self.getRowsWithHeadersAsDict(xlsTab=xlsTab)

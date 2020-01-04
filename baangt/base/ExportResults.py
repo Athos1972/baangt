@@ -6,7 +6,7 @@ from baangt.base.utils import utils
 
 logger = logging.getLogger("pyC")
 
-class ExportResults():
+class ExportResults:
     def __init__(self, **kwargs):
         self.testRunName = kwargs.get(GC.KWARGS_TESTRUNINSTANCE).testRunName
         self.filename = self.__getOutputFileName()
@@ -43,7 +43,7 @@ class ExportResults():
 
     def __writeCell(self, line, cellNumber, testRecordDict, fieldName, strip=False):
         if fieldName in testRecordDict.keys() and testRecordDict[fieldName]:
-            if '/n' in testRecordDict[fieldName][0:5]:
+            if '/n' in testRecordDict[fieldName][0:5] or strip:
                 testRecordDict[fieldName] = testRecordDict[fieldName].strip()
             if isinstance(testRecordDict[fieldName], dict) or isinstance(testRecordDict[fieldName], list):
                 self.worksheet.write(line, cellNumber, testRecordDict[fieldName].strip())
