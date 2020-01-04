@@ -6,8 +6,8 @@ KWARGS_TESTRUNATTRIBUTES = "TESTRUNEXECUTIONPARAMETERS"
 KWARGS_TESTRUNINSTANCE = "TESTRUNINSTANCE"
 KWARGS_TIMING = "TimingClassInstance"
 
-CLASSES_TESTCASESEQUENCE = "TestCaseSequence.TestCaseSequenceMaster.TestCaseSequenceMaster"
-CLASSES_TESTCASE = "TestCase.TestCaseMaster.TestCaseMaster"
+CLASSES_TESTCASESEQUENCE = "baangt.TestCaseSequence.TestCaseSequenceMaster.TestCaseSequenceMaster"
+CLASSES_TESTCASE = "baangt.TestCase.TestCaseMaster.TestCaseMaster"
 
 TIMING_END = "end"
 TIMING_START = "start"
