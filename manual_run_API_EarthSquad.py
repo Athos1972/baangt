@@ -1,7 +1,6 @@
-from baangt.CustTestRun import TestRun
+from baangtVIG.CustTestRun import TestRun
 from baangt import GlobalConstants as GC
-from TestSteps import Exceptions
-from TestSteps.DropsApp.Login_API import Login_API
+from TestSteps.DropsApp import Login_API
 
 if __name__ == '__main__':
     #l_testRun = TestRun("WSTV-Single")
