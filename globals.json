@@ -1,6 +1,3 @@
 {
-  "base_url": "portal-fqa",
-  "user": "502266",
-  "password": "R(r6ayhr7EP3",
-  "file_praemienauskunft": "/Users/bernhardbuhl/git/KatalonVIG/0testdateninput/Test_unterschrift_Beratungsprotokoll.pdf"
+  "exportFilesBasePath": ""
 }

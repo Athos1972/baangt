@@ -8,9 +8,10 @@ logger = logging.getLogger("pyC")
 
 class ExportResults:
     def __init__(self, **kwargs):
-        self.testRunName = kwargs.get(GC.KWARGS_TESTRUNINSTANCE).testRunName
+        self.testRunInstance = kwargs.get(GC.KWARGS_TESTRUNINSTANCE)
+        self.testRunName = self.testRunInstance.testRunName
         self.filename = self.__getOutputFileName()
-        logger.info("Export-Sheet für Ergebnisse: " + self.filename)
+        logger.info("Export-Sheet for results: " + self.filename)
         self.workbook = xlsxwriter.Workbook(self.filename)
         self.worksheet = self.workbook.add_worksheet("Output")
         self.dataRecords = kwargs.get(GC.KWARGS_TESTRUNINSTANCE).dataRecords
@@ -20,7 +21,7 @@ class ExportResults:
         self.closeExcel()
 
     def __getOutputFileName(self):
-        l_file = "/Users/bernhardbuhl/git/KatalonVIG/1testoutput/" + \
+        l_file = self.testRunInstance.globalSettings[GC.DATABASE_EXPORTFILENAMEANDPATH] + \
                  "baangt_" + self.testRunName + "_" + \
                  utils.datetime_return() + \
                  ".xlsx"
@@ -43,7 +44,7 @@ class ExportResults:
 
     def __writeCell(self, line, cellNumber, testRecordDict, fieldName, strip=False):
         if fieldName in testRecordDict.keys() and testRecordDict[fieldName]:
-            if '/n' in testRecordDict[fieldName][0:5] or strip:
+            if '\n' in testRecordDict[fieldName][0:5] or strip:
                 testRecordDict[fieldName] = testRecordDict[fieldName].strip()
             if isinstance(testRecordDict[fieldName], dict) or isinstance(testRecordDict[fieldName], list):
                 self.worksheet.write(line, cellNumber, testRecordDict[fieldName].strip())

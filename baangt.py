@@ -9,7 +9,8 @@ def args_read(l_search_parameter):
     l_args = sys.argv[1:]
 
     try:
-        opts, args = getopt.getopt(l_args, "", ["run="
+        opts, args = getopt.getopt(l_args, "", ["run=",
+                                                "globals="
                                                 ])
     except getopt.GetoptError as err_det:
         print("Error in reading parameters:" + str(err_det))
@@ -32,14 +33,19 @@ Call: python baangt.py --parameters
 
  Suggested for standard use:
    python baangt.py --run="Franzi4711.xlsx": Will run a Testrun Franzi4711.xlsx
-   python baangt.py --run="runProd.json": Will execute a Testrun as specified in runProd.json
+   python baangt.py --run="runProducts.json": Will execute a Testrun as specified in runProducts.json and use default globals.json, if exists
+   python baangt.py --run="runProducts.json" --globals="production.json" will use settings in production.json
+   python baangt.py --run="runProducts.json" --globals="qa.json" will use settings in qa.json
    """)
+
 
 def callTestrun():
     if ".XLSX" in testRunFile.upper() or ".JSON" in testRunFile.upper():
-        CustTestRun(testRunName=utils.sanitizeFileName(testRunFile), globalSettingsFileNameAndPath = globalSettingsFileName)
+        CustTestRun(testRunName=utils.sanitizeFileName(testRunFile),
+                    globalSettingsFileNameAndPath=utils.sanitizeFileName(globalSettingsFileName))
     else:
         sys.exit(f"Unknown Filetype - should be XLSX or JSON: {testRunFile}")
+
 
 def getGlobalSettings():
     lGlobals = args_read("globals")
@@ -50,7 +56,7 @@ def getGlobalSettings():
 
 print_args()
 
-testRunFile : str = args_read("run")
+testRunFile=args_read("run")
 if testRunFile:
     print(f"Starting Testrun: {testRunFile}")
 else:
