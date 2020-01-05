@@ -2,27 +2,32 @@ from baangt.base.BrowserHandling import BrowserDriver
 from baangt.base.ApiHandling import ApiHandling
 from baangt.base.ExportResults import ExportResults
 from baangt.base.Timing import Timing
+from baangt.base.utils import utils
 from baangt.base import GlobalConstants as GC
+from baangt.base.TestRunExcelImporter import TestRunExcelImporter
+from baangt.base.TestRunUtils import TestRunUtils
 import logging
 import sys
+import json
 
 logger = logging.getLogger("pyC")
 
 
 class TestRun:
-    def __init__(self, testRunName, browserName=None):
-        self.testRunName = testRunName
-        self.testrunAttributes = None
+    def __init__(self, testRunName):
+        # self.testRunAttributes = {}
         self.browser = {}
         self.apiInstance = None
-        self.dataRecords = {}
         self.testType = None
-        self.timing = Timing()
         self.kwargs = {}
-        if browserName:
-            # Overwrites the Browser-definition of the testcase
-            self.testrunAttributes[self.testRunName][GC.KWARGS_BROWSER] = browserName
+        self.dataRecords = {}
+
+        self.testRunName, self.testRunFileName = TestRun._sanitizeTestRunNameAndFileName(testRunName)
+        self.timing = Timing()
+        self.testRunUtils = TestRunUtils()
         self._initTestRun()
+        self._loadJSONTestRunDefinitions()
+        self._loadExcelTestRunDefinitions()
         self.executeTestRun()
         self.tearDown()
 
@@ -39,7 +44,8 @@ class TestRun:
         ExportResults(**self.kwargs)
 
     def getAllTestRunAttributes(self):
-        return self.testrunAttributes[self.testRunName][GC.KWARGS_TESTRUNATTRIBUTES]
+        return self.testRunUtils.getCompleteTestRunAttributes(self.testRunName)
+        # return self.testRunAttributes[self.testRunName][GC.KWARGS_TESTRUNATTRIBUTES]
 
     def getBrowser(self, browserInstance=1, browserName=None, browserAttributes=None):
         if browserInstance not in self.browser.keys():
@@ -70,7 +76,7 @@ class TestRun:
             Start TestcaseSequence
         """
         self.executeDictSequenceOfClasses(
-            self.testrunAttributes[self.testRunName][GC.KWARGS_TESTRUNATTRIBUTES][GC.STRUCTURE_TESTCASESEQUENCE],
+            self.testRunUtils.getCompleteTestRunAttributes(self.testRunName)[GC.STRUCTURE_TESTCASESEQUENCE],
             counterName=GC.STRUCTURE_TESTCASESEQUENCE)
 
     def executeDictSequenceOfClasses(self, dictSequenceOfClasses, counterName, **kwargs):
@@ -98,14 +104,26 @@ class TestRun:
     def _initTestRun(self):
         pass
 
-    def getSequenceByNumber(self, sequence):
-        return self.testrunAttributes[self.testRunName][GC.KWARGS_TESTRUNATTRIBUTES][GC.STRUCTURE_TESTCASESEQUENCE].get(sequence)
+    def _loadJSONTestRunDefinitions(self):
+        if not self.testRunFileName:
+            return
 
-    def getTestCaseByNumber(self, sequence, testcaseNumber):
-        return sequence[1][GC.STRUCTURE_TESTCASE][testcaseNumber]
+        if ".JSON" in self.testRunFileName.upper():
+            logger.info(f"Reading Definition from {self.testRunFileName}")
+            with open(self.testRunFileName) as json_file:
+                data = json.load(json_file)
+                data = utils.replaceAllGlobalConstantsInDict(data)
+                self.testRunUtils.setCompleteTestRunAttributes(testRunName=self.testRunName,
+                                                               testRunAttributes=data)
 
-    def getTestStepByNumber(self, testCase, testStepNumber):
-        return testCase[2][GC.STRUCTURE_TESTSTEP].get(testStepNumber)
+    def _loadExcelTestRunDefinitions(self):
+        if not self.testRunFileName:
+            return
+
+        if ".XLSX" in self.testRunFileName.upper():
+            logger.info(f"Reading Definition from {self.testRunFileName}")
+            lExcelImport = TestRunExcelImporter(FileNameAndPath=self.testRunFileName, testRunUtils=self.testRunUtils)
+            lExcelImport.importConfig()
 
     @staticmethod
     def __dynamicImportClasses(fullQualifiedImportName):
@@ -132,3 +150,14 @@ class TestRun:
             sys.exit("Critical Error in Class import - can't continue. "
                      "Please maintain proper classnames in Testrundefinition.")
         return retClass
+
+    @staticmethod
+    def _sanitizeTestRunNameAndFileName(TestRunNameInput):
+        if ".XLSX" in TestRunNameInput.upper() or ".JSON" in TestRunNameInput.upper():
+            lRunName = utils.extractFileNameFromFullPath(TestRunNameInput)
+            lFileName = TestRunNameInput
+        else:
+            lRunName = TestRunNameInput
+            lFileName = None
+
+        return lRunName, lFileName

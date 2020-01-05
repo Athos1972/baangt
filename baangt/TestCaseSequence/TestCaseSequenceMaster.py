@@ -64,7 +64,7 @@ class TestCaseSequenceMaster:
                 if self.dataRecords.get(n + x):
                     logger.debug(f"starting Process and Executions {x}. Value of n+x is {n + x}, "
                                  f"Record = {str(self.dataRecords[n + x])[0:50]}")
-                    self.kwargs[GC.STRUCTURE_TESTCASESEQUENCE] = self.testSequenceData
+                    #self.kwargs[GC.STRUCTURE_TESTCASESEQUENCE] = self.testSequenceData
                     self.kwargs[GC.KWARGS_DATA] = self.dataRecords[n+x]
                     self.kwargs[GC.KWARGS_BROWSER] = browserInstances[x]
                     processes[x] = TestCaseSequenceParallel(sequenceNumber=x,

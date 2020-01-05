@@ -10,9 +10,11 @@ class TestCaseMaster:
         self.apiInstance = None
         self.numberOfParallelRuns = None
         self.testRunInstance = kwargs.get(GC.KWARGS_TESTRUNINSTANCE)
-        self.testSequence = self.testRunInstance.getSequenceByNumber(kwargs.get(GC.STRUCTURE_TESTCASESEQUENCE))
-        self.testCaseSettings = self.testRunInstance.getTestCaseByNumber(self.testSequence,
-                                                                         kwargs.get(GC.STRUCTURE_TESTCASE))
+        self.testRunUtils = self.testRunInstance.testRunUtils
+        self.testSequence = self.testRunUtils.getSequenceByNumber(testRunName=self.testRunInstance.testRunName,
+                                                                  sequence=kwargs.get(GC.STRUCTURE_TESTCASESEQUENCE))
+        self.testCaseSettings = self.testRunUtils.getTestCaseByNumber(self.testSequence,
+                                                                      kwargs.get(GC.STRUCTURE_TESTCASE))
         self.testSteps = self.testCaseSettings[2][GC.STRUCTURE_TESTSTEP]
         self.testCaseType = self.testCaseSettings[1][GC.KWARGS_TESTCASETYPE]
         self.kwargs = kwargs

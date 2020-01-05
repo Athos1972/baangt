@@ -6,7 +6,7 @@ import sys
 
 class TestStepMaster:
     def __init__(self, **kwargs):
-        self.testRun = kwargs.get(GC.KWARGS_TESTRUNINSTANCE)
+        self.testRunInstance = kwargs.get(GC.KWARGS_TESTRUNINSTANCE)
         self.testcaseDataDict = kwargs.get(GC.KWARGS_DATA)
         self.timing: Timing = kwargs.get(GC.KWARGS_TIMING)
         self.timingName = self.timing.takeTime(self.__class__.__name__, forceNew=True)
@@ -14,10 +14,12 @@ class TestStepMaster:
         self.apiSession = kwargs.get(GC.KWARGS_API_SESSION)
         self.testCaseStatus = None
         self.testStepNumber = kwargs.get(GC.STRUCTURE_TESTSTEP) # Set in TestRun by TestCaseMaster
+        self.testRunUtil = self.testRunInstance.testRunUtils
         # check, if this TestStep has additional Parameters and if so, execute
-        lSequence = self.testRun.getSequenceByNumber(kwargs.get(GC.STRUCTURE_TESTCASESEQUENCE))
-        lTestCase = self.testRun.getTestCaseByNumber(lSequence, kwargs.get(GC.STRUCTURE_TESTCASE))
-        lTestStep = self.testRun.getTestStepByNumber(lTestCase, kwargs.get(GC.STRUCTURE_TESTSTEP))
+        lSequence = self.testRunUtil.getSequenceByNumber(testRunName=self.testRunInstance.testRunName,
+                                                         sequence=kwargs.get(GC.STRUCTURE_TESTCASESEQUENCE))
+        lTestCase = self.testRunUtil.getTestCaseByNumber(lSequence, kwargs.get(GC.STRUCTURE_TESTCASE))
+        lTestStep = self.testRunUtil.getTestStepByNumber(lTestCase, kwargs.get(GC.STRUCTURE_TESTSTEP))
         self.ifActive = False
         self.ifIsTrue = True
 
