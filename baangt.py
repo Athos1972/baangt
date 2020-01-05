@@ -28,6 +28,7 @@ def print_args():
     print("""
 Call: python baangt.py --parameters 
        --run=<Existing, predefined Name of a TestRun (XLSX or .JSON-File incl. Path)>
+       --globals=<path to JSON-File containing global Settings. If omitted, will look for globals.json in the current directory>
 
  Suggested for standard use:
    python baangt.py --run="Franzi4711.xlsx": Will run a Testrun Franzi4711.xlsx
@@ -35,11 +36,16 @@ Call: python baangt.py --parameters
    """)
 
 def callTestrun():
-    if ".XLSX" in testRunFile.upper():
-        CustTestRun(testRunName=utils.sanitizeFileName(testRunFile))
-    if ".JSON" in testRunFile.upper():
-        CustTestRun(testRunName=utils.sanitizeFileName(testRunFile))
-        pass
+    if ".XLSX" in testRunFile.upper() or ".JSON" in testRunFile.upper():
+        CustTestRun(testRunName=utils.sanitizeFileName(testRunFile), globalSettingsFileNameAndPath = globalSettingsFileName)
+    else:
+        sys.exit(f"Unknown Filetype - should be XLSX or JSON: {testRunFile}")
+
+def getGlobalSettings():
+    lGlobals = args_read("globals")
+    if not lGlobals:
+        lGlobals = "globals.json"
+    return lGlobals
 
 
 print_args()
@@ -50,6 +56,7 @@ if testRunFile:
 else:
     sys.exit("Called without Testrun definition - exiting")
 
+globalSettingsFileName = getGlobalSettings()
 callTestrun()
 
 

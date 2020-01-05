@@ -1,6 +1,10 @@
 from datetime import datetime
 import baangt.base.GlobalConstants as GC
 import ntpath
+import logging
+import json
+
+logger = logging.getLogger("pyC")
 
 class utils:
     def __init__(self):
@@ -62,3 +66,11 @@ class utils:
                 item = utils._loopList(item)
             listOut.append(item)
         return listOut
+
+    @staticmethod
+    def openJson(fileNameAndPath):
+        logger.info(f"Reading Definition from {fileNameAndPath}")
+        data = None
+        with open(fileNameAndPath) as json_file:
+            data = json.load(json_file)
+        return data

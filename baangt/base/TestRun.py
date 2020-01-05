@@ -14,13 +14,14 @@ logger = logging.getLogger("pyC")
 
 
 class TestRun:
-    def __init__(self, testRunName):
-        # self.testRunAttributes = {}
+    def __init__(self, testRunName, globalSettingsFileNameAndPath=None):
         self.browser = {}
         self.apiInstance = None
         self.testType = None
         self.kwargs = {}
         self.dataRecords = {}
+        self.globalSettingsFileNameAndPath = globalSettingsFileNameAndPath
+        self.globalSettings = None
 
         self.testRunName, self.testRunFileName = TestRun._sanitizeTestRunNameAndFileName(testRunName)
         self.timing = Timing()
@@ -102,19 +103,21 @@ class TestRun:
         self.kwargs = kwargs
 
     def _initTestRun(self):
+        self.loadJSONGlobals()
         pass
+
+    def loadJSONGlobals(self):
+        if self.globalSettingsFileNameAndPath:
+            self.globalSettings = utils.openJson(self.globalSettingsFileNameAndPath)
 
     def _loadJSONTestRunDefinitions(self):
         if not self.testRunFileName:
             return
 
         if ".JSON" in self.testRunFileName.upper():
-            logger.info(f"Reading Definition from {self.testRunFileName}")
-            with open(self.testRunFileName) as json_file:
-                data = json.load(json_file)
-                data = utils.replaceAllGlobalConstantsInDict(data)
-                self.testRunUtils.setCompleteTestRunAttributes(testRunName=self.testRunName,
-                                                               testRunAttributes=data)
+            data = utils.replaceAllGlobalConstantsInDict(utils.openJson(self.testRunFileName))
+            self.testRunUtils.setCompleteTestRunAttributes(testRunName=self.testRunName,
+                                                           testRunAttributes=data)
 
     def _loadExcelTestRunDefinitions(self):
         if not self.testRunFileName:

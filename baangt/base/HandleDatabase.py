@@ -6,14 +6,15 @@ import baangt.base.GlobalConstants as GC
 
 logger = logging.getLogger("pyC")
 
+
 class HandleDatabase:
-    def __init__(self):
+    def __init__(self, globalSettings=None):
         self.lineNumber = 3
         self.globals = {
-            'base_url':'portal-fqa',
-            'user': '502266',
-            'password': 'R(r6ayhr7EP3',
-            'file_praemienauskunft': '/Users/bernhardbuhl/git/KatalonVIG/0testdateninput/Test_unterschrift_Beratungsprotokoll.pdf',
+            # 'base_url':'portal-fqa',
+            # 'user': '502266',
+            # 'password': 'R(r6ayhr7EP3',
+            # 'file_praemienauskunft': '/Users/bernhardbuhl/git/KatalonVIG/0testdateninput/Test_unterschrift_Beratungsprotokoll.pdf',
             CGC.CUST_TOASTS: "",
             CGC.CUST_TOASTS_ERROR: "",
             CGC.VIGOGFNUMMER: "",
@@ -22,6 +23,10 @@ class HandleDatabase:
             CGC.POLNRHOST: "",
             GC.TESTCASESTATUS: ""
         }
+        # FIXME: This is still not clean. GlobalSettings shouldn't be predefined in standard-Class
+        if globalSettings:
+            for setting, value in globalSettings.items():
+                self.globals[setting] = value
         self.df_json = None
 
     def read_excel(self, fileName, sheetName):

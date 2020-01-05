@@ -119,7 +119,7 @@ class TestCaseSequenceMaster:
 
     def __getDatabase(self):
         if not self.testdataDataBase:
-            self.testdataDataBase = HandleDatabase()
+            self.testdataDataBase = HandleDatabase(globalSettings=self.testRunInstance.globalSettings)
             self.testdataDataBase.read_excel(fileName=self.testSequenceData[GC.DATABASE_FILENAME],
                                              sheetName=self.testSequenceData[GC.DATABASE_SHEETNAME])
         return self.testdataDataBase
