@@ -214,14 +214,14 @@ class BrowserDriver:
                        class_name = None,
                        iframe = None,
                        timeout = 60):
-        critical_error = self.findBy(id = id,
+        wasSuccessful = self.findBy(id = id,
                     css = css,
                     xpath=xpath,
                     class_name = class_name,
                     iframe=iframe,
                     timeout=timeout)
 
-        if critical_error:
+        if not wasSuccessful:
             logger.debug("findBy didn't work in findByAndClick")
             return
 
