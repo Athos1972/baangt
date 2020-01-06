@@ -6,6 +6,7 @@ import json
 
 logger = logging.getLogger("pyC")
 
+
 class utils:
     def __init__(self):
         self.__perf_trace = {}
@@ -39,7 +40,7 @@ class utils:
         return value
 
     @staticmethod
-    def replaceAllGlobalConstantsInDict(lDict : dict):
+    def replaceAllGlobalConstantsInDict(lDict: dict):
         lDictOut = {}
         for key, value in lDict.items():
             lKey = utils.replaceFieldValueWithValueOfConstant(key)
@@ -60,9 +61,9 @@ class utils:
         for item in listIn:
             if isinstance(item, str):
                 item = utils.replaceFieldValueWithValueOfConstant(item)
-            elif isinstance(item,dict):
+            elif isinstance(item, dict):
                 item = utils.replaceAllGlobalConstantsInDict(item)
-            elif isinstance(item,list):
+            elif isinstance(item, list):
                 item = utils._loopList(item)
             listOut.append(item)
         return listOut

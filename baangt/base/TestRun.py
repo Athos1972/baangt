@@ -8,7 +8,6 @@ from baangt.base.TestRunExcelImporter import TestRunExcelImporter
 from baangt.base.TestRunUtils import TestRunUtils
 import logging
 import sys
-import json
 
 logger = logging.getLogger("pyC")
 

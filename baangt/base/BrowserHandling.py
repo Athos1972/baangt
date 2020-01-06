@@ -17,8 +17,8 @@ logger = logging.getLogger("pyC")
 
 class BrowserDriver:
     def __init__(self, timing=None):
-        self.driver : webdriver.Firefox = None
-        self.iframe = None
+        self.driver = None
+        self.iFrame = None
         self.element = None
         self.timeout = 2000   # Default Timeout in Milliseconds
         if timing:
@@ -112,7 +112,7 @@ class BrowserDriver:
             while time.time() < mustEnd:
                 try:
                     self.driver.switch_to.default_content()
-                    self.iframe = self.driver.switch_to.frame(iframe)
+                    self.iFrame = self.driver.switch_to.frame(iframe)
                     break
                 except WebDriverException as e:
                     self.__log(logging.DEBUG, f"IFrame {iframe} not there yet - waiting 1 second")
@@ -120,9 +120,9 @@ class BrowserDriver:
             if time.time() > mustEnd:
                 raise TimeoutError
 
-        elif self.iframe:
+        elif self.iFrame:
             self.driver.switch_to.default_content()
-            self.iframe = None
+            self.iFrame = None
         pass
 
     def handleWindow(self, windowNumber, function=None):

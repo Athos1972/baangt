@@ -13,7 +13,7 @@ class TestCaseSequenceMaster:
         self.name = None
         self.description = None
         self.timing : Timing = kwargs.get(GC.KWARGS_TIMING)
-        self.testdataDataBase: HandleDatabase = None
+        self.testdataDataBase = None
         self.testrunAttributes = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES)
         self.testRunInstance = kwargs.get(GC.KWARGS_TESTRUNINSTANCE)
         self.testRunName = self.testRunInstance.testRunName
