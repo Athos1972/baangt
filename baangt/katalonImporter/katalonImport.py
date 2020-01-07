@@ -227,25 +227,24 @@ from baangt.TestSteps.TestStepMaster import TestStepMaster
         header = header + f"class {classNameForHeader.split('/')[-1].replace('.tc', '')}(TestStepMaster):"
 
         header = header + """
-def __init__(self, **kwargs):
-    super().__init__(**kwargs)
-    self.execute()
-            
-def execute(self):
-        """
+\tdef __init__(self, **kwargs):
+\t\tsuper().__init__(**kwargs)
+\t\tself.execute()
+
+\tdef execute(self):"""
 
         self.addTabs()
         self.fileAsDOM = header + '\n' + self.fileAsDOM
 
     def addTabs(self):
         """
-        Add 1 Tab-Stop to each from Groovy converted Code-Line as this code runs under Method execute()
+        Add Tab-Stop to each from Groovy converted Code-Line as this code runs under Method execute()
         """
         self.fileAsDOM = self.fileAsDOM.replace("\n\n", "\n")
         l_lines = self.fileAsDOM.split("\n")
         result = ""
         for line in l_lines:
-            line = '\t' + line
+            line = '\t\t' + line
             result = result + '\n' + line
         self.fileAsDOM = result
 
@@ -318,8 +317,38 @@ def execute(self):
             l_string = l_string.replace("self.testcaseDataDict", "value=self.testcaseDataDict")
 
         l_string = translateGoovy._replaceGlobalVariable(l_string)
-
+        l_string = translateGoovy._replaceOtherStuff(l_string)
         return l_string
+
+    @staticmethod
+    def _replaceOtherStuff(stringIn):
+        if "self.browserSession.findByAndSetText(" in stringIn:
+            # in self.browserSession.findByAndSetText( after the xpath='value' there is a closing bracket before the value
+            # That must got and self.testcasedataDict must be preceeded with "value="
+            stringIn = stringIn.replace("self.testcaseDataDict", "value=self.testcaseDataDict")
+            stringIn = stringIn.replace("'), value=", "', value=")
+
+        if "self.browserSession.findWaitNotVisible" in stringIn:
+            # there's a timeout-value, that needs to be a parameter "timeout="
+            # formats:
+            #    <bla>,<blank><timeout>)
+            #    <bla>,<timeout>)
+
+            lFirst = stringIn.split(",")
+            lEnd = lFirst[-1]
+            lEnd = ", timeout = " + lEnd
+            stringIn = " ".join(lFirst[0:-1]) + lEnd
+            stringIn = stringIn.replace("), timeout =", ", timeout =")
+
+        # Fix space vs. tab in the file beginning
+        lengthDiffSpace = len(stringIn) - len(stringIn.lstrip(' '))
+        if lengthDiffSpace > 0:
+            if lengthDiffSpace >= 8:
+                stringIn = '\t\t' + stringIn.lstrip(' ')
+            elif lengthDiffSpace >= 4:
+                stringIn = '\t' + stringIn.lstrip(' ')
+        return stringIn
+
 
     @staticmethod
     def _replaceGlobalVariable(stringIn):
@@ -361,7 +390,6 @@ def execute(self):
             stringIn = translateGoovy._replaceLengthMethodGroovy(stringIn)
         if ".toLowerCase()" in stringIn:
             stringIn = stringIn.replace("toLowerCase()", "lower()")
-        print(stringIn.strip())
         return stringIn
         pass
 
