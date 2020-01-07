@@ -259,7 +259,7 @@ class BrowserDriver:
 
         while not wasSuccessful and elapsed < timeout:
             try:
-                driverWait = WebDriverWait(self.driver, 20, poll_frequency=0.5)
+                driverWait = WebDriverWait(self.driver, timeout/3, poll_frequency=0.5)
 
                 if id:
                     self.element = driverWait.until(ec.visibility_of_element_located((By.ID, id)))

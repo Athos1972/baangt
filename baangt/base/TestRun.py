@@ -20,7 +20,7 @@ class TestRun:
         self.kwargs = {}
         self.dataRecords = {}
         self.globalSettingsFileNameAndPath = globalSettingsFileNameAndPath
-        self.globalSettings = None
+        self.globalSettings = {}
 
         self.testRunName, self.testRunFileName = TestRun._sanitizeTestRunNameAndFileName(testRunName)
         self.timing = Timing()
@@ -32,8 +32,9 @@ class TestRun:
         self.tearDown()
 
     def tearDown(self):
-        for browserInstance in self.browser.keys():
-            self.browser[browserInstance].closeBrowser()
+        if not self.globalSettings.get("dontCloseBrowser"):
+            for browserInstance in self.browser.keys():
+                self.browser[browserInstance].closeBrowser()
 
         self.timing.takeTime(GC.TIMING_TESTRUN)
         self.timing.takeTimeSumOutput()

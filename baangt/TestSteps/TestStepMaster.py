@@ -6,6 +6,7 @@ import sys
 
 class TestStepMaster:
     def __init__(self, **kwargs):
+        self.kwargs = kwargs
         self.testRunInstance = kwargs.get(GC.KWARGS_TESTRUNINSTANCE)
         self.testcaseDataDict = kwargs.get(GC.KWARGS_DATA)
         self.timing: Timing = kwargs.get(GC.KWARGS_TIMING)
