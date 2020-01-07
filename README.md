@@ -10,9 +10,6 @@ Clone the repository: ``GIT CLONE https://gogs.earthsquad.global/baangt``
 Then fire up your favorite virtual environment, e.g. 
 `CONDA create baangt`, activate it, e.g. `CONDA activate baangt` and install the necessary requirements: `pip install -r Requirements.txt` and you're good to go.
 
-## Installation from DOCKER Hub:
-## Fire up your own Docker:
-
 #Usage:
 ###Preparation:
 You need a datafile (example: `DropsTestExample.xlsx) and a Testrun definition as Excel-Sheet (example `DropsTestRunDefinition.xlsx`). Alternatively provide the definition of the testrun as JSON.
@@ -28,7 +25,7 @@ from baangt.TestStep import TestStepMaster
 class myTestStep(TestStepMaster):
     def execute():
         self.driver.goToURL("http://www.google.com")
-        self.driver.findByAndSetText(xpath='//input[@type='text']', value='baangt')
+        self.driver.findByAndSetText(xpath='//input[@type="text"]', value='baangt')
         self.driver.findByAndClick(xpath='(//input[contains(@type,'submit')])[3]')
 
 ```
