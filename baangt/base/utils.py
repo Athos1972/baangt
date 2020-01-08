@@ -1,5 +1,6 @@
 from datetime import datetime
 import baangt.base.GlobalConstants as GC
+import baangt.base.CustGlobalConstants as CGC
 import ntpath
 import logging
 import json
@@ -35,8 +36,11 @@ class utils:
         If a String reference to global Constant (e.g. GC.BROWSER_FF) is
         given, this function will replace it with the actual value (e.g. FIREFOX)
         """
-        if value[0:3] == "GC.":
-            value = getattr(globals()[value.split(".")[0]], value.split(".")[1])
+        if value[0:3] == "GC." or value[0:4] == 'CGC.':
+            if value[0:3] == 'GC.':
+                value = getattr(globals()[value.split(".")[0]], value.split(".")[1])
+            elif value[0:4] == 'CGC.':
+                value = getattr(globals()[value.split(".")[0]], value.split(".")[1])
         return value
 
     @staticmethod

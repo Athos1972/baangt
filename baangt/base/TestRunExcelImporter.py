@@ -128,7 +128,7 @@ class TestRunExcelImporter:
         value = value.strip()
         value = utils.replaceFieldValueWithValueOfConstant(value)
 
-        if value[0:4] == "CGC.":
+        if value[0:5] == "CGC.":
             value = getattr(globals()[value.split(".")[0]], value.split(".")[1])
 
         return value

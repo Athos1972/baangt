@@ -303,16 +303,16 @@ class BrowserDriver:
                     self.element = driverWait.until(ec.visibility_of_element_located((By.XPATH, xpath)))
                 wasSuccessful = True
             except StaleElementReferenceException as e:
-                self._log(logging.DEBUG, "Stale Element Exception - retrying" + str(e))
+                self._log(logging.DEBUG, "Stale Element Exception - retrying " + str(e))
                 time.sleep(0.5)
             except ElementClickInterceptedException as e:
-                self._log(logging.DEBUG, "ElementClickIntercepted - retrying" + str(e))
+                self._log(logging.DEBUG, "ElementClickIntercepted - retrying " + str(e))
                 time.sleep(0.5)
             except TimeoutException as e:
-                self._log(logging.WARNING, "TimoutException - retrying" + str(e))
+                self._log(logging.WARNING, "TimoutException - retrying " + str(e))
                 time.sleep(0.5)
             except NoSuchElementException as e:
-                self._log(logging.WARNING, "Retrying Webdriver Exception:" + str(e))
+                self._log(logging.WARNING, "Retrying Webdriver Exception: " + str(e))
                 time.sleep(2)
             except InvalidSessionIdException as e:
                 self._log(logging.CRITICAL, "WebDriver Exception - terminating program: " + str(e))
@@ -321,7 +321,7 @@ class BrowserDriver:
                 self._log(logging.CRITICAL, "WebDriver Exception - terminating program: " + str(e))
                 raise Exceptions.baangtTestStepException
             except ElementNotInteractableException as e:
-                self._log(logging.DEBUG, "Most probably timeout exception - retrying:" + str(e))
+                self._log(logging.DEBUG, "Most probably timeout exception - retrying: " + str(e))
             except WebDriverException as e:
                 self._log(logging.ERROR, "Retrying WebDriver Exception: " + str(e))
                 time.sleep(2)
