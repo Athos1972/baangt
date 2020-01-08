@@ -265,6 +265,7 @@ from baangt.TestSteps.TestStepMaster import TestStepMaster
                                     "self.browserSession.findBy(xpath=")
         l_string = l_string.replace("if (", "if ")
         l_string = l_string.replace(" && ", " and ")
+        l_string = l_string.replacE(" || ", " or ")
         l_string = l_string.replace("else", "else:")
         l_string = l_string.replace("{", "")
         l_string = l_string.replace("}", "")
