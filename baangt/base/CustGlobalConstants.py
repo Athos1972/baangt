@@ -5,3 +5,5 @@ SAPPOLNR = "SAP Polizzennr"
 PRAEMIE = "Prämie"
 POLNRHOST = "PolNR Host"
 VERMITTLER = "vermittler"
+
+CLASSES_TESTCASE = "baangtVIG.CustTestCaseMaster"

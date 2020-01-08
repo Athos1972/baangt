@@ -41,8 +41,11 @@ class TestCaseMaster:
             logger.info(f"Testcase {self.kwargs.get(GC.STRUCTURE_TESTSTEP,'')} failed")
             self.kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
         finally:
-            self.kwargs[GC.KWARGS_DATA][GC.TIMELOG] = self.timing.returnTime()
-            self.timing.resetTime()
+            self._finalizeTestCase()
+
+    def _finalizeTestCase(self):
+        self.kwargs[GC.KWARGS_DATA][GC.TIMELOG] = self.timing.returnTime()
+        self.timing.resetTime()
 
     def tearDown(self):
         self.timing.takeTime(self.timingName)
