@@ -125,24 +125,6 @@ class TestCaseSequenceMaster:
                                              sheetName=self.testSequenceData[GC.DATABASE_SHEETNAME])
         return self.testdataDataBase
 
-    def finishTestCase(self, browserInstance=1, dataRecordNumber=None):
-        if not dataRecordNumber:
-            dataRecordNumber = self.recordCounter
-            logger.debug(f"DataRecordNumber = {dataRecordNumber}")
-        dataRecord = self.dataRecords[dataRecordNumber]
-        if not self.testRunInstance.apiInstance:
-            if len(dataRecord[GC.TIMING_DURATION]) == 0:
-                # This was a failed testcase - didn't reach the end. Still take overall time:
-                dataRecord[GC.TIMING_DURATION] = self.testRunInstance.browser[browserInstance].takeTime(
-                    "Testfall gesamt")
-            dataRecord[GC.TIMELOG] = self.testRunInstance.browser[browserInstance].returnTime()
-            self.testRunInstance.browser[browserInstance].takeTimeSumOutput()
-            self.testRunInstance.browser[browserInstance].resetTime()
-        else:
-            # FIXME: Auch für API-Tests brauchen wir eine Zeitaufzeichnung
-            pass
-        self.testRunInstance.setResult()
-
     def tearDown(self):
         self.timing.takeTime(self.timingName)
         pass
