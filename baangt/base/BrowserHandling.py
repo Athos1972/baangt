@@ -230,18 +230,9 @@ class BrowserDriver:
     def submit(self):
         self.element.submit()
 
-    def findByAndClick(self, id = None,
-                       css = None,
-                       xpath = None,
-                       class_name = None,
-                       iframe = None,
-                       timeout = 60):
-        wasSuccessful = self.findBy(id = id,
-                    css = css,
-                    xpath=xpath,
-                    class_name = class_name,
-                    iframe=iframe,
-                    timeout=timeout)
+    def findByAndClick(self, id = None, css=None, xpath=None, class_name=None, iframe=None, timeout=20):
+
+        wasSuccessful = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
 
         if not wasSuccessful:
             logger.debug("findBy didn't work in findByAndClick")
@@ -249,7 +240,7 @@ class BrowserDriver:
 
         self.__doSomething(GC.CMD_CLICK, xpath=xpath, timeout=timeout)
 
-    def findByAndClickIf(self, id = None, css = None, xpath = None, class_name = None, iframe = None, timeout = 60,
+    def findByAndClickIf(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=60,
                          value=None):
         if not value:
             return True
