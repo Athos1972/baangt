@@ -82,7 +82,7 @@ class BrowserDriver:
     def closeBrowser(self):
         self.driver.quit()
 
-    def __log(self, logType, logText, **kwargs):
+    def _log(self, logType, logText, **kwargs):
         argsString = ""
         for key,value in kwargs.items():
             if value:
@@ -103,7 +103,7 @@ class BrowserDriver:
             print(f"Unknown call to Logger: {logType}")
 
     def handleIframe(self, iframe = None):
-        self.__log(logging.DEBUG, "Going into Iframe: ", **{"iframe": iframe})
+        self._log(logging.DEBUG, "Going into Iframe: ", **{"iframe": iframe})
         """Give an IFRAME and it will try to go into.
         If you're inside an iframe it will go out of the iframe"""
         if iframe:
@@ -115,7 +115,7 @@ class BrowserDriver:
                     self.iFrame = self.driver.switch_to.frame(iframe)
                     break
                 except WebDriverException as e:
-                    self.__log(logging.DEBUG, f"IFrame {iframe} not there yet - waiting 1 second")
+                    self._log(logging.DEBUG, f"IFrame {iframe} not there yet - waiting 1 second")
                     time.sleep(1)
             if time.time() > mustEnd:
                 raise TimeoutError
@@ -125,10 +125,21 @@ class BrowserDriver:
             self.iFrame = None
         pass
 
-    def handleWindow(self, windowNumber, function=None):
-        if function == "close":
-            self.driver.close()
-            self.driver.switch_to.window(self.driver.window_handles[0])
+    def handleWindow(self, windowNumber=None, function=None):
+        if function:
+            if function.lower() == "close":
+                self.driver.close()
+                self.driver.switch_to.window(self.driver.window_handles[0])
+            elif "closeall" in function.lower():
+                exceptHandles = function.lower().replace("closeall", "")
+                exceptHandles = exceptHandles.replace("-", "")
+                # WindowHandles based on 0.. Value "let 2 windows open" means to close everything except 0 and 1:
+                exceptHandles = int(exceptHandles.strip()) - 1
+                totalWindows = len(self.driver.window_handles)
+                for windowHandle in self.driver.window_handles[-1:exceptHandles:-1]:
+                    self.driver.switch_to.window(windowHandle)
+                    self.driver.close()
+                self.driver.switch_to.window(self.driver.window_handles[exceptHandles])
         else:
             try:
                 self.driver.switch_to.window(self.driver.window_handles[windowNumber])
@@ -176,6 +187,17 @@ class BrowserDriver:
 
         self.__doSomething(GC.CMD_SETTEXT, value=value, timeout=timeout, xpath=xpath)
 
+    def findByAndSetTextIf(self, id = None, css = None, xpath = None, class_name = None, value = None, iframe = None,
+                           timeout = 60):
+        if not value:
+            return True
+
+        if len(value) == 0:
+            return
+
+        return self.findByAndSetText(id=id, css=css, xpath=xpath, class_name=class_name, value=value, iframe=iframe,
+                                     timeout=timeout)
+
     def findByAndSetTextValidated(self,id = None,
                        css = None,
                        xpath = None,
@@ -196,7 +218,7 @@ class BrowserDriver:
 
         while self.element.text != value and self.element.get_property("value") != value and tries < retries:
 
-            self.__log(logging.DEBUG, f"Verified trying of SetText - iteration {tries} of {retries}")
+            self._log(logging.DEBUG, f"Verified trying of SetText - iteration {tries} of {retries}")
 
             self.findByAndForceText(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe,
                                     value=value, timeout=timeout)
@@ -227,6 +249,16 @@ class BrowserDriver:
 
         self.__doSomething(GC.CMD_CLICK, xpath=xpath, timeout=timeout)
 
+    def findByAndClickIf(self, id = None, css = None, xpath = None, class_name = None, iframe = None, timeout = 60,
+                         value=None):
+        if not value:
+            return True
+
+        if len(value) == 0:
+            return True
+
+        return self.findByAndClick(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
+
     def findByAndForceText(self, id=None, css=None, xpath=None, class_name=None, value=None,
                            iframe=None, timeout=60):
 
@@ -240,7 +272,7 @@ class BrowserDriver:
             self.handleIframe(iframe)
 
         if loggingOn:
-            self.__log(logging.DEBUG, "Locating Element", **{'id':id, 'css':css, 'xpath':xpath, 'class_name':class_name, 'iframe':iframe})
+            self._log(logging.DEBUG, "Locating Element", **{'id':id, 'css':css, 'xpath':xpath, 'class_name':class_name, 'iframe':iframe})
 
         return self.__tryAndRetry(id, css, xpath, class_name, timeout=timeout)
 
@@ -271,25 +303,27 @@ class BrowserDriver:
                     self.element = driverWait.until(ec.visibility_of_element_located((By.XPATH, xpath)))
                 wasSuccessful = True
             except StaleElementReferenceException as e:
-                self.__log(logging.DEBUG, "Stale Element Exception - retrying")
+                self._log(logging.DEBUG, "Stale Element Exception - retrying" + str(e))
                 time.sleep(0.5)
             except ElementClickInterceptedException as e:
-                self.__log(logging.DEBUG, "ElementClickIntercepted - retrying")
+                self._log(logging.DEBUG, "ElementClickIntercepted - retrying" + str(e))
                 time.sleep(0.5)
             except TimeoutException as e:
-                self.__log(logging.WARNING, "TimoutException - retrying")
+                self._log(logging.WARNING, "TimoutException - retrying" + str(e))
                 time.sleep(0.5)
             except NoSuchElementException as e:
-                self.__log(logging.WARNING, "Retrying Webdriver Exception:" + str(e))
+                self._log(logging.WARNING, "Retrying Webdriver Exception:" + str(e))
                 time.sleep(2)
             except InvalidSessionIdException as e:
-                self.__log(logging.CRITICAL, "WebDriver Exception - terminating program: " + str(e))
+                self._log(logging.CRITICAL, "WebDriver Exception - terminating program: " + str(e))
                 raise Exceptions.baangtTestStepException
             except NoSuchWindowException as e:
-                self.__log(logging.CRITICAL, "WebDriver Exception - terminating program: " + str(e))
+                self._log(logging.CRITICAL, "WebDriver Exception - terminating program: " + str(e))
                 raise Exceptions.baangtTestStepException
+            except ElementNotInteractableException as e:
+                self._log(logging.DEBUG, "Most probably timeout exception - retrying:" + str(e))
             except WebDriverException as e:
-                self.__log(logging.ERROR, "Retrying WebDriver Exception: " + str(e))
+                self._log(logging.ERROR, "Retrying WebDriver Exception: " + str(e))
                 time.sleep(2)
 
             elapsed = time.time() - begin
@@ -297,7 +331,7 @@ class BrowserDriver:
         return wasSuccessful
 
     def findWaitNotVisible(self, xpath, timeout = 90):
-        self.__log(logging.DEBUG, "Waiting for Element to disappear", **{"xpath":xpath, "timeout":timeout})
+        self._log(logging.DEBUG, "Waiting for Element to disappear", **{"xpath":xpath, "timeout":timeout})
         time.sleep(0.5)
 
         stillHere = True
@@ -313,7 +347,7 @@ class BrowserDriver:
             except Exception as e:
                 # Element gone - exit
                 stillHere = False
-        self.__log(logging.DEBUG, f"Element was gone after {format(elapsed, '.2f')} seconds")
+        self._log(logging.DEBUG, f"Element was gone after {format(elapsed, '.2f')} seconds")
 
     @staticmethod
     def sleep(sleepTimeinSeconds):
@@ -326,7 +360,7 @@ class BrowserDriver:
 
         while not didWork and elapsed < timeout:
             try:
-                self.__log(logging.DEBUG, f"Do_something {command} with {value}")
+                self._log(logging.DEBUG, f"Do_something {command} with {value}")
                 if command.upper() == GC.CMD_SETTEXT:
                     self.element.send_keys(value)
                 elif command.upper() == GC.CMD_CLICK:
@@ -339,26 +373,29 @@ class BrowserDriver:
                 didWork = True
                 return
             except ElementClickInterceptedException as e:
-                self.__log(logging.DEBUG, "doSomething: Element intercepted - retry")
+                self._log(logging.DEBUG, "doSomething: Element intercepted - retry")
                 time.sleep(0.2)
             except StaleElementReferenceException as e:
-                self.__log(logging.DEBUG, "doSomething: Element stale - retry")
+                self._log(logging.DEBUG, "doSomething: Element stale - retry")
                 time.sleep(0.2)
             except NoSuchElementException as e:
-                self.__log(logging.DEBUG, "doSomething: Element not there yet - retry")
+                self._log(logging.DEBUG, "doSomething: Element not there yet - retry")
                 time.sleep(0.5)
             except InvalidSessionIdException as e:
-                self.__log(logging.ERROR, f"Invalid Session ID Exception caught - aborting... {e} ")
-                raise Exceptions.baangtTestStepException
+                self._log(logging.ERROR, f"Invalid Session ID Exception caught - aborting... {e} ")
+                raise Exceptions.baangtTestStepException(e)
+            except ElementNotInteractableException as e:
+                self._log(logging.ERROR, f"Element not interactable {e}")
+                raise Exceptions.baangtTestStepException(e)
             elapsed = time.time()-begin
         raise Exceptions.baangtTestStepException(f"Action not possible after {timeout} s")
 
     def goToUrl(self, url):
-        self.__log(logging.INFO, f'GoToUrl:{url}')
+        self._log(logging.INFO, f'GoToUrl:{url}')
         try:
             self.driver.get(url)
         except WebDriverException as e:
-            self.__log(logging.ERROR, f"Webpage {url} not reached. Error was: {e}")
+            self._log(logging.ERROR, f"Webpage {url} not reached. Error was: {e}")
             raise Exceptions.baangtTestStepException
         pass
 

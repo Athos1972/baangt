@@ -31,5 +31,26 @@ class myTestStep(TestStepMaster):
 ```
  That's it. All the rest is taken care of by baangt. You'll also receive a nice export file showing timing information for your TestCase.
 
+##Browser related knowledge
+###Setting, which browser to start
+* Method 1:
+Set the browser in the Testrun Definition (either in XLSX in Tab `TestCase` in the column `Browser` or in JSON:
+
+```
+  "dontCloseBrowser": "True",
+  "TC.Browser": "CHROME"
+``` 
+)
+
+* Method 2:
+Set the browser in the `globals.json` file to overwrite any settings of the testrun definition.
+```
+  "dontCloseBrowser": "True",
+  "TC.Browser": "CHROME"
+``` 
+Then call baangt.py as usual:
+
+`python baangt.py --run="someRunNameXLSXorJSON" --globals='mynewGlobals.json'`
+
 #Further reading:
 Please see latest news on http://baangt.org for community edition and http://baangt.com for corporate environments

@@ -51,7 +51,8 @@ class TestCaseSequenceMaster:
         # Processes
         browserInstances = {}
         for n in range(0, parallelInstances):
-            # fixme: Browser should come from Testcase - not hardcoded
+            # fixme: Browser should come from Testcase - not hardcoded. It's not that easy, as we might have many
+            # fixme: Testcases, some Browser, some API and we might even have different browsers. This is for much later
             browserInstances[n] = self.testRunInstance.getBrowser(browserInstance=n, browserName=GC.BROWSER_FIREFOX)
 
         processes = {}

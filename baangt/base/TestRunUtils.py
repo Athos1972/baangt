@@ -1,4 +1,7 @@
 import baangt.base.GlobalConstants as GC
+import logging
+
+logger = logging.getLogger("pyC")
 
 class TestRunUtils():
     def __init__(self):
@@ -18,3 +21,27 @@ class TestRunUtils():
 
     def getTestStepByNumber(self, testCase, testStepNumber):
         return testCase[2][GC.STRUCTURE_TESTSTEP].get(testStepNumber)
+
+    def replaceGlobals(self, globals):
+        """
+        Will go through all testcase-Settings and replace values with values from global settings, if matched
+        """
+        for key, value in globals.items():
+            if not "TC." in key[0:3]:
+                continue
+            self.testRunAttributes = TestRunUtils._recursive_replace(self.testRunAttributes, key.replace("TC.",""), value)
+
+    @staticmethod
+    def _recursive_replace(dictToBeReplaced, lKey, lValue):
+        if isinstance(dictToBeReplaced, list):
+            for entry in dictToBeReplaced:
+                TestRunUtils._recursive_replace(entry, lKey, lValue)
+        elif isinstance(dictToBeReplaced, dict):
+            if lKey in dictToBeReplaced:
+                logger.info(f"Due to Globals replaced value {dictToBeReplaced[lKey]} of {lKey} with value {lValue}")
+                dictToBeReplaced[lKey] = lValue
+            for k,v in dictToBeReplaced.items():
+                TestRunUtils._recursive_replace(v, lKey, lValue)
+        else:
+            pass
+        return dictToBeReplaced

@@ -76,6 +76,7 @@ class TestRun:
         """
             Start TestcaseSequence
         """
+        self.testRunUtils.replaceGlobals(self.globalSettings)
         self.executeDictSequenceOfClasses(
             self.testRunUtils.getCompleteTestRunAttributes(self.testRunName)[GC.STRUCTURE_TESTCASESEQUENCE],
             counterName=GC.STRUCTURE_TESTCASESEQUENCE)
