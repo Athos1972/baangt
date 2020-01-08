@@ -33,14 +33,16 @@ class HandleDatabase:
 
     def readTestRecord(self, lineNumber=None):
         if lineNumber:
-            self.lineNumber = lineNumber
+            self.lineNumber = lineNumber - 1 # -1 for Header-File
         else:
             self.lineNumber += 1
 
         try:
+            record=None
             record = json.loads(
                 self.df_json["JSON"][self.lineNumber][1:-1])  # 1:-1 to remove leading and traling "]"
         except Exception as e:
+            logger.critical(f"Couldn't read record# {self.lineNumber}")
             return None
 
         self.globals[CGC.CUST_TOASTS] = ""

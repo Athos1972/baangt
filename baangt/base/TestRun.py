@@ -44,6 +44,22 @@ class TestRun:
 
         ExportResults(**self.kwargs)
 
+        successful, error = self.getSuccessAndError()
+        logger.info(f"Finished execution of Testrun {self.testRunName}. "
+                    f"{successful} Testcases successfully executed, {error} errors")
+        print(f"Finished execution of Testrun {self.testRunName}. "
+              f"{successful} Testcases successfully executed, {error} errors")
+
+    def getSuccessAndError(self):
+        lError = 0
+        lSuccess = 0
+        for value in self.dataRecords.values():
+            if value[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR:
+                lError += 1
+            elif value[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_SUCCESS:
+                lSuccess += 1
+        return lSuccess, lError
+
     def getAllTestRunAttributes(self):
         return self.testRunUtils.getCompleteTestRunAttributes(self.testRunName)
         # return self.testRunAttributes[self.testRunName][GC.KWARGS_TESTRUNATTRIBUTES]
@@ -89,6 +105,11 @@ class TestRun:
         if not kwargs.get(GC.KWARGS_TIMING):
             kwargs[GC.KWARGS_TIMING] = self.timing
         for key, value in dictSequenceOfClasses.items():
+            # If any of the previous steps set the testcase to "Error" - exit here.
+            if kwargs.get(GC.KWARGS_DATA):
+                if kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR:
+                    logger.info(f"TC is already in status Error - not processing step {counterName}: {key}, {value}")
+                    return
             logger.info(f"Starting {counterName}: {key}, {value} ")
             kwargs[counterName] = key
             if isinstance(value, list):

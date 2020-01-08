@@ -313,12 +313,12 @@ class BrowserDriver:
                 time.sleep(0.5)
             except NoSuchElementException as e:
                 self._log(logging.WARNING, "Retrying Webdriver Exception: " + str(e))
-                time.sleep(2)
+                time.sleep(0.5)
             except InvalidSessionIdException as e:
-                self._log(logging.CRITICAL, "WebDriver Exception - terminating program: " + str(e))
+                self._log(logging.CRITICAL, "WebDriver Exception - terminating testrun: " + str(e))
                 raise Exceptions.baangtTestStepException
             except NoSuchWindowException as e:
-                self._log(logging.CRITICAL, "WebDriver Exception - terminating program: " + str(e))
+                self._log(logging.CRITICAL, "WebDriver Exception - terminating testrun: " + str(e))
                 raise Exceptions.baangtTestStepException
             except ElementNotInteractableException as e:
                 self._log(logging.DEBUG, "Most probably timeout exception - retrying: " + str(e))
@@ -366,6 +366,7 @@ class BrowserDriver:
                 elif command.upper() == GC.CMD_CLICK:
                     self.element.click()
                 elif command.upper() == GC.CMD_FORCETEXT:
+                    self.element.clear()
                     for i in range(0, 10):
                         self.element.send_keys(keys.Keys.BACKSPACE)
                     time.sleep(0.1)
