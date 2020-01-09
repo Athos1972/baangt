@@ -10,6 +10,7 @@ from selenium.webdriver.common import keys
 from baangt.base import GlobalConstants as GC
 from baangt.base.Timing import Timing
 from baangt.TestSteps import Exceptions
+import uuid
 import time
 import logging
 
@@ -101,6 +102,23 @@ class BrowserDriver:
             logger.debug(logText + argsString)
         else:
             print(f"Unknown call to Logger: {logType}")
+
+    def takeScreenshot(self, screenShotPath=None):
+        driver = self.driver
+        # Filename must have ".png" inside
+        lFile = str(uuid.uuid4()) + ".png"
+
+        if screenShotPath:
+            lFile = screenShotPath + "/" + lFile
+        else:
+            lFile = os.getcwd() + "/" + lFile
+
+        try:
+            driver.save_screenshot(lFile)
+        except Exception as e:
+            raise Exceptions.baangtTestStepException(f"Screenshot not possible {e}")
+
+        return lFile
 
     def handleIframe(self, iframe = None):
         self._log(logging.DEBUG, "Going into Iframe: ", **{"iframe": iframe})

@@ -33,6 +33,7 @@ class TestCaseMaster:
         elif self.testCaseType == GC.KWARGS_API_SESSION:
             self.apiInstance = self.testRunInstance.getAPI()
         self.execute()
+        self.tearDown()
 
     def execute(self):
         try:
@@ -48,5 +49,10 @@ class TestCaseMaster:
         self.timing.resetTime()
 
     def tearDown(self):
+        if self.kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR:
+            # Try taking a Screenshot
+            if self.testCaseType == GC.KWARGS_BROWSER:
+                self.kwargs[GC.KWARGS_DATA][GC.SCREENSHOTS] = self.kwargs[GC.KWARGS_DATA][GC.SCREENSHOTS] + '\n' +\
+                                                              self.browser.takeScreenshot()
         self.timing.takeTime(self.timingName)
         pass

@@ -1,5 +1,6 @@
 import logging
 import pandas as pd
+import itertools
 import json
 import baangt.base.CustGlobalConstants as CGC
 import baangt.base.GlobalConstants as GC
@@ -19,9 +20,10 @@ class HandleDatabase:
             CGC.POLNRHOST: "",
             GC.TESTCASESTATUS: "",
             GC.TIMING_DURATION: "",
+            GC.SCREENSHOTS: "",
             GC.TIMELOG: ""
         }
-        # FIXME: This is still not clean. GlobalSettings shouldn't be predefined in standard-Class
+        # FIXME: This is still not clean. GlobalSettings shouldn't be predefined in CustomConstants-Class
         if globalSettings:
             for setting, value in globalSettings.items():
                 self.globals[setting] = value
@@ -41,6 +43,8 @@ class HandleDatabase:
             record=None
             record = json.loads(
                 self.df_json["JSON"][self.lineNumber][1:-1])  # 1:-1 to remove leading and traling "]"
+            logger.info(f"Starting with Testrecord {lineNumber}, Details: " +
+                        str({k: record[k] for k in list(record)[0:5]}))
         except Exception as e:
             logger.critical(f"Couldn't read record# {self.lineNumber}")
             return None
@@ -50,6 +54,7 @@ class HandleDatabase:
         self.globals[GC.TIMING_DURATION] = ""
         self.globals[GC.TIMELOG] = ""
         self.globals[GC.TESTCASESTATUS] = ""
+        self.globals[GC.SCREENSHOTS] = ""
 
         record.update(self.globals)
 

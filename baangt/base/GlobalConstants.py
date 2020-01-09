@@ -44,6 +44,7 @@ STRUCTURE_TESTSTEP = "TestStep"
 STRUCTURE_TESTSTEPEXECUTION = "TestStepExecutionParameters"
 
 EXECUTION_PARALLEL = "ParallelRuns"
+SCREENSHOTS = "Screenshots"
 
 EXPORT_FORMAT = "Export Format"
 EXP_FIELDLIST = "Fieldlist"
