@@ -323,6 +323,10 @@ from baangt.TestSteps.TestStepMaster import TestStepMaster
 
     @staticmethod
     def _replaceOtherStuff(stringIn):
+        if ".contains(" in stringIn:
+            # Syntax: "<space><bla>.contains('blabla')<space>
+            # fixme: not done yet. Implement...
+            pass
         if "self.browserSession.findByAndSetText(" in stringIn:
             # in self.browserSession.findByAndSetText( after the xpath='value' there is a closing bracket before the value
             # That must got and self.testcasedataDict must be preceeded with "value="
