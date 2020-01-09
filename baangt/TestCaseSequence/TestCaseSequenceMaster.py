@@ -65,8 +65,10 @@ class TestCaseSequenceMaster:
                 if self.dataRecords.get(n + x):
                     logger.debug(f"starting Process and Executions {x}. Value of n+x is {n + x}, "
                                  f"Record = {str(self.dataRecords[n + x])[0:50]}")
-                    #self.kwargs[GC.STRUCTURE_TESTCASESEQUENCE] = self.testSequenceData
                     self.kwargs[GC.KWARGS_DATA] = self.dataRecords[n+x]
+                    # Prints the first 5 fields of the data record into the log:
+                    logger.info(f"Starting parallel execution with TestRecord {n+x}, Details: " +
+                        str({k: self.kwargs[GC.KWARGS_DATA][k] for k in list(self.kwargs[GC.KWARGS_DATA])[0:5]}))
                     self.kwargs[GC.KWARGS_BROWSER] = browserInstances[x]
                     processes[x] = TestCaseSequenceParallel(sequenceNumber=x,
                                                             tcNumber=n + x,
@@ -101,6 +103,8 @@ class TestCaseSequenceMaster:
         for key, value in self.dataRecords.items():
             # self.kwargs[GC.STRUCTURE_TESTCASESEQUENCE] = self.testSequenceData
             self.kwargs[GC.KWARGS_DATA] = value
+            logger.info(f"Starting parallel execution with TestRecord {key}, Details: " +
+                        str({k: self.kwargs[GC.KWARGS_DATA][k] for k in list(self.kwargs[GC.KWARGS_DATA])[0:5]}))
             self.testRunInstance.executeDictSequenceOfClasses(self.testCases, GC.STRUCTURE_TESTCASE,
                                                               **self.kwargs)
             # Write Result back to TestRun for later saving in export format
