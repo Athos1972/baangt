@@ -275,7 +275,8 @@ class BrowserDriver:
 
         self.__doSomething(GC.CMD_FORCETEXT, value=value, timeout=timeout, xpath=xpath)
 
-    def findBy(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=60, loggingOn=True):
+    def findBy(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=60, loggingOn=True,
+               optional = False):
 
         if iframe:
             self.handleIframe(iframe)
@@ -283,7 +284,11 @@ class BrowserDriver:
         if loggingOn:
             self._log(logging.DEBUG, "Locating Element", **{'id':id, 'css':css, 'xpath':xpath, 'class_name':class_name, 'iframe':iframe})
 
-        return self.__tryAndRetry(id, css, xpath, class_name, timeout=timeout)
+        successful = self.__tryAndRetry(id, css, xpath, class_name, timeout=timeout)
+
+        if not successful and not optional:
+            raise Exceptions.baangtTestStepException(f"Element could not be found within timeout of {timeout}")
+        return successful
 
     def getURL(self):
         return self.driver.current_url
