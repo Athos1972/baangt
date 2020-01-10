@@ -121,9 +121,11 @@ class BrowserDriver:
         return lFile
 
     def handleIframe(self, iframe = None):
-        self._log(logging.DEBUG, "Going into Iframe: ", **{"iframe": iframe})
         """Give an IFRAME and it will try to go into.
         If you're inside an iframe it will go out of the iframe"""
+
+        self._log(logging.DEBUG, "Going into Iframe: ", **{"iframe": iframe})
+
         if iframe:
             # frame_to_be_availble_and_switch_to_it doesn't work.
             mustEnd = time.time() + 300
@@ -248,9 +250,10 @@ class BrowserDriver:
     def submit(self):
         self.element.submit()
 
-    def findByAndClick(self, id = None, css=None, xpath=None, class_name=None, iframe=None, timeout=20):
+    def findByAndClick(self, id = None, css=None, xpath=None, class_name=None, iframe=None, timeout=20, optional=False):
 
-        wasSuccessful = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
+        wasSuccessful = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout,
+                                    optional=optional)
 
         if not wasSuccessful:
             logger.debug("findBy didn't work in findByAndClick")
@@ -259,14 +262,15 @@ class BrowserDriver:
         self.__doSomething(GC.CMD_CLICK, xpath=xpath, timeout=timeout)
 
     def findByAndClickIf(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=60,
-                         value=None):
+                         value=None, optional=False):
         if not value:
             return True
 
         if len(value) == 0:
             return True
 
-        return self.findByAndClick(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
+        return self.findByAndClick(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout,
+                                   optional=optional)
 
     def findByAndForceText(self, id=None, css=None, xpath=None, class_name=None, value=None,
                            iframe=None, timeout=60):
@@ -353,7 +357,6 @@ class BrowserDriver:
         begin = time.time()
 
         while stillHere and elapsed < timeout:
-            # self.CustomHandleZipkin()
             try:
                 self.element = self.driver.find_element_by_xpath(xpath)
                 time.sleep(0.1)
