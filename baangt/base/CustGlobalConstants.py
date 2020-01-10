@@ -1,5 +1,5 @@
 CUST_TOASTS = "Toasts"
-CUST_TOASTS_ERROR = "ToastsError"
+# CUST_TOASTS_ERROR = "ToastsError" --> Replaced by GC.TESTCASEERRORLOG
 VIGOGFNUMMER = "VIGOGF#"
 SAPPOLNR = "SAP Polizzennr"
 PRAEMIE = "Prämie"

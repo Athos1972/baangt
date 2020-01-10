@@ -276,7 +276,7 @@ class BrowserDriver:
         self.__doSomething(GC.CMD_FORCETEXT, value=value, timeout=timeout, xpath=xpath)
 
     def findBy(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=60, loggingOn=True,
-               optional = False):
+               optional=False):
 
         if iframe:
             self.handleIframe(iframe)

@@ -40,6 +40,7 @@ class TestCaseMaster:
             self.testRunInstance.executeDictSequenceOfClasses(self.testSteps, GC.STRUCTURE_TESTSTEP, **self.kwargs)
         except baangtTestStepException as e:
             logger.info(f"Testcase {self.kwargs.get(GC.STRUCTURE_TESTSTEP,'')} failed")
+            self.kwargs[GC.KWARGS_DATA][GC.TESTCASEERRORLOG] += '\n' + "Exception-Text: " + str(e)
             self.kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
         finally:
             self._finalizeTestCase()

@@ -13,7 +13,8 @@ class HandleDatabase:
         self.lineNumber = 3
         self.globals = {
             CGC.CUST_TOASTS: "",
-            CGC.CUST_TOASTS_ERROR: "",
+            GC.TESTCASEERRORLOG: "",
+            # CGC.CUST_TOASTS_ERROR: "", # Replaced by GC.TESTCASEERRORLOG
             CGC.VIGOGFNUMMER: "",
             CGC.SAPPOLNR: "",
             CGC.PRAEMIE: "",
@@ -50,7 +51,8 @@ class HandleDatabase:
             return None
 
         self.globals[CGC.CUST_TOASTS] = ""
-        self.globals[CGC.CUST_TOASTS_ERROR] = ""
+        self.globals[GC.TESTCASEERRORLOG] = ""
+        # self.globals[CGC.CUST_TOASTS_ERROR] = "" Replaced by GC.TESTCASEEROROG
         self.globals[GC.TIMING_DURATION] = ""
         self.globals[GC.TIMELOG] = ""
         self.globals[GC.TESTCASESTATUS] = ""
