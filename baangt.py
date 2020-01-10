@@ -1,6 +1,7 @@
 import getopt
 import sys
 from baangt.base.TestRun import TestRun
+from baangt.ui.ui import UI
 from baangtVIG.CustTestRun import CustTestRun
 from baangt.base.utils import utils
 
@@ -59,11 +60,10 @@ print_args()
 testRunFile=args_read("run")
 if testRunFile:
     print(f"Starting Testrun: {testRunFile}")
+    globalSettingsFileName = getGlobalSettings()
+    callTestrun()
 else:
-    sys.exit("Called without Testrun definition - exiting")
-
-globalSettingsFileName = getGlobalSettings()
-callTestrun()
+    UI()
 
 
 

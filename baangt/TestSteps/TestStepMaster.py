@@ -118,7 +118,7 @@ class TestStepMaster:
                 self.testcaseDataDict = GC.TESTCASESTATUS_ERROR
             else:
                 sys.exit("No idea, what happened here. Unknown condition appeared")
-        self.timing.takeTime(self.timingName)
+        self.timing.takeTime(self.timingName) # Why does this not work?
 
     def replaceVariables(self, expression):
         if not "$(" in expression:

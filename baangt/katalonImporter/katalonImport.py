@@ -271,6 +271,7 @@ from baangt.TestSteps.TestStepMaster import TestStepMaster
         l_string = l_string.replace("}", "")
         l_string = l_string.replace("))", ")")
         l_string = l_string.replace(".toString()","")
+        l_string = l_string.replace(".trim()", ".strip()")
 
         if "WebUI.waitForElementClickable" in l_string:
             l_string = ""
@@ -344,6 +345,8 @@ from baangt.TestSteps.TestStepMaster import TestStepMaster
             lEnd = ", timeout = " + lEnd
             stringIn = " ".join(lFirst[0:-1]) + lEnd
             stringIn = stringIn.replace("), timeout =", ", timeout =")
+
+        stringIn = stringIn.replace("else: if", "elif")
 
         # Fix space vs. tab in the file beginning
         lengthDiffSpace = len(stringIn) - len(stringIn.lstrip(' '))
