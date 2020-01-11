@@ -126,13 +126,11 @@ class BrowserDriver:
 
         return lFile
 
-    def handleIframe(self, iframe = None):
+    def handleIframe(self, iframe=None):
         """Give an IFRAME and it will try to go into.
         If you're inside an iframe it will go out of the iframe"""
-
-        self._log(logging.DEBUG, "Going into Iframe: ", **{"iframe": iframe})
-
         if iframe:
+            self._log(logging.DEBUG, "Going into Iframe: ", **{"iframe": iframe})
             # frame_to_be_availble_and_switch_to_it doesn't work.
             mustEnd = time.time() + 300
             while time.time() < mustEnd:
@@ -147,6 +145,7 @@ class BrowserDriver:
                 raise TimeoutError
 
         elif self.iFrame:
+            self._log(logging.DEBUG, f"Leaving Iframe: {self.iFrame}")
             self.driver.switch_to.default_content()
             self.iFrame = None
         pass

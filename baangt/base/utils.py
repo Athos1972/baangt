@@ -38,7 +38,10 @@ class utils:
         """
         if value[0:3] == "GC." or value[0:4] == 'CGC.':
             if value[0:3] == 'GC.':
-                value = getattr(globals()[value.split(".")[0]], value.split(".")[1])
+                try:
+                    value = getattr(globals()[value.split(".")[0]], value.split(".")[1])
+                except Exception as e:
+                    logger.warning(f"Referenced variable doesn't exist: {value}")
             elif value[0:4] == 'CGC.':
                 value = getattr(globals()[value.split(".")[0]], value.split(".")[1])
         return value

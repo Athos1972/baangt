@@ -16,6 +16,10 @@ class ExportResults:
         self.worksheet = self.workbook.add_worksheet("Output")
         self.dataRecords = kwargs.get(GC.KWARGS_TESTRUNINSTANCE).dataRecords
         self.fieldListExport = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.EXPORT_FORMAT)["Fieldlist"]
+        self.cellFormatGreen = self.workbook.add_format()
+        self.cellFormatGreen.set_bg_color('green')
+        self.cellFormatRed = self.workbook.add_format()
+        self.cellFormatRed.set_bg_color('red')
         self.__setHeader()
         self._exportData()
         self.closeExcel()
@@ -49,7 +53,13 @@ class ExportResults:
             if isinstance(testRecordDict[fieldName], dict) or isinstance(testRecordDict[fieldName], list):
                 self.worksheet.write(line, cellNumber, testRecordDict[fieldName].strip())
             else:
-                self.worksheet.write(line, cellNumber, testRecordDict[fieldName])
+                if fieldName == GC.TESTCASESTATUS:
+                    if testRecordDict[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_SUCCESS:
+                        self.worksheet.write(line, cellNumber, testRecordDict[fieldName], self.cellFormatGreen)
+                    elif testRecordDict[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR:
+                        self.worksheet.write(line, cellNumber, testRecordDict[fieldName], self.cellFormatRed)
+                else:
+                    self.worksheet.write(line, cellNumber, testRecordDict[fieldName])
 
     def closeExcel(self):
         self.workbook.close()

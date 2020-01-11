@@ -4,3 +4,4 @@
 /dist
 /baangt/logs
 geckodriver.log
+*.png
