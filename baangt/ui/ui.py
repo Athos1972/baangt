@@ -6,6 +6,7 @@ import configparser
 import baangt.base.GlobalConstants as GC
 from baangt.base.utils import utils
 import logging
+import json
 
 logger = logging.getLogger("pyC")
 
@@ -45,7 +46,7 @@ class UI:
             for key, value in self.configContents.items():
                 lLayout.append([sg.In(key, key="-attrib-" + key, size=(25,1)), sg.In(key="-val-"+key, size=(30,1), default_text=value)])
             for i in range(0,4):
-                lLayout.append([sg.In(key=f"-newField{i}", size=(25,1)), sg.In(key=f"-newValue{i}", size=(30,1))])
+                lLayout.append([sg.In(key=f"-newField-{i}", size=(25,1)), sg.In(key=f"-newValue-{i}", size=(30,1))])
             lLayout.append([sg.Button('Save'), sg.Button('Exit'), sg.Button("Execute TestRun")])
         else:
             lLayout.append([sg.Button('Exit')])
@@ -86,6 +87,11 @@ class UI:
             if lEvent == 'Save':
                 # receive updated fields and values to store in JSON-File
                 self.modifyValuesOfConfigFileInMemory(lValues)
+                self.saveContentsOfConfigFile()
+                lWindow.close()
+                self.window = sg.Window("Baangt interactive Starter", layout=self.getLayout())
+                lWindow = self.window
+                lWindow.finalize()
 
             if lEvent == "Execute TestRun":
                 self.runTestRun()
@@ -125,12 +131,41 @@ class UI:
     def readContentsOfGlobals(self):
         self.configContents = utils.openJson(self.directory + "/" + self.configFile)
 
-    def saveContentsOfGlobals(self):
-        pass
+    def saveContentsOfConfigFile(self):
+
+        x = sg.popup_ok_cancel(f"Would write this content: {self.configContents} \n to file: {self.configFile} in path {self.directory}")
+        print(x)
+
+        if x == 'OK':
+            with open(self.directory + "/" + self.configFile, 'w') as outfile:
+                json.dump(self.configContents, outfile)
+            sg.popup_ok(f"Wrote file {self.directory}/{self.configFile}")
 
     def modifyValuesOfConfigFileInMemory(self, lValues):
-
-        pass
+        for key, value in lValues.items():
+            if '-attrib-' in key:
+                # Existing field - update value from value
+                lSearchKey = key.replace("-attrib-","")
+                if lSearchKey != value:
+                    # an existing variable was changed to a new name. Delete the old one:
+                    self.configContents.pop(lSearchKey)
+                    lSearchKey = value
+                    lSearchVal = lValues['-val-'+key.replace("-attrib-","")]
+                else:
+                    lSearchVal = lValues['-val-'+lSearchKey]
+                if len(lSearchKey) > 0:
+                    self.configContents[lSearchKey] = lSearchVal
+            elif '-newField-' in key:
+                # New field needs to be added to memory:
+                lSearchKey = value # the new fieldname
+                if len(lSearchKey) > 0:
+                    lSearchVal = lValues['-newValue-'+key[-1]]
+                    self.configContents[lSearchKey] = lSearchVal
+            elif '-val-' in key or '-newValue-':
+                pass # Values have been used already above
+            else:
+                logger.critical(f"Program error. Received something with key {key}, value {value} and no "
+                                f"idea what to do with it")
 
     def saveInteractiveGuiConfig(self):
         config = configparser.ConfigParser()
