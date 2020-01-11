@@ -101,9 +101,8 @@ class TestCaseSequenceMaster:
     def execute(self):
         # Execute all Testcases:
         for key, value in self.dataRecords.items():
-            # self.kwargs[GC.STRUCTURE_TESTCASESEQUENCE] = self.testSequenceData
             self.kwargs[GC.KWARGS_DATA] = value
-            logger.info(f"Starting parallel execution with TestRecord {key}, Details: " +
+            logger.info(f"Starting execution with TestRecord {key}, Details: " +
                         str({k: self.kwargs[GC.KWARGS_DATA][k] for k in list(self.kwargs[GC.KWARGS_DATA])[0:5]}))
             self.testRunInstance.executeDictSequenceOfClasses(self.testCases, GC.STRUCTURE_TESTCASE,
                                                               **self.kwargs)

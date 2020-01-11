@@ -22,6 +22,8 @@ class BrowserDriver:
         self.iFrame = None
         self.element = None
         self.timeout = 2000   # Default Timeout in Milliseconds
+        self.locatorType = None
+        self.locator = None
         if timing:
             self.timing = timing
         else:
@@ -85,9 +87,12 @@ class BrowserDriver:
 
     def _log(self, logType, logText, **kwargs):
         argsString = ""
-        for key,value in kwargs.items():
+        for key, value in kwargs.items():
             if value:
                 argsString = argsString + f" {key}: {value}"
+
+        if self.locator:
+            argsString = argsString + f"Locator: {self.locatorType}:{self.locator}"
         # print(datetime.now(), logText, argsString)
 
         if logType == logging.ERROR:
@@ -115,6 +120,7 @@ class BrowserDriver:
 
         try:
             driver.save_screenshot(lFile)
+            self._log(logging.DEBUG, f"Stored Screenshot: {lFile}")
         except Exception as e:
             raise Exceptions.baangtTestStepException(f"Screenshot not possible {e}")
 
@@ -229,12 +235,7 @@ class BrowserDriver:
 
         tries = 0
 
-        self.findBy(id=id,
-                    css=css,
-                    xpath=xpath,
-                    class_name=class_name,
-                    iframe=iframe,
-                    timeout=timeout)
+        self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
 
         while self.element.text != value and self.element.get_property("value") != value and tries < retries:
 
@@ -257,9 +258,11 @@ class BrowserDriver:
 
         if not wasSuccessful:
             logger.debug("findBy didn't work in findByAndClick")
-            return
+            return wasSuccessful
 
         self.__doSomething(GC.CMD_CLICK, xpath=xpath, timeout=timeout)
+
+        return wasSuccessful
 
     def findByAndClickIf(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=60,
                          value=None, optional=False):
@@ -285,13 +288,27 @@ class BrowserDriver:
         if iframe:
             self.handleIframe(iframe)
 
+        # Set class variables for potential logging of problems.
+        if xpath:
+            self.locatorType = 'XPATH'
+            self.locator = xpath
+        elif css:
+            self.locatorType = 'CSS'
+            self.locator = css
+        elif class_name:
+            self.locatorType = 'ClassName'
+            self.locator = class_name
+        elif id:
+            self.locatorType = 'ID'
+            self.locator = id
+
         if loggingOn:
-            self._log(logging.DEBUG, "Locating Element", **{'id':id, 'css':css, 'xpath':xpath, 'class_name':class_name, 'iframe':iframe})
+            self._log(logging.DEBUG, f"Locating Element {self.locatorType}={self.locator}")
 
         successful = self.__tryAndRetry(id, css, xpath, class_name, timeout=timeout)
 
         if not successful and not optional:
-            raise Exceptions.baangtTestStepException(f"Element could not be found within timeout of {timeout}")
+            raise Exceptions.baangtTestStepException(f"Element {self.locatorType}={self.locator} could not be found within timeout of {timeout}")
         return successful
 
     def getURL(self):
