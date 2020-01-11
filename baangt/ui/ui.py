@@ -43,11 +43,12 @@ class UI:
         if self.configContents:
             lLayout.append([sg.Text("-"*10 + f"Settings of file {self.configFile}" + "-"*10)])
             for key, value in self.configContents.items():
-                lLayout.append([sg.Text(key, size=(25,1)), sg.In(key=key, size=(30,1), default_text=value)])
+                lLayout.append([sg.In(key, key="-attrib-" + key, size=(25,1)), sg.In(key="-val-"+key, size=(30,1), default_text=value)])
             for i in range(0,4):
-                lLayout.append([sg.In(key=f"newField{i}", size=(25,1)), sg.In(key=f"newValue{i}", size=(30,1))])
-
-        lLayout.append([sg.Button('Submit'), sg.Button('Exit'), sg.Button("Execute TestRun")])
+                lLayout.append([sg.In(key=f"-newField{i}", size=(25,1)), sg.In(key=f"-newValue{i}", size=(30,1))])
+            lLayout.append([sg.Button('Save'), sg.Button('Exit'), sg.Button("Execute TestRun")])
+        else:
+            lLayout.append([sg.Button('Exit')])
 
         return lLayout
 
@@ -70,6 +71,9 @@ class UI:
                 lWindow['testRunFile'].update(values=self.testRunFiles, value="")
                 lValues['configFile'] = ""
 
+            if lValues["testRunFile"]:
+                self.testRunFile = lValues["testRunFile"]
+
             if lValues["configFile"]:
                 if lValues["configFile"] != self.configFile:
                     self.configFile = lValues['configFile']
@@ -79,13 +83,14 @@ class UI:
                     lWindow = self.window
                     lWindow.finalize()
 
-            if lValues["testRunFile"]:
-                self.testRunFile = lValues["testRunFile"]
+            if lEvent == 'Save':
+                # receive updated fields and values to store in JSON-File
+                self.modifyValuesOfConfigFileInMemory(lValues)
 
             if lEvent == "Execute TestRun":
                 self.runTestRun()
 
-        self.saveConfig()
+        self.saveInteractiveGuiConfig()
 
     def runTestRun(self):
         if not self.configFile:
@@ -120,7 +125,14 @@ class UI:
     def readContentsOfGlobals(self):
         self.configContents = utils.openJson(self.directory + "/" + self.configFile)
 
-    def saveConfig(self):
+    def saveContentsOfGlobals(self):
+        pass
+
+    def modifyValuesOfConfigFileInMemory(self, lValues):
+
+        pass
+
+    def saveInteractiveGuiConfig(self):
         config = configparser.ConfigParser()
         config["DEFAULT"] = {"path": self.directory}
         with open("baangt.ini", "w") as configFile:
