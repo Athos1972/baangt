@@ -171,31 +171,29 @@ class BrowserDriver:
                 logger.critical(f"Tried to switch to Window {windowNumber} but it's not there")
                 raise Exceptions.baangtTestStepException(f"Window {windowNumber} doesn't exist")
 
-    def findByAndWaitForValue(self, id = None,
-                       css = None,
-                       xpath = None,
-                       class_name = None,
-                       iframe = None,
-                       timeout = 20):
+    def findByAndWaitForValue(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=20):
+
         start = time.time()
         found = False
         duration = 0
 
-        self.element = None
-        self.findBy(id=id, css=css, xpath=xpath, class_name=class_name,
-                    iframe=iframe)
-
         while not found and duration < timeout:
+            self.element = None
+            self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout / 3)
             try:
                 if len(self.element.text) > 0:
                     return self.element.text
             except Exception as e:
-                logger.debug(f"Exception during findByAndWaitForValue, but continuing {str(e)}")
+                logger.debug(f"Exception during findByAndWaitForValue, but continuing {str(e)}, "
+                             f"Locator: {self.locatorType}:{self.locator}")
                 pass
             time.sleep(0.5)
             duration = time.time() - start
 
-    def findByAndSetText(self, id = None, css=None, xpath=None, class_name=None, value=None, iframe=None,
+        logger.info(f"Couldn't find value for element {self.locatorType}:{self.locator}")
+        return None
+
+    def findByAndSetText(self, id=None, css=None, xpath=None, class_name=None, value=None, iframe=None,
                          timeout=60, optional=False):
         self.findBy(id=id,
                     css=css,

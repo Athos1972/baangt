@@ -27,7 +27,7 @@ class TestCaseSequenceMaster:
         self.kwargs = kwargs
         self.timingName = self.timing.takeTime(self.__class__.__name__,forceNew=True)
         self.prepareExecution()
-        if self.testSequenceData.get(GC.EXECUTION_PARALLEL, 0) > 1:
+        if int(self.testSequenceData.get(GC.EXECUTION_PARALLEL, 0)) > 1:
             self.execute_parallel(self.testSequenceData.get(GC.EXECUTION_PARALLEL, 0))
         else:
             self.execute()
@@ -49,13 +49,17 @@ class TestCaseSequenceMaster:
         # Usually the Testcases themselves would request Browser from Testrun
         # In this case we need to request them, because the Testcases will run in their own
         # Processes
+        parallelInstances = int(parallelInstances)
         browserInstances = {}
-        for n in range(0, parallelInstances):
+        for n in range(0, int(parallelInstances)):
             # fixme: Browser should come from Testcase - not hardcoded. It's not that easy, as we might have many
             # fixme: Testcases, some Browser, some API and we might even have different browsers. For now we'll only
             # fixme: take Browser from globals-file
             lBrowserName = self.testRunInstance.globalSettings.get("TC.Browser", GC.BROWSER_FIREFOX)
-            browserInstances[n] = self.testRunInstance.getBrowser(browserInstance=n, browserName=lBrowserName)
+            lBrowserAttributes = self.testRunInstance.globalSettings.get("TC." + GC.BROWSER_ATTRIBUTES, None)
+            browserInstances[n] = self.testRunInstance.getBrowser(browserInstance=n,
+                                                                  browserName=lBrowserName,
+                                                                  browserAttributes=lBrowserAttributes)
 
         processes = {}
         processExecutions = {}
