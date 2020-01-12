@@ -126,6 +126,9 @@ class UI:
                 self.testRunFiles.append(file)
             pass
 
+        self.configFiles = sorted(self.configFiles)
+        self.testRunFiles = sorted(self.testRunFiles)
+
         os.chdir(lcwd)
 
     def readContentsOfGlobals(self):
