@@ -21,7 +21,6 @@ class BrowserDriver:
         self.driver = None
         self.iFrame = None
         self.element = None
-        self.timeout = 2000   # Default Timeout in Milliseconds
         self.locatorType = None
         self.locator = None
         if timing:
@@ -30,7 +29,7 @@ class BrowserDriver:
             self.timing = Timing()
         self.takeTime = self.timing.takeTime
 
-    def createNewBrowser(self, browserName, desiredCapabilities=None, **kwargs):
+    def createNewBrowser(self, browserName=GC.BROWSER_FIREFOX, desiredCapabilities=None, **kwargs):
         self.takeTime("Browser Start")
         browserNames = {
             GC.BROWSER_FIREFOX: webdriver.Firefox,
@@ -207,8 +206,8 @@ class BrowserDriver:
 
         self.__doSomething(GC.CMD_SETTEXT, value=value, timeout=timeout, xpath=xpath, optional=optional)
 
-    def findByAndSetTextIf(self, id = None, css = None, xpath = None, class_name = None, value = None, iframe = None,
-                           timeout = 60):
+    def findByAndSetTextIf(self, id=None, css=None, xpath=None, class_name=None, value=None, iframe=None,
+                           timeout=60):
         if not value:
             return True
 
@@ -308,19 +307,21 @@ class BrowserDriver:
     def getURL(self):
         return self.driver.current_url
 
-    def __tryAndRetry(self, id = None,
-                      css = None,
-                      xpath = None,
-                      class_name = None,
-                      timeout = 20):
+    def __tryAndRetry(self, id=None, css=None, xpath=None, class_name=None, timeout=20):
 
         wasSuccessful = False
         begin = time.time()
         elapsed = 0
+        if timeout < 1.5:
+            pollFrequency = timeout / 3
+        else:
+            pollFrequency = 0.5
+
+        internalTimeout = timeout / 3
 
         while not wasSuccessful and elapsed < timeout:
             try:
-                driverWait = WebDriverWait(self.driver, timeout/3, poll_frequency=0.5)
+                driverWait = WebDriverWait(self.driver, timeout=internalTimeout, poll_frequency=pollFrequency)
 
                 if id:
                     self.element = driverWait.until(ec.visibility_of_element_located((By.ID, id)))
@@ -333,16 +334,16 @@ class BrowserDriver:
                 wasSuccessful = True
             except StaleElementReferenceException as e:
                 self._log(logging.DEBUG, "Stale Element Exception - retrying " + str(e))
-                time.sleep(0.5)
+                time.sleep(pollFrequency)
             except ElementClickInterceptedException as e:
                 self._log(logging.DEBUG, "ElementClickIntercepted - retrying " + str(e))
-                time.sleep(0.5)
+                time.sleep(pollFrequency)
             except TimeoutException as e:
                 self._log(logging.WARNING, "TimoutException - retrying " + str(e))
-                time.sleep(0.5)
+                time.sleep(pollFrequency)
             except NoSuchElementException as e:
                 self._log(logging.WARNING, "Retrying Webdriver Exception: " + str(e))
-                time.sleep(0.5)
+                time.sleep(pollFrequency)
             except InvalidSessionIdException as e:
                 self._log(logging.CRITICAL, "WebDriver Exception - terminating testrun: " + str(e))
                 raise Exceptions.baangtTestStepException
