@@ -196,13 +196,8 @@ class BrowserDriver:
             time.sleep(0.5)
             duration = time.time() - start
 
-    def findByAndSetText(self,id = None,
-                       css = None,
-                       xpath = None,
-                       class_name = None,
-                       value = None,
-                       iframe = None,
-                       timeout = 60):
+    def findByAndSetText(self, id = None, css=None, xpath=None, class_name=None, value=None, iframe=None,
+                         timeout=60, optional=False):
         self.findBy(id=id,
                     css=css,
                     xpath=xpath,
@@ -210,7 +205,7 @@ class BrowserDriver:
                     iframe=iframe,
                     timeout=timeout)
 
-        self.__doSomething(GC.CMD_SETTEXT, value=value, timeout=timeout, xpath=xpath)
+        self.__doSomething(GC.CMD_SETTEXT, value=value, timeout=timeout, xpath=xpath, optional=optional)
 
     def findByAndSetTextIf(self, id = None, css = None, xpath = None, class_name = None, value = None, iframe = None,
                            timeout = 60):
@@ -259,7 +254,7 @@ class BrowserDriver:
             logger.debug("findBy didn't work in findByAndClick")
             return wasSuccessful
 
-        self.__doSomething(GC.CMD_CLICK, xpath=xpath, timeout=timeout)
+        self.__doSomething(GC.CMD_CLICK, xpath=xpath, timeout=timeout, optional=optional)
 
         return wasSuccessful
 
@@ -275,11 +270,11 @@ class BrowserDriver:
                                    optional=optional)
 
     def findByAndForceText(self, id=None, css=None, xpath=None, class_name=None, value=None,
-                           iframe=None, timeout=60):
+                           iframe=None, timeout=60, optional=False):
 
         self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
 
-        self.__doSomething(GC.CMD_FORCETEXT, value=value, timeout=timeout, xpath=xpath)
+        self.__doSomething(GC.CMD_FORCETEXT, value=value, timeout=timeout, xpath=xpath, optional=optional)
 
     def findBy(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=60, loggingOn=True,
                optional=False):
@@ -386,7 +381,7 @@ class BrowserDriver:
     def sleep(sleepTimeinSeconds):
         time.sleep(sleepTimeinSeconds)
 
-    def __doSomething(self, command, value=None, timeout=20, xpath=None):
+    def __doSomething(self, command, value=None, timeout=20, xpath=None, optional=False):
         didWork = False
         elapsed = 0
         begin = time.time()
@@ -422,7 +417,11 @@ class BrowserDriver:
                 self._log(logging.ERROR, f"Element not interactable {e}")
                 raise Exceptions.baangtTestStepException(e)
             elapsed = time.time()-begin
-        raise Exceptions.baangtTestStepException(f"Action not possible after {timeout} s")
+
+        if optional:
+            logger.debug(f"Action not possible after {timeout} s, Locator: {self.locatorType}: {self.locator}, but flag 'optional' is set")
+        else:
+            raise Exceptions.baangtTestStepException(f"Action not possible after {timeout} s, Locator: {self.locatorType}: {self.locator}")
 
     def goToUrl(self, url):
         self._log(logging.INFO, f'GoToUrl:{url}')
