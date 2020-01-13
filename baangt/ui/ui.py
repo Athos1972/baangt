@@ -47,7 +47,7 @@ class UI:
                 lLayout.append([sg.In(key, key="-attrib-" + key, size=(25,1)), sg.In(key="-val-"+key, size=(30,1), default_text=value)])
             for i in range(0,4):
                 lLayout.append([sg.In(key=f"-newField-{i}", size=(25,1)), sg.In(key=f"-newValue-{i}", size=(30,1))])
-            lLayout.append([sg.Button('Save'), sg.Button('Exit'), sg.Button("Execute TestRun")])
+            lLayout.append([sg.Button('Save'), sg.Button("SaveAs"), sg.Button('Exit'), sg.Button("Execute TestRun")])
         else:
             lLayout.append([sg.Button('Exit')])
 
@@ -62,7 +62,6 @@ class UI:
 
         while True:
             lEvent, lValues = lWindow.read()
-            print(lValues.get("configFile"))
             if lEvent == "Exit":
                 break
             if lValues.get('-directory-') != self.directory:
@@ -85,18 +84,26 @@ class UI:
                     lWindow.finalize()
 
             if lEvent == 'Save':
-                # receive updated fields and values to store in JSON-File
-                self.modifyValuesOfConfigFileInMemory(lValues)
-                self.saveContentsOfConfigFile()
-                lWindow.close()
-                self.window = sg.Window("Baangt interactive Starter", layout=self.getLayout())
-                lWindow = self.window
-                lWindow.finalize()
+                self.saveConfigFileProcedure(lWindow, lValues)
+
+            if lEvent == 'SaveAs':
+                self.configFile = sg.popup_get_text("New Name of Configfile:")
+                if len(self.configFile) > 0:
+                    self.saveConfigFileProcedure(lWindow, lValues)
 
             if lEvent == "Execute TestRun":
                 self.runTestRun()
 
         self.saveInteractiveGuiConfig()
+
+    def saveConfigFileProcedure(self, lWindow, lValues):
+        # receive updated fields and values to store in JSON-File
+        self.modifyValuesOfConfigFileInMemory(lValues)
+        self.saveContentsOfConfigFile()
+        lWindow.close()
+        self.window = sg.Window("Baangt interactive Starter", layout=self.getLayout())
+        lWindow = self.window
+        lWindow.finalize()
 
     def runTestRun(self):
         if not self.configFile:
@@ -141,7 +148,7 @@ class UI:
 
         if x == 'OK':
             with open(self.directory + "/" + self.configFile, 'w') as outfile:
-                json.dump(self.configContents, outfile, ident=4)
+                json.dump(self.configContents, outfile, indent=4)
             sg.popup_ok(f"Wrote file {self.directory}/{self.configFile}")
 
     def modifyValuesOfConfigFileInMemory(self, lValues):
