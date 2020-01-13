@@ -93,6 +93,7 @@ class BrowserDriver:
         if desiredCapabilities.get(GC.BROWSER_MODE_HEADLESS):
             logger.debug("Starting in Headless mode")
             lOptions.headless = True
+            lOptions.add_argument("--window-size=1920,1080")
 
         return lOptions
 
@@ -111,8 +112,10 @@ class BrowserDriver:
 
         if logType == logging.ERROR:
             logger.error(logText + argsString)
+            self.takeScreenshot()
         elif logType == logging.WARN:
             logger.warning(logText + argsString)
+            self.takeScreenshot()
         elif logType == logging.INFO:
             logger.info(logText + argsString)
         elif logType == logging.CRITICAL:
