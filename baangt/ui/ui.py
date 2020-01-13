@@ -141,7 +141,7 @@ class UI:
 
         if x == 'OK':
             with open(self.directory + "/" + self.configFile, 'w') as outfile:
-                json.dump(self.configContents, outfile)
+                json.dump(self.configContents, outfile, ident=4)
             sg.popup_ok(f"Wrote file {self.directory}/{self.configFile}")
 
     def modifyValuesOfConfigFileInMemory(self, lValues):
