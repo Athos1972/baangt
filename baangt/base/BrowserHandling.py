@@ -13,6 +13,8 @@ from baangt.TestSteps import Exceptions
 import uuid
 import time
 import logging
+from pathlib import Path
+
 
 logger = logging.getLogger("pyC")
 
@@ -39,14 +41,21 @@ class BrowserDriver:
             GC.BROWSER_REMOTE: webdriver.Remote}
 
         if browserName in browserNames:
-            if browserName == GC.BROWSER_FIREFOX :
+            GeckoExecutable = "geckodriver"
+            ChromeExecutable = "chromedriver"
+
+            if 'NT' in os.name.upper():
+                GeckoExecutable = GeckoExecutable + ".exe"
+                ChromeExecutable = ChromeExecutable + ".exe"
+
+            if browserName == GC.BROWSER_FIREFOX:
                 self.driver = browserNames[browserName](options=self.__createOptions(browserName=browserName,
                                                                                      desiredCapabilities=desiredCapabilities),
-                                                        executable_path=self.__findBrowserDriverPaths()+'/geckodriver')
+                                                        executable_path=self.__findBrowserDriverPaths(GeckoExecutable))
             elif browserName == GC.BROWSER_CHROME:
                 self.driver = browserNames[browserName](options=self.__createOptions(browserName=browserName,
                                                                                      desiredCapabilities=desiredCapabilities),
-                                                        executable_path=self.__findBrowserDriverPaths()+'/chromedriver')
+                                                        executable_path=self.__findBrowserDriverPaths(ChromeExecutable))
             elif browserName == GC.BROWSER_REMOTE:
                 self.driver = browserNames[browserName](options=self.__createOptions(browserName=browserName,
                                                                                      desiredCapabilities=desiredCapabilities),
@@ -57,11 +66,12 @@ class BrowserDriver:
 
         self.takeTime("Browser Start")
 
-    def __findBrowserDriverPaths(self):
-        lCurPath = os.getcwd()
-        lCurPath = lCurPath.split("/baangt")[0]+"/baangt/browserDrivers/"
+    def __findBrowserDriverPaths(self, filename):
+        lCurPath = Path(os.getcwd())
+        lCurPath = lCurPath.joinpath("browserDrivers")
+        lCurPath = lCurPath.joinpath(filename)
 
-        return lCurPath
+        return str(lCurPath)
 
     def __createOptions(self, browserName, desiredCapabilities):
         if browserName == GC.BROWSER_CHROME:
@@ -114,11 +124,12 @@ class BrowserDriver:
         lFile = str(uuid.uuid4()) + ".png"
 
         if screenShotPath:
-            lFile = screenShotPath + "/" + lFile
+            lFile = Path(screenShotPath).joinpath(lFile)
         else:
-            lFile = os.getcwd() + "/" + lFile
+            lFile = Path(os.getcwd()).joinpath(lFile)
 
         try:
+            lFile = str(lFile)
             driver.save_screenshot(lFile)
             self._log(logging.DEBUG, f"Stored Screenshot: {lFile}")
         except Exception as e:

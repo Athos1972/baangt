@@ -4,6 +4,7 @@ import baangt.base.CustGlobalConstants as CGC
 import ntpath
 import logging
 import json
+from pathlib import Path
 
 logger = logging.getLogger("pyC")
 
@@ -79,6 +80,26 @@ class utils:
     def openJson(fileNameAndPath):
         logger.info(f"Reading Definition from {fileNameAndPath}")
         data = None
+        fileNameAndPath = utils.findFileAndPathFromPath(fileNameAndPath)
+
         with open(fileNameAndPath) as json_file:
             data = json.load(json_file)
         return data
+
+    @staticmethod
+    def findFileAndPathFromPath(fileNameAndPath):
+        lFileNameAndPath = fileNameAndPath
+
+        if not Path(lFileNameAndPath).exists():
+            if Path(lFileNameAndPath).expanduser().exists():
+                lFileNameAndPath = str(Path(lFileNameAndPath).expanduser())
+            elif len(Path(lFileNameAndPath).parents) == 0:
+                # This is only the filename. Try with current path and a bit up
+                if Path(utils.__file__).joinpath(lFileNameAndPath).exists:
+                    lFileNameAndPath = str(Path(utils.__file__).joinpath(lFileNameAndPath))
+                elif Path(utils.__file__).parent.joinpath(lFileNameAndPath).exists:
+                    lFileNameAndPath = str(Path(utils.__file__).parent.joinpath(lFileNameAndPath))
+                elif Path(utils.__file__).parent.parent.joinpath(lFileNameAndPath).exists:
+                    lFileNameAndPath = str(Path(utils.__file__).parent.parent.joinpath(lFileNameAndPath))
+
+        return lFileNameAndPath
