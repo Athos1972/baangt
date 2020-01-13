@@ -192,6 +192,7 @@ class UI:
             config.read("baangt.ini")
             self.directory = config["DEFAULT"]['path']
         except Exception as e:
+            self.directory = os.getcwd()
             pass
 
 

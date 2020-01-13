@@ -1,14 +1,17 @@
 import logging
-import os
 from datetime import datetime
+import pathlib
 
 # fixme: Parameter für Logfile should include stage and browser()
-logFilename = ("/".join(os.path.dirname(os.path.realpath(__file__)).split('/')[0:-1]) +
-                  "/logs/" +
-               datetime.now().strftime("%Y%m%d_%H%M%S") + '.log')
+logFilename:pathlib.Path = pathlib.Path(__file__)
+logFilename = logFilename.parent.parent
+logFilename = logFilename.joinpath('logs')
+pathlib.Path(logFilename).mkdir(parents=True, exist_ok=True)
+logFilename = logFilename.joinpath(datetime.now().strftime("%Y%m%d_%H%M%S") + '.log')
+
 print(f"Logfile verwendet: {logFilename}")
 
-# Bit more advanced logging:
+# Bit more advanced logging
 logger = logging.getLogger('pyC')
 logger.setLevel(logging.DEBUG)
 # create file handler which logs even debug messages

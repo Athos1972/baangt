@@ -3,8 +3,10 @@ import logging
 import json
 import baangt.base.GlobalConstants as GC
 from baangt.base.utils import utils
+from pathlib import Path
 
 logger = logging.getLogger("pyC")
+
 
 class ExportResults:
     def __init__(self, **kwargs):
@@ -14,7 +16,7 @@ class ExportResults:
         logger.info("Export-Sheet for results: " + self.filename)
         self.workbook = xlsxwriter.Workbook(self.filename)
         self.worksheet = self.workbook.add_worksheet("Output")
-        self.dataRecords = kwargs.get(GC.KWARGS_TESTRUNINSTANCE).dataRecords
+        self.dataRecords = self.testRunInstance.dataRecords
         self.fieldListExport = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.EXPORT_FORMAT)["Fieldlist"]
         self.cellFormatGreen = self.workbook.add_format()
         self.cellFormatGreen.set_bg_color('green')
@@ -34,12 +36,11 @@ class ExportResults:
         # Testrun-Name, Testrun-Parameters,
 
     def __getOutputFileName(self):
-        l_file = self.testRunInstance.globalSettings[GC.DATABASE_EXPORTFILENAMEANDPATH] + \
-                 "baangt_" + self.testRunName + "_" + \
-                 utils.datetime_return() + \
-                 ".xlsx"
-        logger.debug(f"Filename for export: {l_file}")
-        return l_file
+        l_file: Path = Path(self.testRunInstance.globalSettings[GC.DATABASE_EXPORTFILENAMEANDPATH])
+        l_file = l_file.expanduser()
+        l_file = l_file.joinpath("baangt_" + self.testRunName + "_" + utils.datetime_return() + ".xlsx")
+        logger.debug(f"Filename for export: {str(l_file)}")
+        return str(l_file)
 
     def __setHeader(self):
         i = 0

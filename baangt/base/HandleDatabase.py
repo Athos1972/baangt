@@ -4,6 +4,9 @@ import itertools
 import json
 import baangt.base.CustGlobalConstants as CGC
 import baangt.base.GlobalConstants as GC
+from baangt.base.utils import utils
+import baangt.TestSteps.Exceptions
+from pathlib import Path
 
 logger = logging.getLogger("pyC")
 
@@ -31,6 +34,7 @@ class HandleDatabase:
         self.df_json = None
 
     def read_excel(self, fileName, sheetName):
+        fileName = utils.findFileAndPathFromPath(fileName)
         df = pd.read_excel(fileName, sheet_name=sheetName)
         self.df_json = df[["JSON"]].copy()
 
