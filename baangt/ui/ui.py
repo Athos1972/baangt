@@ -78,21 +78,19 @@ class UI:
                 if lValues["configFile"] != self.configFile:
                     self.configFile = lValues['configFile']
                     self.readContentsOfGlobals()
-                    lWindow.close()
-                    self.window = sg.Window("Baangt interactive Starter", layout=self.getLayout())
-                    lWindow = self.window
-                    lWindow.finalize()
+                    lWindow = self.reopenWindow(lWindow)
 
             if lEvent == 'Save':
-                self.saveConfigFileProcedure(lWindow, lValues)
+                lWindow = self.saveConfigFileProcedure(lWindow, lValues)
 
             if lEvent == 'SaveAs':
                 self.configFile = sg.popup_get_text("New Name of Configfile:")
                 if len(self.configFile) > 0:
-                    self.saveConfigFileProcedure(lWindow, lValues)
+                    lWindow = self.saveConfigFileProcedure(lWindow, lValues)
 
             if lEvent == "Execute TestRun":
                 self.runTestRun()
+
 
         self.saveInteractiveGuiConfig()
 
@@ -100,10 +98,15 @@ class UI:
         # receive updated fields and values to store in JSON-File
         self.modifyValuesOfConfigFileInMemory(lValues)
         self.saveContentsOfConfigFile()
+        lWindow = self.reopenWindow(lWindow)
+        return lWindow
+
+    def reopenWindow(self, lWindow):
         lWindow.close()
         self.window = sg.Window("Baangt interactive Starter", layout=self.getLayout())
         lWindow = self.window
         lWindow.finalize()
+        return lWindow
 
     def runTestRun(self):
         if not self.configFile:
