@@ -13,6 +13,7 @@ from baangt.TestSteps import Exceptions
 import uuid
 import time
 import logging
+import json
 
 logger = logging.getLogger("pyC")
 
@@ -73,10 +74,15 @@ class BrowserDriver:
         if not desiredCapabilities:
             return None
 
+        # sometimes, instead of DICT comes a string with DICT-Format
+        if isinstance(desiredCapabilities, str) and "{" in desiredCapabilities and "}" in desiredCapabilities:
+            desiredCapabilities = json.loads(desiredCapabilities.replace("'", '"'))
+
         if not isinstance(desiredCapabilities, dict):
             return None
 
         if desiredCapabilities.get(GC.BROWSER_MODE_HEADLESS):
+            logger.debug("Starting in Headless mode")
             lOptions.headless = True
 
         return lOptions

@@ -21,8 +21,17 @@ class ExportResults:
         self.cellFormatRed = self.workbook.add_format()
         self.cellFormatRed.set_bg_color('red')
         self.__setHeader()
+        self.makeSummary()
+        self.exportResult()
+
+    def exportResult(self, **kwargs):
         self._exportData()
         self.closeExcel()
+
+    def makeSummary(self):
+        summarySheet = self.workbook.add_worksheet("Summary")
+        # Todo: Write Complete Duration, total Number of Testrecords, OK, failed, %,
+        # Testrun-Name, Testrun-Parameters,
 
     def __getOutputFileName(self):
         l_file = self.testRunInstance.globalSettings[GC.DATABASE_EXPORTFILENAMEANDPATH] + \
