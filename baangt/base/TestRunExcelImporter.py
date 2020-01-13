@@ -34,22 +34,55 @@ class TestRunExcelImporter:
         testRunAttributes = self.testRunUtils.testRunAttributes[self.fileName][GC.KWARGS_TESTRUNATTRIBUTES]
 
         xlsTab = self._getTab("TestRun")
-        testRunAttributes[GC.EXPORT_FORMAT] = {GC.EXPORT_FORMAT: self._getValueFromList(xlsTab=xlsTab,
-                                                                                        searchField=GC.EXPORT_FORMAT)}
+        if xlsTab:
+            testRunAttributes[GC.EXPORT_FORMAT] = \
+                {GC.EXPORT_FORMAT: self._getValueFromList(xlsTab=xlsTab,
+                                                          searchField=GC.EXPORT_FORMAT)}
+        else:
+            # Default Value
+            testRunAttributes[GC.EXPORT_FORMAT] = {GC.EXPORT_FORMAT: GC.EXP_XLSX}
+
         xlsTab = self._getTab("ExportFieldList")
-        testRunAttributes[GC.EXPORT_FORMAT][GC.EXP_FIELDLIST] = self._getRowAsList(xlsTab)
+        if xlsTab:
+            testRunAttributes[GC.EXPORT_FORMAT][GC.EXP_FIELDLIST] = self._getRowAsList(xlsTab)
+        else:
+            # Default Value
+            testRunAttributes[GC.EXPORT_FORMAT][GC.EXP_FIELDLIST] = [GC.TESTCASESTATUS,
+                                                                     GC.TIMING_DURATION,
+                                                                     GC.TIMELOG]
 
         testRunAttributes[GC.STRUCTURE_TESTCASESEQUENCE] = {}
         testrunSequence = testRunAttributes[GC.STRUCTURE_TESTCASESEQUENCE]
+
         xlsTab = self._getTab("TestCaseSequence")
-        lSequenceDict = self.getRowsWithHeadersAsDict(xlsTab=xlsTab)
+        if xlsTab:
+            lSequenceDict = self.getRowsWithHeadersAsDict(xlsTab=xlsTab)
+        else:
+            lSequenceDict = {1:
+                {
+                "SequenceClass": GC.CLASSES_TESTCASESEQUENCE,
+                "TestDataFile": "",
+                "Sheetname": "",
+                "ParallelRuns": 1,
+                "FromLine": 0,
+                "ToLine": 999999
+                },
+            }
         for key, sequence in lSequenceDict.items():
             testrunSequence[key] = [sequence["SequenceClass"], {}]
             for field, value in sequence.items():
                 testRunAttributes[GC.STRUCTURE_TESTCASESEQUENCE][key][1][field] = value
 
+
         xlsTab = self._getTab("TestCase")
-        lTestCaseDict = self.getRowsWithHeadersAsDict(xlsTab=xlsTab)
+        if xlsTab:
+            lTestCaseDict = self.getRowsWithHeadersAsDict(xlsTab=xlsTab)
+        else:
+            lTestCaseDict = {1: {"TestCaseSequenceNumber": 1,
+                             "TestCaseNumber": 1,
+                             "TestCaseType": GC.KWARGS_BROWSER,
+                             GC.KWARGS_BROWSER: GC.BROWSER_FIREFOX,
+                             GC.BROWSER_ATTRIBUTES: ""}}
         for key, testCase in lTestCaseDict.items():
             testSequenceRoot = testrunSequence[testCase["TestCaseSequenceNumber"]][1]
             testSequenceRoot[GC.STRUCTURE_TESTCASE] = {testCase["TestCaseNumber"]: []}
@@ -61,7 +94,13 @@ class TestRunExcelImporter:
                  })
 
         xlsTab = self._getTab("TestStep")
-        lStepDict = self.getRowsWithHeadersAsDict(xlsTab=xlsTab)
+        if xlsTab:
+            lStepDict = self.getRowsWithHeadersAsDict(xlsTab=xlsTab)
+        else:
+            lStepDict = {"TestCaseSequenceNumber": 1,
+                         "TestCaseNumber": 1,
+                         "TestStepNumber": 1,
+                         "TestStepClass": 'baangt.TestSteps.TestStepMaster'}
         for key, testStep in lStepDict.items():
             testStepRoot = testrunSequence[testStep["TestCaseSequenceNumber"]][1]
             testStepRoot = testStepRoot[GC.STRUCTURE_TESTCASE][testStep["TestCaseNumber"]]
@@ -71,22 +110,23 @@ class TestRunExcelImporter:
             testStepRoot = testStepRoot[2][GC.STRUCTURE_TESTSTEP]
             testStepRoot[testStep["TestStepNumber"]] = testStep["TestStepClass"]
 
+
         xlsTab = self._getTab("TestStepExecution")
         lExecDict = self.getRowsWithHeadersAsDict(xlsTab=xlsTab)
-        for key,execLine in lExecDict.items():
+        for key, execLine in lExecDict.items():
             lSequence = self.testRunUtils.getSequenceByNumber(testRunName=self.fileName,
-                                                              sequence=execLine["TestCaseSequenceNumber"])
+                                                              sequence=execLine.get("TestCaseSequenceNumber",1))
             lTestCase = self.testRunUtils.getTestCaseByNumber(sequence=lSequence,
-                                                              testcaseNumber=execLine["TestCaseNumber"])
+                                                              testcaseNumber=execLine.get("TestCaseNumber",1))
             lTestStep = self.testRunUtils.getTestStepByNumber(testCase=lTestCase,
-                                                              testStepNumber=execLine["TestStepNumber"])
+                                                              testStepNumber=execLine.get("TestStepNumber",1))
             # if this TestStep is still just a String, then it needs to be converted into a List with Dict
             # to hold the TestexecutionSteps in this Dict.
             if isinstance(lTestStep, str):
-                lTestCase[2][GC.STRUCTURE_TESTSTEP][execLine["TestStepNumber"]] = \
+                lTestCase[2][GC.STRUCTURE_TESTSTEP][execLine.get("TestStepNumber",1)] = \
                     [lTestStep, {GC.STRUCTURE_TESTSTEPEXECUTION: {}}]
                 lTestStep = self.testRunUtils.getTestStepByNumber(testCase=lTestCase,
-                                                                  testStepNumber=execLine["TestStepNumber"])
+                                                                  testStepNumber=execLine.get("TestStepNumber",1))
 
             lTestStep[1][GC.STRUCTURE_TESTSTEPEXECUTION][execLine["TestStepExecutionNumber"]] = {}
             for lkey, value in execLine.items():
@@ -115,7 +155,10 @@ class TestRunExcelImporter:
                 return self.replaceFieldValueWithValueOfConstant(xlsTab.cell_value(row, 2))
 
     def _getTab(self, tabName):
-        worksheet = self.excelFile.sheet_by_name(tabName)
+        try:
+            worksheet = self.excelFile.sheet_by_name(tabName)
+        except Exception as e:
+            return None
         return worksheet
 
     def replaceFieldValueWithValueOfConstant(self, value):
