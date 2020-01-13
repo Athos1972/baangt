@@ -187,7 +187,8 @@ class BrowserDriver:
                 logger.critical(f"Tried to switch to Window {windowNumber} but it's not there")
                 raise Exceptions.baangtTestStepException(f"Window {windowNumber} doesn't exist")
 
-    def findByAndWaitForValue(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=20):
+    def findByAndWaitForValue(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=20,
+                              optional=False):
 
         start = time.time()
         found = False
@@ -195,7 +196,8 @@ class BrowserDriver:
 
         while not found and duration < timeout:
             self.element = None
-            self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout / 3)
+            self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout / 3,
+                        optional=optional)
             try:
                 if len(self.element.text) > 0:
                     return self.element.text
