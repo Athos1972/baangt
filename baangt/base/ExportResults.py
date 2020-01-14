@@ -2,6 +2,7 @@ import xlsxwriter
 import logging
 import json
 import baangt.base.GlobalConstants as GC
+import subprocess
 from baangt.base.utils import utils
 from pathlib import Path
 
@@ -73,3 +74,5 @@ class ExportResults:
 
     def closeExcel(self):
         self.workbook.close()
+        # Next line doesn't work on MAC. Returns "not authorized"
+        # subprocess.Popen([self.filename], shell=True)
