@@ -14,6 +14,7 @@ logger = logging.getLogger("pyC")
 class HandleDatabase:
     def __init__(self, globalSettings=None):
         self.lineNumber = 3
+        # FIXME: This is still not clean. GlobalSettings shouldn't be predefined in CustomConstants-Class
         self.globals = {
             CGC.CUST_TOASTS: "",
             GC.TESTCASEERRORLOG: "",
@@ -27,18 +28,54 @@ class HandleDatabase:
             GC.SCREENSHOTS: "",
             GC.TIMELOG: ""
         }
-        # FIXME: This is still not clean. GlobalSettings shouldn't be predefined in CustomConstants-Class
         if globalSettings:
             for setting, value in globalSettings.items():
                 self.globals[setting] = value
         self.df_json = None
+        self.dataDict = {}
 
     def read_excel(self, fileName, sheetName):
         fileName = utils.findFileAndPathFromPath(fileName)
-        df = pd.read_excel(fileName, sheet_name=sheetName)
-        self.df_json = df[["JSON"]].copy()
+
+        xl = pd.ExcelFile(fileName)
+        ncols = xl.book.sheet_by_name(sheet_name=sheetName).ncols
+        # Read all columns as strings:
+        df = xl.parse(sheet_name=sheetName, converters={i: str for i in range(ncols)})
+
+        # Set all Nan to empty String:
+        df = df.where((pd.notnull(df)), '')
+        # Create Dict of Header + item:
+        self.dataDict = df.to_dict(orient="records")
+
+        # self.df_json = df[["JSON"]].copy()
 
     def readTestRecord(self, lineNumber=None):
+        if lineNumber:
+            self.lineNumber = lineNumber -1  # Base 0 vs. Base 1
+        else:
+            self.lineNumber += 1 # add 1 to read next line number
+
+        try:
+            record = self.dataDict[self.lineNumber]
+            logger.info(f"Starting with Testrecord {self.lineNumber}, Details: " +
+                        str({k: record[k] for k in list(record)[0:5]}))
+            return self.updateGlobals(record)
+        except Exception as e:
+            logger.critical(f"Couldn't read record# {self.lineNumber}")
+
+    def updateGlobals(self, record):
+
+        self.globals[CGC.CUST_TOASTS] = ""
+        self.globals[GC.TESTCASEERRORLOG] = ""
+        self.globals[GC.TIMING_DURATION] = ""
+        self.globals[GC.TIMELOG] = ""
+        self.globals[GC.TESTCASESTATUS] = ""
+        self.globals[GC.SCREENSHOTS] = ""
+
+        record.update(self.globals)
+        return record
+
+    def readTestRecordOld(self, lineNumber=None):
         if lineNumber:
             self.lineNumber = lineNumber - 1 # -1 for Header-File
         else:
@@ -54,14 +91,4 @@ class HandleDatabase:
             logger.critical(f"Couldn't read record# {self.lineNumber}")
             return None
 
-        self.globals[CGC.CUST_TOASTS] = ""
-        self.globals[GC.TESTCASEERRORLOG] = ""
-        # self.globals[CGC.CUST_TOASTS_ERROR] = "" Replaced by GC.TESTCASEEROROG
-        self.globals[GC.TIMING_DURATION] = ""
-        self.globals[GC.TIMELOG] = ""
-        self.globals[GC.TESTCASESTATUS] = ""
-        self.globals[GC.SCREENSHOTS] = ""
-
-        record.update(self.globals)
-
-        return record
+        return self.updateGlobals(record)
