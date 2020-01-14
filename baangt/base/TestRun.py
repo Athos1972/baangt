@@ -64,6 +64,10 @@ class TestRun:
               f"{successful} Testcases successfully executed, {error} errors")
 
     def getSuccessAndError(self):
+        """
+        Returns number of successful and number of error test cases of the current test run
+        @rtype: object
+        """
         lError = 0
         lSuccess = 0
         for value in self.dataRecords.values():
@@ -75,9 +79,18 @@ class TestRun:
 
     def getAllTestRunAttributes(self):
         return self.testRunUtils.getCompleteTestRunAttributes(self.testRunName)
-        # return self.testRunAttributes[self.testRunName][GC.KWARGS_TESTRUNATTRIBUTES]
 
     def getBrowser(self, browserInstance=1, browserName=None, browserAttributes=None):
+        """
+        This method is called whenever a browser instance (existing or new) is needed. If called without
+        parameters it will create one instance of Firefox (geckodriver).
+
+        @param browserInstance: Number of the requested browser instance. If none is provided, always the default
+          browser instance will be returned
+        @param browserName: one of the browser names (e.g. FF, Chrome) from GC.BROWSER*
+        @param browserAttributes: optional Browser Attributes
+        @return: the browser instance of base class BrowserDriver
+        """
         if browserInstance not in self.browser.keys():
             logger.info(f"opening new instance {browserInstance} of browser {browserName}")
             self._getBrowserInstance(browserInstance=browserInstance)
@@ -103,7 +116,17 @@ class TestRun:
 
     def executeTestRun(self):
         """
-            Start TestcaseSequence
+        Start TestcaseSequence
+
+        TestCaseSequence is a sequence of Testcases. In the TestcaseSequence there's a sequential List of
+        Testcases to be executed.
+
+        Before the loop (executeDictSequenceOfClasses) variables inside the the testrun-definition are replaced
+        by values from the globals-file (e.g. if you want to generally run with FF, but in a certain case you want to
+        run with Chrome, you'd have FF in the Testrundefinition, but set parameter in globals_chrome.json accordingly
+        (in this case {"TC.Browser": "CHROME"}. TC.-Prefix signals the logic to look for this variable ("Browser")
+        inside the testcase definitions and replace it with value "CHROME".
+
         """
         self.testRunUtils.replaceGlobals(self.globalSettings)
         self.executeDictSequenceOfClasses(
