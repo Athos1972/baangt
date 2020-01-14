@@ -46,6 +46,7 @@ STRUCTURE_TESTSTEPEXECUTION = "TestStepExecutionParameters"
 
 EXECUTION_PARALLEL = "ParallelRuns"
 SCREENSHOTS = "Screenshots"
+EXECUTION_DONTCLOSEBROWSER = "dontCloseBrowser"
 
 EXPORT_FORMAT = "Export Format"
 EXP_FIELDLIST = "Fieldlist"

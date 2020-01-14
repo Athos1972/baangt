@@ -13,7 +13,15 @@ logger = logging.getLogger("pyC")
 
 
 class TestRun:
+    """
+    This is the main Class of Testexecution in the baangt Framework. It is usually started
+    from baangt.py
+    """
     def __init__(self, testRunName, globalSettingsFileNameAndPath=None):
+        """
+        @param testRunName: The name of the TestRun to be executed.
+        @param globalSettingsFileNameAndPath: from where to read the <globals>.json
+        """
         self.browser = {}
         self.apiInstance = None
         self.testType = None
@@ -32,7 +40,12 @@ class TestRun:
         self.tearDown()
 
     def tearDown(self):
-        if not self.globalSettings.get("dontCloseBrowser"):
+        """
+        Close browser (unless stated in the Globals to not do so) and API-Instances
+        Take overall Time spent for the complete TestRun
+        Write results of TestRun to output channel(s)
+        """
+        if not self.globalSettings.get(GC.EXECUTION_DONTCLOSEBROWSER):
             for browserInstance in self.browser.keys():
                 self.browser[browserInstance].closeBrowser()
 
