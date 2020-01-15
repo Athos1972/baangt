@@ -66,16 +66,16 @@ class BrowserDriver:
                 ChromeExecutable = ChromeExecutable + ".exe"
 
             if browserName == GC.BROWSER_FIREFOX:
-                self.driver = browserNames[browserName](options=self.__createOptions(browserName=browserName,
-                                                                                     desiredCapabilities=desiredCapabilities),
+                self.driver = browserNames[browserName](options=self.__createBrowserOptions(browserName=browserName,
+                                                                                            desiredCapabilities=desiredCapabilities),
                                                         executable_path=self.__findBrowserDriverPaths(GeckoExecutable))
             elif browserName == GC.BROWSER_CHROME:
-                self.driver = browserNames[browserName](options=self.__createOptions(browserName=browserName,
-                                                                                     desiredCapabilities=desiredCapabilities),
+                self.driver = browserNames[browserName](options=self.__createBrowserOptions(browserName=browserName,
+                                                                                            desiredCapabilities=desiredCapabilities),
                                                         executable_path=self.__findBrowserDriverPaths(ChromeExecutable))
             elif browserName == GC.BROWSER_REMOTE:
-                self.driver = browserNames[browserName](options=self.__createOptions(browserName=browserName,
-                                                                                     desiredCapabilities=desiredCapabilities),
+                self.driver = browserNames[browserName](options=self.__createBrowserOptions(browserName=browserName,
+                                                                                            desiredCapabilities=desiredCapabilities),
                                                         command_executor='http://localhost:4444/wd/hub',
                                                         desired_capabilities = desiredCapabilities)
         else:
@@ -90,7 +90,7 @@ class BrowserDriver:
 
         return str(lCurPath)
 
-    def __createOptions(self, browserName, desiredCapabilities):
+    def __createBrowserOptions(self, browserName, desiredCapabilities):
         if browserName == GC.BROWSER_CHROME:
             lOptions = ChromeOptions()
         elif browserName == GC.BROWSER_FIREFOX:
@@ -101,7 +101,7 @@ class BrowserDriver:
         if not desiredCapabilities:
             return None
 
-        # sometimes, instead of DICT comes a string with DICT-Format
+        # sometimes instead of DICT comes a string with DICT-Format
         if isinstance(desiredCapabilities, str) and "{" in desiredCapabilities and "}" in desiredCapabilities:
             desiredCapabilities = json.loads(desiredCapabilities.replace("'", '"'))
 
@@ -119,6 +119,13 @@ class BrowserDriver:
         self.driver.quit()
 
     def _log(self, logType, logText, **kwargs):
+        """
+        Interal wrapper of Browser-Class for Logging. Takes a screenshot on Error and Warning.
+
+        @param logType: any of logging.ERROR, logging.WARN, INFO, etc.
+        @param logText: Text to log
+        @param kwargs: Additional Arguments to be logged
+        """
         argsString = ""
         for key, value in kwargs.items():
             if value:
@@ -126,9 +133,10 @@ class BrowserDriver:
 
         if self.locator:
             argsString = argsString + f"Locator: {self.locatorType}:{self.locator}"
-        # print(datetime.now(), logText, argsString)
 
-        if logType == logging.ERROR:
+        if logType == logging.DEBUG:
+            logger.debug(logText + argsString)
+        elif logType == logging.ERROR:
             logger.error(logText + argsString)
             self.takeScreenshot()
         elif logType == logging.WARN:
@@ -138,10 +146,10 @@ class BrowserDriver:
             logger.info(logText + argsString)
         elif logType == logging.CRITICAL:
             logger.critical(logText + argsString)
-        elif logType == logging.DEBUG:
-            logger.debug(logText + argsString)
+            self.takeScreenshot()
         else:
             print(f"Unknown call to Logger: {logType}")
+            self._log(logging.CRITICAL, f"Unknown type in call to logger: {logType}")
 
     def takeScreenshot(self, screenShotPath=None):
         driver = self.driver
@@ -187,6 +195,12 @@ class BrowserDriver:
         pass
 
     def handleWindow(self, windowNumber=None, function=None):
+        """
+        Interations with Windows (=BrowserTabs).
+
+        @param windowNumber: Number of the windowHandle inside this browser session (0 = startwindow(=Tab), 1=Next window
+        @param function: "CLOSE", "CLOSEALL"
+        """
         if function:
             if function.lower() == "close":
                 self.driver.close()
