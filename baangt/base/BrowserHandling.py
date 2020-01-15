@@ -411,7 +411,7 @@ class BrowserDriver:
 
         return wasSuccessful
 
-    def findWaitNotVisible(self, xpath, timeout = 90):
+    def findWaitNotVisible(self, xpath=None, id=None, timeout = 90):
         self._log(logging.DEBUG, "Waiting for Element to disappear", **{"xpath":xpath, "timeout":timeout})
         time.sleep(0.5)
 
@@ -421,7 +421,10 @@ class BrowserDriver:
 
         while stillHere and elapsed < timeout:
             try:
-                self.element = self.driver.find_element_by_xpath(xpath)
+                if xpath:
+                    self.element = self.driver.find_element_by_xpath(xpath)
+                elif id:
+                    self.element = self.driver.find_element_by_id(id)
                 time.sleep(0.1)
                 elapsed = time.time() - begin
             except Exception as e:
