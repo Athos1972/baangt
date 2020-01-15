@@ -166,7 +166,7 @@ class BrowserDriver:
             driver.save_screenshot(lFile)
             self._log(logging.DEBUG, f"Stored Screenshot: {lFile}")
         except Exception as e:
-            raise Exceptions.baangtTestStepException(f"Screenshot not possible {e}")
+            self._log(logging.INFO, f"Screenshot not possible. Error: {e}")
 
         return lFile
 
@@ -176,7 +176,7 @@ class BrowserDriver:
         if iframe:
             self._log(logging.DEBUG, "Going into Iframe: ", **{"iframe": iframe})
             # frame_to_be_availble_and_switch_to_it doesn't work.
-            mustEnd = time.time() + 300
+            mustEnd = time.time() + 30
             while time.time() < mustEnd:
                 try:
                     self.driver.switch_to.default_content()
@@ -467,6 +467,8 @@ class BrowserDriver:
                 raise Exceptions.baangtTestStepException(e)
             except ElementNotInteractableException as e:
                 self._log(logging.ERROR, f"Element not interactable {e}")
+                raise Exceptions.baangtTestStepException(e)
+            except NoSuchWindowException as e:
                 raise Exceptions.baangtTestStepException(e)
             elapsed = time.time()-begin
 
