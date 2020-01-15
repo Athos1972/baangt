@@ -18,7 +18,18 @@ import json
 
 logger = logging.getLogger("pyC")
 
+
 class BrowserDriver:
+    """
+    The main class for baangt-Elements to interact with a browser.
+    Main Methods:
+    - createNewBrowser: Create one instance of a Browser
+    - findBy*-Methods: e.g. findByAndClick
+    - URL-Methods: To navigate to an URL
+    - handleIframe and handleWindow: To navigate between Windows (=tabs) and Iframes
+    - javaScript: to pass JS directly to the browser
+    - takeScreenshot: yes, that.
+    """
     def __init__(self, timing=None):
         self.driver = None
         self.iFrame = None
@@ -32,6 +43,13 @@ class BrowserDriver:
         self.takeTime = self.timing.takeTime
 
     def createNewBrowser(self, browserName=GC.BROWSER_FIREFOX, desiredCapabilities=None, **kwargs):
+        """
+        Will find the specified executables of the desired browser and start it with the given capabilities.
+
+        @param browserName: one of GC_BROWSER_*-Browsernames, e.g. GC_BROWSER_FIREFOX
+        @param desiredCapabilities: DICT of desiredCapabilities for this browser
+        @param kwargs: Currently (Jan2020) not used
+        """
         self.takeTime("Browser Start")
         browserNames = {
             GC.BROWSER_FIREFOX: webdriver.Firefox,
