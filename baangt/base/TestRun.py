@@ -134,6 +134,19 @@ class TestRun:
             counterName=GC.STRUCTURE_TESTCASESEQUENCE)
 
     def executeDictSequenceOfClasses(self, dictSequenceOfClasses, counterName, **kwargs):
+        """
+        This is the main loop of the TestCaseSequence, TestCases, TestStepSequences and TestSteps.
+        The Sequence of which class instance to create is defined by the TestRunAttributes.
+
+        Before instancing the class it is checked, whether the class was loaded already and if not, will be loaded
+            (only if the classname is fully qualified (e.g baangt<projectname>.TestSteps.myTestStep).
+        If the testcase-Status is already "error" (GC.TESTCASESTATUS_ERROR) we'll stop the loop.
+
+        @param dictSequenceOfClasses: The list of classes to be instanced. Must be a dict of {Enum, Classname},
+                                      can be also {enum: [classname, <whatEverElse>]}
+        @param counterName: Which Structure element we're currently looping, e.g. "TestStep" (GC.STRUCTURE_TESTSTEP)
+        @param kwargs: TestrunAttributes, this TestRun, the Timings-Instance, the datarecord
+        """
         if not kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES):
             kwargs[GC.KWARGS_TESTRUNATTRIBUTES] = self.getAllTestRunAttributes()
         if not kwargs.get(GC.KWARGS_TESTRUNINSTANCE):
@@ -144,7 +157,8 @@ class TestRun:
             # If any of the previous steps set the testcase to "Error" - exit here.
             if kwargs.get(GC.KWARGS_DATA):
                 if kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR:
-                    logger.info(f"TC is already in status Error - not processing step {counterName}: {key}, {value}")
+                    logger.info(f"TC is already in status Error - not processing steps {counterName}: {key}, {value}"
+                                f"and everything behind this step")
                     return
             logger.info(f"Starting {counterName}: {key}, {value} ")
             kwargs[counterName] = key
@@ -188,12 +202,16 @@ class TestRun:
 
     @staticmethod
     def __dynamicImportClasses(fullQualifiedImportName):
-        """Requires fully qualified Name of Import-Class and module,
+        """
+        Requires fully qualified Name of Import-Class and module,
         e.g. TestCaseSequence.TCS_VIGO.TCS_VIGO if the class TCS_VIGO
                                                 is inside the Python-File TCS_VIGO
                                                 which is inside the Module TestCaseSequence
         if name is not fully qualified, the ClassName must be identical with the Python-File-Name,
-        e.g. TestSteps.Franzi will try to import TestSteps.Franzi.Franzi"""
+        e.g. TestSteps.Franzi will try to import TestSteps.Franzi.Franzi
+        @param fullQualifiedImportName:
+        @return: The class instance. If no class instance can be found the TestRun aborts hard with sys.exit
+        """
         importClass = fullQualifiedImportName.split(".")[-1]
         if globals().get(importClass):
             return globals()[importClass]  # Class already imported
@@ -214,6 +232,10 @@ class TestRun:
 
     @staticmethod
     def _sanitizeTestRunNameAndFileName(TestRunNameInput):
+        """
+        @param TestRunNameInput: The complete File and Path of the TestRun definition (JSON or XLSX).
+        @return: TestRunName and FileName (if definition of testrun comes from a file (JSON or XLSX)
+        """
         if ".XLSX" in TestRunNameInput.upper() or ".JSON" in TestRunNameInput.upper():
             lRunName = utils.extractFileNameFromFullPath(TestRunNameInput)
             lFileName = TestRunNameInput
