@@ -2,7 +2,7 @@ import getopt
 import sys
 from baangt.base.TestRun import TestRun
 from baangt.ui.ui import UI
-from baangtVIG.CustTestRun import CustTestRun
+# from baangtVIG.CustTestRun import CustTestRun
 from baangt.base.utils import utils
 
 
@@ -42,8 +42,8 @@ Call: python baangt.py --parameters
 
 def callTestrun():
     if ".XLSX" in testRunFile.upper() or ".JSON" in testRunFile.upper():
-        CustTestRun(testRunName=utils.sanitizeFileName(testRunFile),
-                    globalSettingsFileNameAndPath=utils.sanitizeFileName(globalSettingsFileName))
+        TestRun(testRunName=utils.sanitizeFileName(testRunFile),
+                globalSettingsFileNameAndPath=utils.sanitizeFileName(globalSettingsFileName))
     else:
         sys.exit(f"Unknown Filetype - should be XLSX or JSON: {testRunFile}")
 
