@@ -36,6 +36,9 @@ class HandleDatabase:
 
     def read_excel(self, fileName, sheetName):
         fileName = utils.findFileAndPathFromPath(fileName)
+        if not fileName:
+            logger.critical(f"Can't open file: {fileName}")
+            return
 
         xl = pd.ExcelFile(fileName)
         ncols = xl.book.sheet_by_name(sheet_name=sheetName).ncols
@@ -46,8 +49,6 @@ class HandleDatabase:
         df = df.where((pd.notnull(df)), '')
         # Create Dict of Header + item:
         self.dataDict = df.to_dict(orient="records")
-
-        # self.df_json = df[["JSON"]].copy()
 
     def readTestRecord(self, lineNumber=None):
         if lineNumber:

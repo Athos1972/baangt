@@ -4,6 +4,7 @@ import baangt.base.CustGlobalConstants as CGC
 import ntpath
 import logging
 import json
+import sys
 from pathlib import Path
 
 logger = logging.getLogger("pyC")
@@ -89,17 +90,22 @@ class utils:
     @staticmethod
     def findFileAndPathFromPath(fileNameAndPath):
         lFileNameAndPath = fileNameAndPath
+        basePath = Path(sys.modules['__main__'].__file__).parent
 
         if not Path(lFileNameAndPath).exists():
-            if Path(lFileNameAndPath).expanduser().exists():
-                lFileNameAndPath = str(Path(lFileNameAndPath).expanduser())
+            if "~" in lFileNameAndPath:
+                lFileNameAndPath = Path(lFileNameAndPath).expanduser()
+            elif Path(basePath).joinpath(fileNameAndPath).exists():
+                lFileNameAndPath = Path(basePath).joinpath(lFileNameAndPath)
             elif len(Path(lFileNameAndPath).parents) == 0:
                 # This is only the filename. Try with current path and a bit up
                 if Path(utils.__file__).joinpath(lFileNameAndPath).exists:
-                    lFileNameAndPath = str(Path(utils.__file__).joinpath(lFileNameAndPath))
+                    lFileNameAndPath = Path(utils.__file__).joinpath(lFileNameAndPath)
                 elif Path(utils.__file__).parent.joinpath(lFileNameAndPath).exists:
-                    lFileNameAndPath = str(Path(utils.__file__).parent.joinpath(lFileNameAndPath))
+                    lFileNameAndPath = Path(utils.__file__).parent.joinpath(lFileNameAndPath)
                 elif Path(utils.__file__).parent.parent.joinpath(lFileNameAndPath).exists:
-                    lFileNameAndPath = str(Path(utils.__file__).parent.parent.joinpath(lFileNameAndPath))
+                    lFileNameAndPath = Path(utils.__file__).parent.parent.joinpath(lFileNameAndPath)
+        else:
+            lFileNameAndPath = Path(lFileNameAndPath)
 
-        return lFileNameAndPath
+        return str(lFileNameAndPath.absolute())

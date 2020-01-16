@@ -4,6 +4,7 @@ import json
 import baangt.base.GlobalConstants as GC
 from baangt.base.Timing import Timing
 import subprocess
+import sys
 from baangt.base.utils import utils
 from pathlib import Path
 from typing import Optional
@@ -75,8 +76,13 @@ class ExportResults:
         self.summarySheet.write(self.summaryRow, 1, lineText, format)
 
     def __getOutputFileName(self):
-        l_file: Path = Path(self.testRunInstance.globalSettings[GC.DATABASE_EXPORTFILENAMEANDPATH])
-        l_file = l_file.expanduser()
+        if not "/" in self.testRunInstance.globalSettings[GC.DATABASE_EXPORTFILENAMEANDPATH][0:1]:
+            basePath = Path(sys.modules['__main__'].__file__).parent
+        else:
+            basePath = ""
+        l_file: Path = Path(basePath).joinpath(self.testRunInstance.globalSettings[GC.DATABASE_EXPORTFILENAMEANDPATH])
+        if "~" in str(l_file.absolute()):
+            l_file = l_file.expanduser()
         l_file = l_file.joinpath("baangt_" + self.testRunName + "_" + utils.datetime_return() + ".xlsx")
         logger.debug(f"Filename for export: {str(l_file)}")
         return str(l_file)
