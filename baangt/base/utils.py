@@ -105,6 +105,10 @@ class utils:
                     lFileNameAndPath = Path(utils.__file__).parent.joinpath(lFileNameAndPath)
                 elif Path(utils.__file__).parent.parent.joinpath(lFileNameAndPath).exists:
                     lFileNameAndPath = Path(utils.__file__).parent.parent.joinpath(lFileNameAndPath)
+                else:
+                    raise Exception(f"Can't find file {fileNameAndPath}")
+            else:
+                raise Exception(f"Can't find file {fileNameAndPath}")
         else:
             lFileNameAndPath = Path(lFileNameAndPath)
 
