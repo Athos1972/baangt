@@ -115,11 +115,14 @@ class UI:
         if not self.testRunFile:
             sg.popup_cancel("No Testrun File selected - can't run")
             return
-        runCmd = f"python baangt.py --run='{self.directory}/{self.testRunFile}' " \
-                 f"--globals='{self.directory}/{self.configFile}'"
+        runCmd = self._getRunCommand()
         logger.info(f"Running command: {runCmd}")
         p = subprocess.run(runCmd, shell=True)
         sg.popup_ok("Testrun finished")
+
+    def _getRunCommand(self):
+        return f"python baangt.py --run='{self.directory}/{self.testRunFile}' " \
+                 f"--globals='{self.directory}/{self.configFile}'"
 
     def getConfigFilesInDirectory(self):
         """Reads *.JSON-Files from directory given in self.directory and builds 2 lists (Testrunfiles and ConfiFiles"""
