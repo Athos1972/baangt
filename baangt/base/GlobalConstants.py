@@ -8,6 +8,7 @@ KWARGS_TIMING = "TimingClassInstance"
 
 CLASSES_TESTCASESEQUENCE = "baangt.TestCaseSequence.TestCaseSequenceMaster.TestCaseSequenceMaster"
 CLASSES_TESTCASE = "baangt.TestCase.TestCaseMaster.TestCaseMaster"
+CLASSES_TESTSTEPMASTER = 'baangt.TestSteps.TestStepMaster'
 
 TIMING_END = "end"
 TIMING_START = "start"

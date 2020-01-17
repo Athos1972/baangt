@@ -10,6 +10,7 @@ logger = logging.getLogger("pyC")
 
 class TestRunExcelImporter:
     def __init__(self, FileNameAndPath, testRunUtils: TestRunUtils):
+        self.testStepExecutionNumber = 0
         # self.testRunAttributes = testRunUtils.testRunAttributes
         self.testRunUtils = testRunUtils
         try:
@@ -61,10 +62,10 @@ class TestRunExcelImporter:
             lSequenceDict = {1:
                 {
                 "SequenceClass": GC.CLASSES_TESTCASESEQUENCE,
-                "TestDataFile": "",
-                "Sheetname": "",
+                "TestDataFileName": self.fileName,
+                "Sheetname": "data",
                 "ParallelRuns": 1,
-                "FromLine": 0,
+                "FromLine": 1,
                 "ToLine": 999999
                 },
             }
@@ -81,6 +82,7 @@ class TestRunExcelImporter:
             lTestCaseDict = {1: {"TestCaseSequenceNumber": 1,
                              "TestCaseNumber": 1,
                              "TestCaseType": GC.KWARGS_BROWSER,
+                             "TestCaseClass": GC.CLASSES_TESTCASE,
                              GC.KWARGS_BROWSER: GC.BROWSER_FIREFOX,
                              GC.BROWSER_ATTRIBUTES: ""}}
         for key, testCase in lTestCaseDict.items():
@@ -97,10 +99,11 @@ class TestRunExcelImporter:
         if xlsTab:
             lStepDict = self.getRowsWithHeadersAsDict(xlsTab=xlsTab)
         else:
-            lStepDict = {"TestCaseSequenceNumber": 1,
+            lStepDict = {1: {"TestCaseSequenceNumber": 1,
                          "TestCaseNumber": 1,
                          "TestStepNumber": 1,
-                         "TestStepClass": 'baangt.TestSteps.TestStepMaster'}
+                         "TestStepClass": GC.CLASSES_TESTSTEPMASTER}
+                         }
         for key, testStep in lStepDict.items():
             testStepRoot = testrunSequence[testStep["TestCaseSequenceNumber"]][1]
             testStepRoot = testStepRoot[GC.STRUCTURE_TESTCASE][testStep["TestCaseNumber"]]
@@ -128,9 +131,19 @@ class TestRunExcelImporter:
                 lTestStep = self.testRunUtils.getTestStepByNumber(testCase=lTestCase,
                                                                   testStepNumber=execLine.get("TestStepNumber",1))
 
-            lTestStep[1][GC.STRUCTURE_TESTSTEPEXECUTION][execLine["TestStepExecutionNumber"]] = {}
+            lStepExecutionNumber = self.__iterateStepExecutionNumber(execLine.get("TestStepExecutionNumber"))
+            lTestStep[1][GC.STRUCTURE_TESTSTEPEXECUTION][lStepExecutionNumber] = {}
             for lkey, value in execLine.items():
-                lTestStep[1][GC.STRUCTURE_TESTSTEPEXECUTION][execLine["TestStepExecutionNumber"]][lkey] = value
+                lTestStep[1][GC.STRUCTURE_TESTSTEPEXECUTION][lStepExecutionNumber][lkey] = value
+
+    def __iterateStepExecutionNumber(self, numberFromDefinition):
+        if numberFromDefinition:
+            return numberFromDefinition
+
+        # This is a teststep in simple format, without an execution number column in the XLS
+        # We need to iterate ourselves.
+        self.testStepExecutionNumber += 1
+        return self.testStepExecutionNumber
 
     def getRowsWithHeadersAsDict(self, xlsTab):
         lRetDict = {}

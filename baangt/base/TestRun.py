@@ -32,6 +32,7 @@ class TestRun:
 
         self.testRunName, self.testRunFileName = TestRun._sanitizeTestRunNameAndFileName(testRunName)
         self.timing = Timing()
+        self.timing.takeTime(GC.TIMING_TESTRUN)  # Initialize Testrun Duration
         self.testRunUtils = TestRunUtils()
         self._initTestRun()
         self._loadJSONTestRunDefinitions()
@@ -94,10 +95,8 @@ class TestRun:
         if browserInstance not in self.browser.keys():
             logger.info(f"opening new instance {browserInstance} of browser {browserName}")
             self._getBrowserInstance(browserInstance=browserInstance)
-            self.browser[browserInstance].createNewBrowser(
-                browserName=browserName,
-                desiredCapabilities=browserAttributes)
-            self.timing.takeTime(GC.TIMING_TESTRUN)
+            self.browser[browserInstance].createNewBrowser(browserName=browserName,
+                                                           desiredCapabilities=browserAttributes)
         else:
             logger.debug(f"Using existing instance of browser {browserInstance}")
         return self.browser[browserInstance]
