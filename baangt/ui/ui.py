@@ -1,6 +1,8 @@
 import PySimpleGUI as sg
 import glob
 import os
+import sys
+import platform
 import subprocess
 import configparser
 import baangt.base.GlobalConstants as GC
@@ -121,7 +123,14 @@ class UI:
         sg.popup_ok("Testrun finished")
 
     def _getRunCommand(self):
-        return f"python baangt.py --run='{self.directory}/{self.testRunFile}' " \
+        if platform.system().lower() == 'linux' or platform.system().lower() == 'darwin':
+            lPython = 'python3'
+        elif platform.system().lower == 'windows':
+            lPython = 'python'
+        else:
+            sys.exit(f"Unknown platform to run on: {platform.system()}")
+
+        return f"{lPython} baangt.py --run='{self.directory}/{self.testRunFile}' " \
                  f"--globals='{self.directory}/{self.configFile}'"
 
     def getConfigFilesInDirectory(self):
