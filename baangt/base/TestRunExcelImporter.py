@@ -9,6 +9,15 @@ logger = logging.getLogger("pyC")
 
 
 class TestRunExcelImporter:
+    """
+    The TestrunSettings are in class TestRunUtils and expected to be a deep dict. For details see documentation there.
+
+    This class will migrate data from an excel sheet (either simple format with only 1 tab or complex format with all
+    structural elements) into the deep dict.
+
+    In case the XLSX is simple format, all missing data is "predicted"/assumed.
+
+    """
     def __init__(self, FileNameAndPath, testRunUtils: TestRunUtils):
         self.testStepExecutionNumber = 0
         # self.testRunAttributes = testRunUtils.testRunAttributes
@@ -25,6 +34,13 @@ class TestRunExcelImporter:
         return self.testRunUtils.getCompleteTestRunAttributes(self.fileName)
 
     def _initTestRun(self):
+        """
+        Writes a new entry to testRunUtils --> = this current TestRunDefinition (Filename)
+        Then loops through the tabs "TestRun", "ExportFieldList", "TestCaseSequence" and so on,
+        reads the lines/columns and writes them the the deep dict of testRunUtils accordingly (TestCaseSequence,
+        TestCase, TestStepSequence, TestSteps, etc.)
+        @return:
+        """
         self.testRunUtils.testRunAttributes = \
             {
                 self.fileName: {
@@ -141,7 +157,7 @@ class TestRunExcelImporter:
             return numberFromDefinition
 
         # This is a teststep in simple format, without an execution number column in the XLS
-        # We need to iterate ourselves.
+        # we need to iterate ourselves and simply add 1 to each new TestStep
         self.testStepExecutionNumber += 1
         return self.testStepExecutionNumber
 
@@ -163,6 +179,11 @@ class TestRunExcelImporter:
 
     def _getValueFromList(self, xlsTab, searchField):
         # Searches for Value in Column 1 and returns Value from Column 2 if found.
+        # This is used for XLSX-Tabs with this format:
+        # column:value
+        # TestlineStart:10
+        # TestlineEnd:20
+        # foo:bar
         for row in range(1, xlsTab.nrows):
             if xlsTab.cell_value(row, 1) == searchField:
                 return self.replaceFieldValueWithValueOfConstant(xlsTab.cell_value(row, 2))
@@ -175,6 +196,19 @@ class TestRunExcelImporter:
         return worksheet
 
     def replaceFieldValueWithValueOfConstant(self, value):
+        """
+        baangt Global constants (baangt.base.GlobalConstants) are available everywhere as GC., e.g. the variable
+        "BROWSER" defined in GlobalConstants can be accessed from everywhere within baangt by using "GC.BROWSER".
+
+        The variables can also be used in configuration files (would be very stupid if we need to change a constant and
+        then 100s of Config-Files need adjustment - worst case the testruns behave unexepected). This applies both to
+        XLSX and JSON Config files.
+
+        The CGC.-Part is still needs fixing. It shouldn't appear in Baangt base, but currently still needed.
+
+        @param value: potentially convertable value (e.g. GC.BROWSER)
+        @return: potentially converted value (e.g. "Browser")
+        """
         if isinstance(value, float):
             if value % 1 == 0:
                 return int(value)
