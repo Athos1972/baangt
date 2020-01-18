@@ -123,15 +123,17 @@ class UI:
         sg.popup_ok("Testrun finished")
 
     def _getRunCommand(self):
+        return f"{self._getPythonExecutable()} baangt.py --run='{self.directory}/{self.testRunFile}' " \
+                 f"--globals='{self.directory}/{self.configFile}'"
+
+    def _getPythonExecutable(self):
         if platform.system().lower() == 'linux' or platform.system().lower() == 'darwin':
             lPython = 'python3'
         elif platform.system().lower == 'windows':
             lPython = 'python'
         else:
             sys.exit(f"Unknown platform to run on: {platform.system()}")
-
-        return f"{lPython} baangt.py --run='{self.directory}/{self.testRunFile}' " \
-                 f"--globals='{self.directory}/{self.configFile}'"
+        return lPython
 
     def getConfigFilesInDirectory(self):
         """Reads *.JSON-Files from directory given in self.directory and builds 2 lists (Testrunfiles and ConfiFiles"""
