@@ -88,6 +88,7 @@ class BrowserDriver:
         lCurPath = lCurPath.joinpath("browserDrivers")
         lCurPath = lCurPath.joinpath(filename)
 
+        logger.debug(f"Path for BrowserDrivers: {lCurPath}")
         return str(lCurPath)
 
     def __createBrowserOptions(self, browserName, desiredCapabilities):

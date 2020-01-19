@@ -7,7 +7,8 @@ block_cipher = None
 
 a = Analysis(['baangtIA.py'],
              pathex=['/Users/bernhardbuhl/git/baangt'],
-             binaries=[],
+             binaries=['/browserDrivers/geckodriver', '/browserDrivers/chromedriver',
+                       '/browserDrivers/geckodriver.exe', '/browserDrivers/chromedriver.exe'],
              datas=[],
              hiddenimports=['selenium'],
              hookspath=[],
