@@ -128,9 +128,13 @@ class utils:
         import os
 
         def main_is_frozen():
-            return (hasattr(sys, "frozen") or  # new py2exe
-                    hasattr(sys, "importers")  # old py2exe
-                    or imp.is_frozen("__main__"))  # tools/freeze
+            lFrozen = False
+            if hasattr(sys, "frozen") or \
+               hasattr(sys, 'importers'):
+                lFrozen = True
+            elif getattr(sys, 'frozen') and hasattr(sys, '_MEIPASS'):
+                lFrozen = True
+            return lFrozen
 
         def get_main_dir():
             if main_is_frozen():
@@ -150,4 +154,10 @@ class utils:
         # OPTIONAL:
         # use info to find relative data files in 'data' subdir
         # datafile1 = os.path.join(get_main_dir(), 'data', 'file1')
+
+        if getattr(sys, 'frozen') and hasattr(sys, '_MEIPASS'):
+            print('running in a PyInstaller bundle')
+        else:
+            print('running in a normal Python process')
+
         return path_to_script
