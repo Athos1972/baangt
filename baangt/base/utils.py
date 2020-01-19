@@ -88,26 +88,32 @@ class utils:
         return data
 
     @staticmethod
-    def findFileAndPathFromPath(fileNameAndPath):
+    def findFileAndPathFromPath(fileNameAndPath, basePath=None):
         """
         Tries different approaches to locate a file
-        basePath = the Path where the script is run
+        lBasePath = the Path where the script is run
 
-        @param fileNameAndPath:
+        @param fileNameAndPath: Filename and potentially relative path
+        @param basePath (optional): Optional basePath to look at
         @return:
         """
         lFileNameAndPath = fileNameAndPath
-        basePath = Path(sys.modules['__main__'].__file__).parent
-        logger.debug(f"Main Path to search for files: {basePath}")
-        if len(str(basePath)) < 3:
-            # Most probaby we're in pyinstaller. Let's try to find executable path
-            basePath = Path(sys.executable).parent
+        if basePath:
+            lBasePath = Path(basePath)
+        else:
+            lBasePath = Path(sys.modules['__main__'].__file__).parent
+            logger.debug(f"Main Path to search for files: {lBasePath}")
+            if len(str(lBasePath)) < 3:
+                # Most probaby we're in pyinstaller. Let's try to find executable path
+                lBasePath = Path(sys.executable).parent
+                logger.debug(f"New Main Path to search for files: {lBasePath}")
 
         if not Path(lFileNameAndPath).exists():
             if "~" in lFileNameAndPath:
                 lFileNameAndPath = Path(lFileNameAndPath).expanduser()
-            elif Path(basePath).joinpath(fileNameAndPath).exists():
-                lFileNameAndPath = Path(basePath).joinpath(lFileNameAndPath)
+            elif Path(lBasePath).joinpath(fileNameAndPath).exists():
+                lFileNameAndPath = Path(lBasePath).joinpath(lFileNameAndPath)
+                logger.debug(f"Found file via BasePath {str(lFileNameAndPath)}")
             elif len(Path(lFileNameAndPath).parents) == 0:
                 # This is only the filename. Try with current path and a bit up
                 if Path(utils.__file__).joinpath(lFileNameAndPath).exists:

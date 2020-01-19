@@ -1,8 +1,10 @@
 from baangt.base.HandleDatabase import HandleDatabase
 from baangt.TestCaseSequence.TestCaseSequenceParallel import TestCaseSequenceParallel
 from baangt.base.Timing import Timing
+from baangt.base.utils import utils
 import baangt.base.GlobalConstants as GC
 import multiprocessing
+from pathlib import Path
 import logging
 
 logger = logging.getLogger("pyC")
@@ -130,8 +132,11 @@ class TestCaseSequenceMaster:
     def __getDatabase(self):
         if not self.testdataDataBase:
             self.testdataDataBase = HandleDatabase(globalSettings=self.testRunInstance.globalSettings)
-            self.testdataDataBase.read_excel(fileName=self.testSequenceData[GC.DATABASE_FILENAME],
-                                             sheetName=self.testSequenceData[GC.DATABASE_SHEETNAME])
+            self.testdataDataBase.read_excel(
+                fileName=utils.findFileAndPathFromPath(
+                    self.testSequenceData[GC.DATABASE_FILENAME],
+                    basePath=str(Path(self.testRunInstance.globalSettingsFileNameAndPath).parent)),
+                sheetName=self.testSequenceData[GC.DATABASE_SHEETNAME])
         return self.testdataDataBase
 
     def tearDown(self):
