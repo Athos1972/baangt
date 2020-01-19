@@ -124,7 +124,7 @@ class UI:
 
     def _getRunCommand(self):
         """
-        _getPythonExecutable: Python oder Python3
+        _getPythonExecutable: Python oder Python3 or nothing, if executed from a bundled executable
         __main__.__file__: Mainscript - usually baangt.py or baangtIA.py
         run: The testrun name selected from the UI-Element
         globals: The globals-file selected from the UI-Element
@@ -135,6 +135,10 @@ class UI:
                f"--globals='{self.directory}/{self.configFile}'"
 
     def _getPythonExecutable(self):
+        if hasattr(sys, '_MEIPASS'):
+            # We're in an executable created by pyinstaller
+            return ""
+
         if platform.system().lower() == 'linux' or platform.system().lower() == 'darwin':
             lPython = 'python3'
         elif platform.system().lower == 'windows':
