@@ -14,10 +14,10 @@ Clone the repository: ``GIT CLONE https://gogs.earthsquad.global/baangt``
 Then fire up your favorite virtual environment, e.g. 
 `CONDA create baangt`, activate it, e.g. `CONDA activate baangt` and install the necessary requirements: 
 `pip install -r requirements.txt` and you're good to go.
-#Usage:
+##Usage
 ``baangt`` can be used for API, oData V2/V4, Browser (Chrome, Firefox, Safari, IE and more) Testing based on a common 
 data layer. As complex as this sounds, as easy is it to start with, give it a try!
-##Preparation:
+##Preparation
 You need at least a data- and a sequence definition file (example: `DropsSimple.xlsx` in the root folder of `baangt`).
 ##Run the Testcase
 ``Python baangt.py --run="DropsSimple.xlsx"`` will execute the testcases defined in the file (login to drops-app, recycle 
