@@ -99,6 +99,9 @@ class utils:
         lFileNameAndPath = fileNameAndPath
         basePath = Path(sys.modules['__main__'].__file__).parent
         logger.debug(f"Main Path to search for files: {basePath}")
+        if len(basePath) < 3:
+            # Most probaby we're in pyinstaller. Let's try to find executable path
+            basePath = Path(sys.executable).parent
 
         if not Path(lFileNameAndPath).exists():
             if "~" in lFileNameAndPath:
