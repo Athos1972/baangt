@@ -89,8 +89,16 @@ class utils:
 
     @staticmethod
     def findFileAndPathFromPath(fileNameAndPath):
+        """
+        Tries different approaches to locate a file
+        basePath = the Path where the script is run
+
+        @param fileNameAndPath:
+        @return:
+        """
         lFileNameAndPath = fileNameAndPath
         basePath = Path(sys.modules['__main__'].__file__).parent
+        logger.debug(f"Main Path to search for files: {basePath}")
 
         if not Path(lFileNameAndPath).exists():
             if "~" in lFileNameAndPath:

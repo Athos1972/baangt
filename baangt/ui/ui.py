@@ -123,7 +123,14 @@ class UI:
         sg.popup_ok("Testrun finished")
 
     def _getRunCommand(self):
-        return f"{self._getPythonExecutable()} baangt.py --run='{self.directory}/{self.testRunFile}' " \
+        """
+        _getPythonExecutable: Python oder Python3
+        __main__.__file__: Mainscript - usually baangt.py or baangtIA.py
+        run: The testrun name selected from the UI-Element
+        globals: The globals-file selected from the UI-Element
+        @return: Full path and filename to call Subprocess
+        """
+        return f"{self._getPythonExecutable()} {sys.modules['__main__'].__file__} --run='{self.directory}/{self.testRunFile}' " \
                  f"--globals='{self.directory}/{self.configFile}'"
 
     def _getPythonExecutable(self):
