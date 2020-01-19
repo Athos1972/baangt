@@ -6,6 +6,10 @@ from baangt.base.utils import utils
 from baangt.base import GlobalConstants as GC
 from baangt.base.TestRunExcelImporter import TestRunExcelImporter
 from baangt.base.TestRunUtils import TestRunUtils
+# needed - they'll be used dynamically later
+from baangt.TestSteps import TestStepMaster
+from baangt.TestCase import TestCaseMaster
+from baangt.TestCaseSequence import TestCaseSequenceMaster
 import logging
 import sys
 
