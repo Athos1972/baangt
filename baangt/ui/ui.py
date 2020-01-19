@@ -153,7 +153,7 @@ class UI:
         elif platform.system().lower == 'windows':
             lPython = 'python'
         else:
-            sys.exit(f"Unknown platform to run on: {platform.system()}")
+            sys.exit(f"Unknown platform to run on: {platform.system().lower()}")
         return lPython
 
     def getConfigFilesInDirectory(self):
