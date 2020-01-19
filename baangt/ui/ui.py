@@ -130,8 +130,9 @@ class UI:
         globals: The globals-file selected from the UI-Element
         @return: Full path and filename to call Subprocess
         """
-        return f"{self._getPythonExecutable()} {sys.modules['__main__'].__file__} --run='{self.directory}/{self.testRunFile}' " \
-                 f"--globals='{self.directory}/{self.configFile}'"
+        return f"{self._getPythonExecutable()} {utils.findFileAndPathFromPath(utils.pathUtils() + '/baangt.py')} " \
+               f"--run='{self.directory}/{self.testRunFile}' " \
+               f"--globals='{self.directory}/{self.configFile}'"
 
     def _getPythonExecutable(self):
         if platform.system().lower() == 'linux' or platform.system().lower() == 'darwin':

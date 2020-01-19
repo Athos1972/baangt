@@ -121,3 +121,32 @@ class utils:
             lFileNameAndPath = Path(lFileNameAndPath)
 
         return str(lFileNameAndPath.absolute())
+
+    @staticmethod
+    def pathUtils():
+        import imp
+        import os
+
+        def main_is_frozen():
+            return (hasattr(sys, "frozen") or  # new py2exe
+                    hasattr(sys, "importers")  # old py2exe
+                    or imp.is_frozen("__main__"))  # tools/freeze
+
+        def get_main_dir():
+            if main_is_frozen():
+                # print 'Running from path', os.path.dirname(sys.executable)
+                return os.path.dirname(sys.executable)
+            return os.path.dirname(sys.argv[0])
+
+        # find path to where we are running
+        path_to_script = get_main_dir()
+
+        # OPTIONAL:
+        # add the sibling 'lib' dir to our module search path
+        lib_path = os.path.join(get_main_dir(), os.path.pardir, 'lib')
+        sys.path.insert(0, lib_path)
+
+        # OPTIONAL:
+        # use info to find relative data files in 'data' subdir
+        # datafile1 = os.path.join(get_main_dir(), 'data', 'file1')
+        return path_to_script
