@@ -16,25 +16,25 @@ Then fire up your favorite virtual environment, e.g.
 `pip install -r requirements.txt` and you're good to go.
 
 
-##Usage
+## Usage
 `baangt` can be used for API, oData V2/V4, Browser (Chrome, Firefox, Safari, IE and more) Testing based on a common 
 data layer. As complex as this sounds, as easy is it to start with, give it a try!
-##Preparation
+## Preparation
 You need at least a data- and a sequence definition file (example: `DropsSimple.xlsx` in the root folder of `baangt`).
-##Run the Testcase
+## Run the Testcase
 `Python baangt.py --run="DropsSimple.xlsx"` will execute the testcases defined in the file (login to drops-app, recycle 
 a product)
-##Receive the results
+## Receive the results
 You'll find the output file in the folder `1testoutput` as XLSX with a summary of duration, successful vs. non-successful 
 testcases and a second tab with details for each looped testcase.
-##Awesome, but not enough?
+## Awesome, but not enough?
 You're deeply impressed by the simplicity of the solution, but want MORE? We've got you covered. The second example shows 
 the same outcome with much greater flexibility. For the second execution you'll use DropsTestRunDefinition.xlsx-File. 
 You can see there are more Tabs than in the first example, for instance can you specify which datafile and 
 tabname(s) to use for execution of a testrun, which lines from the datafile to skip/run, which browser to use and much more.
 Calling ``baangt.py`` is still same simple:
 `Python baangt.py --run="DropsTestRunDefinition"`. Again you'll find an excel sheet in the folder `1Testoutput`.
-##Nice(r), but how about a real life example?
+## Nice(r), but how about a real life example?
 You're right. Nobody can test his application with 5 datafields and 1 business process. 
 
 Real life regression tests often span multiple applications (thus we use TestCaseSequence), many business processes 
@@ -43,7 +43,7 @@ No matter, how complex the application under test is, the start is always a Test
 
 Btw. try `python baangt.py` without parameters to start the UI. It should run on Mac, Windows and all major 
 Linux-Distributions with X11 
-##Still want more? Create your own TestStepClass:
+## Still want more? Create your own TestStepClass:
 Every once in a while the TestStep-Definition via XLSX or the database will not be enough for your use-case. You can 
 easily subclass whatever you need and still use the rest of the framework.
 ```
@@ -65,8 +65,8 @@ and also create your own Assertion-classes (for instance if you need to receive 
 RFC/SOAP-Connection, which is not natively supported by ``baangt.py``). Of course you'd only re-implement methods, 
 that you need to enrich and consume everything else from the framework.
 
-##Browser related knowledge
-###Setting, which browser to start
+## Browser related knowledge
+### Setting, which browser to start
 * Method 1:
 Set the browser in the Testrun Definition (either in XLSX in Tab `TestCase` in the column `Browser` or in JSON:
 
@@ -86,10 +86,10 @@ Then call `baangt.py` as usual:
 
 `python baangt.py --run="someRunNameXLSXorJSON" --globals='mynewGlobals.json'`
 
-###Starting browser in Headless Mode:
+### Starting browser in Headless Mode:
 Either in XLSX or in JSON on level TestCase set the BrowserOptions as follows:
 
 `{'HEADLESS': 'True'}`
 
-#Further reading:
+# Further reading:
 Please see latest news on http://baangt.org for community edition and http://baangt.com for corporate environments.
