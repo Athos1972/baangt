@@ -132,7 +132,7 @@ class utils:
             if hasattr(sys, "frozen") or \
                hasattr(sys, 'importers'):
                 lFrozen = True
-            elif getattr(sys, 'frozen') and hasattr(sys, '_MEIPASS'):
+            elif hasattr(sys, 'frozen') and hasattr(sys, '_MEIPASS'):
                 lFrozen = True
             return lFrozen
 
@@ -155,9 +155,14 @@ class utils:
         # use info to find relative data files in 'data' subdir
         # datafile1 = os.path.join(get_main_dir(), 'data', 'file1')
 
-        if getattr(sys, 'frozen') and hasattr(sys, '_MEIPASS'):
-            print('running in a PyInstaller bundle')
+        logger.debug(f"Value of sys._MEIPASS {getattr(sys, '_MEIPASS', 'None')}")
+        logger.debug(f"Value of __file__: {__file__}")
+        logger.debug(f"Value of sys.executable: {sys.executable}")
+        logger.debug(f"Value of sys.argv[0]: {sys.argv[0]}")
+
+        if hasattr(sys, 'frozen') and hasattr(sys, '_MEIPASS'):
+            logger.debug('running in a PyInstaller bundle')
         else:
-            print('running in a normal Python process')
+            logger.debug('running in a normal Python process')
 
         return path_to_script
