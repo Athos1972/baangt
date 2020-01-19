@@ -94,7 +94,6 @@ class UI:
             if lEvent == "Execute TestRun":
                 self.runTestRun()
 
-
         self.saveInteractiveGuiConfig()
 
     def saveConfigFileProcedure(self, lWindow, lValues):
@@ -125,12 +124,15 @@ class UI:
 
     def _getRunCommand(self):
         """
+        If bundled (e.g. in pyinstaller), then the executable is already sys.executable,
+        otherwise we need to concatenate executable and Script-Name before we can start
+        a subprocess.
 
         @return: Full path and filename to call Subprocess
         """
         lStart = sys.executable
         if "python" in sys.executable.lower():
-            if Path(sys.argv[0]).parents.count() > 1:
+            if len(Path(sys.argv[0]).parents) > 1:
                 # This is a system where the path the the script is given in sys.argv[0]
                 lStart = lStart + f" {sys.argv[0]}"
             else:
