@@ -17,7 +17,7 @@ Then fire up your favorite virtual environment, e.g.
 
 
 ## Usage
-`baangt` can be used for API, oData V2/V4, Browser (Chrome, Firefox, Safari, IE and more) Testing based on a common 
+Use `baangt` for API, oData V2/V4, Browser (Chrome, Firefox, Safari, IE and more) Testing based on a common 
 data layer. As complex as this sounds, as easy is it to start with, give it a try!
 ## Preparation
 You need at least a data- and a sequence definition file (example: `DropsSimple.xlsx` in the root folder of `baangt`).
