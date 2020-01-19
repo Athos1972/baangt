@@ -83,6 +83,9 @@ class ExportResults:
         l_file: Path = Path(basePath).joinpath(self.testRunInstance.globalSettings[GC.DATABASE_EXPORTFILENAMEANDPATH])
         if "~" in str(l_file.absolute()):
             l_file = l_file.expanduser()
+        if not Path(l_file).is_dir():
+            logger.info(f"Create directory {l_file}")
+            Path(l_file).mkdir(parents=True, exist_ok=True)
         l_file = l_file.joinpath("baangt_" + self.testRunName + "_" + utils.datetime_return() + ".xlsx")
         logger.debug(f"Filename for export: {str(l_file)}")
         return str(l_file)
