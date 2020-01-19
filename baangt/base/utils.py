@@ -140,6 +140,7 @@ class utils:
 
         # find path to where we are running
         path_to_script = get_main_dir()
+        logger.debug(f"Path determined from PathUtils is {path_to_script}")
 
         # OPTIONAL:
         # add the sibling 'lib' dir to our module search path
