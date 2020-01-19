@@ -1,6 +1,9 @@
 import logging
 from datetime import datetime
 import pathlib
+import sys
+import os
+from pathlib import Path
 
 # fixme: Parameter für Logfile should include stage and browser()
 logFilename:pathlib.Path = pathlib.Path(__file__)
@@ -27,3 +30,18 @@ fileHandler.setFormatter(formatter)
 # add the handlers to logger
 logger.addHandler(channelHandler)
 logger.addHandler(fileHandler)
+
+# Some general debug info:
+logger.debug(f"Value of sys._MEIPASS {getattr(sys, '_MEIPASS', 'None')}")
+logger.debug(f"Value of __file__: {__file__}")
+logger.debug(f"Value of sys.executable: {sys.executable}")
+logger.debug(f"Value of sys.argv[0]: {sys.argv[0]}")
+logger.debug(f"Value of sys.path: {sys.path}")
+logger.debug(f"Value of os.path: {os.path}")
+logger.debug(f"Value of os.getcwd(): {os.getcwd()}")
+logger.debug(f"Value of Path.cwd(): {Path.cwd()}")
+
+if hasattr(sys, 'frozen') and hasattr(sys, '_MEIPASS'):
+    logger.debug('running in a PyInstaller bundle')
+else:
+    logger.debug('running in a normal Python process')

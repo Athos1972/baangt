@@ -9,6 +9,7 @@ import baangt.base.GlobalConstants as GC
 from baangt.base.utils import utils
 import logging
 import json
+from pathlib import Path
 
 logger = logging.getLogger("pyC")
 
@@ -124,20 +125,26 @@ class UI:
 
     def _getRunCommand(self):
         """
-        _getPythonExecutable: Python oder Python3 or nothing, if executed from a bundled executable
-        __main__.__file__: Mainscript - usually baangt.py or baangtIA.py
-        run: The testrun name selected from the UI-Element
-        globals: The globals-file selected from the UI-Element
+
         @return: Full path and filename to call Subprocess
         """
-        return f"{self._getPythonExecutable()} {utils.findFileAndPathFromPath(utils.pathUtils() + '/baangt.py')} " \
+        lStart = sys.executable
+        if "python" in sys.executable.lower():
+            if Path(sys.argv[0]).parents.count() > 1:
+                # This is a system where the path the the script is given in sys.argv[0]
+                lStart = lStart + f" {sys.argv[0]}"
+            else:
+                # this is a system where we need to join os.getcwd() and sys.argv[0] because the path is not given in sys.argv[0]
+                lStart = lStart + f" {Path(os.getcwd()).joinpath(sys.argv[0])}"
+
+        return f"{lStart} " \
                f"--run='{self.directory}/{self.testRunFile}' " \
                f"--globals='{self.directory}/{self.configFile}'"
 
     def _getPythonExecutable(self):
         if hasattr(sys, '_MEIPASS'):
             # We're in an executable created by pyinstaller
-            return ""
+            return sys.executable
 
         if platform.system().lower() == 'linux' or platform.system().lower() == 'darwin':
             lPython = 'python3'
