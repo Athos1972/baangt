@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="baangt", # Replace with your own username
-    version="2020.1.1b7",
+    version="2020.1.1b9",
     author="Bernhard Buhl",
     author_email="buhl@buhl-consulting.com.cy",
     description="Basic And Advanced NextGeneration Testing",
