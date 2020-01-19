@@ -150,7 +150,7 @@ class UI:
 
         if platform.system().lower() == 'linux' or platform.system().lower() == 'darwin':
             lPython = 'python3'
-        elif platform.system().lower == 'windows':
+        elif platform.system().lower() == 'windows':
             lPython = 'python'
         else:
             sys.exit(f"Unknown platform to run on: {platform.system().lower()}")
