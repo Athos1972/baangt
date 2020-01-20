@@ -5,7 +5,6 @@ class TestRunDatabaseFill:
         self.cursor = cursor
         self.fill()
 
-        pass
 
     def fill(self):
         self.cursor.execute('insert into executionMethod (name, description, created, createdBy)'

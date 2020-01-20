@@ -145,4 +145,3 @@ class TestCaseSequenceMaster:
 
     def tearDown(self):
         self.timing.takeTime(self.timingName)
-        pass

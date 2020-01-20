@@ -103,6 +103,7 @@ class TestStepMaster:
                 self.ifIsTrue = False
         else:
             raise BaseException(f"Comparison Operator not supported/unknown {lComparison}")
+
     def execute(self):
         """Method is overwritten in all children"""
         pass

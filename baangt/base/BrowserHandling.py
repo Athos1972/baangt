@@ -213,7 +213,6 @@ class BrowserDriver:
             self._log(logging.DEBUG, f"Leaving Iframe: {self.iFrame}")
             self.driver.switch_to.default_content()
             self.iFrame = None
-        pass
 
     def handleWindow(self, windowNumber=None, function=None):
         """
