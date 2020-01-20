@@ -23,6 +23,7 @@ class ExportResults:
         self.workbook = xlsxwriter.Workbook(self.filename)
         self.summarySheet = self.workbook.add_worksheet("Summary")
         self.worksheet = self.workbook.add_worksheet("Output")
+        self.timingsheet = self.workbook.add_worksheet("Timing")
         self.dataRecords = self.testRunInstance.dataRecords
         self.fieldListExport = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.EXPORT_FORMAT)["Fieldlist"]
         self.cellFormatGreen = self.workbook.add_format()
@@ -35,10 +36,11 @@ class ExportResults:
         self.__setHeaderDetailSheet()
         self.makeSummary()
         self.exportResult()
+        self.exportTiming = ExportTiming(self.dataRecords, self.timingsheet)
+        self.closeExcel()
 
     def exportResult(self, **kwargs):
         self._exportData()
-        self.closeExcel()
 
     def makeSummary(self):
 
@@ -47,14 +49,18 @@ class ExportResults:
 
         # Testrecords
         self.__writeSummaryCell("Testrecords", len(self.dataRecords), row=2, format=self.cellFormatBold)
-        self.__writeSummaryCell("Successful", len([x for x in self.dataRecords.values()
-                                                   if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_SUCCESS]),
-                                format=self.cellFormatGreen)
+        value = len([x for x in self.dataRecords.values()
+                                                   if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_SUCCESS])
+        if not value:
+            value = ""
+        self.__writeSummaryCell("Successful", value, format=self.cellFormatGreen)
         self.__writeSummaryCell("Paused", len([x for x in self.dataRecords.values()
                                                    if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_WAITING]))
-        self.__writeSummaryCell("Error", len([x for x in self.dataRecords.values()
-                                               if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR]),
-                                format=self.cellFormatRed)
+        value = len([x for x in self.dataRecords.values()
+                                               if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR])
+        if not value:
+            value = ""
+        self.__writeSummaryCell("Error", value, format=self.cellFormatRed)
 
         # Logfile
         self.__writeSummaryCell("Logfile", logger.handlers[1].baseFilename, row=7)
@@ -67,9 +73,18 @@ class ExportResults:
         self.__writeSummaryCell("Duration", duration, format=self.cellFormatBold )
         self.__writeSummaryCell("Avg. Dur", "")
 
-        #Globals:
+        # Globals:
         self.__writeSummaryCell("Global settings for this testrun", "", format=self.cellFormatBold, row=14)
         for key, value in self.testRunInstance.globalSettings.items():
+            self.__writeSummaryCell(key, str(value))
+
+        # Testcase and Testsequence setting
+        self.__writeSummaryCell("TestSequence settings follow:", "", row=16+len(self.testRunInstance.globalSettings),
+                                format=self.cellFormatBold)
+        lSequence = self.testRunInstance.testRunUtils.getSequenceByNumber(testRunName=self.testRunName, sequence="1")
+        for key, value in lSequence[1].items():
+            if isinstance(value, list) or isinstance(value, dict):
+                continue
             self.__writeSummaryCell(key, str(value))
 
     def __writeSummaryCell(self, lineHeader, lineText, row=None, format=None):
@@ -78,8 +93,12 @@ class ExportResults:
         else:
             self.summaryRow = row
 
-        self.summarySheet.write(self.summaryRow, 0, lineHeader)
-        self.summarySheet.write(self.summaryRow, 1, lineText, format)
+        if not lineText:
+            # If we have no lineText we want to apply format to the Header
+            self.summarySheet.write(self.summaryRow, 0, lineHeader, format)
+        else:
+            self.summarySheet.write(self.summaryRow, 0, lineHeader)
+            self.summarySheet.write(self.summaryRow, 1, lineText, format)
 
     def __getOutputFileName(self):
         if self.testRunInstance.globalSettings[GC.PATH_ROOT]:
@@ -117,7 +136,7 @@ class ExportResults:
 
         # Make cells wide enough
         for n in range(0,len(self.fieldListExport)):
-            ExportResults.set_column_autowidth(self.worksheet, n)
+            ExcelSheetHelperFunctions.set_column_autowidth(self.worksheet, n)
 
     def __writeCell(self, line, cellNumber, testRecordDict, fieldName, strip=False):
         if fieldName in testRecordDict.keys() and testRecordDict[fieldName]:
@@ -138,6 +157,25 @@ class ExportResults:
         self.workbook.close()
         # Next line doesn't work on MAC. Returns "not authorized"
         # subprocess.Popen([self.filename], shell=True)
+
+
+class ExcelSheetHelperFunctions:
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def set_column_autowidth(worksheet: Worksheet, column: int):
+        """
+        Set the width automatically on a column in the `Worksheet`.
+        !!! Make sure you run this function AFTER having all cells filled in
+        the worksheet!
+        """
+        maxwidth = ExcelSheetHelperFunctions.get_column_width(worksheet=worksheet, column=column)
+        if maxwidth is None:
+            return
+        elif maxwidth > 45:
+            maxwidth = 45
+        worksheet.set_column(first_col=column, last_col=column, width=maxwidth)
 
     @staticmethod
     def get_column_width(worksheet: Worksheet, column: int) -> Optional[int]:
@@ -167,16 +205,92 @@ class ExportResults:
             return None
         return max(lengths)
 
+
+class ExportTiming:
+    def __init__(self, testdataRecords:dict, sheet:xlsxwriter.worksheet):
+        self.testdataRecords = testdataRecords
+        self.sheet:xlsxwriter.worksheet = sheet
+
+        self.sections = {}
+
+        self.findAllTimingSections()
+        self.writeHeader()
+        self.writeLines()
+
+        # Autowidth
+        for n in range(0,len(self.sections)+1):
+            ExcelSheetHelperFunctions.set_column_autowidth(self.sheet, n)
+
+    def writeHeader(self):
+        self.wc(0,0,"Testcase#")
+        for index, key in enumerate(self.sections.keys(), start=1):
+            self.wc(0, index, key)
+
+    def writeLines(self):
+        for tcNumber, (key, line) in enumerate(self.testdataRecords.items(),start=1):
+            self.wc(tcNumber, 0, tcNumber)
+            lSections = self.interpretTimeLog(line[GC.TIMELOG])
+            for section, timingValue in lSections.items():
+                # find, in which column this section should be written:
+                for column, key in enumerate(self.sections.keys(),1):
+                    if key == section:
+                        self.wc(tcNumber, column,
+                                ExportTiming.shortenTimingValue(timingValue[GC.TIMING_DURATION]))
+                        continue
+
     @staticmethod
-    def set_column_autowidth(worksheet: Worksheet, column: int):
+    def shortenTimingValue(timingValue):
+        # TimingValue is seconds in Float. 2 decimals is enough:
+        timingValue = int(float(timingValue) * 100)
+        return timingValue/100
+
+    def writeCell(self, row, col, content, format=None):
+        self.sheet.write(row, col, content, format)
+
+    wc = writeCell
+
+    def findAllTimingSections(self):
         """
-        Set the width automatically on a column in the `Worksheet`.
-        !!! Make sure you run this function AFTER having all cells filled in
-        the worksheet!
+        We try to have an ordered list of Timing Sequences. As each Testcase might have different sections we'll have
+        to make guesses
+
+        @return:
         """
-        maxwidth = ExportResults.get_column_width(worksheet=worksheet, column=column)
-        if maxwidth is None:
-            return
-        elif maxwidth > 50:
-            maxwidth = 50
-        worksheet.set_column(first_col=column, last_col=column, width=maxwidth)
+        lSections = {}
+        for key, line in self.testdataRecords.items():
+            lTiming:dict = ExportTiming.interpretTimeLog(line[GC.TIMELOG])
+            for key in lTiming.keys():
+                if lSections.get(key):
+                    continue
+                else:
+                    lSections[key] = None
+
+        self.sections = lSections
+
+    @staticmethod
+    def interpretTimeLog(lTimeLog):
+        """Example Time Log:
+        Complete Testrun: Start: 1579553837.241974 - no end recorded
+        TestCaseSequenceMaster: Start: 1579553837.243414 - no end recorded
+        CustTestCaseMaster: Start: 1579553838.97329 - no end recorded
+        Browser Start: , since last call: 2.3161418437957764
+        Empfehlungen: , since last call: 6.440968036651611, ZIDs:[175aeac023237a73], TS:2020-01-20 21:57:46.525577
+        Annahme_RABAZ: , since last call: 2.002716064453125e-05, ZIDs:[6be7d0a44e59acf6], TS:2020-01-20 21:58:37.203583
+        Antrag drucken: , since last call: 9.075241088867188, ZIDs:[6be7d0a44e59acf6, b27c3875ddcbb4fa], TS:2020-01-20 21:58:38.040137
+        Warten auf Senden an Bestand Button: , since last call: 1.3927149772644043
+        Senden an Bestand: , since last call: 9.60469913482666, ZIDs:[66b12fa4869cf8a0, ad1f3d47c4694e26], TS:2020-01-20 21:58:49.472288
+
+        where the first part before ":" is the section, "since last call:" is the duration, TS: is the timestamp
+"""
+        lExport = {}
+        lLines = lTimeLog.split("\n")
+        for line in lLines:
+            parts = line.split(",")
+            if "Start:" in line:
+                # Format <sequence>: <Start>: <time.loctime>
+                continue
+            else:
+                lSection = parts[0].replace(":","").strip()
+                lDuration = parts[1].split(":")[1]
+                lExport[lSection] = {GC.TIMING_DURATION: lDuration}
+        return lExport
