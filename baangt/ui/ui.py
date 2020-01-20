@@ -19,9 +19,8 @@ class UI:
     Provides a simple UI for Testrun-Execution
     """
     def __init__(self):
-        # Todo 1: Save last used directory to local config File
-        # Todo 2: Use the parameters from Globals and provide an option to change them
         self.configFile = None
+        self.tempConfigFile = None
         self.configFiles = []
         self.testRunFile = None
         self.testRunFiles = []
@@ -121,6 +120,12 @@ class UI:
         logger.info(f"Running command: {runCmd}")
         p = subprocess.run(runCmd, shell=True)
         sg.popup_ok("Testrun finished")
+        # Remove temporary Configfile, that was created only for this run:
+        try:
+            os.remove(self.directory+"/"+self.tempConfigFile)
+        except Exception as e:
+            logger.warning(f"Tried to remove temporary file but seems to be not there: "
+                           f"{self.directory}/{self.tempConfigFile}")
 
     def _getRunCommand(self):
         """
@@ -139,9 +144,27 @@ class UI:
                 # this is a system where we need to join os.getcwd() and sys.argv[0] because the path is not given in sys.argv[0]
                 lStart = lStart + f" {Path(os.getcwd()).joinpath(sys.argv[0])}"
 
+        self.__makeTempConfigFile()
+
         return f"{lStart} " \
                f"--run='{self.directory}/{self.testRunFile}' " \
-               f"--globals='{self.directory}/{self.configFile}'"
+               f"--globals='{self.directory}/{self.tempConfigFile}'"
+
+    def __makeTempConfigFile(self):
+        """
+        Add parameters to the Config-File for this Testrun and save the file under a temporary name
+        """
+        self.configContents[GC.PATH_ROOT] = self.directory
+        self.configContents[GC.PATH_SCREENSHOTS] = str(Path(self.directory).joinpath("Screenshots"))
+        self.configContents[GC.PATH_EXPORT] = str(Path(self.directory).joinpath("1testoutput"))
+        self.configContents[GC.PATH_IMPORT] = str(Path(self.directory).joinpath("0testdateninput"))
+        self.tempConfigFile = UI.__makeRandomFileName()
+        self.saveContentsOfConfigFile(self.tempConfigFile)
+
+
+    @staticmethod
+    def __makeRandomFileName():
+        return "globals_" + utils.datetime_return() + ".json"
 
     def _getPythonExecutable(self):
         if hasattr(sys, '_MEIPASS'):
@@ -179,15 +202,12 @@ class UI:
     def readContentsOfGlobals(self):
         self.configContents = utils.openJson(self.directory + "/" + self.configFile)
 
-    def saveContentsOfConfigFile(self):
+    def saveContentsOfConfigFile(self, lFileName = None):
+        if not lFileName:
+            lFileName = self.configFile
 
-        x = sg.popup_ok_cancel(f"Would write this content: {self.configContents} \n to file: {self.configFile} in path {self.directory}")
-        print(x)
-
-        if x == 'OK':
-            with open(self.directory + "/" + self.configFile, 'w') as outfile:
-                json.dump(self.configContents, outfile, indent=4)
-            sg.popup_ok(f"Wrote file {self.directory}/{self.configFile}")
+        with open(self.directory + "/" + lFileName, 'w') as outfile:
+            json.dump(self.configContents, outfile, indent=4)
 
     def modifyValuesOfConfigFileInMemory(self, lValues):
         for key, value in lValues.items():

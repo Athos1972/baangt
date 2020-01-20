@@ -32,17 +32,25 @@ class BrowserDriver:
     - javaScript: to pass JS directly to the browser
     - takeScreenshot: yes, that.
     """
-    def __init__(self, timing=None):
+    def __init__(self, timing=None, screenshotPath=None):
         self.driver = None
         self.iFrame = None
         self.element = None
         self.locatorType = None
         self.locator = None
+
         if timing:
             self.timing = timing
         else:
             self.timing = Timing()
+
         self.takeTime = self.timing.takeTime
+
+        if screenshotPath:
+            self.screenshotPath = screenshotPath
+            Path(self.screenshotPath).mkdir(exist_ok=True)
+        else:
+            self.screenshotPath = os.getcwd()
 
     def createNewBrowser(self, browserName=GC.BROWSER_FIREFOX, desiredCapabilities=None, **kwargs):
         """
@@ -172,7 +180,7 @@ class BrowserDriver:
         if screenShotPath:
             lFile = Path(screenShotPath).joinpath(lFile)
         else:
-            lFile = Path(os.getcwd()).joinpath(lFile)
+            lFile = Path(self.screenshotPath).joinpath(lFile)
 
         try:
             lFile = str(lFile)

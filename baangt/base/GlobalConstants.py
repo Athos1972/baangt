@@ -55,3 +55,9 @@ EXECUTION_DONTCLOSEBROWSER = "dontCloseBrowser"
 EXPORT_FORMAT = "Export Format"
 EXP_FIELDLIST = "Fieldlist"
 EXP_XLSX = "XLSX"
+EXP_CSV = "CSV"
+
+PATH_EXPORT = 'ExportPath'
+PATH_IMPORT = 'ImportPath'
+PATH_SCREENSHOTS = 'ScreenshotPath'
+PATH_ROOT = 'RootPath'

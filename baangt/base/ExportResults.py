@@ -76,7 +76,9 @@ class ExportResults:
         self.summarySheet.write(self.summaryRow, 1, lineText, format)
 
     def __getOutputFileName(self):
-        if not "/" in self.testRunInstance.globalSettings[GC.DATABASE_EXPORTFILENAMEANDPATH][0:1]:
+        if self.testRunInstance.globalSettings[GC.PATH_ROOT]:
+            basePath = Path(self.testRunInstance.globalSettings[GC.PATH_ROOT])
+        elif not "/" in self.testRunInstance.globalSettings[GC.DATABASE_EXPORTFILENAMEANDPATH][0:1]:
             basePath = Path(sys.modules['__main__'].__file__).parent
         else:
             basePath = ""

@@ -11,6 +11,7 @@ from baangt.TestSteps.TestStepMaster import TestStepMaster
 from baangt.TestCase.TestCaseMaster import TestCaseMaster
 from baangt.TestCaseSequence.TestCaseSequenceMaster import TestCaseSequenceMaster
 import logging
+from pathlib import Path
 import sys
 
 logger = logging.getLogger("pyC")
@@ -106,7 +107,8 @@ class TestRun:
         return self.browser[browserInstance]
 
     def _getBrowserInstance(self, browserInstance):
-        self.browser[browserInstance] = BrowserDriver(timing=self.timing)
+        self.browser[browserInstance] = BrowserDriver(timing=self.timing,
+                                                      screenshotPath=self.globalSettings[GC.PATH_SCREENSHOTS])
 
     def getAPI(self):
         if not self.apiInstance:
@@ -179,6 +181,11 @@ class TestRun:
 
     def _initTestRun(self):
         self.loadJSONGlobals()
+        if not self.globalSettings.get(GC.PATH_SCREENSHOTS,None):
+            self.globalSettings[GC.PATH_SCREENSHOTS] = str(Path(self.globalSettingsFileNameAndPath).parent.joinpath("Screenshots"))
+            self.globalSettings[GC.PATH_EXPORT] = str(Path(self.globalSettingsFileNameAndPath).parent.joinpath("1testoutput"))
+            self.globalSettings[GC.PATH_IMPORT] = str(Path(self.globalSettingsFileNameAndPath).parent.joinpath("0testdateninput"))
+            self.globalSettings[GC.PATH_ROOT] = str(Path(self.globalSettingsFileNameAndPath).parent)
         pass
 
     def loadJSONGlobals(self):

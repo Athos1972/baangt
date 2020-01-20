@@ -6,8 +6,7 @@ import os
 from pathlib import Path
 
 # fixme: Parameter für Logfile should include stage and browser()
-logFilename:pathlib.Path = pathlib.Path(__file__)
-logFilename = logFilename.parent.parent
+logFilename:pathlib.Path = Path(os.getcwd())
 logFilename = logFilename.joinpath('logs')
 pathlib.Path(logFilename).mkdir(parents=True, exist_ok=True)
 logFilename = logFilename.joinpath(datetime.now().strftime("%Y%m%d_%H%M%S") + '.log')
