@@ -65,6 +65,12 @@ class ExportResults:
         self.__writeSummaryCell("Starttime", start, row=9)
         self.__writeSummaryCell("Endtime", end)
         self.__writeSummaryCell("Duration", duration, format=self.cellFormatBold )
+        self.__writeSummaryCell("Avg. Dur", "")
+
+        #Globals:
+        self.__writeSummaryCell("Global settings for this testrun", "", format=self.cellFormatBold, row=14)
+        for key, value in self.testRunInstance.globalSettings.items():
+            self.__writeSummaryCell(key, str(value))
 
     def __writeSummaryCell(self, lineHeader, lineText, row=None, format=None):
         if not row:
