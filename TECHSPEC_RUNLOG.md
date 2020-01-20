@@ -15,3 +15,4 @@ create (if not exisits) database and entities to save:
 
 ### Extend TestRun.py to write into the database
 * In the method `tearDown` of `baangt.base.TestRun.py` add a call to store the testrun execution data into the database.
+* Alternatively use the existing (and already called) ExportResults.py class directly
