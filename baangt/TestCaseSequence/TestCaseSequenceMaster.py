@@ -5,6 +5,7 @@ from baangt.base.utils import utils
 import baangt.base.GlobalConstants as GC
 import multiprocessing
 from pathlib import Path
+import sys
 import logging
 
 logger = logging.getLogger("pyC")
@@ -24,7 +25,7 @@ class TestCaseSequenceMaster:
         # Extract relevant data for this TestSequence:
         self.testSequenceData = self.testrunAttributes[GC.STRUCTURE_TESTCASESEQUENCE].get(
             kwargs.get(GC.STRUCTURE_TESTCASESEQUENCE))[1]
-        self.recordPointer = self.testSequenceData[GC.DATABASE_FROM_LINE]
+        # self.recordPointer = self.testSequenceData[GC.DATABASE_FROM_LINE]
         self.testCases = self.testSequenceData[GC.STRUCTURE_TESTCASE]
         self.kwargs = kwargs
         self.timingName = self.timing.takeTime(self.__class__.__name__,forceNew=True)
@@ -35,6 +36,11 @@ class TestCaseSequenceMaster:
             self.execute()
 
     def prepareExecution(self):
+        if self.testSequenceData.get(GC.DATABASE_FROM_LINE) and not self.testSequenceData.get(GC.DATABASE_LINES, None):
+            # Change old line selection format into new format:
+            self.testSequenceData[GC.DATABASE_LINES] = f"{self.testSequenceData.get(GC.DATABASE_FROM_LINE)}-{self.testSequenceData.get(GC.DATABASE_TO_LINE)}"
+            self.testSequenceData.pop(GC.DATABASE_FROM_LINE)
+            self.testSequenceData.pop(GC.DATABASE_TO_LINE)
         self.__getDatabase()
         recordPointer = 0
         # Read all Testrecords into l_testRecords:
@@ -119,19 +125,17 @@ class TestCaseSequenceMaster:
 
     def getNextRecord(self):
         self.recordCounter += 1
-        if self.testdataDataBase:
-            if self.recordPointer > self.testSequenceData[GC.DATABASE_TO_LINE]:
-                return None
-        else:
+
+        if not self.testdataDataBase:
             self.__getDatabase()
 
-        lDataRecord = self.testdataDataBase.readTestRecord(self.recordPointer)
-        self.recordPointer += 1
+        lDataRecord=self.testdataDataBase.readNextRecord()
         return lDataRecord
 
     def __getDatabase(self):
         if not self.testdataDataBase:
-            self.testdataDataBase = HandleDatabase(globalSettings=self.testRunInstance.globalSettings)
+            self.testdataDataBase = HandleDatabase(globalSettings=self.testRunInstance.globalSettings,
+                                                   linesToRead=self.testSequenceData.get(GC.DATABASE_LINES))
             self.testdataDataBase.read_excel(
                 fileName=utils.findFileAndPathFromPath(
                     self.testSequenceData[GC.DATABASE_FILENAME],

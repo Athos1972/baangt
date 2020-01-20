@@ -186,7 +186,6 @@ class TestRun:
             self.globalSettings[GC.PATH_EXPORT] = str(Path(self.globalSettingsFileNameAndPath).parent.joinpath("1testoutput"))
             self.globalSettings[GC.PATH_IMPORT] = str(Path(self.globalSettingsFileNameAndPath).parent.joinpath("0testdateninput"))
             self.globalSettings[GC.PATH_ROOT] = str(Path(self.globalSettingsFileNameAndPath).parent)
-        pass
 
     def loadJSONGlobals(self):
         if self.globalSettingsFileNameAndPath:

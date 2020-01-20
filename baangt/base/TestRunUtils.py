@@ -27,7 +27,7 @@ class TestRunUtils():
         Will go through all testcase-Settings and replace values with values from global settings, if matched
         """
         for key, value in globals.items():
-            if not "TC." in key[0:3]:
+            if not "TC." in key[0:3] or len(value) == 0:
                 continue
             self.testRunAttributes = TestRunUtils._recursive_replace(self.testRunAttributes, key.replace("TC.",""), value)
 
