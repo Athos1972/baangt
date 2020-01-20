@@ -7,6 +7,7 @@ import subprocess
 import configparser
 import baangt.base.GlobalConstants as GC
 from baangt.base.utils import utils
+from baangt.ui.ImportKatalonRecorder import ImportKatalonRecorder
 import logging
 import json
 from pathlib import Path
@@ -34,14 +35,14 @@ class UI:
         self.startWindow()
 
     def getLayout(self):
-        lLayout = [[sg.Text("Select Directory, Testrun and Global settings to use:")],
-                   [sg.Text("Directory", size=(15,1)),
-                    sg.In(key="-directory-", size=(30,1), enable_events=True, default_text=self.directory),
-                    sg.FolderBrowse(initial_folder=os.getcwd(), enable_events=True)],
-                   [sg.Text("TestRun", size=(15,1)),
-                    sg.InputCombo(self.testRunFiles, key="testRunFile", default_value=self.testRunFile, size=(30,1))],
-                   [sg.Text("Global Settings", size=(15,1)),
-                    sg.InputCombo(self.configFiles, key="configFile", default_value=self.configFile, enable_events=True, size=(30,1))]]
+        lLayout= [[sg.Text("Select Directory, Testrun and Global settings to use:")]]
+        lLayout.append([sg.Text("Directory", size=(15,1)),
+                    sg.In(key="-directory-", size=(31,1), enable_events=True, default_text=self.directory),
+                    sg.FolderBrowse(initial_folder=os.getcwd(), enable_events=True)])
+        lLayout.append([sg.Text("TestRun", size=(15,1)),
+                    sg.InputCombo(self.testRunFiles, key="testRunFile", default_value=self.testRunFile, size=(29,1))])
+        lLayout.append([sg.Text("Global Settings", size=(15,1)),
+                    sg.InputCombo(self.configFiles, key="configFile", default_value=self.configFile, enable_events=True, size=(29,1))])
 
         if self.configContents:
             lLayout.append([sg.Text("-"*10 + f"Settings of file {self.configFile}" + "-"*10)])
@@ -52,6 +53,8 @@ class UI:
             lLayout.append([sg.Button('Save'), sg.Button("SaveAs"), sg.Button('Exit'), sg.Button("Execute TestRun")])
         else:
             lLayout.append([sg.Button('Exit')])
+
+        lLayout.append([sg.Button("Import Katalon", disabled=True), sg.Button("Import KatalonRecorder")])
 
         return lLayout
 
@@ -66,6 +69,7 @@ class UI:
             lEvent, lValues = lWindow.read()
             if lEvent == "Exit":
                 break
+
             if lValues.get('-directory-') != self.directory:
                 self.directory = lValues.get("-directory-")
                 self.getConfigFilesInDirectory()
@@ -91,9 +95,15 @@ class UI:
                     lWindow = self.saveConfigFileProcedure(lWindow, lValues)
 
             if lEvent == "Execute TestRun":
+                self.modifyValuesOfConfigFileInMemory(lValues=lValues)
                 self.runTestRun()
 
+            if lEvent == "Import KatalonRecorder":
+                ImportKatalonRecorder(self.directory)
+                self.getConfigFilesInDirectory()   # Refresh display
+
         self.saveInteractiveGuiConfig()
+        lWindow.close()
 
     def saveConfigFileProcedure(self, lWindow, lValues):
         # receive updated fields and values to store in JSON-File
@@ -161,7 +171,6 @@ class UI:
         self.tempConfigFile = UI.__makeRandomFileName()
         self.saveContentsOfConfigFile(self.tempConfigFile)
 
-
     @staticmethod
     def __makeRandomFileName():
         return "globals_" + utils.datetime_return() + ".json"
@@ -187,8 +196,12 @@ class UI:
         os.chdir(self.directory)
         fileList = glob.glob("*.json")
         fileList.extend(glob.glob("*.xlsx"))
+        if not platform.system().lower() == 'windows':
+            # On MAC and LINUX there may be also upper/lower-Case versions
+            fileList.extend(glob.glob("*.JSON"))
+            fileList.extend(glob.glob("*.XLSX"))
         for file in fileList:
-            if file[0:4].lower() == 'glob':
+            if file[0:4].lower() == 'glob':      # Global Settings for Testrun must start with global_*
                 self.configFiles.append(file)
             else:
                 self.testRunFiles.append(file)
@@ -201,6 +214,9 @@ class UI:
 
     def readContentsOfGlobals(self):
         self.configContents = utils.openJson(self.directory + "/" + self.configFile)
+        # Prepare some default values, if not filled:
+        if not self.configContents.get("TC." + GC.DATABASE_LINES):
+            self.configContents["TC." + GC.DATABASE_LINES] = ""
 
     def saveContentsOfConfigFile(self, lFileName = None):
         if not lFileName:
@@ -237,15 +253,27 @@ class UI:
 
     def saveInteractiveGuiConfig(self):
         config = configparser.ConfigParser()
-        config["DEFAULT"] = {"path": self.directory}
+        config["DEFAULT"] = {"path": self.directory,
+                             "testrun": UI.__nonEmptyString(self.testRunFile),
+                             "globals": UI.__nonEmptyString(self.configFile)}
         with open("baangt.ini", "w") as configFile:
             config.write(configFile)
+
+    @staticmethod
+    def __nonEmptyString(stringIn):
+        if stringIn:
+            return stringIn
+        else:
+            return ""
 
     def readConfig(self):
         config = configparser.ConfigParser()
         try:
             config.read("baangt.ini")
             self.directory = config["DEFAULT"]['path']
+            self.testRunFile = config["DEFAULT"]['testrun']
+            self.configFile = config["DEFAULT"]['globals']
+            self.readContentsOfGlobals()
         except Exception as e:
             self.directory = os.getcwd()
             pass
