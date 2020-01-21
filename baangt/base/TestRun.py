@@ -182,10 +182,14 @@ class TestRun:
     def _initTestRun(self):
         self.loadJSONGlobals()
         if not self.globalSettings.get(GC.PATH_SCREENSHOTS,None):
-            self.globalSettings[GC.PATH_SCREENSHOTS] = str(Path(self.globalSettingsFileNameAndPath).parent.joinpath("Screenshots"))
-            self.globalSettings[GC.PATH_EXPORT] = str(Path(self.globalSettingsFileNameAndPath).parent.joinpath("1testoutput"))
-            self.globalSettings[GC.PATH_IMPORT] = str(Path(self.globalSettingsFileNameAndPath).parent.joinpath("0testdateninput"))
-            self.globalSettings[GC.PATH_ROOT] = str(Path(self.globalSettingsFileNameAndPath).parent)
+            self.globalSettings[GC.PATH_SCREENSHOTS] = str(Path(self.globalSettingsFileNameAndPath
+                                                                ).parent.joinpath("Screenshots").expanduser())
+            self.globalSettings[GC.PATH_EXPORT] = str(Path(self.globalSettingsFileNameAndPath
+                                                           ).parent.joinpath("1testoutput").expanduser())
+            self.globalSettings[GC.PATH_IMPORT] = str(Path(self.globalSettingsFileNameAndPath
+                                                           ).parent.joinpath("0testdateninput").expanduser())
+            self.globalSettings[GC.PATH_ROOT] = str(Path(self.globalSettingsFileNameAndPath
+                                                         ).parent.expanduser())
 
     def loadJSONGlobals(self):
         if self.globalSettingsFileNameAndPath:

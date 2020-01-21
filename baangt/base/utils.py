@@ -100,8 +100,10 @@ class utils:
         lFileNameAndPath = fileNameAndPath
         if basePath:
             lBasePath = Path(basePath)
+            if "~" in str(lBasePath):
+                lBasePath = lBasePath.expanduser()
         else:
-            lBasePath = Path(sys.modules['__main__'].__file__).parent
+            lBasePath = Path(sys.argv[0]).parent    # Works in Windows
             logger.debug(f"Main Path to search for files: {lBasePath}")
             if len(str(lBasePath)) < 3:
                 # Most probaby we're in pyinstaller. Let's try to find executable path

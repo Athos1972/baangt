@@ -132,7 +132,7 @@ class UI:
         sg.popup_ok("Testrun finished")
         # Remove temporary Configfile, that was created only for this run:
         try:
-            os.remove(self.directory+"/"+self.tempConfigFile)
+            os.remove(Path(self.directory).joinpath(self.tempConfigFile))
         except Exception as e:
             logger.warning(f"Tried to remove temporary file but seems to be not there: "
                            f"{self.directory}/{self.tempConfigFile}")
@@ -157,8 +157,8 @@ class UI:
         self.__makeTempConfigFile()
 
         return f"{lStart} " \
-               f"--run='{self.directory}/{self.testRunFile}' " \
-               f"--globals='{self.directory}/{self.tempConfigFile}'"
+               f"--run='{Path(self.directory).joinpath(self.testRunFile)}' " \
+               f"--globals='{Path(self.directory).joinpath(self.tempConfigFile)}'"
 
     def __makeTempConfigFile(self):
         """
@@ -213,7 +213,7 @@ class UI:
         os.chdir(lcwd)
 
     def readContentsOfGlobals(self):
-        self.configContents = utils.openJson(self.directory + "/" + self.configFile)
+        self.configContents = utils.openJson(Path(self.directory).joinpath(self.configFile))
         # Prepare some default values, if not filled:
         if not self.configContents.get("TC." + GC.DATABASE_LINES):
             self.configContents["TC." + GC.DATABASE_LINES] = ""
@@ -222,7 +222,7 @@ class UI:
         if not lFileName:
             lFileName = self.configFile
 
-        with open(self.directory + "/" + lFileName, 'w') as outfile:
+        with open(str(Path(self.directory).joinpath(lFileName)), 'w') as outfile:
             json.dump(self.configContents, outfile, indent=4)
 
     def modifyValuesOfConfigFileInMemory(self, lValues):
@@ -234,7 +234,7 @@ class UI:
                     # an existing variable was changed to a new name. Delete the old one:
                     self.configContents.pop(lSearchKey)
                     lSearchKey = value
-                    lSearchVal = lValues['-val-'+key.replace("-attrib-","")]
+                    lSearchVal = lValues['-val-'+key.replace("-attrib-", "")]
                 else:
                     lSearchVal = lValues['-val-'+lSearchKey]
                 if len(lSearchKey) > 0:
