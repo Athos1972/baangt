@@ -1,10 +1,10 @@
-#TechSpec TestRun-Database
+# TechSpec TestRun-Database
 The database is a an alternative to creating testrun settings for baangt in XLSX. 
-Working with the database provides - other than XLSX - also the option to reuse elements (TestCaseSequence, TestCase, TestStepSequence) inbetween testruns, while in XLSX-Format there is no referencing, only Copy+Past (and resulting maintenance issues)
+Working with the database provides - other than XLSX - also the option to reuse elements (TestCaseSequence, TestCase, TestStepSequence) between testruns, while in XLSX-Format there is no referencing, only Copy+Paste (and resulting maintenance issues)
 
-##Create Database and UI for Testrun Definitions
+## Create Database and UI for Testrun Definitions
 Database and UI should be implemented using FLASK and ORM. Database SQLite is enough for now.
-###Main entities
+### Main entities
 * Testrun
 * TestCaseSequence (n:m to TestRun)
 * DataFiles (n:m) to TestCaseSequence 
@@ -13,7 +13,7 @@ Database and UI should be implemented using FLASK and ORM. Database SQLite is en
 * TestStepSequence (n:m) to TestCase
 * TestStepExecution (1:n) to TestStepSequence
 
-###Supporting entities
+###S upporting entities
 When a new database is created all entries in supporting entities shall be created (by ORM - not any db-specific command)
 * GlobalTestStepExecution (identical to TestStepExecution table but for reusable TestSteps)
 * ClassNames (Value table for Classnames in TestCaseSequence, TestCase, TestStepSequence)
@@ -28,14 +28,14 @@ When a new database is created all entries in supporting entities shall be creat
 
 Supporting entities shall have language/locale depending descriptions, that will be used in the UI to display tooltips and/or explanations in Dropdown-Fields.
   
-##Create the UI
-Hierarchical display of testruns and all their subsequent entities. Most probably something like a Tree would be good with +/- Buttons to add/remove elements.
+## Create the UI
+Hierarchical display of testruns and all their subsequent entities. Most probably something like a Tree would be good with +/- Buttons to add/remove elements. This UI-Element must be searchable and show filtered search result after a few characters are typed.
 
-###Special treatment of Global Variables
-GlobalVariables are stored in baangt.base.GlobalConstants.py - these variables shall be available at several places, additionally to manually entered values (see excel-sheet `DropsTestRunDefinition`)
+### Special treatment of Global Variables
+GlobalVariables are stored in `baangt.base.GlobalConstants.py` - these variables shall be available at several places, additionally to manually entered values (see excel-sheet `DropsTestRunDefinition`)
 
-###Testdatafiles:
+### Testdatafiles:
 Headers of testdatafiles must be read, so that the column names are available for selection in TestStepExecution-Steps for use in Column `Value` or `Value2` 
 
-###Execution
+### Execution
 There should be a "Run"-Button, which can be pressed whenever the user is inside a testrun (or any level below). When the button is clicke, all changes shall be saved to the database. `baangt.py` shall be called with the testrun-name of the currently active testrun in the UI. Further parameters need to be discussed.
