@@ -9,8 +9,6 @@ logger = logging.getLogger("pyC")
 class TestCaseSequenceParallel:
     def __init__(self, sequenceNumber, tcNumber, testcaseSequence=None, **kwargs):
         self.manager = multiprocessing.Manager()
-        if __name__ ==  '__main__':
-            multiprocessing.freeze_support()
         self.process_list = self.manager.list()
         self.sequenceNumber = sequenceNumber
         self.dataRecord = kwargs.get(GC.KWARGS_DATA)
