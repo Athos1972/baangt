@@ -8,5 +8,6 @@ VERMITTLER = "vermittler"
 MANDANT = "Mandant"
 DONAU = "DON"
 WSTV = "WSTV"
+VN = "VN"
 
 CLASSES_TESTCASE = "baangtVIG.CustTestCaseMaster"
