@@ -10,9 +10,6 @@ from pathlib import Path
 from typing import Optional
 from xlsxwriter.worksheet import (
     Worksheet, cell_number_tuple, cell_string_tuple)
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from baangt.base.DataBaseORM import DATABASE_URL, TestrunLog
 
 logger = logging.getLogger("pyC")
 
@@ -41,57 +38,6 @@ class ExportResults:
         self.exportResult()
         self.exportTiming = ExportTiming(self.dataRecords, self.timingsheet)
         self.closeExcel()
-        # export to DataBase
-        self.exportToDataBase()
-
-    def exportToDataBase(self):
-        engine = create_engine(f'sqlite:///{DATABASE_URL}')
-
-        # create a Session
-        Session = sessionmaker(bind=engine)
-        session = Session()
-
-        # get timings
-        start, end, duration = timing.returnTimeSegment(GC.TIMING_TESTRUN)
-
-        # get status
-        success = 0
-        error = 0
-        waiting = 0
-        for value in self.dataRecords.values():
-            if value[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_SUCCESS:
-                success += 1
-            elif value[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR:
-                error += 1
-            if value[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_WAITING:
-                waiting += 1
-
-        # get globals
-        globalString = '{'
-        for key, value in self.testRunInstance.globalSettings.items():
-            if len(globalString) > 1:
-                globalString += ', '
-            globalString += f'{key}: {value}'
-        globalString += '}'
-
-        # get documents
-        datafiles = self.filename
-
-        # create object
-        log = TestrunLog(
-            testrunName = self.testRunName,
-            logfileName = logger.handlers[1].baseFilename,
-            startTime = start,
-            endTime = end,
-            statusOk = success,
-            statusFailed = error,
-            statusPaused = waiting,
-            globalVars = globalString,
-            dataFile = datafiles,
-        )
-        # write to DataBase
-        session.add(log)
-        session.commit()
 
     def exportResult(self, **kwargs):
         self._exportData()

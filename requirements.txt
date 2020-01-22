@@ -23,4 +23,3 @@ webencodings
 xlrd
 XlsxWriter
 zipp
-SQLAlchemy

@@ -83,16 +83,6 @@ class TestRun:
                 lSuccess += 1
         return lSuccess, lError
 
-    def getPaused(self):
-        """
-        Returns number of paused test cases of the current test run
-        """
-        lPaused = 0
-        for value in self.dataRecords.values():
-            if value[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_WAITING:
-                lPaused += 1
-        return lPaused
-
     def getAllTestRunAttributes(self):
         return self.testRunUtils.getCompleteTestRunAttributes(self.testRunName)
 
