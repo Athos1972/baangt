@@ -8,6 +8,7 @@ import sys
 from baangt.base.utils import utils
 from pathlib import Path
 from typing import Optional
+import sqlite3
 from xlsxwriter.worksheet import (
     Worksheet, cell_number_tuple, cell_string_tuple)
 
@@ -38,6 +39,8 @@ class ExportResults:
         self.exportResult()
         self.exportTiming = ExportTiming(self.dataRecords, self.timingsheet)
         self.closeExcel()
+        self.createTables()
+        self.insertdata()
 
     def exportResult(self, **kwargs):
         self._exportData()
@@ -81,13 +84,11 @@ class ExportResults:
         # Testcase and Testsequence setting
         self.__writeSummaryCell("TestSequence settings follow:", "", row=16+len(self.testRunInstance.globalSettings),
                                 format=self.cellFormatBold)
-        lSequence = self.testRunInstance.testRunUtils.getSequenceByNumber(testRunName=self.testRunName, sequence="1")
-        # fixme: Here is a new bug (Earthsquad-Demo.XLS --> he doesn't find Sequence1 and then breaks. Theoretically there should always be a sequence 1 - even in simple XLS-Format.
-        if lSequence:
-            for key, value in lSequence[1].items():
-                if isinstance(value, list) or isinstance(value, dict):
-                    continue
-                self.__writeSummaryCell(key, str(value))
+        lSequence = self.testRunInstance.testRunUtils.getSequenceByNumber(testRunName=self.testRunName, sequence=1)
+        for key, value in lSequence[1].items():
+            if isinstance(value, list) or isinstance(value, dict):
+                continue
+            self.__writeSummaryCell(key, str(value))
 
     def __writeSummaryCell(self, lineHeader, lineText, row=None, format=None):
         if not row:
@@ -159,6 +160,107 @@ class ExportResults:
         self.workbook.close()
         # Next line doesn't work on MAC. Returns "not authorized"
         # subprocess.Popen([self.filename], shell=True)
+
+    def createDb(self):
+        dbConnection = None
+        if dbConnection:
+            dbCon = dbConnection
+        else:
+            dbCon = sqlite3.connect("test.db")
+        return dbCon
+
+    def createTables(self):
+        dbCon = self.createDb()
+        cursor = dbCon.cursor()
+
+        # Testrun_Name table
+        cursor.execute("""
+                CREATE TABLE if not exists Testrun_Name (
+                    ID integer PRIMARY KEY,
+                    name text NOT NULL
+                )
+                """)
+
+        # Logfile_Name table
+        cursor.execute("""
+                                CREATE TABLE if not exists Logfile_Name (
+                                    ID integer PRIMARY KEY,
+                                    name text NOT NULL,
+                                    Testrun_Name_ID integer NOT NULL, 
+                                    FOREIGN KEY (Testrun_Name_ID) REFERENCES Testrun_Name (ID)
+                                )
+                                """)
+
+        # Timings table
+        cursor.execute("""
+                                    CREATE TABLE if not exists Timings (
+                                            ID integer PRIMARY KEY,
+                                            Start TIMESTAMP NOT NULL,
+                                            End TIMESTAMP NOT NULL,
+                                            Duration TIMESTAMP NOT NULL,
+                                            Testrun_Name_ID integer NOT NULL,  
+                                            FOREIGN KEY (Testrun_Name_ID) REFERENCES Testrun_Name (ID)
+                                        )
+                                        """)
+
+        # Global_values table
+        query = "CREATE TABLE if not exists Global(ID integer PRIMARY KEY,Testrun_Name_ID integer NOT NULL,"
+
+        for key, value in self.testRunInstance.globalSettings.items():
+            query = query + ' ' + key + ' text NOT NULL' + ','
+
+        query = query + ' FOREIGN KEY (Testrun_Name_ID) REFERENCES Testrun_Name (ID))'
+        query = query.replace("TC.Lines", "TC_Lines")
+        cursor.execute(query)
+
+
+        cursor.execute("""
+                                        CREATE TABLE if not exists DataFile_Name (
+                                            ID integer PRIMARY KEY,
+                                            name text NOT NULL,
+                                            Testrun_Name_ID integer NOT NULL, 
+                                            FOREIGN KEY (Testrun_Name_ID) REFERENCES Testrun_Name (ID)
+                                        )
+                                        """)
+
+        dbCon.commit()
+
+
+
+    def insertdata(self):
+        dbCon = self.createDb()
+        cursor = dbCon.cursor()
+
+        cursor.execute("""
+                        INSERT INTO Testrun_Name (name) values ("{s}")
+                        """.format(s = str(self.testRunName)))
+        lastrowid = cursor.lastrowid
+        cursor.execute("""
+                                INSERT INTO Logfile_Name (name,Testrun_Name_ID) values ("{n}",{T})
+                                """.format(n = logger.handlers[1].baseFilename,T = lastrowid))
+        timing: Timing = self.testRunInstance.timing
+        start, end, duration = timing.returnTimeSegment(GC.TIMING_TESTRUN)
+        cursor.execute("""
+                                       INSERT INTO Timings (Start,End,Duration,Testrun_Name_ID) values ("{st}","{en}","{dt}",{t_id})
+                                       """.format(st = start,en = end,dt = duration,t_id = lastrowid))
+        query = "INSERT INTO Global ("
+
+        for key, value in self.testRunInstance.globalSettings.items():
+            query = query + key + ','
+        query = query + 'Testrun_Name_ID) values ('
+        for key, value in self.testRunInstance.globalSettings.items():
+            query = query + '"' + value + '"' + ','
+        query = query + str(lastrowid) + ")"
+        query = query.replace("TC.Lines", "TC_Lines")
+        cursor.execute(query)
+
+        lSequence = self.testRunInstance.testRunUtils.getSequenceByNumber(testRunName=self.testRunName, sequence=1)
+
+        cursor.execute("""
+                                        INSERT INTO DataFile_Name(name,Testrun_Name_ID) values ("{n}",{T})
+                                        """.format(n=lSequence[1].get('TestDataFileName'), T=lastrowid))
+
+        dbCon.commit()
 
 
 class ExcelSheetHelperFunctions:

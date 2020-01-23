@@ -63,6 +63,7 @@ class TestRun:
 
         ExportResults(**self.kwargs)
 
+
         successful, error = self.getSuccessAndError()
         logger.info(f"Finished execution of Testrun {self.testRunName}. "
                     f"{successful} Testcases successfully executed, {error} errors")
