@@ -136,10 +136,12 @@ class ExportResults:
         self.__writeSummaryCell("TestSequence settings follow:", "", row=16+len(self.testRunInstance.globalSettings),
                                 format=self.cellFormatBold)
         lSequence = self.testRunInstance.testRunUtils.getSequenceByNumber(testRunName=self.testRunName, sequence="1")
-        for key, value in lSequence[1].items():
-            if isinstance(value, list) or isinstance(value, dict):
-                continue
-            self.__writeSummaryCell(key, str(value))
+        # fixme: Here is a new bug (Earthsquad-Demo.XLS --> he doesn't find Sequence1 and then breaks. Theoretically there should always be a sequence 1 - even in simple XLS-Format.
+        if lSequence:
+            for key, value in lSequence[1].items():
+                if isinstance(value, list) or isinstance(value, dict):
+                    continue
+                self.__writeSummaryCell(key, str(value))
 
     def __writeSummaryCell(self, lineHeader, lineText, row=None, format=None):
         if not row:

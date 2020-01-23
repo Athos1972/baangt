@@ -509,6 +509,17 @@ class BrowserDriver:
             raise Exceptions.baangtTestStepException
         pass
 
+    def goBack(self):
+        """
+        Method to go 1 step back in current tab's browse history
+        @return:
+        """
+        try:
+            self.javaScript("window.history.go(-1)")
+        except Exception as e:
+            self._log(logging.WARNING, f"Tried to go back in history, didn't work with error {e}")
+
+
     def javaScript(self, jsText):
         # self.driver.execute_async_script(jsText)
         self.driver.execute_script(jsText)
