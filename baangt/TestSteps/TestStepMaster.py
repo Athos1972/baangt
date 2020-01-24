@@ -82,6 +82,8 @@ class TestStepMaster:
                     raise BaseException("ENDIF without IF")
                 self.ifActive = False
                 self.ifIsTrue = True
+            elif lActivity == 'GOBACK':
+                self.browserSession.goBack()
             else:
                 raise BaseException(f"Unknown command in TestStep {lActivity}")
 

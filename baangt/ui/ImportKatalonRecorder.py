@@ -140,6 +140,8 @@ click | //div[@id='main']/div[2]/div/div[2]/div/div[5]/button/div[2] |
         self.outputText = ""
         self.outputFormatted = lineOut
         for line in lineOut:
+            if not line:
+                continue
             lStr = ""
             for key, value in line.items():
                 lStr = lStr + (f"{key}: {value}, ")
@@ -164,6 +166,8 @@ click | //div[@id='main']/div[2]/div/div[2]/div/div[5]/button/div[2] |
             return ImportKatalonRecorder.doTranslateType(locator, value)
         elif command == 'open':
             return ImportKatalonRecorder.__fillDict("GOTOURL", "", locator)
+        elif command == 'goBackAndWait' or command == 'goBack':
+            return ImportKatalonRecorder.doTranslategoBackAndWait()
         else:
             logger.exception(f"Translation for command not implemented: {command}")
             return None
@@ -175,6 +179,10 @@ click | //div[@id='main']/div[2]/div/div[2]/div/div[5]/button/div[2] |
     @staticmethod
     def doTranslateClick(locator):
         return ImportKatalonRecorder.__fillDict("click", locator)
+
+    @staticmethod
+    def doTranslategoBackAndWait():
+        return ImportKatalonRecorder.__fillDict("goBack", "")
 
     @staticmethod
     def __fillDict(activity, locator, value="", locatorType='xpath'):

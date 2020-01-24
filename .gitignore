@@ -7,3 +7,5 @@ geckodriver.log
 *.png
 baangt.ini
 /Screenshots
+/docs/_build
+/docs/logs
