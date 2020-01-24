@@ -17,6 +17,9 @@ from pathlib import Path
 import json
 import sys
 import platform
+import requests
+import ctypes
+import zipfile
 
 logger = logging.getLogger("pyC")
 
@@ -66,7 +69,6 @@ class BrowserDriver:
             GC.BROWSER_CHROME: webdriver.Chrome,
             GC.BROWSER_SAFARI: webdriver.Safari,
             GC.BROWSER_REMOTE: webdriver.Remote}
-
         if browserName in browserNames:
             GeckoExecutable = "geckodriver"
             ChromeExecutable = "chromedriver"
@@ -75,11 +77,21 @@ class BrowserDriver:
                 GeckoExecutable = GeckoExecutable + ".exe"
                 ChromeExecutable = ChromeExecutable + ".exe"
 
+            lCurPath = Path(os.getcwd())
+            lCurPath = lCurPath.joinpath("browserDrivers")
+
             if browserName == GC.BROWSER_FIREFOX:
+                lCurPath = lCurPath.joinpath(GeckoExecutable)
+                if not(os.path.isfile(str(lCurPath))):
+                    self.downloadDriver(GeckoExecutable)
                 self.driver = browserNames[browserName](options=self.__createBrowserOptions(browserName=browserName,
                                                                                             desiredCapabilities=desiredCapabilities),
                                                         executable_path=self.__findBrowserDriverPaths(GeckoExecutable))
+
             elif browserName == GC.BROWSER_CHROME:
+                lCurPath = lCurPath.joinpath(ChromeExecutable)
+                if not (os.path.isfile(str(lCurPath))):
+                    self.downloadDriver(ChromeExecutable)
                 self.driver = browserNames[browserName](options=self.__createBrowserOptions(browserName=browserName,
                                                                                             desiredCapabilities=desiredCapabilities),
                                                         executable_path=self.__findBrowserDriverPaths(ChromeExecutable))
@@ -513,4 +525,42 @@ class BrowserDriver:
         # self.driver.execute_async_script(jsText)
         self.driver.execute_script(jsText)
         # self.driver.execute(jsText)
+
+    def downloadDriver(self,browserName):
+        if str(browserName) == GC.GECKO_DRIVER:
+            if platform.system().lower() == GC.WIN_PLATFORM:
+                if ctypes.sizeof(ctypes.c_voidp) == GC.BIT_64:
+                    url = GC.GECKO_URL_WIN_64
+                else:
+                    url = GC.GECKO_URL_WIN_32
+            elif platform.system().lower() == GC.LINUX_PLATFORM:
+                url = GC.GECKO_URL_LINUX
+            else:
+                url = GC.GECKO_URL_MAC_OS
+            file = requests.get(url)
+            path = Path(os.getcwd())
+            path = path.joinpath("browserDrivers")
+            path_zip = path.joinpath(GC.GECKO_DRIVER.replace('exe', 'zip'))
+            open(path_zip, 'wb').write(file.content)
+            with zipfile.ZipFile(path_zip, 'r') as zip_ref:
+                zip_ref.extractall(path)
+            os.remove(path_zip)
+        elif str(browserName) == GC.CHROME_DRIVER:
+            if platform.system().lower() == GC.WIN_PLATFORM:
+                url = GC.CHROME_URL_WIN
+            elif platform.system().lower() == GC.LINUX_PLATFORM:
+                url = GC.CHROME_URL_LINUX
+            else:
+                url = GC.CHROME_URL_MAC
+            file = requests.get(url)
+            path = Path(os.getcwd())
+            path = path.joinpath("browserDrivers")
+            path_zip = path.joinpath(GC.CHROME_DRIVER.replace('exe', 'zip'))
+            print(path_zip)
+            open(path_zip, 'wb').write(file.content)
+            with zipfile.ZipFile(path_zip, 'r') as zip_ref:
+                zip_ref.extractall(path)
+            os.remove(path_zip)
+
+
 
