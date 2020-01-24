@@ -38,6 +38,8 @@ class BrowserDriver:
         self.element = None
         self.locatorType = None
         self.locator = None
+        self.slowExecution = False
+        self.slowExecutionTimeoutInSeconds = 1
 
         if timing:
             self.timing = timing
@@ -110,6 +112,25 @@ class BrowserDriver:
 
         logger.debug(f"Path for BrowserDrivers: {lCurPath}")
         return str(lCurPath)
+
+    def slowExecutionToggle(self, newSlowExecutionWaitTimeInSeconds = None):
+        """
+        SlowExecution can be set in globals or by the teststep. It's intended use is debugging or showcasing a testcases
+        functionality.
+
+        @param newSlowExecutionWaitTimeInSeconds: Optional. If set, it will change the default value of WaitTime, when SlowExecution is active
+        @return: Returns the state of sloeExecution toggle after toggling was done.
+        """
+
+        if self.slowExecution:
+            self.slowExecution = False
+        else:
+            self.slowExecution = True
+
+        if newSlowExecutionWaitTimeInSeconds:
+            self.slowExecutionTimeoutInSeconds = newSlowExecutionWaitTimeInSeconds
+
+        return self.slowExecution
 
     def __createBrowserOptions(self, browserName, desiredCapabilities):
         if browserName == GC.BROWSER_CHROME:
@@ -348,6 +369,9 @@ class BrowserDriver:
 
     def findBy(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=60, loggingOn=True,
                optional=False):
+
+        if self.slowExecution:
+            time.sleep(self.slowExecutionTimeoutInSeconds)
 
         if iframe:
             self.handleIframe(iframe)

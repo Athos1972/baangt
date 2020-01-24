@@ -217,6 +217,10 @@ class UI:
         # Prepare some default values, if not filled:
         if not self.configContents.get("TC." + GC.DATABASE_LINES):
             self.configContents["TC." + GC.DATABASE_LINES] = ""
+        if not self.configContents.get("TC." + GC.EXECUTION_DONTCLOSEBROWSER):
+            self.configContents["TC." + GC.EXECUTION_DONTCLOSEBROWSER] = ""
+        if not self.configContents.get("TC." + GC.EXECUTION_SLOW):
+            self.configContents["TC." + GC.EXECUTION_SLOW] = ""
 
     def saveContentsOfConfigFile(self, lFileName = None):
         if not lFileName:

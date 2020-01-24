@@ -91,6 +91,8 @@ class TestRun:
         This method is called whenever a browser instance (existing or new) is needed. If called without
         parameters it will create one instance of Firefox (geckodriver).
 
+        if global setting TC.EXECUTION_SLOW is set, inform the browser instance about it.
+
         @param browserInstance: Number of the requested browser instance. If none is provided, always the default
           browser instance will be returned
         @param browserName: one of the browser names (e.g. FF, Chrome) from GC.BROWSER*
@@ -102,6 +104,7 @@ class TestRun:
             self._getBrowserInstance(browserInstance=browserInstance)
             self.browser[browserInstance].createNewBrowser(browserName=browserName,
                                                            desiredCapabilities=browserAttributes)
+            self.browser[browserInstance].slowExecutionToggle()
         else:
             logger.debug(f"Using existing instance of browser {browserInstance}")
         return self.browser[browserInstance]
