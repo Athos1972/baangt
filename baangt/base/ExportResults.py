@@ -5,6 +5,9 @@ import baangt.base.GlobalConstants as GC
 from baangt.base.Timing import Timing
 import subprocess
 import sys
+import os
+import sqlite3
+from sqlite3 import Error
 from baangt.base.utils import utils
 from pathlib import Path
 from typing import Optional
@@ -13,9 +16,9 @@ from xlsxwriter.worksheet import (
 
 logger = logging.getLogger("pyC")
 
-
 class ExportResults:
     def __init__(self, **kwargs):
+        self.testList = []
         self.testRunInstance = kwargs.get(GC.KWARGS_TESTRUNINSTANCE)
         self.testRunName = self.testRunInstance.testRunName
         self.filename = self.__getOutputFileName()
@@ -38,6 +41,7 @@ class ExportResults:
         self.exportResult()
         self.exportTiming = ExportTiming(self.dataRecords, self.timingsheet)
         self.closeExcel()
+        self.dataExport()
 
     def exportResult(self, **kwargs):
         self._exportData()
@@ -46,38 +50,47 @@ class ExportResults:
 
         self.summarySheet.write(0,0, f"Testreport for {self.testRunName}", self.cellFormatBold)
         self.summarySheet.set_column(0, last_col=0, width=15)
-
+        # get testrunname my
+        self.testList.append(self.testRunName)
         # Testrecords
         self.__writeSummaryCell("Testrecords", len(self.dataRecords), row=2, format=self.cellFormatBold)
         value = len([x for x in self.dataRecords.values()
                                                    if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_SUCCESS])
+        self.testList.append(value) # Ok my
         if not value:
             value = ""
         self.__writeSummaryCell("Successful", value, format=self.cellFormatGreen)
+        self.testList.append(value)  # paused my
         self.__writeSummaryCell("Paused", len([x for x in self.dataRecords.values()
                                                    if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_WAITING]))
         value = len([x for x in self.dataRecords.values()
                                                if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR])
+        self.testList.append(value)  # error my
         if not value:
             value = ""
         self.__writeSummaryCell("Error", value, format=self.cellFormatRed)
 
         # Logfile
         self.__writeSummaryCell("Logfile", logger.handlers[1].baseFilename, row=7)
-
+        # get logfilename for database my
+        self.testList.append(logger.handlers[1].baseFilename)
         # Timing
         timing:Timing = self.testRunInstance.timing
         start, end, duration = timing.returnTimeSegment(GC.TIMING_TESTRUN)
         self.__writeSummaryCell("Starttime", start, row=9)
+        # get start end during time my
+        self.testList.append(start)
+        self.testList.append(end)
+
         self.__writeSummaryCell("Endtime", end)
         self.__writeSummaryCell("Duration", duration, format=self.cellFormatBold )
         self.__writeSummaryCell("Avg. Dur", "")
-
         # Globals:
         self.__writeSummaryCell("Global settings for this testrun", "", format=self.cellFormatBold, row=14)
         for key, value in self.testRunInstance.globalSettings.items():
             self.__writeSummaryCell(key, str(value))
-
+            # get global data my
+            self.testList.append(str(value))
         # Testcase and Testsequence setting
         self.__writeSummaryCell("TestSequence settings follow:", "", row=16+len(self.testRunInstance.globalSettings),
                                 format=self.cellFormatBold)
@@ -160,6 +173,57 @@ class ExportResults:
         # Next line doesn't work on MAC. Returns "not authorized"
         # subprocess.Popen([self.filename], shell=True)
 
+
+    def dataExport(self):
+        # database = "g:\\work\\codebase\\baangt\\baangt\\db\\phaseSqlite.db"
+        database= r"C:\sqlitedb\test.db"
+        self.testList.append(database)
+        sql_create_result_table = """CREATE TABLE IF NOT EXISTS result(
+                    id integer PRIMARY KEY,
+                    TestName text NOT NULL,
+                    LogfileName text NOT NULL,
+                    StartTime text NOT NULL,
+                    EndTime text NOT NULL,
+                    globalValue1 text NOT NULL,
+                    globalValue2 text NOT NULL,
+                    globalValue3 text NOT NULL,
+                    globalValue4 text NOT NULL,
+                    dbFile text NOT NULL,
+                    numTestCaseOk integer,
+                    numTestCasePaused integer,
+                    numTestCaseFail integer        
+                    );"""
+        conn = self.createDb(database)
+        content = []
+        for i in range(len(self.testList)):
+            content.append(self.testList[i])
+        if conn is not None:
+            # print(content)
+            self.createTbl(conn, sql_create_result_table,content)
+        else:
+            print("Error! cannot create the database connection.")
+
+    def createDb(self,db_file):
+        conn = None
+        try:
+            conn = sqlite3.connect(db_file)
+            print(sqlite3.version)
+        except Error as e:
+            print(e)
+        return conn
+
+    def createTbl(self,conn,create_table_sql,content):
+        try:
+            # print(content)
+            c = conn.cursor()
+            c.execute(create_table_sql)
+            print("=============================")
+            sqlite_insert_query = """INSERT INTO result(id,TestName,LogfileName,StartTime,EndTime,globalValue1,globalValue2,globalValue3,globalValue4,dbFile,numTestCaseOk,numTestCasePaused,numTestCaseFail)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?);"""
+            data_tuple = (1,content[0],content[4],content[5],content[6],content[8],content[9],content[10],content[11],content[13],content[1],content[3],content[2])
+            c.execute(sqlite_insert_query,data_tuple)
+            conn.commit()
+        except Error as e:
+            print(e)
 
 class ExcelSheetHelperFunctions:
     def __init__(self):
@@ -282,8 +346,7 @@ class ExportTiming:
         Warten auf Senden an Bestand Button: , since last call: 1.3927149772644043
         Senden an Bestand: , since last call: 9.60469913482666, ZIDs:[66b12fa4869cf8a0, ad1f3d47c4694e26], TS:2020-01-20 21:58:49.472288
 
-        where the first part before ":" is the section, "since last call:" is the duration, TS: is the timestamp
-"""
+        where the first part before ":" is the section, "since last call:" is the duration, TS: is the timestamp"""
         lExport = {}
         lLines = lTimeLog.split("\n")
         for line in lLines:
@@ -296,3 +359,4 @@ class ExportTiming:
                 lDuration = parts[1].split(":")[1]
                 lExport[lSection] = {GC.TIMING_DURATION: lDuration}
         return lExport
+
