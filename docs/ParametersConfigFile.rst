@@ -18,18 +18,10 @@ for instance to slowly retest a single testrecord or to not close the browser af
    * - ``TC.Lines``
      - Which lines from datafile to process.
 
-       .. list-table:: Variations
-          :widths: 25, 75
-          :header-rows: 1
+       * ``linennumber`` e.g. ``5``. Will execute the selected testrun using line 5 from the datafile
+       * ``linenumber_from - linenumber_to`` e.g. ``1530 - 1540``. Will execute the selected testrun with lines 1530 until including line 1540
 
-          * - Syntax
-            - Effect
-          * - ``linenumber``
-            - e.g. ``5``. Will execute the selected testrun using line 5 from the datafile
-          * - ``linenumber_from - linenumber_to``
-            - e.g. ``1530 - 1540``. Will execute the selected testrun with lines 1530 until including line 1540
-
-       Combinations are possible, in this case separate the numbers by comma e.g. ``5, 10-20, 30-90``
+       Combinations are possible and allowed, in this case separate the numbers by comma e.g. ``5, 10-20, 30-90``
    * - ``TC.Browser``
      - If the testcase is WEB-Testing, then you can overwrite the browser, which is defined inside the testrun definition. If the testcase is not a Web-Testcase this setting doesn't have any effect. Valid values are ``Chrome``, ``FF`` and ``Safari``
    * - ``TC.ParallelRuns``
