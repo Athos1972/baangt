@@ -104,7 +104,8 @@ class TestRun:
             self._getBrowserInstance(browserInstance=browserInstance)
             self.browser[browserInstance].createNewBrowser(browserName=browserName,
                                                            desiredCapabilities=browserAttributes)
-            self.browser[browserInstance].slowExecutionToggle()
+            if self.globalSettings.get("TC." + GC.EXECUTION_SLOW):
+                self.browser[browserInstance].slowExecutionToggle()
         else:
             logger.debug(f"Using existing instance of browser {browserInstance}")
         return self.browser[browserInstance]

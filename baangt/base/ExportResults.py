@@ -3,16 +3,16 @@ import logging
 import json
 import baangt.base.GlobalConstants as GC
 from baangt.base.Timing import Timing
-import subprocess
 import sys
-import os
-import sqlite3
-from sqlite3 import Error
 from baangt.base.utils import utils
 from pathlib import Path
 from typing import Optional
 from xlsxwriter.worksheet import (
     Worksheet, cell_number_tuple, cell_string_tuple)
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from baangt.base.DataBaseORM import DATABASE_URL, TestrunLog
+from datetime import datetime
 
 logger = logging.getLogger("pyC")
 
@@ -41,7 +41,57 @@ class ExportResults:
         self.exportResult()
         self.exportTiming = ExportTiming(self.dataRecords, self.timingsheet)
         self.closeExcel()
-        self.dataExport()
+        self.exportToDataBase()
+
+    def exportToDataBase(self):
+        engine = create_engine(f'sqlite:///{DATABASE_URL}')
+
+        # create a Session
+        Session = sessionmaker(bind=engine)
+        session = Session()
+
+        # get timings
+        timing: Timing = self.testRunInstance.timing
+        start, end, duration = timing.returnTimeSegment(GC.TIMING_TESTRUN)
+
+        # get status
+        success = 0
+        error = 0
+        waiting = 0
+        for value in self.dataRecords.values():
+            if value[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_SUCCESS:
+                success += 1
+            elif value[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR:
+                error += 1
+            if value[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_WAITING:
+                waiting += 1
+
+        # get globals
+        globalString = '{'
+        for key, value in self.testRunInstance.globalSettings.items():
+            if len(globalString) > 1:
+                globalString += ', '
+            globalString += f'{key}: {value}'
+        globalString += '}'
+
+        # get documents
+        datafiles = self.filename
+
+        # create object
+        log = TestrunLog(
+            testrunName = self.testRunName,
+            logfileName = logger.handlers[1].baseFilename,
+            startTime = datetime.strptime(start, "%H:%M:%S"),
+            endTime = datetime.strptime(end, "%H:%M:%S"),
+            statusOk = success,
+            statusFailed = error,
+            statusPaused = waiting,
+            globalVars = globalString,
+            dataFile = datafiles,
+        )
+        # write to DataBase
+        session.add(log)
+        session.commit()
 
     def exportResult(self, **kwargs):
         self._exportData()
@@ -172,58 +222,6 @@ class ExportResults:
         self.workbook.close()
         # Next line doesn't work on MAC. Returns "not authorized"
         # subprocess.Popen([self.filename], shell=True)
-
-
-    def dataExport(self):
-        # database = "g:\\work\\codebase\\baangt\\baangt\\db\\phaseSqlite.db"
-        database= r"C:\sqlitedb\test.db"
-        self.testList.append(database)
-        sql_create_result_table = """CREATE TABLE IF NOT EXISTS result(
-                    id integer PRIMARY KEY,
-                    TestName text NOT NULL,
-                    LogfileName text NOT NULL,
-                    StartTime text NOT NULL,
-                    EndTime text NOT NULL,
-                    globalValue1 text NOT NULL,
-                    globalValue2 text NOT NULL,
-                    globalValue3 text NOT NULL,
-                    globalValue4 text NOT NULL,
-                    dbFile text NOT NULL,
-                    numTestCaseOk integer,
-                    numTestCasePaused integer,
-                    numTestCaseFail integer        
-                    );"""
-        conn = self.createDb(database)
-        content = []
-        for i in range(len(self.testList)):
-            content.append(self.testList[i])
-        if conn is not None:
-            # print(content)
-            self.createTbl(conn, sql_create_result_table,content)
-        else:
-            print("Error! cannot create the database connection.")
-
-    def createDb(self,db_file):
-        conn = None
-        try:
-            conn = sqlite3.connect(db_file)
-            print(sqlite3.version)
-        except Error as e:
-            print(e)
-        return conn
-
-    def createTbl(self,conn,create_table_sql,content):
-        try:
-            # print(content)
-            c = conn.cursor()
-            c.execute(create_table_sql)
-            print("=============================")
-            sqlite_insert_query = """INSERT INTO result(id,TestName,LogfileName,StartTime,EndTime,globalValue1,globalValue2,globalValue3,globalValue4,dbFile,numTestCaseOk,numTestCasePaused,numTestCaseFail)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?);"""
-            data_tuple = (1,content[0],content[4],content[5],content[6],content[8],content[9],content[10],content[11],content[13],content[1],content[3],content[2])
-            c.execute(sqlite_insert_query,data_tuple)
-            conn.commit()
-        except Error as e:
-            print(e)
 
 class ExcelSheetHelperFunctions:
     def __init__(self):
