@@ -14,7 +14,7 @@
     <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Why baangt and why is it open source?" href="HistoryAndReasons.html" />
+    <link rel="next" title="Developer guidelines for custom enhancements" href="Developer.html" />
     <link rel="prev" title="Parameters in Configuration files (globals)" href="ParametersConfigFile.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -35,13 +35,14 @@
   <div class="section" id="types-of-tests">
 <h1>Types of tests<a class="headerlink" href="#types-of-tests" title="Permalink to this headline">¶</a></h1>
 <p>No matter if your organization is agile or waterfall oriented or follows one of the many hybrid variants. Sooner or later
-you’ll have an increment - an outcome from your software developers or customizers.</p>
+you’ll have an increment - an outcome from your software developers or customizers. You paid for it. You want it in production.
+But will it work? Will there be any unwanted side effects to existing functionality?</p>
 <div class="section" id="increment-testing">
 <h2>Increment testing<a class="headerlink" href="#increment-testing" title="Permalink to this headline">¶</a></h2>
 <p>Usually an increment is tested manually by human testers who are not identical with the developers.</p>
 <p>Depending on maturatiy of your organization and many other factors, the testers will be more or less clearly instructed,
 what to test. They might have written business requirements and deduct the test cases themselves. In ideal setups they
-were part of the development livecycle, know the deviations from original requirements, pitfalls and workarounds and can
+were part of the development lifecycle, know the deviations from original requirements, pitfalls and workarounds and can
 adjust their test expectation accordingly.</p>
 <p>Unless you’re in a greenfield situation where the whole system landscape needs to be tested and retested for months or years
 your Testers will focus on testing the increment - not so much the existing functionality, which used to work fine already.</p>
@@ -49,6 +50,15 @@ your Testers will focus on testing the increment - not so much the existing func
 the data combinations, that you’ll want to have tested. Once the functionality is there, record the most complex scenario
 in the recorder. Instead of testing 100s of cases manually, you’ll need only one recording and the prepared dataset. Start
 the TestRunExecution, sit back and wait for the results. Simple like that.</p>
+</div>
+<div class="section" id="heartbeat-and-alive-testing">
+<h2>Heartbeat and Alive-Testing<a class="headerlink" href="#heartbeat-and-alive-testing" title="Permalink to this headline">¶</a></h2>
+<p>Alive-Testing is usually done with just one quick test case in all stages (Dev, Pre-Quality and Quality-System). It will
+show general availability of the landscape and applications running on it. Alive-Tests with some APIs could run for instance
+every 5 minutes.</p>
+<p>Heartbeat tests are a smaller subset of regression tests. E.g. if you have 10.000 testcases in regression tests, you’d
+use a few hundred for heartbeat tests. They’d usually run a few times per day on Pre-Quality- and once per day on
+Quality-System) and of course in the build pipeline.</p>
 </div>
 <div class="section" id="regression-testing">
 <h2>Regression testing<a class="headerlink" href="#regression-testing" title="Permalink to this headline">¶</a></h2>
@@ -69,6 +79,13 @@ increments. But you’ll use the same tool: <code class="docutils literal notran
 <p>As of today (Jan 2020) <code class="docutils literal notranslate"><span class="pre">baangt</span></code> does not provide infrastructure monitoring. In order to analyze the results of your
 performance tests you’ll need additional tools, but <code class="docutils literal notranslate"><span class="pre">baangt</span></code> will give indications, which components or which functionalities
 need a closer look by your experts.</p>
+</div>
+<div class="section" id="no-oversimplification">
+<h2>No oversimplification<a class="headerlink" href="#no-oversimplification" title="Permalink to this headline">¶</a></h2>
+<p>Please don’t get me wrong. Just because we have a great tool, it doesn’t mean that testing will happen by itself. There’s
+still a lot of expert work needed for Testdesign, Stagedesign, Creation and maintenance of Testsets, creation and
+maintenance of test data sets, deployment strategies. <code class="docutils literal notranslate"><span class="pre">baangt</span></code> provides efficient ways to work, but work still needs
+to be done.</p>
 </div>
 </div>
 
@@ -97,10 +114,13 @@ need a closer look by your experts.</p>
 <li class="toctree-l1"><a class="reference internal" href="ParametersConfigFile.html">Parameters in Configuration files (<code class="docutils literal notranslate"><span class="pre">globals</span></code>)</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Types of tests</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#increment-testing">Increment testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#heartbeat-and-alive-testing">Heartbeat and Alive-Testing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#regression-testing">Regression testing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#performance-testing">Performance testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#no-oversimplification">No oversimplification</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="Developer.html">Developer guidelines for custom enhancements</a></li>
 <li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">Why <code class="docutils literal notranslate"><span class="pre">baangt</span></code> and why is it open source?</a></li>
 </ul>
 
@@ -109,7 +129,7 @@ need a closer look by your experts.</p>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="ParametersConfigFile.html" title="previous chapter">Parameters in Configuration files (<code class="docutils literal notranslate"><span class="pre">globals</span></code>)</a></li>
-      <li>Next: <a href="HistoryAndReasons.html" title="next chapter">Why <code class="docutils literal notranslate"><span class="pre">baangt</span></code> and why is it open source?</a></li>
+      <li>Next: <a href="Developer.html" title="next chapter">Developer guidelines for custom enhancements</a></li>
   </ul></li>
 </ul>
 </div>

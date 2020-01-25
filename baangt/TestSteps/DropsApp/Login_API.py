@@ -1,9 +1,9 @@
 from baangt.base.ApiHandling import ApiHandling
-from TestSteps.CustTestStepMaster import CustTestStepMaster
+from baangt.TestSteps.TestStepMaster import TestStepMaster
 import baangt.base.GlobalConstants as GC
 
 
-class Login_API(CustTestStepMaster):
+class Login_API(TestStepMaster):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.execute()
