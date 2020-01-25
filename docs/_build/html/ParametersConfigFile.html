@@ -1,0 +1,163 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Parameters in Configuration files (globals) &#8212; baangt 2020.1.1.b11 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="What is baangt" href="OverviewUsage.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="parameters-in-configuration-files-globals">
+<h1>Parameters in Configuration files (<code class="docutils literal notranslate"><span class="pre">globals</span></code>)<a class="headerlink" href="#parameters-in-configuration-files-globals" title="Permalink to this headline">¶</a></h1>
+<p>Generally it’s not needed to change parameters in the config files during manual or automated execution as the parameters
+have default values or are anyway defined in the Testrun definition. Still sometimes it’s very handy to change them on the fly,
+for instance to slowly retest a single testrecord or to not close the browser after an error.</p>
+<table class="colwidths-given docutils align-default" id="id1">
+<caption><span class="caption-text">Parameters in globals</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">TC.slowExecution</span></code></p></td>
+<td><p>When set to <code class="docutils literal notranslate"><span class="pre">true</span></code> the browser will stop for a short time after each command, so that you can also visually see what the browser is doing</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dontCloseBrowser</span></code></p></td>
+<td><p>When the browser or script finds an error usually it takes a screenshot and moves on to the next testcase. With this setting to <code class="docutils literal notranslate"><span class="pre">True</span></code> the Browsersession will stop right at the error</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">TC.Lines</span></code></p></td>
+<td><p>Which lines from datafile to process.</p>
+<table class="colwidths-given docutils align-default" id="id2">
+<caption><span class="caption-text">Variations</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Syntax</p></th>
+<th class="head"><p>Effect</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">linenumber</span></code></p></td>
+<td><p>e.g. <code class="docutils literal notranslate"><span class="pre">5</span></code>. Will execute the selected testrun using line 5 from the datafile</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">linenumber_from</span> <span class="pre">-</span> <span class="pre">linenumber_to</span></code></p></td>
+<td><p>e.g. <code class="docutils literal notranslate"><span class="pre">1530</span> <span class="pre">-</span> <span class="pre">1540</span></code>. Will execute the selected testrun with lines 1530 until including line 1540</p></td>
+</tr>
+</tbody>
+</table>
+<p>Combinations are possible, in this case separate the numbers by comma e.g. <code class="docutils literal notranslate"><span class="pre">5,</span> <span class="pre">10-20,</span> <span class="pre">30-90</span></code></p>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">TC.Browser</span></code></p></td>
+<td><p>If the testcase is WEB-Testing, then you can overwrite the browser, which is defined inside the testrun definition. If the testcase is not a Web-Testcase this setting doesn’t have any effect. Valid values are <code class="docutils literal notranslate"><span class="pre">Chrome</span></code>, <code class="docutils literal notranslate"><span class="pre">FF</span></code> and <code class="docutils literal notranslate"><span class="pre">Safari</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">TC.ParallelRuns</span></code></p></td>
+<td><p>Number of parallel sessions to be executing. Values depend largely on your hardware and internet connection. Debugging works only in a single session.</p></td>
+</tr>
+</tbody>
+</table>
+<p># Todo:
+BrowserAttributes</p>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">baangt</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="OverviewUsage.html">What is <code class="docutils literal notranslate"><span class="pre">baangt</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Parameters in Configuration files (<code class="docutils literal notranslate"><span class="pre">globals</span></code>)</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="OverviewUsage.html" title="previous chapter">What is <code class="docutils literal notranslate"><span class="pre">baangt</span></code></a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Bernhard Buhl.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/ParametersConfigFile.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

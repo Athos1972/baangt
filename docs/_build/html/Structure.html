@@ -1,0 +1,177 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Structure of baangt &#8212; baangt 2020.1.1.b11 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Parameters in Configuration files (globals)" href="ParametersConfigFile.html" />
+    <link rel="prev" title="Jump-start into worry free production deployments" href="simpleExample.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="structure-of-baangt">
+<h1>Structure of baangt<a class="headerlink" href="#structure-of-baangt" title="Permalink to this headline">¶</a></h1>
+<p>If you never used any test automation software before these terms can be intimidating, but in reality it’s all very simple.</p>
+<p>We’ll start from the bottom to the top.</p>
+<div class="section" id="teststep">
+<h2>TestStep<a class="headerlink" href="#teststep" title="Permalink to this headline">¶</a></h2>
+<p>A teststep is a single activity, for instance clicking on a button or sending a <code class="docutils literal notranslate"><span class="pre">GET</span></code> request to an API. A teststep has
+a mandatory parameter <code class="docutils literal notranslate"><span class="pre">Activity</span></code>. All other parameters depend on the chosen activity, for instance for Activitiy GOTOURL
+you need only a value (the URL where the browser should go to).</p>
+<p>For SetText you need a locatorType, the locator (which input field to send the text to) and the text itself.</p>
+<p>A teststep may have a timeout setting. If none given, system default will be considered.</p>
+</div>
+<div class="section" id="teststepsequence">
+<h2>TestStepSequence<a class="headerlink" href="#teststepsequence" title="Permalink to this headline">¶</a></h2>
+<p>Many Teststeps together are a TestStepSequence. The Sequence just defines, in which order each individual TestStep is
+executed. A TestStepSequence will provide timing information in the test report (Start- and End-Timestamps and
+Duration in Seconds)</p>
+</div>
+<div class="section" id="testcase">
+<h2>TestCase<a class="headerlink" href="#testcase" title="Permalink to this headline">¶</a></h2>
+<p>A Testcase is a Sequence of TestStepSequences. You might wonder, why this additional TestStepSequence is needed, why not
+simply write the TestSteps directly into the TestCase.</p>
+<p>First of all: you don’t need the TestStepSequence. In the simple XLSX-Format this grouping area doesn’t exist.
+Second: Imagine you’ve a login-page, a product bucket, product return functionality and invoice reprint functionality in
+your SPA and you want to test all of them. Obviously you’ll have at least 3 Testcases, but in all of them you’ll have to
+do a login. You can use the TestStepSequence to extract this repeated Sequence.</p>
+<p>In a Testcase we define not only the Sequence of TestStepSequences but also which type of Testcase (Browser, API, etc.)
+this is.</p>
+</div>
+<div class="section" id="testcasesequence">
+<h2>TestCaseSequence<a class="headerlink" href="#testcasesequence" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>Oh no, another level of confusion?!</p>
+</div></blockquote>
+<p>One or many TestCases can be grouped into a TestcaseSequence. The TestCaseSequence holds the
+connection to the datafile(s) to be used and which records to process in this TestRun. In a TestCaseSequence you could
+for instance group together the execution of a WEB-Page TestCase and subsequently the execution of an API-Call to retrieve
+results from another system. This scenario is of course mostly for corporate system landscapes, where the frontend (Web) communicates
+more or less asynchronous with backend components like Hosts, CRM-Systems, SAP-Backends and so on.</p>
+<p>By all means - if you don’t need it - don’t use it. But in case you need it, it’s good to know it’s there.</p>
+</div>
+<div class="section" id="testrun">
+<h2>TestRun<a class="headerlink" href="#testrun" title="Permalink to this headline">¶</a></h2>
+<p>You guessed it by now. A TestRun as the highest level is a sequence of TestCaseSequences. Why would you need another level of grouping here?</p>
+<p>In End-2-End-Tests or Lifecycle tests you’d want to test the whole system’s functionality along a value stream:</p>
+<ul class="simple">
+<li><p>Create Partner in CRM-System</p></li>
+<li><p>Use Partner for a Contract</p></li>
+<li><p>Deliver Contract</p></li>
+<li><p>Invoice Contract</p></li>
+<li><p>Dunn invoice</p></li>
+<li><p>Post Payment</p></li>
+<li><p>Close contract</p></li>
+<li><p>Flag all Documents for archiving</p></li>
+<li><p>Archive all documents</p></li>
+</ul>
+<p>Each item of this list would be a TestCaseSequence with 1 to many testcases included, various systems, various Web-, API
+and other Interfaces within each TestCase.</p>
+<p>Again: If you don’t need it, just don’t use it. Every parameter has a default value assigned, so <code class="docutils literal notranslate"><span class="pre">baangt</span></code> will work
+perfectly without you touching things you don’t need.</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">baangt</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="OverviewUsage.html">What is <code class="docutils literal notranslate"><span class="pre">baangt</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="simpleExample.html">Jump-start into worry free production deployments</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Structure of baangt</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#teststep">TestStep</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#teststepsequence">TestStepSequence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#testcase">TestCase</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#testcasesequence">TestCaseSequence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#testrun">TestRun</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ParametersConfigFile.html">Parameters in Configuration files (<code class="docutils literal notranslate"><span class="pre">globals</span></code>)</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="simpleExample.html" title="previous chapter">Jump-start into worry free production deployments</a></li>
+      <li>Next: <a href="ParametersConfigFile.html" title="next chapter">Parameters in Configuration files (<code class="docutils literal notranslate"><span class="pre">globals</span></code>)</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Bernhard Buhl.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/Structure.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,228 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Jump-start into worry free production deployments &#8212; baangt 2020.1.1.b11 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Structure of baangt" href="Structure.html" />
+    <link rel="prev" title="What is baangt" href="OverviewUsage.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="jump-start-into-worry-free-production-deployments">
+<h1>Jump-start into worry free production deployments<a class="headerlink" href="#jump-start-into-worry-free-production-deployments" title="Permalink to this headline">¶</a></h1>
+<p>You can try baangt right away and see, how it works. It’ll take less then 5 minutes.</p>
+<div class="section" id="prerequisits">
+<h2>Prerequisits<a class="headerlink" href="#prerequisits" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Firefox installed</p></li>
+<li><p>Python3 installed</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">baangt</span></code> installed (either via PIP or from the GIT-Repository at <a class="reference external" href="https://gogs.earthsquad.global/athos/baangt">https://gogs.earthsquad.global/athos/baangt</a>)</p></li>
+</ul>
+<p>If you prefer running <code class="docutils literal notranslate"><span class="pre">baangt</span></code> inside Docker use the Dockerfile from <a class="reference external" href="https://gogs.earthsquad.global/athos/baangt-Docker">https://gogs.earthsquad.global/athos/baangt-Docker</a>.
+After downloading the repository enter <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">build</span></code> and then <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">run</span></code> in the command line. Once Docker is up, use SVN://localhost:5902 to connect. All features are exactly as you’d install everything on your local machine.</p>
+</div>
+<div class="section" id="let-s-dive-right-into-it">
+<h2>Let’s dive right into it<a class="headerlink" href="#let-s-dive-right-into-it" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Start baangt interactive UI by typing <cite>python baangtIA.py</cite></p></li>
+<li><p>In the dropdown “Testrun” chose “SimpleTheInternet.xlsx” and click on “Execute TestRun”</p></li>
+<li><dl class="simple">
+<dt>What’s happening here is pretty similar to a real world test case:</dt><dd><ul>
+<li><p>Browser (in this case Firefox) starts up</p></li>
+<li><p>Navigate to a certain web page</p></li>
+<li><p>click on a link</p></li>
+<li><p>navigate back</p></li>
+<li><p>click on other link</p></li>
+<li><p>click on several elements of the page (e.g. buttons)</p></li>
+<li><p>write a report with summary and details about the test case. You’ll find the report in the root directory of baangt, unless you stated otherwise.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="section" id="extend-the-script">
+<h3>Extend the Script:<a class="headerlink" href="#extend-the-script" title="Permalink to this headline">¶</a></h3>
+<p>For this to work we recommend an XPATH or CSS-plugin for your browser.</p>
+<p>Follow these steps to modify the behaviour of the test script:</p>
+<ul class="simple">
+<li><p>Open “SimpleTheInternet.xlsx” from the baangt root directory in Excel or OpenOffice</p></li>
+<li><p>In your browser with activated XPATH or CSS-Plugin head over to <a class="reference external" href="http://the-internet.com">http://the-internet.com</a></p></li>
+<li><p>Choose one of the links, that you want to play around with and find the XPATH or CSS from your tool.</p></li>
+<li><dl class="simple">
+<dt>Copy and paste this ID in the last line of the XLSX in column C (“Locator”).</dt><dd><ul>
+<li><p>Column A (“Activity”) should be “CLICK”</p></li>
+<li><p>Column B (“LocatorType”) will be either XPATH or CSS depending on your tool</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>Save the XLSX</p></li>
+<li><p>Execute the testrun “SimpleTheInternet.xlsx” in <code class="docutils literal notranslate"><span class="pre">baangt</span></code> again.</p></li>
+<li><p>Sit back and enjoy your victory!</p></li>
+</ul>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>If you want to be able to watch your browser executing each step we recommend you set the parameter <code class="docutils literal notranslate"><span class="pre">slowExecution</span></code> with value <code class="docutils literal notranslate"><span class="pre">True</span></code> in Globals and re-run the test</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>If you want the browser window to stay open on errors and/or after execution you can use parameter <code class="docutils literal notranslate"><span class="pre">dontCloseBrowser</span></code> with value <code class="docutils literal notranslate"><span class="pre">True</span></code>
+in global settings and run the test again. The browser will stop on errors or when the test run execution stopped.</p>
+</div>
+</div>
+<div class="section" id="a-bit-further">
+<h3>A bit further<a class="headerlink" href="#a-bit-further" title="Permalink to this headline">¶</a></h3>
+<p>Go ahead and try it out with your personal real-world example of a webpage, web-app or SPA, which you would like to have
+reproducable regression tests for.</p>
+<p>Of course you could basically follow the steps above, but depending on the length and complexity of the execution you’ll
+definitely enjoy having more tools in your toolbox:</p>
+</div>
+<div class="section" id="recording-a-test-case-with-katalon-recorder">
+<h3>Recording a test case with Katalon Recorder<a class="headerlink" href="#recording-a-test-case-with-katalon-recorder" title="Permalink to this headline">¶</a></h3>
+<p>Katalon Recorder is a free browser Add-on for Chrome and Firefox. Installation is simple, just google
+<code class="docutils literal notranslate"><span class="pre">Katalon</span> <span class="pre">plugin</span> <span class="pre">&lt;your-browser&gt;</span></code> and install the plugin. After installation of the Katalon recorder follow these steps:</p>
+<ul>
+<li><p>Start the plugin</p></li>
+<li><p>Hit the “record”-Button</p></li>
+<li><dl class="simple">
+<dt>Execute the activities you want it to record. Usually following these steps:</dt><dd><ul class="simple">
+<li><p>Open a Webpage</p></li>
+<li><p>Login (optional)</p></li>
+<li><p>Navigate to some sub-page</p></li>
+<li><p>Click buttons</p></li>
+<li><p>Enter values</p></li>
+<li><p>Download documents (optional)</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>Stop recording</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>You might want to execute the test case from within Katalon Recorder so make sure everything was recorded proplery.</p>
+</div>
+</li>
+<li><p>Hit the export-Button of the recorder, chose format “other”</p></li>
+<li><p>Click “Export to Clipboard”</p></li>
+<li><dl class="simple">
+<dt>Switch over to <code class="docutils literal notranslate"><span class="pre">baangt</span></code> and press the button “Import KatalonRecorder”</dt><dd><ul class="simple">
+<li><p>The contents from the clipboard should be imported already and translation to <code class="docutils literal notranslate"><span class="pre">baangt</span></code> should be completed. If not click on the button “Import Clipboard” and please drop a ticket stating your Operating System incl. Version and which Browser you used for Recording.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>Press “Save” and choose where you want to store the resulting XLSX-File to</p></li>
+</ul>
+<p><strong>That’s it. You just created you first regression test case including all parameters for it.</strong></p>
+<p>If you’re wondering, which parameters these are and how you can influence them, fear not! Open the Testcase-XLSX from
+the last step above, click on the “data”-Tab and start to enter values and lines as you please.</p>
+<p>You can always re-run Baangt after saving your Testrun-XLSX and see your progress.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>If you want to be able to watch your browser executing each step we recommend you set the parameter <code class="docutils literal notranslate"><span class="pre">slowExecution</span></code> with value <code class="docutils literal notranslate"><span class="pre">True</span></code> in Globals and re-run the test</p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">baangt</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="OverviewUsage.html">What is <code class="docutils literal notranslate"><span class="pre">baangt</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Jump-start into worry free production deployments</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisits">Prerequisits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#let-s-dive-right-into-it">Let’s dive right into it</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Structure.html">Structure of baangt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ParametersConfigFile.html">Parameters in Configuration files (<code class="docutils literal notranslate"><span class="pre">globals</span></code>)</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="OverviewUsage.html" title="previous chapter">What is <code class="docutils literal notranslate"><span class="pre">baangt</span></code></a></li>
+      <li>Next: <a href="Structure.html" title="next chapter">Structure of baangt</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Bernhard Buhl.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/simpleExample.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

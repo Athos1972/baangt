@@ -1,0 +1,154 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Types of tests &#8212; baangt 2020.1.1.b11 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Why baangt and why is it open source?" href="HistoryAndReasons.html" />
+    <link rel="prev" title="Parameters in Configuration files (globals)" href="ParametersConfigFile.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="types-of-tests">
+<h1>Types of tests<a class="headerlink" href="#types-of-tests" title="Permalink to this headline">¶</a></h1>
+<p>No matter if your organization is agile or waterfall oriented or follows one of the many hybrid variants. Sooner or later
+you’ll have an increment - an outcome from your software developers or customizers.</p>
+<div class="section" id="increment-testing">
+<h2>Increment testing<a class="headerlink" href="#increment-testing" title="Permalink to this headline">¶</a></h2>
+<p>Usually an increment is tested manually by human testers who are not identical with the developers.</p>
+<p>Depending on maturatiy of your organization and many other factors, the testers will be more or less clearly instructed,
+what to test. They might have written business requirements and deduct the test cases themselves. In ideal setups they
+were part of the development livecycle, know the deviations from original requirements, pitfalls and workarounds and can
+adjust their test expectation accordingly.</p>
+<p>Unless you’re in a greenfield situation where the whole system landscape needs to be tested and retested for months or years
+your Testers will focus on testing the increment - not so much the existing functionality, which used to work fine already.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">baangt</span></code> already in preparation of this test phase. Create all the test cases, that you plan to execute. Create all
+the data combinations, that you’ll want to have tested. Once the functionality is there, record the most complex scenario
+in the recorder. Instead of testing 100s of cases manually, you’ll need only one recording and the prepared dataset. Start
+the TestRunExecution, sit back and wait for the results. Simple like that.</p>
+</div>
+<div class="section" id="regression-testing">
+<h2>Regression testing<a class="headerlink" href="#regression-testing" title="Permalink to this headline">¶</a></h2>
+<p>If you followed through on Increment testing imagine the joy of the next release! You’ll have the increment tested and run
+all test cases of previous increments as well. That’s called regression testing. If you did everything well use the results
+of regression tests and increment tests as rock-solid base for your decision whether to move on to production or not.</p>
+</div>
+<div class="section" id="performance-testing">
+<h2>Performance testing<a class="headerlink" href="#performance-testing" title="Permalink to this headline">¶</a></h2>
+<p>So you did regression and increment tests, moved to production and receive countless complaints from users, that the
+performance of the system is too slow. Additionally there are now bugs that appear due to timeout situations. Damn.</p>
+<blockquote>
+<div><p><strong>What happened?</strong></p>
+</div></blockquote>
+<p>You tested only for functionality, but not for load. With a few simple adoptions to your test cases you can simulate any
+number of users. To achieve realistic performance testing you’ll need more hardware for testing than for regression and
+increments. But you’ll use the same tool: <code class="docutils literal notranslate"><span class="pre">baangt</span></code>.</p>
+<p>As of today (Jan 2020) <code class="docutils literal notranslate"><span class="pre">baangt</span></code> does not provide infrastructure monitoring. In order to analyze the results of your
+performance tests you’ll need additional tools, but <code class="docutils literal notranslate"><span class="pre">baangt</span></code> will give indications, which components or which functionalities
+need a closer look by your experts.</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">baangt</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="OverviewUsage.html">What is <code class="docutils literal notranslate"><span class="pre">baangt</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="simpleExample.html">Jump-start into worry free production deployments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Structure.html">Structure of baangt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ParametersConfigFile.html">Parameters in Configuration files (<code class="docutils literal notranslate"><span class="pre">globals</span></code>)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Types of tests</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#increment-testing">Increment testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#regression-testing">Regression testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#performance-testing">Performance testing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">Why <code class="docutils literal notranslate"><span class="pre">baangt</span></code> and why is it open source?</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="ParametersConfigFile.html" title="previous chapter">Parameters in Configuration files (<code class="docutils literal notranslate"><span class="pre">globals</span></code>)</a></li>
+      <li>Next: <a href="HistoryAndReasons.html" title="next chapter">Why <code class="docutils literal notranslate"><span class="pre">baangt</span></code> and why is it open source?</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Bernhard Buhl.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/TestTypes.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
