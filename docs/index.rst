@@ -3,15 +3,21 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to baangt's documentation!
+Welcome to ``baangt``!
 ==================================
-Baangt is the new, open source test suite, that grows along your requirements. From simple recoding based automation to
-highly complex corporate environments: baangt is the solution. And if it's not, it should be very easy to extend the solid
+``baangt`` is the new, open source test suite, that grows along with your requirements. From simple recoding based automation to
+highly complex corporate environments: ``baangt`` is the solution. And if it's not, it should be very easy to extend the solid
 and well documented master functionality.
+
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+
+   OverviewUsage.rst
+   simpleExample.rst
+   Structure.rst
+   ParametersConfigFile.rst
 
 
 Indices and tables

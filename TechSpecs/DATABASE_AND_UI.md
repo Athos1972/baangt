@@ -13,7 +13,7 @@ Database and UI should be implemented using FLASK and ORM. Database SQLite is en
 * TestStepSequence (n:m) to TestCase
 * TestStepExecution (1:n) to TestStepSequence
 
-###S upporting entities
+### Supporting entities
 When a new database is created all entries in supporting entities shall be created (by ORM - not any db-specific command)
 * GlobalTestStepExecution (identical to TestStepExecution table but for reusable TestSteps)
 * ClassNames (Value table for Classnames in TestCaseSequence, TestCase, TestStepSequence)
