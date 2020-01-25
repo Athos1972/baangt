@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Testruns
+{% endblock %}
+
+{% block content %}
+    <h1>List of Testruns</h1>
+    <ul>
+        {% for testrun in testruns %}
+        <li>
+            {{ testrun.id }}: {{ testrun.name }}
+            (created by {{ testrun.get_createdBy().username }}
+            on {{ testrun.created.strftime('%Y-%m-%d %H:%M')}})
+            <ul>
+                {% for seq in testrun.testcase_sequences %}
+                    <li>{{ seq.name }}</li>
+                {% endfor %}
+            </ul>
+        </li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}
