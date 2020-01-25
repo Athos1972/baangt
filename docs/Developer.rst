@@ -30,6 +30,9 @@ Instead create a subclass of BrowserDriver
 That's it. Business people will love you and whenever "specialThingForThisClient" changes, you'll have to adjust only
 in one place.
 
+After subclassing you'll need to replace the standard ``BrowserHandling`` with ``MyCustomBrowser`` in order for baangt
+to use it.
+
 Plugins
 -------
 
