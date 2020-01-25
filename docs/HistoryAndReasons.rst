@@ -12,7 +12,7 @@ but now that it reached production we've to establish a task force, inform manag
 That's pain. And lost energy, that could have been used to create and improve instead of fixing an error and it's side
 effects in countless systems within the sytem landscape.
 
-Testing is undervalues, in parts because it's crazy expensive, tedious and slow. Enter ``baangt``. Enabling business users
+Testing is undervalued. In parts because it's crazy expensive, tedious and slow. Enter ``baangt``. Enabling business users
 to actually record and create test cases and seamlessly run them on any environment (either by themselves or by their
 IT-Guys or both) helps to ensure rock-stable production environments.
 
