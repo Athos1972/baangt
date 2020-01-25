@@ -19,6 +19,7 @@ and well documented master functionality.
    Structure.rst
    ParametersConfigFile.rst
    TestTypes.rst
+   Developer.rst
    HistoryAndReasons.rst
 
 
