@@ -9,6 +9,49 @@ engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)
 session = Session()
 
+# create supports
+browsers = {
+	'FF': 'Mozilla Firefox',
+	'Chrome': 'Google Chrome',
+	'IE': 'MS Internet Exploer',
+	'Safari': 'Safari',
+	'Edge': 'MS Edge',
+}
+for key, value in browsers.items():
+	browser = BrowserType(name=key, description=value)
+	session.add(browser)
+
+testcases = {
+	'Browser': 'Browser',
+	'API-Rest': 'API-Rest',
+	'API-SOAP': 'API-SOAP',
+	'API-oDataV2': 'API-oDataV2',
+	'API-oDataV4': 'API-oDataV4',
+}
+for key, value in testcases.items():
+	testcase = TestCaseType(name=key, description=value)
+	session.add(testcase)
+
+activities = {
+	'GOTOURL': 'Go to an URL',
+	'SETTEXT': 'Set Text of an Element',
+	'CLICK': 'Click on an Element',
+}
+for key, value in activities.items():
+	activity = ActivityType(name=key, description=value)
+	session.add(activity)
+
+locators = {
+	'xpath': 'Locate via XPATH-Expression',
+	'css': 'Locate via CSS-Path of the Element',
+	'id': 'Locate via ID of the Element',
+}
+for key, value in locators.items():
+	locator = LocatorType(name=key, description=value)
+	session.add(locator)
+
+session.commit()
+
 # create users
 user = User(username='admin')
 session.add(user)
