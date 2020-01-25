@@ -18,6 +18,7 @@ and well documented master functionality.
    simpleExample.rst
    Structure.rst
    ParametersConfigFile.rst
+   TestTypes.rst
    HistoryAndReasons.rst
 
 
