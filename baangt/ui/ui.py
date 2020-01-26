@@ -45,14 +45,15 @@ class UI:
         # lMenu doesnt' work. It shows up in the Mac-Menu, but none of the buttons work. Even the
         # Mac-Button stops working until the window is closed
 
-        lColumnLeft = [[sg.Text("Chose path, testrun and settings", font="Helvetica 8 bold")],
+        lColumnLeft = [[sg.Text("")],
                        [sg.Text("Path", size=(10,1), font="Helvetica 10 bold"),
-                    sg.In(key="-directory-", size=(31,1), enable_events=True, default_text=self.directory, font="Helvetica 12"),
-                    sg.FolderBrowse(initial_folder=os.getcwd(), font="Helvetica 8", enable_events=True, size=(12,1))]]
+                        sg.In(key="-directory-", size=(31,1), enable_events=True, default_text=self.directory, font="Helvetica 12"),
+                        sg.FolderBrowse(initial_folder=os.getcwd(), font="Helvetica 8", enable_events=True, size=(12,1))]]
+
         lColumnLeft.append([sg.Text("TestRun", size=(10, 1), font="Helvetica 10 bold"),
                         sg.InputCombo(self.testRunFiles, key="testRunFile", default_value=self.testRunFile,
                                       size=(29, 1), font="Helvetica 12"),
-                        sg.Button("Execute", size=(10, 1), pad=((5, 5), 5), font="Helvetica 10", button_color=('white', 'darkgreen'))])
+                        sg.Button("Execute", size=(10, 1), font="Helvetica 10", button_color=('white', 'darkgreen'))])
 
         lColumnLeft.append([sg.Text("Settings", size=(10, 1), font="Helvetica 10 bold"),
                             sg.InputCombo(self.configFiles, key="configFile", default_value=self.configFile,
@@ -155,7 +156,7 @@ class UI:
         lSize = lWindow.Size
         lPosition = lWindow.CurrentLocation()
         lWindow.close()
-        self.window = sg.Window("Baangt interactive Starter", layout=self.getLayout(),
+        self.window = sg.Window("baangt Interactive Starter", layout=self.getLayout(),
                                 location=lPosition)
         lWindow = self.window
         lWindow.finalize()
