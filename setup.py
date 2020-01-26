@@ -6,7 +6,7 @@ if __name__ == '__main__':
 
     setuptools.setup(
         name="baangt", # Replace with your own username
-        version="2020.1.1b20",
+        version="2020.1.1b21",
         author="Bernhard Buhl",
         author_email="buhl@buhl-consulting.com.cy",
         description="Basic And Advanced NextGeneration Testing",
