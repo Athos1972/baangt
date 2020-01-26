@@ -101,7 +101,7 @@ class UI:
                                 icon=self.iconFileWindow)  # size=(750,400)
         lWindow = self.window
         lWindow.finalize()
-        lWindow.set_icon(pngbase64=self.iconFileWindow)
+        # lWindow.set_icon(pngbase64=self.iconFileWindow)
 
         # sg.theme_previewer()
 
@@ -166,7 +166,7 @@ class UI:
         lPosition = lWindow.CurrentLocation()
         lWindow.close()
         self.window = sg.Window("baangt Interactive Starter", layout=self.getLayout(),
-                                location=lPosition)
+                                location=lPosition, icon=self.iconFileWindow)
         lWindow = self.window
         lWindow.finalize()
         return lWindow
