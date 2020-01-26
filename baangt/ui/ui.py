@@ -27,48 +27,83 @@ class UI:
         self.testRunFiles = []
         self.configContents = {}
         self.window = None
+        self.toggleAdditionalFieldsVisible = False
 
         self.directory = None
+        self.mainWindowPosition = (None, None)
+
         self.readConfig()
         self.getConfigFilesInDirectory()
 
         self.startWindow()
 
     def getLayout(self):
-        lLayout= [[sg.Text("Select Directory, Testrun and Global settings to use:")]]
-        lLayout.append([sg.Text("Directory", size=(15,1)),
-                    sg.In(key="-directory-", size=(31,1), enable_events=True, default_text=self.directory),
-                    sg.FolderBrowse(initial_folder=os.getcwd(), enable_events=True)])
-        lLayout.append([sg.Text("TestRun", size=(15,1)),
-                    sg.InputCombo(self.testRunFiles, key="testRunFile", default_value=self.testRunFile, size=(29,1))])
-        lLayout.append([sg.Text("Global Settings", size=(15,1)),
-                    sg.InputCombo(self.configFiles, key="configFile", default_value=self.configFile, enable_events=True, size=(29,1))])
+
+        lMenu = [['&File', ['&Open', '&Save', 'E&xit', 'Properties']],
+                 ['&Katalon Studio', ['Paste', ['Special', 'Normal', ], 'Undo'], ],
+                 ['&Help', '&About...'], ]
+        # lMenu doesnt' work. It shows up in the Mac-Menu, but none of the buttons work. Even the
+        # Mac-Button stops working until the window is closed
+
+        lColumnLeft = [[sg.Text("Chose path, testrun and settings", font="Helvetica 8 bold")],
+                       [sg.Text("Path", size=(10,1), font="Helvetica 10 bold"),
+                    sg.In(key="-directory-", size=(31,1), enable_events=True, default_text=self.directory, font="Helvetica 12"),
+                    sg.FolderBrowse(initial_folder=os.getcwd(), font="Helvetica 8", enable_events=True, size=(12,1))]]
+        lColumnLeft.append([sg.Text("TestRun", size=(10, 1), font="Helvetica 10 bold"),
+                        sg.InputCombo(self.testRunFiles, key="testRunFile", default_value=self.testRunFile,
+                                      size=(29, 1), font="Helvetica 12"),
+                        sg.Button("Execute", size=(10, 1), pad=((5, 5), 5), font="Helvetica 10", button_color=('white', 'green'))])
+
+        lColumnLeft.append([sg.Text("Settings", size=(10, 1), font="Helvetica 10 bold"),
+                            sg.InputCombo(self.configFiles, key="configFile", default_value=self.configFile,
+                                          enable_events=True, size=(29, 1), font="Helvetica 12"),
+                            sg.Button("Details", size=(12, 1), font="Helvetica 8", key="ToggleFields")])
+
+        # Baangt Logo
+        lPathLogo = Path(__file__).parent.parent.parent.joinpath("Ressources").joinpath("baangtLogo.png")
+        lColumnRight = [[sg.Image(filename=lPathLogo)]]
+
+        lLayout = [[sg.Menu(lMenu)],
+                   [sg.Col(lColumnLeft, pad=((0,0),0)), sg.Col(lColumnRight, justification="right")]]
+
+        # Show the button to provide more details
+        ttip_Recorder = 'Will start the Katalon Recorder Importer'
 
         if self.configContents:
-            lLayout.append([sg.Text("-"*10 + f"Settings of file {self.configFile}" + "-"*10)])
+            lLayout.append([sg.Text(f"SETTINGS IN {self.configFile}", font="Helvetica 8 bold",
+                                    visible=self.toggleAdditionalFieldsVisible)])
             for key, value in self.configContents.items():
-                lLayout.append([sg.In(key, key="-attrib-" + key, size=(25,1)), sg.In(key="-val-"+key, size=(30,1), default_text=value)])
+                lLayout.append([sg.In(key, key="-attrib-" + key, size=(28,1), visible=self.toggleAdditionalFieldsVisible),
+                                sg.In(key="-val-"+key, size=(34,1), default_text=value, visible=self.toggleAdditionalFieldsVisible)])
             for i in range(0,4):
-                lLayout.append([sg.In(key=f"-newField-{i}", size=(25,1)), sg.In(key=f"-newValue-{i}", size=(30,1))])
-            lLayout.append([sg.Button('Save'), sg.Button("SaveAs"), sg.Button('Exit'), sg.Button("Execute TestRun")])
-        else:
-            lLayout.append([sg.Button('Exit')])
+                lLayout.append([sg.In(key=f"-newField-{i}", size=(28,1), visible=self.toggleAdditionalFieldsVisible),
+                                sg.In(key=f"-newValue-{i}", size=(34,1), visible=self.toggleAdditionalFieldsVisible)])
 
-        lLayout.append([sg.Button("Import Katalon", disabled=True), sg.Button("Import KatalonRecorder")])
+            lLayout.append([sg.Button('Save', size=(13,1)),
+                            sg.Button("SaveAs", size=(13,1)),
+                            sg.Button("Import Recorder", size=(13,1), tooltip=ttip_Recorder),
+                            sg.Button("Import Katalon", size=(13,1), disabled=True),])
 
         return lLayout
 
     def startWindow(self):
-        sg.theme("TanBlue")
+        sg.theme("LightBrown1")
 
-        self.window = sg.Window("Baangt interactive Starter", layout=self.getLayout())
+        self.window = sg.Window("baangt Interactive Starter", layout=self.getLayout(), location=self.mainWindowPosition )  # size=(750,400)
         lWindow = self.window
         lWindow.finalize()
 
+        # sg.theme_previewer()
+
         while True:
-            lEvent, lValues = lWindow.read()
+            lEvent, lValues = lWindow.read(timeout=200)
             if lEvent == "Exit":
                 break
+
+            if not lEvent:       # Window was closed by "X"-Button
+                break
+
+            self.mainWindowPosition = lWindow.CurrentLocation()
 
             if lValues.get('-directory-') != self.directory:
                 self.directory = lValues.get("-directory-")
@@ -94,13 +129,17 @@ class UI:
                 if len(self.configFile) > 0:
                     lWindow = self.saveConfigFileProcedure(lWindow, lValues)
 
-            if lEvent == "Execute TestRun":
+            if lEvent == "Execute":
                 self.modifyValuesOfConfigFileInMemory(lValues=lValues)
                 self.runTestRun()
 
             if lEvent == "Import KatalonRecorder":
                 ImportKatalonRecorder(self.directory)
                 self.getConfigFilesInDirectory()   # Refresh display
+
+            if lEvent == 'ToggleFields':
+                lWindow = self.toggleAdditionalFieldsExecute(lWindow=lWindow)
+
 
         self.saveInteractiveGuiConfig()
         lWindow.close()
@@ -113,10 +152,22 @@ class UI:
         return lWindow
 
     def reopenWindow(self, lWindow):
+        lSize = lWindow.Size
+        lPosition = lWindow.CurrentLocation()
         lWindow.close()
-        self.window = sg.Window("Baangt interactive Starter", layout=self.getLayout())
+        self.window = sg.Window("Baangt interactive Starter", layout=self.getLayout(),
+                                location=lPosition)
         lWindow = self.window
         lWindow.finalize()
+        return lWindow
+
+    def toggleAdditionalFieldsExecute(self, lWindow):
+        if self.toggleAdditionalFieldsVisible:
+            self.toggleAdditionalFieldsVisible = False
+        else:
+            self.toggleAdditionalFieldsVisible = True
+
+        lWindow = self.reopenWindow(lWindow=lWindow)
         return lWindow
 
     def runTestRun(self):
@@ -231,6 +282,9 @@ class UI:
 
     def modifyValuesOfConfigFileInMemory(self, lValues):
         for key, value in lValues.items():
+            if not isinstance(key, str):
+                continue
+
             if '-attrib-' in key:
                 # Existing field - update value from value
                 lSearchKey = key.replace("-attrib-","")
@@ -259,7 +313,8 @@ class UI:
         config = configparser.ConfigParser()
         config["DEFAULT"] = {"path": self.directory,
                              "testrun": UI.__nonEmptyString(self.testRunFile),
-                             "globals": UI.__nonEmptyString(self.configFile)}
+                             "globals": UI.__nonEmptyString(self.configFile),
+                             "position": self.mainWindowPosition}
         with open("baangt.ini", "w") as configFile:
             config.write(configFile)
 
@@ -277,11 +332,20 @@ class UI:
             self.directory = config["DEFAULT"]['path']
             self.testRunFile = config["DEFAULT"]['testrun']
             self.configFile = config["DEFAULT"]['globals']
+            self.mainWindowPosition = UI.__convert_configPosition2Tuple(config["DEFAULT"]['position'])
+            # Value in there is now a string of "(x-coordinates, y-coordinates)". We need a tuple (int:x, int:y)
+
             self.readContentsOfGlobals()
         except Exception as e:
             self.directory = os.getcwd()
             pass
 
+    @staticmethod
+    def __convert_configPosition2Tuple(inString):
+        x = int(inString.split(",")[0].lstrip("("))
+        y = int(inString.split(",")[1].rstrip(")"))
+
+        return (x,y)
 
 
 
