@@ -52,7 +52,7 @@ class UI:
         lColumnLeft.append([sg.Text("TestRun", size=(10, 1), font="Helvetica 10 bold"),
                         sg.InputCombo(self.testRunFiles, key="testRunFile", default_value=self.testRunFile,
                                       size=(29, 1), font="Helvetica 12"),
-                        sg.Button("Execute", size=(10, 1), pad=((5, 5), 5), font="Helvetica 10", button_color=('white', 'green'))])
+                        sg.Button("Execute", size=(10, 1), pad=((5, 5), 5), font="Helvetica 10", button_color=('white', 'darkgreen'))])
 
         lColumnLeft.append([sg.Text("Settings", size=(10, 1), font="Helvetica 10 bold"),
                             sg.InputCombo(self.configFiles, key="configFile", default_value=self.configFile,

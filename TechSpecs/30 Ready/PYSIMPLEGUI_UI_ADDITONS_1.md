@@ -1,6 +1,7 @@
 # Scope of this enhancement
 
 UI has currently just very basic functionality. Enhancements are needed in the following areas:
+
 ## More comfortable handling of Global Parameters
 Right now in baangt.UI.UI when you chose any global*.JSON the parameters and values from this file are displayed. 
 4 empty lines are added to give the user a chance to add more parameters/values. In long configuration files, this
@@ -18,7 +19,8 @@ When the user scrolls on the vertical scroll-bar, e.g. to position 4: Read the g
 UI-Element parameter-01 with parameter 4 from globals-Dict, value-01 with value 4 from globals-Dict, and so on.
 
 ## Global Parameters as dropdown with additional values:
-Right now the user must know the allowed parameter names in order to tune the globals-file. That's not ideal. 
+Right now the user must know the allowed parameter names in order to tune the globals-file. That's not ideal. It would
+be better if at least standard values are in a dropdown and only customer specific values must be known.
 
 ### Solution approach:
 For empty entries (Currently 4 at the end of the list):
@@ -26,4 +28,5 @@ Change the Parameter-fields in the UI to be Dropdowns. Have a method to set the 
 addition of values by the user. 
 
 For filled entries:
-No dropdown. Instead show a "delete"-Button for each row.
+No dropdown. Instead show a "delete"-Button for each row. After pressing the delete-button remove the entry and reload
+the Window (hide/unhide on Mac doesn't really work. It destroys the layout. Reloading works well)
