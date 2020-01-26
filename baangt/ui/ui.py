@@ -48,7 +48,7 @@ class UI:
         lColumnLeft = [[sg.Text("")],
                        [sg.Text("Path", size=(10,1), font="Helvetica 10 bold"),
                         sg.In(key="-directory-", size=(31,1), enable_events=True, default_text=self.directory, font="Helvetica 12"),
-                        sg.FolderBrowse(initial_folder=os.getcwd(), font="Helvetica 8", enable_events=True, size=(12,1))]]
+                        sg.FolderBrowse(initial_folder=os.getcwd(), font="Helvetica 10", enable_events=True, size=(10,1))]]
 
         lColumnLeft.append([sg.Text("TestRun", size=(10, 1), font="Helvetica 10 bold"),
                         sg.InputCombo(self.testRunFiles, key="testRunFile", default_value=self.testRunFile,
@@ -58,14 +58,15 @@ class UI:
         lColumnLeft.append([sg.Text("Settings", size=(10, 1), font="Helvetica 10 bold"),
                             sg.InputCombo(self.configFiles, key="configFile", default_value=self.configFile,
                                           enable_events=True, size=(29, 1), font="Helvetica 12"),
-                            sg.Button("Details", size=(12, 1), font="Helvetica 8", key="ToggleFields")])
+                            sg.Button("Details", size=(10, 1), font="Helvetica 10", key="ToggleFields")])
 
         # Baangt Logo
         lPathLogo = Path(__file__).parent.parent.parent.joinpath("Ressources").joinpath("baangtLogo.png")
         lColumnRight = [[sg.Image(filename=lPathLogo)]]
 
         lLayout = [[sg.Menu(lMenu)],
-                   [sg.Col(lColumnLeft, pad=((0,0),0)), sg.Col(lColumnRight, justification="right")]]
+                   [sg.Col(lColumnLeft),
+                    sg.Col(lColumnRight, justification="right")]]
 
         # Show the button to provide more details
         ttip_Recorder = 'Will start the Katalon Recorder Importer'
@@ -84,6 +85,7 @@ class UI:
                             sg.Button("SaveAs", size=(13,1)),
                             sg.Button("Import Recorder", size=(13,1), tooltip=ttip_Recorder),
                             sg.Button("Import Katalon", size=(13,1), disabled=True),])
+            lLayout.append([sg.T()])
 
         return lLayout
 
