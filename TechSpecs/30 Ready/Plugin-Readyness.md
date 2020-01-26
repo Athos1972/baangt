@@ -8,4 +8,8 @@ Each method, that doesn't call super().<method>() means danger of upcoming break
 Sometimes it would be easier to implement a Plugin than subclassing.
 
 # Aim of this task
-Prepare baangt classes and method for usage of pluggy. Implement pluggy-entry points in 
+Prepare baangt classes and methods for usage of [pluggy](https://pluggy.readthedocs.io/en/latest/). Implement pluggy-entry points in 
+* baangt.base.BrowserHandling
+* baangt.base.TestRun
+* baangt.base.Timing
+* baangt.base.ExportResults
