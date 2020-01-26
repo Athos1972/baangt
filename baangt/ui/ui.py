@@ -61,12 +61,16 @@ class UI:
                             sg.Button("Details", size=(10, 1), font="Helvetica 10", key="ToggleFields")])
 
         # Baangt Logo
-        lPathLogo = Path(__file__).parent.parent.parent.joinpath("Ressources").joinpath("baangtLogo.png")
+        lPathLogo = Path(__file__).parent.parent.parent.joinpath("ressources").joinpath("baangtLogo.png")
+        # when in pip-Package, this doesn't work.
+        if not lPathLogo.exists():
+            lPathLogo = Path(__file__).parent.parent.joinpath("ressources").joinpath("baangtLogo.png")
+
         lColumnRight = [[sg.Image(filename=lPathLogo)]]
 
         lLayout = [[sg.Menu(lMenu)],
-                   [sg.Col(lColumnLeft),
-                    sg.Col(lColumnRight, justification="right")]]
+                   [sg.Col(lColumnLeft, pad=(0,0)),
+                    sg.Col(lColumnRight, pad=(0,0), justification="right")]]
 
         # Show the button to provide more details
         ttip_Recorder = 'Will start the Katalon Recorder Importer'
