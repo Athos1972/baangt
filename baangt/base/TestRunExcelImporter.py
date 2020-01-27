@@ -81,7 +81,7 @@ class TestRunExcelImporter:
                 "TestDataFileName": self.fileName,
                 "Sheetname": "data",
                 "ParallelRuns": 1,
-                "FromLine": 1,
+                "FromLine": 0,
                 "ToLine": 999999
                 },
             }

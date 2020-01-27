@@ -64,6 +64,9 @@ class TestStepMaster:
             if len(lValue2) > 0:
                 lValue2 = self.replaceVariables(lValue2)
 
+            if lActivity == "COMMENT":
+                continue     # Comment's are ignored
+
             if lActivity == "GOTOURL":
                 self.browserSession.goToUrl(lValue)
             elif lActivity == "SETTEXT":
