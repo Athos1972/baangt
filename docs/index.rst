@@ -10,18 +10,22 @@ highly complex corporate environments: ``baangt`` is the solution. And if it's n
 and well documented master functionality.
 
 
+.. image:: screenshotBaangtIA.png
+
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   OverviewUsage.rst
-   simpleExample.rst
-   Structure.rst
-   ParametersConfigFile.rst
-   TestTypes.rst
-   Developer.rst
-   HistoryAndReasons.rst
-   contributors.rst
+      Installation <Installation.rst>
+      Overview <OverviewUsage.rst>
+      First Steps <simpleExample.rst>
+      Structure <Structure.rst>
+      Parameters <ParametersConfigFile.rst>
+      Types of Tests <TestTypes.rst>
+      For Developers <Developer.rst>
+      History <HistoryAndReasons.rst>
+      Contributions <contributors.rst>
 
 
 Indices and tables

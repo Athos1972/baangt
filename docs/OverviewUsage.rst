@@ -38,7 +38,7 @@ people who know best what to test: Your business department.
 Hey, why not do everything in Excel?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-There is one serious drawback from this flexibilty: it's change. Of course you started with 1 sheet, but later had some additional
+There is one serious drawback from this flexibilty: it's **change**. Of course you started with 1 sheet, but later had some additional
 requirements and simply added a second sheet to cover those whithout changing the definitions of the first excel sheet.
 You're still happy as you need both behaviours tested (imagine one test set for regional customers and another test set
 for customers from other countries). Great. Everything works. After having some serious problems in production and fixing
@@ -47,10 +47,41 @@ times, deleting and re-adding objects from a shopping chart, etc.). The basic te
 the other two cases, but for a specific card you'll need changes. Simple. You copy one of the original sheets and adjust
 accordingly. You immediately sleep better because now also those cases are part of your growing regression test set. Wonderful.
 You continue like this for 2 months, end up with 2 or 3 datafiles and 20 test case definitions. That's not uncommon. Also
-not uncommon is "Change". For more direct communication with the endusers the AUT (Application under test) get's enriched
+not uncommon is "**Change**". For more direct communication with the endusers the AUT (Application under test) get's enriched
 with a Sentry-Popup. Wonderful idea. But wait... It's not so great after all, because now you have to update 20 test case
 definitions with a way to deal with the new popup. Imagine corporate environments where we have many 1.000 or many 10.000
 tests.
+
+Subclassing for multiply used functionality
+-------------------------------------------
+
+The existing classes ``baangt.TestCase.TestCaseMaster`` and ``baangt.TestStep.TestStepMaster`` can easily be subclassed
+and enriched with static functionality - even when you use the Excel version of ``baangt.py``. Yes, you'll need to know
+some basics of powerful Python Language and most probably an IDE.
+
+An example could look as simple like this:
+
+::
+
+    from baangt.TestStep import TestStepMaster
+
+    class myTestStep(TestStepMaster):
+        def execute():
+            self.driver.goToURL("http://www.google.com")
+            self.driver.findByAndSetText(xpath='//input[@type="text"]', value='baangt')
+            self.driver.findByAndClick(xpath='(//input[contains(@type,'submit')])[3]')
+
+That's it. All the rest is taken care of by ``baangt``. You'll also receive a nice export file showing timing information
+for your TestCase.
+
+You can subclass any other functionality, that doesn't fully fit your needs (IBAN-Generation, Browser-Handling, Timing)
+and also create your own Assertion-classes (for instance if you need to receive data from a Host-System or
+RFC/SOAP-Connection or any other source that is not natively supported by ``baangt.py``). Of course you'd only
+re-implement methods, that you need to enrich and consume everything else from the framework.
+
+Please consider creating pull-requests if you think some of your custom implemented functionality could be useful for
+others.
+
 
 ``BaangtDB`` for flexible, powerful enterprise grade test automation
 --------------------------------------------------------------------

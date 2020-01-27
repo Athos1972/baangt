@@ -250,7 +250,9 @@ class UI:
         return lPython
 
     def getConfigFilesInDirectory(self):
-        """Reads *.JSON-Files from directory given in self.directory and builds 2 lists (Testrunfiles and ConfiFiles"""
+        """
+        Reads JSON-Files from directory given in self.directory and builds 2 lists (Testrunfiles and ConfiFiles)
+        """
         self.configFiles = []
         self.testRunFiles = []
         lcwd = os.getcwd()

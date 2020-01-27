@@ -15,6 +15,8 @@ for instance to slowly retest a single testrecord or to not close the browser af
      - When set to ``true`` the browser will stop for a short time after each command, so that you can also visually see what the browser is doing
    * - ``dontCloseBrowser``
      - When the browser or script finds an error usually it takes a screenshot and moves on to the next testcase. With this setting to ``True`` the Browsersession will stop right at the error
+   * - ``TC.BrowserOptions``
+     - Set the value to ``{'HEADLESS': 'True'}`` to run Chrome/Firefox in headless mode.
    * - ``TC.Lines``
      - Which lines from datafile to process.
 
