@@ -15,10 +15,20 @@
   </head>
   
   <body>
-    <div class="container">
-    	{% block content %}
-    	{% endblock %}
-    </div>
+    <nav class="navbar navbar-expand navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand ml-3 py-2" href="/">Testruns Definition</a>
+        <ul class="navbar-nav ml-auto mr-3">
+            <li class="nav-item nav-link">
+                Username
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Sign out</a>
+            </li>
+        </ul>
+    </nav>
+      
+    {% block content %}
+    {% endblock %}
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

@@ -5,20 +5,80 @@
 {% endblock %}
 
 {% block content %}
-    <h1>List of Testruns</h1>
-    <ul>
-        {% for testrun in testruns %}
-        <li>
-            {{ testrun.id }}: {{ testrun.name }}
-            (created by {{ testrun.get_createdBy().username }}
-            on {{ testrun.created.strftime('%Y-%m-%d %H:%M')}})
-            <ul>
-                {% for seq in testrun.testcase_sequences %}
-                    <li>{{ seq.name }}</li>
-                {% endfor %}
+<div class="container-fluid mt-5">
+<div class="row">
+    <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+        <div class="sidebar-sticky">
+            <ul class="nav flex-column my-3">
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="collapse" href="#Testruns">
+                        Testruns                        </a>
+                    <div class="collapse" id="Testruns">
+                        {% for testrun in items.testruns %}
+                            <a class="dropdown-item" id="testrun_{{ testrun.id}}" href="#">{{ testrun }}</a>
+                        {% endfor %}
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="collapse" href="#TestCaseSequences">
+                        Test Case Sequences
+                    </a>
+                    <div class="collapse" id="TestCaseSequences">
+                        {% for testcaseseq in items.testcase_sequances %}
+                            <a class="dropdown-item" id="testcase_sequence_{{ testcaseseq.id}}" href="#">{{ testcaseseq }}</a>
+                        {% endfor %}
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="collapse" href="#DataFiles">
+                        Data Files
+                    </a>
+                    <div class="collapse" id="DataFiles">
+                        {% for datafile in items.datafiles %}
+                            <a class="dropdown-item" id="datafile_{{ datafile.id}}" href="#">{{ datafile }}</a>
+                        {% endfor %}
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="collapse" href="#TestCases">
+                        Test Cases
+                    </a>
+                    <div class="collapse" id="TestCases">
+                        {% for testcase in items.testcases %}
+                            <a class="dropdown-item" id="testcase_{{ testcase.id}}" href="#">{{ testcase }}</a>
+                        {% endfor %}
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="collapse" href="#TestStepSequences">
+                        Test Step Sequences
+                    </a>
+                    <div class="collapse" id="TestStepSequences">
+                        {% for teststepseq in items.teststep_sequences %}
+                            <a class="dropdown-item" id="teststep_sequence_{{ teststepseq.id}}" href="#">{{ teststepseq }}</a>
+                        {% endfor %}
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="collapse" href="#TestSteps">
+                        Test Steps
+                    </a>
+                    <div class="collapse" id="TestSteps">
+                        {% for teststep in items.teststeps %}
+                            <a class="dropdown-item" id="teststep_{{ teststep.id}}" href="#">{{ teststep }}</a>
+                        {% endfor %}
+                    </div>
+                </li>
             </ul>
-        </li>
-        {% endfor %}
-    </ul>
+        </div>
+    </nav>
+
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1>Data Area</h1>
+        </div>
+    </main>
+</div>
+</div>
 
 {% endblock %}

@@ -9,10 +9,22 @@ db = SQLAlchemy(app)
 
 @app.route("/")
 def index():
-	print('***** index')
-	testruns = Testrun.query.all()
-	print(testruns)
-	return render_template("index.html", testruns=testruns)
+	# get the whole bunch of items
+	items = {}
+	items['testruns'] = Testrun.query.all()
+	items['testcase_sequances'] = TestCaseSequence.query.all()
+	items['datafiles'] = DataFile.query.all()
+	items['testcases'] = TestCase.query.all()
+	items['teststep_sequences'] = TestStepSequence.query.all()
+	items['teststeps'] = TestStepExecution.query.all()
+	return render_template("index.html", items=items)
+
+@app.route("/testrun/<int:testrun_id>") 
+def testrun(testrun_id):
+	# get testrun by id
+	items['testruns'] = Testrun.query.get(testrun_id)
+	return render_template("testrun.html", testrun=testrun)
+	
 
 if __name__ == '__main__':
 	app.run()
