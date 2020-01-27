@@ -21,6 +21,7 @@ and well documented master functionality.
    TestTypes.rst
    Developer.rst
    HistoryAndReasons.rst
+   contributors.rst
 
 
 Indices and tables
