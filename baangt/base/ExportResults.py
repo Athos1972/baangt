@@ -349,6 +349,8 @@ class ExportTiming:
         lLines = lTimeLog.split("\n")
         for line in lLines:
             parts = line.split(",")
+            if len(parts) < 2:
+                continue
             if "Start:" in line:
                 # Format <sequence>: <Start>: <time.loctime>
                 continue
