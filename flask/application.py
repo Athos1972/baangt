@@ -17,13 +17,27 @@ def index():
 	items['testcases'] = TestCase.query.all()
 	items['teststep_sequences'] = TestStepSequence.query.all()
 	items['teststeps'] = TestStepExecution.query.all()
-	return render_template("index.html", items=items)
+	return render_template("testrun/index.html", items=items)
 
-@app.route("/testrun/<int:testrun_id>") 
-def testrun(testrun_id):
-	# get testrun by id
-	items['testruns'] = Testrun.query.get(testrun_id)
-	return render_template("testrun.html", testrun=testrun)
+@app.route("/<string:item_type>/<int:item_id>") 
+def testrun(item_type, item_id):
+	# get item by type and id
+	if item_type == 'testrun':
+		item = Testrun.query.get(item_id)
+	elif item_type == 'testcase_sequence':
+		item = TestCaseSequence.query.get(item_id)
+	elif item_type == 'testcase':
+		item = TestCase.query.get(item_id)
+	elif item_type == 'teststep_sequences':
+		item = TestStepSequence.query.get(item_id)
+	elif item_type == 'teststep':
+		item = TestStepExecution.query.get(item_id)
+	else:
+		return 'ERROR: Wrong Item'
+
+	return render_template("testrun/item.html", type=item_type, item=item)
+
+
 	
 
 if __name__ == '__main__':

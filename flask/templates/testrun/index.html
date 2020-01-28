@@ -14,8 +14,9 @@
                     <a class="nav-link" data-toggle="collapse" href="#Testruns">
                         Testruns                        </a>
                     <div class="collapse" id="Testruns">
-                        {% for testrun in items.testruns %}
-                            <a class="dropdown-item" id="testrun_{{ testrun.id}}" href="#">{{ testrun }}</a>
+                        <a class="btn btn-primary btn-sm ml-4" data-type="testrun" href="#">Create New Testrun</a>
+                        {% for item in items.testruns %}
+                            <a class="dropdown-item" data-type="testrun" data-id="{{ item.id }}" href="">{{ item }}</a>
                         {% endfor %}
                     </div>
                 </li>
@@ -24,28 +25,31 @@
                         Test Case Sequences
                     </a>
                     <div class="collapse" id="TestCaseSequences">
-                        {% for testcaseseq in items.testcase_sequances %}
-                            <a class="dropdown-item" id="testcase_sequence_{{ testcaseseq.id}}" href="#">{{ testcaseseq }}</a>
+                        <a class="btn btn-primary btn-sm ml-4" data-type="testcase_sequence" href="#">Create New Test Case Sequence</a>
+                        {% for item in items.testcase_sequances %}
+                            <a class="dropdown-item" data-type="testcase_sequence" data-id="{{ item.id }}" href="">{{ item }}</a>
                         {% endfor %}
                     </div>
                 </li>
+                <!-- DataFile excludded
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="collapse" href="#DataFiles">
                         Data Files
                     </a>
                     <div class="collapse" id="DataFiles">
-                        {% for datafile in items.datafiles %}
-                            <a class="dropdown-item" id="datafile_{{ datafile.id}}" href="#">{{ datafile }}</a>
+                        {% for item in items.datafiles %}
+                            <a class="dropdown-item" data-type="datafile" data-id="{{ item.id }}" href="">{{ item }}</a>
                         {% endfor %}
                     </div>
                 </li>
+            -->
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="collapse" href="#TestCases">
                         Test Cases
-                    </a>
                     <div class="collapse" id="TestCases">
-                        {% for testcase in items.testcases %}
-                            <a class="dropdown-item" id="testcase_{{ testcase.id}}" href="#">{{ testcase }}</a>
+                        <a class="btn btn-primary btn-sm ml-4" data-type="testcase" href="#">Create New Test Case</a>
+                        {% for item in items.testcases %}
+                            <a class="dropdown-item" data-type="testcase" data-id="{{ item.id }}" href="">{{ item }}</a>
                         {% endfor %}
                     </div>
                 </li>
@@ -54,8 +58,9 @@
                         Test Step Sequences
                     </a>
                     <div class="collapse" id="TestStepSequences">
-                        {% for teststepseq in items.teststep_sequences %}
-                            <a class="dropdown-item" id="teststep_sequence_{{ teststepseq.id}}" href="#">{{ teststepseq }}</a>
+                        <a class="btn btn-primary btn-sm ml-4" data-type="teststep_sequence" href="#">Create New Test Step Sequence</a>
+                        {% for item in items.teststep_sequences %}
+                            <a class="dropdown-item" data-type="teststep_sequence" data-id="{{ item.id }}" href="">{{ item }}</a>
                         {% endfor %}
                     </div>
                 </li>
@@ -64,8 +69,9 @@
                         Test Steps
                     </a>
                     <div class="collapse" id="TestSteps">
-                        {% for teststep in items.teststeps %}
-                            <a class="dropdown-item" id="teststep_{{ teststep.id}}" href="#">{{ teststep }}</a>
+                        <a class="btn btn-primary btn-sm ml-4" data-type="teststep" href="#">Create New Test Step</a>
+                        {% for item in items.teststeps %}
+                            <a class="dropdown-item" data-type="teststep" data-id="{{ item.id }}" href="">{{ item }}</a>
                         {% endfor %}
                     </div>
                 </li>
@@ -74,11 +80,14 @@
     </nav>
 
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <h1>Data Area</h1>
-        </div>
+
+            <h1 class="border-bottom py-2">Select an item</h1>
+
     </main>
 </div>
 </div>
+
+<!-- Load local JS -->
+<script src="{{ url_for('static', filename='testrun.js') }}"></script>
 
 {% endblock %}
