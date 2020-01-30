@@ -1,18 +1,33 @@
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-from application import db
+from app import db, login_manager
 
 #
 # user Model
 # TODO: extend user Model
 #
-class User(db.Model):
+class User(UserMixin, db.Model):
 	__tablename__ = 'users'
 	id = db.Column(db.Integer, primary_key=True)
-	username = db.Column(db.String, unique=True, nullable=False)
+	username = db.Column(db.String(64), unique=True, nullable=False)
+	password = db.Column(db.String(128), nullable=False)
+	created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+	lastlogin = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
 	def __str__(self):
 		return self.username
+
+	def set_password(self, password):
+		self.password = generate_password_hash(password)
+
+	def verify_password(self, password):
+		return check_password_hash(self.password, password)
+
+@login_manager.user_loader
+def load_user(id):
+	return User.query.get(int(id))
 
 #
 # relation tables
@@ -49,8 +64,8 @@ testcase_stepsequence = db.Table(
 class Testrun(db.Model):
 	__tablename__ = 'testruns'
 	id = db.Column(db.Integer, primary_key=True)
-	name = db.Column(db.String, nullable=False)
-	description = db.Column(db.String, nullable=False)
+	name = db.Column(db.String(64), nullable=False)
+	description = db.Column(db.String(512), nullable=False)
 	created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 	creator_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 	edited = db.Column(db.DateTime, nullable=True)
@@ -64,8 +79,8 @@ class Testrun(db.Model):
 class TestCaseSequence(db.Model):
 	__tablename__ = 'testcase_sequences'
 	id = db.Column(db.Integer, primary_key=True)
-	name = db.Column(db.String, nullable=False)
-	description = db.Column(db.String, nullable=False)
+	name = db.Column(db.String(64), nullable=False)
+	description = db.Column(db.String(512), nullable=False)
 	created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 	creator_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 	edited = db.Column(db.DateTime, nullable=True)
@@ -87,7 +102,7 @@ class TestCaseSequence(db.Model):
 class DataFile(db.Model):
 	__tablename__ = 'datafiles'
 	id = db.Column(db.Integer, primary_key=True)
-	fileName = db.Column(db.String, nullable=False)
+	filename = db.Column(db.String(64), nullable=False)
 	created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 	creator_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 	creator = db.relationship('User', backref='created_datafiles', lazy='immediate', foreign_keys=[creator_id])
@@ -99,13 +114,13 @@ class DataFile(db.Model):
 	)
 
 	def __str__(self):
-		return self.fileName
+		return self.filename
 
 class TestCase(db.Model):
 	__tablename__ = 'testcases'
 	id = db.Column(db.Integer, primary_key=True)
-	name = db.Column(db.String, nullable=False)
-	description = db.Column(db.String, nullable=False)
+	name = db.Column(db.String(64), nullable=False)
+	description = db.Column(db.String(512), nullable=False)
 	created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 	creator_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 	edited = db.Column(db.DateTime, nullable=True)
@@ -131,8 +146,8 @@ class TestCase(db.Model):
 class TestStepSequence(db.Model):
 	__tablename__ = 'teststep_sequences'
 	id = db.Column(db.Integer, primary_key=True)
-	name = db.Column(db.String, nullable=False)
-	description = db.Column(db.String, nullable=False)
+	name = db.Column(db.String(64), nullable=False)
+	description = db.Column(db.String(512), nullable=False)
 	created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 	creator_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 	edited = db.Column(db.DateTime, nullable=True)
@@ -154,8 +169,8 @@ class TestStepSequence(db.Model):
 class TestStepExecution(db.Model):
 	__tablename__ = 'teststep_executions'
 	id = db.Column(db.Integer, primary_key=True)
-	name = db.Column(db.String, nullable=False)
-	description = db.Column(db.String, nullable=False)
+	name = db.Column(db.String(64), nullable=False)
+	description = db.Column(db.String(512), nullable=False)
 	created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 	creator_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 	edited = db.Column(db.DateTime, nullable=True)
@@ -178,8 +193,8 @@ class TestStepExecution(db.Model):
 class GlobalTestStepExecution(db.Model):
 	__tablename__ = 'global_teststep_executions'
 	id = db.Column(db.Integer, primary_key=True)
-	name = db.Column(db.String, nullable=False)
-	description = db.Column(db.String, nullable=False)
+	name = db.Column(db.String(64), nullable=False)
+	description = db.Column(db.String(512), nullable=False)
 	created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 	creator_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 	edited = db.Column(db.DateTime, nullable=True)
@@ -199,8 +214,8 @@ class GlobalTestStepExecution(db.Model):
 class ClassName(db.Model):
 	__tablename__ = 'classnames'
 	id = db.Column(db.Integer, primary_key=True)
-	name = db.Column(db.String, nullable=False)
-	description = db.Column(db.String, nullable=False)
+	name = db.Column(db.String(64), nullable=False)
+	description = db.Column(db.String(512), nullable=False)
 
 	def __str__(self):
 		return self.name
@@ -208,8 +223,8 @@ class ClassName(db.Model):
 class BrowserType(db.Model):
 	__tablename__ = 'browser_types'
 	id = db.Column(db.Integer, primary_key=True)
-	name = db.Column(db.String, nullable=False)
-	description = db.Column(db.String, nullable=False)
+	name = db.Column(db.String(64), nullable=False)
+	description = db.Column(db.String(512), nullable=False)
 
 	def __str__(self):
 		return self.name
@@ -217,8 +232,8 @@ class BrowserType(db.Model):
 class TestCaseType(db.Model):
 	__tablename__ = 'testcase_types'
 	id = db.Column(db.Integer, primary_key=True)
-	name = db.Column(db.String, nullable=False)
-	description = db.Column(db.String, nullable=False)
+	name = db.Column(db.String(64), nullable=False)
+	description = db.Column(db.String(512), nullable=False)
 
 	def __str__(self):
 		return self.name
@@ -226,8 +241,8 @@ class TestCaseType(db.Model):
 class ActivityType(db.Model):
 	__tablename__ = 'activity_types'
 	id = db.Column(db.Integer, primary_key=True)
-	name = db.Column(db.String, nullable=False)
-	description = db.Column(db.String, nullable=False)
+	name = db.Column(db.String(64), nullable=False)
+	description = db.Column(db.String(512), nullable=False)
 
 	def __str__(self):
 		return self.name
@@ -235,8 +250,8 @@ class ActivityType(db.Model):
 class LocatorType(db.Model):
 	__tablename__ = 'locator_types'
 	id = db.Column(db.Integer, primary_key=True)
-	name = db.Column(db.String, nullable=False)
-	description = db.Column(db.String, nullable=False)
+	name = db.Column(db.String(64), nullable=False)
+	description = db.Column(db.String(512), nullable=False)
 
 	def __str__(self):
 		return self.name

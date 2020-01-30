@@ -12,13 +12,18 @@ db.drop_all()
 db.create_all()
 
 # create users
+print('Creating users...')
 admin = User(username='admin')
+admin.set_password('12345')
 user = User(username='simple_user')
+user.set_password('12345')
 db.session.add(admin)
 db.session.add(user)
 db.session.commit()
+print('Done.')
 
 # create supports
+print('Creating supports...')
 browsers = {
 	'FF': 'Mozilla Firefox',
 	'Chrome': 'Google Chrome',
@@ -63,8 +68,10 @@ classname = ClassName(name='ClassName A', description='A Simple Class Name')
 db.session.add(classname)
 
 db.session.commit()
+print('Done.')
 
 # create mains
+print('Creating mains...')
 for i in range(5):
 	testrun  = Testrun(
 		name=f'Testrun #{i}',
@@ -99,7 +106,7 @@ for i in range(5):
 	else:
 		u = user
 	datafile  = DataFile(
-		fileName=f'data_file_{i}.xlsx',
+		filename=f'data_file_{i}.xlsx',
 		creator=u,
 	)
 	testseq = TestCaseSequence.query.get(i+1)
@@ -165,3 +172,4 @@ for i in range(4):
 	db.session.add(testcase)
 
 db.session.commit()
+print('Done.')

@@ -11,3 +11,4 @@ baangt.ini
 __pycache__
 *.pyc
 *.db
+venv
