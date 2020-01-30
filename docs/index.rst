@@ -26,6 +26,8 @@ and well documented master functionality.
       For Developers <Developer.rst>
       History <HistoryAndReasons.rst>
       Contributions <contributors.rst>
+      Changelog <changelog.rst>
+      Planned Features <PlannedFeatures.rst>
 
 
 Indices and tables
