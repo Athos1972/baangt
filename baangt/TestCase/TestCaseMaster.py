@@ -45,8 +45,25 @@ class TestCaseMaster:
             self._finalizeTestCase()
 
     def _finalizeTestCase(self):
-        self.kwargs[GC.KWARGS_DATA][GC.TIMELOG] = self.timing.returnTime()
+        tcData = self.kwargs[GC.KWARGS_DATA]
+        tcData[GC.TIMELOG] = self.timing.returnTime()
+
         self.timing.resetTime()
+
+    def _checkAndSetTestcaseStatusIfFailExpected(self):
+        """
+        If this Testcase is supposed to fail and failed, he's actually successful.
+        If this Testcase is supposed to fail and doesn't, he's actually failed.
+        @return: Directly sets the Testcasestatus accordingly.
+        """
+        tcData = self.kwargs[GC.KWARGS_DATA]
+
+        if tcData.get(GC.TESTCASE_EXPECTED_ERROR_FIELD) == 'X':
+            if tcData[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR:
+                tcData[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_SUCCESS
+            elif tcData[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_SUCCESS:
+                tcData[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
+
 
     def tearDown(self):
         if self.kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR:
@@ -54,4 +71,8 @@ class TestCaseMaster:
             if self.testCaseType == GC.KWARGS_BROWSER:
                 self.kwargs[GC.KWARGS_DATA][GC.SCREENSHOTS] = self.kwargs[GC.KWARGS_DATA][GC.SCREENSHOTS] + '\n' +\
                                                               self.browser.takeScreenshot()
+
+        self._checkAndSetTestcaseStatusIfFailExpected()
+
         self.timing.takeTime(self.timingName)
+
