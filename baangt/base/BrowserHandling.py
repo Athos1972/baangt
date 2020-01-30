@@ -41,6 +41,8 @@ class BrowserDriver:
         self.element = None
         self.locatorType = None
         self.locator = None
+        self.slowExecution = False
+        self.slowExecutionTimeoutInSeconds = 1
 
         if timing:
             self.timing = timing
@@ -69,6 +71,7 @@ class BrowserDriver:
             GC.BROWSER_CHROME: webdriver.Chrome,
             GC.BROWSER_SAFARI: webdriver.Safari,
             GC.BROWSER_REMOTE: webdriver.Remote}
+
         if browserName in browserNames:
             GeckoExecutable = "geckodriver"
             ChromeExecutable = "chromedriver"
@@ -76,6 +79,24 @@ class BrowserDriver:
             if 'NT' in os.name.upper():
                 GeckoExecutable = GeckoExecutable + ".exe"
                 ChromeExecutable = ChromeExecutable + ".exe"
+
+        #     if browserName == GC.BROWSER_FIREFOX:
+        #         self.driver = browserNames[browserName](options=self.__createBrowserOptions(browserName=browserName,
+        #                                                                                     desiredCapabilities=desiredCapabilities),
+        #                                                 executable_path=self.__findBrowserDriverPaths(GeckoExecutable))
+        #     elif browserName == GC.BROWSER_CHROME:
+        #         self.driver = browserNames[browserName](options=self.__createBrowserOptions(browserName=browserName,
+        #                                                                                     desiredCapabilities=desiredCapabilities),
+        #                                                 executable_path=self.__findBrowserDriverPaths(ChromeExecutable))
+        #     elif browserName == GC.BROWSER_REMOTE:
+        #         self.driver = browserNames[browserName](options=self.__createBrowserOptions(browserName=browserName,
+        #                                                                                     desiredCapabilities=desiredCapabilities),
+        #                                                 command_executor='http://localhost:4444/wd/hub',
+        #                                                 desired_capabilities = desiredCapabilities)
+        # else:
+        #     raise SystemExit("Browsername unknown")
+
+        # self.takeTime("Browser Start")
 
             lCurPath = Path(os.getcwd())
             lCurPath = lCurPath.joinpath("browserDrivers")
@@ -122,6 +143,25 @@ class BrowserDriver:
 
         logger.debug(f"Path for BrowserDrivers: {lCurPath}")
         return str(lCurPath)
+
+    def slowExecutionToggle(self, newSlowExecutionWaitTimeInSeconds = None):
+        """
+        SlowExecution can be set in globals or by the teststep. It's intended use is debugging or showcasing a testcases
+        functionality.
+
+        @param newSlowExecutionWaitTimeInSeconds: Optional. If set, it will change the default value of WaitTime, when SlowExecution is active
+        @return: Returns the state of sloeExecution toggle after toggling was done.
+        """
+
+        if self.slowExecution:
+            self.slowExecution = False
+        else:
+            self.slowExecution = True
+
+        if newSlowExecutionWaitTimeInSeconds:
+            self.slowExecutionTimeoutInSeconds = newSlowExecutionWaitTimeInSeconds
+
+        return self.slowExecution
 
     def __createBrowserOptions(self, browserName, desiredCapabilities):
         if browserName == GC.BROWSER_CHROME:
@@ -361,6 +401,9 @@ class BrowserDriver:
     def findBy(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=60, loggingOn=True,
                optional=False):
 
+        if self.slowExecution:
+            time.sleep(self.slowExecutionTimeoutInSeconds)
+
         if iframe:
             self.handleIframe(iframe)
 
@@ -521,46 +564,78 @@ class BrowserDriver:
             raise Exceptions.baangtTestStepException
         pass
 
+    def goBack(self):
+        """
+        Method to go 1 step back in current tab's browse history
+        @return:
+        """
+        try:
+            self.javaScript("window.history.go(-1)")
+        except Exception as e:
+            self._log(logging.WARNING, f"Tried to go back in history, didn't work with error {e}")
+
+
     def javaScript(self, jsText):
         # self.driver.execute_async_script(jsText)
         self.driver.execute_script(jsText)
         # self.driver.execute(jsText)
 
     def downloadDriver(self,browserName):
+        path = Path(os.getcwd())
+        path = path.joinpath("browserDrivers")
+
         if str(browserName) == GC.GECKO_DRIVER:
+            response = requests.get(GC.GECKO_URL)
+            gecko = response.json()
+            gecko = gecko['assets']
+            gecko_length_results = len(gecko)
+            drivers_url_dict = []
+
+            for i in range(gecko_length_results):
+                drivers_url_dict.append(gecko[i]['browser_download_url'])
+
+            zipbObj = zip(GC.OS_list, drivers_url_dict)
+            geckoDriversDict = dict(zipbObj)
             if platform.system().lower() == GC.WIN_PLATFORM:
                 if ctypes.sizeof(ctypes.c_voidp) == GC.BIT_64:
-                    url = GC.GECKO_URL_WIN_64
+                    url = geckoDriversDict[GC.OS_list[4]]
                 else:
-                    url = GC.GECKO_URL_WIN_32
+                    url = geckoDriversDict[GC.OS_list[3]]
             elif platform.system().lower() == GC.LINUX_PLATFORM:
-                url = GC.GECKO_URL_LINUX
+                if ctypes.sizeof(ctypes.c_voidp) == GC.BIT_64:
+                    url = geckoDriversDict[GC.OS_list[1]]
+                else:
+                    url = geckoDriversDict[GC.OS_list[0]]
             else:
-                url = GC.GECKO_URL_MAC_OS
+                url = geckoDriversDict[GC.OS_list[2]]
             file = requests.get(url)
-            path = Path(os.getcwd())
-            path = path.joinpath("browserDrivers")
+
             path_zip = path.joinpath(GC.GECKO_DRIVER.replace('exe', 'zip'))
-            open(path_zip, 'wb').write(file.content)
-            with zipfile.ZipFile(path_zip, 'r') as zip_ref:
-                zip_ref.extractall(path)
-            os.remove(path_zip)
-        elif str(browserName) == GC.CHROME_DRIVER:
+        # elif str(browserName) == GC.CHROME_DRIVER:
+        else:
+            response = requests.get(GC.CHROME_URL)
+            chromeversion = response.text
+            chromedriver_url_dict = []
+
+            for i in range(len(GC.OS_list_chrome)):
+                OS = GC.OS_list_chrome[i]
+                chrome = 'http://chromedriver.storage.googleapis.com/{ver}/chromedriver_{os}.zip'.format(
+                    ver=chromeversion,
+                    os=OS)
+
+                chromedriver_url_dict.append(chrome)
+
+            zipbObjChrome = zip(GC.OS_list, chromedriver_url_dict)
+            chromeDriversDict = dict(zipbObjChrome)
             if platform.system().lower() == GC.WIN_PLATFORM:
-                url = GC.CHROME_URL_WIN
+                url = chromeDriversDict[GC.OS_list[3]]
             elif platform.system().lower() == GC.LINUX_PLATFORM:
-                url = GC.CHROME_URL_LINUX
+                url = chromeDriversDict[GC.OS_list[1]]
             else:
-                url = GC.CHROME_URL_MAC
+                url = chromeDriversDict[GC.OS_list[2]]
             file = requests.get(url)
-            path = Path(os.getcwd())
-            path = path.joinpath("browserDrivers")
             path_zip = path.joinpath(GC.CHROME_DRIVER.replace('exe', 'zip'))
-            print(path_zip)
-            open(path_zip, 'wb').write(file.content)
-            with zipfile.ZipFile(path_zip, 'r') as zip_ref:
-                zip_ref.extractall(path)
-            os.remove(path_zip)
-
-
-
+        open(path_zip, 'wb').write(file.content)
+        with zipfile.ZipFile(path_zip, 'r') as zip_ref:
+            zip_ref.extractall(path)
+        os.remove(path_zip)

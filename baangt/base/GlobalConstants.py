@@ -23,7 +23,6 @@ TIMELOG = "timelog"
 GECKO_DRIVER = "geckodriver.exe"
 CHROME_DRIVER = "chromedriver.exe"
 
-
 BROWSER_FIREFOX = "FF"
 BROWSER_CHROME = "CHROME"
 BROWSER_SAFARI = "SAFARI"
@@ -56,6 +55,7 @@ STRUCTURE_TESTSTEPEXECUTION = "TestStepExecutionParameters"
 EXECUTION_PARALLEL = "ParallelRuns"
 SCREENSHOTS = "Screenshots"
 EXECUTION_DONTCLOSEBROWSER = "dontCloseBrowser"
+EXECUTION_SLOW = "slowExecution"
 
 EXPORT_FORMAT = "Export Format"
 EXP_FIELDLIST = "Fieldlist"
@@ -73,11 +73,10 @@ LINUX_PLATFORM = 'linux'
 BIT_64 = 8
 BIT_32 = 4
 
-GECKO_URL_WIN_64 = 'https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-win64.zip'
-GECKO_URL_WIN_32 = 'https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-win32.zip'
-GECKO_URL_LINUX = 'https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz'
-GECKO_URL_MAC_OS = 'https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-macos.tar.gz'
+OS_list = ["Linux-32", "Linux-64", "MacOS", "Windows-32", "Windows-64"]
+OS_list_chrome = ['linux32', 'linux64', 'mac32', 'win32']
 
-CHROME_URL_WIN = 'https://chromedriver.storage.googleapis.com/79.0.3945.36/chromedriver_win32.zip'
-CHROME_URL_LINUX = 'https://chromedriver.storage.googleapis.com/79.0.3945.36/chromedriver_linux64.zip'
-CHROME_URL_MAC = 'https://chromedriver.storage.googleapis.com/79.0.3945.36/chromedriver_mac64.zip'
+GECKO_URL = 'https://api.github.com/repos/mozilla/geckodriver/releases/latest'
+
+
+CHROME_URL= 'https://chromedriver.storage.googleapis.com/LATEST_RELEASE'
