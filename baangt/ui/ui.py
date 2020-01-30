@@ -189,7 +189,13 @@ class UI:
             return
         runCmd = self._getRunCommand()
         logger.info(f"Running command: {runCmd}")
-        p = subprocess.run(runCmd, shell=True)
+        p = subprocess.run(runCmd, shell=True, close_fds=True)
+
+        # from baangt.base.TestRun import TestRun
+
+        # lTestRun = TestRun(f"{Path(self.directory).joinpath(self.testRunFile)}",
+        #                   globalSettingsFileNameAndPath=f'{Path(self.directory).joinpath(self.tempConfigFile)}')
+
         sg.popup_ok("Testrun finished")
         # Remove temporary Configfile, that was created only for this run:
         try:
