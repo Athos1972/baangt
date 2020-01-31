@@ -2,44 +2,45 @@ Why your production sucks and how to fix it
 ===========================================
 
 Sounds familiar? When you sort your defects/incident list for the next sprint, you abandon priority concept (1, 2, 3)
-and start experimenting with negative numbers? -1, -2 -3? Your sprint capacity is full before you even reach priority 0?
+and start experimenting with negative numbers? -1, -2 -3 where -3 are the ones where you've to report to the CIO every day? And your sprint capacity is full before you even reach priority 0?
 
 Each day/week when you're supposed to ship the most important hotfixes to production you suddenly beome religious and pray
 intensively for 30 minutes? But the universe doesn't listen to you and 30 Minutes after deployment hell breaks loose
 because you again bricked the production?
 
-First of all: **Breathe!** Help is right here!
+First of all: **Breathe!** Help is on the way!
 
 Changing your religion will not improve your situation (unless you go "all-in",
-start as a full-time monk and leave software development forever.). **You are not alone**. I can't come up with trustworthy
-numbers, but I'd guess that at any given second of the day at least 1000 people pray for good deployment results or are
+start as a full-time monk and leave software development forever.). **You are not alone**.
+I'd guess, that at any given second of the day at least 1000 people pray for good deployment results or are
 at least worried about the current deployment (and the next. And the next.). It's
 a phenomenon that we had already in the 1990s, just the impact back then was never as huge as it is today. There existed
 manual fallback processes in all companies. Nobody "needed" the IT. If you had a bad deployment and needed to rollback and it
 took one week to do so, it wasn't the end of the world, the company or you.
 
-Today is different. Well, I'm pretty sure even if facebook is down for a week, the world would still turn. And facebook
-facebook wouldn't cease to exist. I'm not so sure about a few 1000 people, who'd be responsible for the mess though.
+Today is different. I'm pretty sure even if facebook would go down for a week, the world would still turn. And facebook
+wouldn't cease to exist either. But I'm not so sure about a few 1000 people, who'd be responsible for the mess.
 
 Well, let's not focus on what could happen (and usually happens because Murphy's a very special friend to many people in
 IT), but rather see, what we can do about it.
 
-    We all know, that there's test automation, which should theoretically give us enough insight on lower stages before we move to Production.
+    We all know, that there is test automation, which should theoretically give us enough insight on lower stages to prevent faulty deployments ever reaching production. Bugs get costly (monetary as well as regarding our reputation) once they reach our partners (customers more than suppliers).
 
-Tricentis Tosca is the market leader and has been around for a few decades. So have the solutions from
-HP and many others. As good as these tools are, in order to gain value from them you better follow certain processes, none of
-which would be suitable for your business department or your developers. So both parties, who are in pain when deployments
-don't work have a direct interface to the tool, that should help them. There are test-engineers, test-planners, test-designers,
-test-executors and most probably repalled DevOps involved in the automation testing, but not the business department and not
+Tricentis Tosca is the market leader and has been around for a while. So have the solutions from
+HP and many others. As good as these tools are, in order to gain value from them you better follow their suggested processes,
+none of which would be suitable for your business department or your developers. So both parties, who are in pain when deployments
+don't work have no direct interface to the tool, that should help them. There are test-engineers, test-planners, test-designers,
+test-executors and most probably repelled DevOps involved in automation testing, but not the business department and not
 the developers. That's critical from my point of view, because those processes build a barrier, that prohibits automation testing
-to fulfill it's potential in todays organizations.
+to fulfill it's potential in today´s organizations. It's not fast nor efficient to artificially build an additional step
+between business and their developers.
 
 Enter: ``baangt``. Leightweight, fast, simple. Easy to use for business deparments, fast and flexible for developers (they
 even get to play around with beloved JSON-Files) and mature enough for established Delivery organizations to fulfill their
-needs of reporting and integration.
+needs of reporting, integration, test coverage statistics and much more.
 
 Before you try every sect on the planet give ``baangt`` a try. If set-up and used properly, this tool has a good chance
-to make your life better and easier.
+to make your life easier - no matter in which role you are right now.
 
 Great. You're still reading. Before you try to convince your manager about the tool, let's see some common resistance patterns
 and how to overcome them.
