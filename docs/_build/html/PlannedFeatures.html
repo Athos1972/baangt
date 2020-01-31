@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Developer guidelines for custom enhancements &mdash; baangt 2020.1.1.b11 documentation</title>
+  <title>Future Features &mdash; baangt 2020.1.1.b11 documentation</title>
   
 
   
@@ -35,8 +35,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Why baangt and why is it open source?" href="HistoryAndReasons.html" />
-    <link rel="prev" title="Types of tests" href="TestTypes.html" /> 
+    <link rel="next" title="Why your production sucks and how to fix it" href="articles/ProductionSucks.html" />
+    <link rel="prev" title="Change log" href="changelog.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -89,15 +89,16 @@
 <li class="toctree-l1"><a class="reference internal" href="ParametersConfigFile.html">   Parameters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="DataFile.html">   Data file</a></li>
 <li class="toctree-l1"><a class="reference internal" href="TestTypes.html">   Types of Tests</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">   For Developers</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#subclassing">Subclassing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#plugins">Plugins</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="Developer.html">   For Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">   History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">   Changelog</a></li>
-<li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">   Planned Features</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#short-medium-term-features">Short/Medium term features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#features-for-later">Features for later</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pro-features">PRO-Features</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="articles/ProductionSucks.html">      Production sucks</a></li>
 </ul>
 
@@ -144,13 +145,13 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Developer guidelines for custom enhancements</li>
+      <li>Future Features</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/Developer.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/PlannedFeatures.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -163,37 +164,49 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="developer-guidelines-for-custom-enhancements">
-<h1>Developer guidelines for custom enhancements<a class="headerlink" href="#developer-guidelines-for-custom-enhancements" title="Permalink to this headline">¶</a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">baangt</span></code> is already pretty versatile but from time to time you’ll face a requirement, that simply can’t be done without
-writing code. But that’s not a bad thing - we like writing code after all, don’t we?</p>
-<div class="section" id="subclassing">
-<h2>Subclassing<a class="headerlink" href="#subclassing" title="Permalink to this headline">¶</a></h2>
-<p>The main classes and functions should be more than OK for you. You’ll just need to implement some central enhancements.
-For instance there’s a requirement to check after each Browser-Interaction, whether a specific popup/message appeared.
-Don’t be cruel and let the end-users duplicate the locator over and over again in their XLSX.</p>
-<p>Instead create a subclass of BrowserDriver</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">baangt.base.BrowserDriver</span> <span class="kn">import</span> <span class="n">BrowserHandling</span>
-
-<span class="k">class</span> <span class="nc">MyCustomBrowser</span><span class="p">(</span><span class="n">BrowserHandling</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">findByAndClick</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
-
-        <span class="c1"># Search for the element</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">customSearchAndReact</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">customSearchAndReact</span><span class="p">():</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">findBy</span><span class="p">(</span><span class="n">xpath</span><span class="p">,</span> <span class="s2">&quot;specialThingForThisClient&quot;</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">testdataDict</span><span class="p">[</span><span class="n">GC</span><span class="o">.</span><span class="n">TESTCASESTATUS</span><span class="p">]</span> <span class="o">=</span> <span class="n">GC</span><span class="o">.</span><span class="n">TESTCASESTATUS_FAILED</span>
-</pre></div>
+  <div class="section" id="future-features">
+<h1>Future Features<a class="headerlink" href="#future-features" title="Permalink to this headline">¶</a></h1>
+<p>We implement all features for 3 operating Systems (Mac, Windows, Debian Linux and Ubuntu on Docker).</p>
+<div class="section" id="short-medium-term-features">
+<h2>Short/Medium term features<a class="headerlink" href="#short-medium-term-features" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Executables on Mac, Linux and Windows (Most probably 2020.02)</p></li>
+<li><p>Download browser Driver (if needed) (2020.02)</p></li>
+<li><p>Refactoring of Multiprocessing (2020.02)</p></li>
+<li><p>BaangtDB powered by Flask (2020.02)</p></li>
+<li><p>Stop the shame of having no unit tests (2020.02)</p></li>
+<li><p>Provide support for Plugins (2020.03)</p></li>
+<li><p>Nicer interactive UI-Starter (2020.03)</p></li>
+<li><p>Build-In Proxy-Server for Network traffic and timing logs (2020.03) (most probably not possible in Windows and MAC but should work in Linux)</p></li>
+<li><p>Double Opt-In Automation (2020.03)</p></li>
+<li><p>Support for Selenium Grid V4 (2020.03)</p></li>
+</ul>
 </div>
-<p>That’s it. Business people will love you and whenever “specialThingForThisClient” changes, you’ll have to adjust only
-in one place.</p>
-<p>After subclassing you’ll need to replace the standard <code class="docutils literal notranslate"><span class="pre">BrowserHandling</span></code> with <code class="docutils literal notranslate"><span class="pre">MyCustomBrowser</span></code> in order for baangt
-to use it.</p>
+<div class="section" id="features-for-later">
+<h2>Features for later<a class="headerlink" href="#features-for-later" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Proof of concept with PyWinAuto</p></li>
+<li><p>Integration with SAP Gui Scripting via VBS and PyWinAuto</p></li>
+<li><p>Better support for Mass testing APIs</p></li>
+<li><p>Integration with Atlassian Confluence (for Testcase and Testrun definitions)</p></li>
+<li><p>Integration with Atlassian Confluence (to publish results of testruns)</p></li>
+<li><p>Integration with MS Teams to publish results of testruns</p></li>
+<li><p>Grafana Board for Flask-Version</p></li>
+<li><p>Better support for oData V4.0 (similar to SOAP)</p></li>
+<li><p>Support for GraphQL via Graphene</p></li>
+</ul>
 </div>
-<div class="section" id="plugins">
-<h2>Plugins<a class="headerlink" href="#plugins" title="Permalink to this headline">¶</a></h2>
-<p>Please make yourself familiar with <a class="reference external" href="https://pluggy.readthedocs.io/en/latest/">https://pluggy.readthedocs.io/en/latest/</a> in order to implement Plugins. If you’re stuck let me know.</p>
+<div class="section" id="pro-features">
+<h2>PRO-Features<a class="headerlink" href="#pro-features" title="Permalink to this headline">¶</a></h2>
+<p>There’s no time plan yet, when a pro version will be released. So far whatever we do goes into the open source version.
+Future features might include:</p>
+<ul class="simple">
+<li><p>DB-Migration tools (to ease the pain of upgrading databases)</p></li>
+<li><p>Multi-User environment (who did when which activity)</p></li>
+<li><p>History of Testcases (what was changed when. If urgently needed we could come up with DB-Dump and GIT diff or so.)</p></li>
+<li><p>Test-Canons (deliberately stop test cases multiple times at certain test steps, wait for trigger, then resume. After first Testcase <em>finished</em> his first waiting period, start second round of Testcases (that’s how the name “Canon” came up). So far implemented in customer project, but needs to be polished up for public version)</p></li>
+<li><p>XML/PDF-Compare</p></li>
+</ul>
 </div>
 </div>
 
@@ -205,10 +218,10 @@ to use it.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="HistoryAndReasons.html" class="btn btn-neutral float-right" title="Why baangt and why is it open source?" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="articles/ProductionSucks.html" class="btn btn-neutral float-right" title="Why your production sucks and how to fix it" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="TestTypes.html" class="btn btn-neutral float-left" title="Types of tests" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="changelog.html" class="btn btn-neutral float-left" title="Change log" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

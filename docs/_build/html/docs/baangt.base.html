@@ -80,15 +80,19 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../Installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../OverviewUsage.html">What is <code class="docutils literal notranslate"><span class="pre">baangt</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../simpleExample.html">Jump-start into worry free production deployments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Structure.html">Structure of baangt</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../ParametersConfigFile.html">Parameters in Configuration files (<code class="docutils literal notranslate"><span class="pre">globals</span></code>)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../TestTypes.html">Types of tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Developer.html">Developer guidelines for custom enhancements</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../HistoryAndReasons.html">Why <code class="docutils literal notranslate"><span class="pre">baangt</span></code> and why is it open source?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributors.html">Contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Installation.html">   Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../OverviewUsage.html">   Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../simpleExample.html">   First Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Structure.html">   Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ParametersConfigFile.html">   Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../DataFile.html">   Data file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../TestTypes.html">   Types of Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Developer.html">   For Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../HistoryAndReasons.html">   History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributors.html">   Contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">   Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PlannedFeatures.html">   Planned Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../articles/ProductionSucks.html">      Production sucks</a></li>
 </ul>
 
             
@@ -238,52 +242,98 @@ Main Methods:
 <dl class="method">
 <dt id="baangt.base.BrowserHandling.BrowserDriver.findBy">
 <code class="sig-name descname">findBy</code><span class="sig-paren">(</span><em class="sig-param">id=None</em>, <em class="sig-param">css=None</em>, <em class="sig-param">xpath=None</em>, <em class="sig-param">class_name=None</em>, <em class="sig-param">iframe=None</em>, <em class="sig-param">timeout=60</em>, <em class="sig-param">loggingOn=True</em>, <em class="sig-param">optional=False</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.BrowserHandling.BrowserDriver.findBy" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>chose any single locator (ID, CSS, XPATH, CLASS_NAME) to identify an element within the page. if slowExectuion
+is set, we’ll pause for slowExecutionTimeoutInSeconds.</p>
+<p>&#64;param id: ID of the element
+&#64;param css: CSS-Locator
+&#64;param xpath: XPATH
+&#64;param class_name: Class-Name
+&#64;param iframe: Name of an Iframe. Use only, if you didn’t set the Iframe previously already!
+&#64;param timeout: How many seconds shall we try/retry, default = 60 Seconds
+&#64;param loggingOn: Shall this request be logged? Default = Yes
+&#64;param optional: If set to true and within Timeout we can’t find the element, we just return this info. If set to False (=default), an Exception is raised
+&#64;return: True if element was located, False if element couldn’t be found.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="baangt.base.BrowserHandling.BrowserDriver.findByAndClick">
 <code class="sig-name descname">findByAndClick</code><span class="sig-paren">(</span><em class="sig-param">id=None</em>, <em class="sig-param">css=None</em>, <em class="sig-param">xpath=None</em>, <em class="sig-param">class_name=None</em>, <em class="sig-param">iframe=None</em>, <em class="sig-param">timeout=20</em>, <em class="sig-param">optional=False</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.BrowserHandling.BrowserDriver.findByAndClick" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Execute a Click on an element identified by it’s locator.
+&#64;return wasSuccessful says, whether the element was found.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="baangt.base.BrowserHandling.BrowserDriver.findByAndClickIf">
 <code class="sig-name descname">findByAndClickIf</code><span class="sig-paren">(</span><em class="sig-param">id=None</em>, <em class="sig-param">css=None</em>, <em class="sig-param">xpath=None</em>, <em class="sig-param">class_name=None</em>, <em class="sig-param">iframe=None</em>, <em class="sig-param">timeout=60</em>, <em class="sig-param">value=None</em>, <em class="sig-param">optional=False</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.BrowserHandling.BrowserDriver.findByAndClickIf" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Convenience method to not have to write:
+if &lt;condition&gt;:</p>
+<blockquote>
+<div><p>findByAndClick(locator)</p>
+</div></blockquote>
+<p>instead write:
+findByAndClickIf(locator, value).</p>
+<p>If value is evaluated to “True”, the click-event is executed.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="baangt.base.BrowserHandling.BrowserDriver.findByAndForceText">
 <code class="sig-name descname">findByAndForceText</code><span class="sig-paren">(</span><em class="sig-param">id=None</em>, <em class="sig-param">css=None</em>, <em class="sig-param">xpath=None</em>, <em class="sig-param">class_name=None</em>, <em class="sig-param">value=None</em>, <em class="sig-param">iframe=None</em>, <em class="sig-param">timeout=60</em>, <em class="sig-param">optional=False</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.BrowserHandling.BrowserDriver.findByAndForceText" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Convenience Method. Please see documentation in findBy and __doSomething.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="baangt.base.BrowserHandling.BrowserDriver.findByAndSetText">
 <code class="sig-name descname">findByAndSetText</code><span class="sig-paren">(</span><em class="sig-param">id=None</em>, <em class="sig-param">css=None</em>, <em class="sig-param">xpath=None</em>, <em class="sig-param">class_name=None</em>, <em class="sig-param">value=None</em>, <em class="sig-param">iframe=None</em>, <em class="sig-param">timeout=60</em>, <em class="sig-param">optional=False</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.BrowserHandling.BrowserDriver.findByAndSetText" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Please see documentation in findBy and __doSomething</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="baangt.base.BrowserHandling.BrowserDriver.findByAndSetTextIf">
 <code class="sig-name descname">findByAndSetTextIf</code><span class="sig-paren">(</span><em class="sig-param">id=None</em>, <em class="sig-param">css=None</em>, <em class="sig-param">xpath=None</em>, <em class="sig-param">class_name=None</em>, <em class="sig-param">value=None</em>, <em class="sig-param">iframe=None</em>, <em class="sig-param">timeout=60</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.BrowserHandling.BrowserDriver.findByAndSetTextIf" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Helper function to not have to write:
+If &lt;condition&gt;:</p>
+<blockquote>
+<div><p>findByAndSetText(locator)</p>
+</div></blockquote>
+<p>instead use:
+findByAndSetTextIf(locator, value).</p>
+<p>If value is evaluated into “True” the Text is set.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="baangt.base.BrowserHandling.BrowserDriver.findByAndSetTextValidated">
 <code class="sig-name descname">findByAndSetTextValidated</code><span class="sig-paren">(</span><em class="sig-param">id=None</em>, <em class="sig-param">css=None</em>, <em class="sig-param">xpath=None</em>, <em class="sig-param">class_name=None</em>, <em class="sig-param">value=None</em>, <em class="sig-param">iframe=None</em>, <em class="sig-param">timeout=60</em>, <em class="sig-param">retries=5</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.BrowserHandling.BrowserDriver.findByAndSetTextValidated" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>This is a method not recommended to be used regularly. Sometimes (especially with Angular Frontends) it gets
+pretty hard to set a value into a field. Chrome, but also FF will show the value, but the DOM will not have it.
+Ths Method should be your last ressort. Here we try &lt;retries&gt; time to set a value. Then we read the element again
+and compare value to what we’d expect. If value is different and we’re less than &lt;retries&gt;-Times, we’ll try again.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="baangt.base.BrowserHandling.BrowserDriver.findByAndWaitForValue">
 <code class="sig-name descname">findByAndWaitForValue</code><span class="sig-paren">(</span><em class="sig-param">id=None</em>, <em class="sig-param">css=None</em>, <em class="sig-param">xpath=None</em>, <em class="sig-param">class_name=None</em>, <em class="sig-param">iframe=None</em>, <em class="sig-param">timeout=20</em>, <em class="sig-param">optional=False</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.BrowserHandling.BrowserDriver.findByAndWaitForValue" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>&#64;param id: ID of the element
+&#64;param css: CSS-Locator
+&#64;param xpath: XPATH-Locator
+&#64;param class_name: Class-Name
+&#64;param iframe: Iframe to use (use only if changed. If you set an iframe before, you don’t need to set it again!)
+&#64;param timeout: Timeout in Seconds before raising an error or returning back (depending on “optional”)
+&#64;param optional: If set to “True” and the operation can not be executed, just a log entry is written but no error raised
+&#64;return: the text of the element, if element was found</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="baangt.base.BrowserHandling.BrowserDriver.findWaitNotVisible">
-<code class="sig-name descname">findWaitNotVisible</code><span class="sig-paren">(</span><em class="sig-param">xpath=None</em>, <em class="sig-param">id=None</em>, <em class="sig-param">timeout=90</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.BrowserHandling.BrowserDriver.findWaitNotVisible" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">findWaitNotVisible</code><span class="sig-paren">(</span><em class="sig-param">xpath=None</em>, <em class="sig-param">id=None</em>, <em class="sig-param">timeout=90</em>, <em class="sig-param">optional=False</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.BrowserHandling.BrowserDriver.findWaitNotVisible" title="Permalink to this definition">¶</a></dt>
+<dd><p>You’d use this method when you wait for an element to disappear, for instance Angular Spinner or a popup
+to disapear before you continue with your script in the main screen.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="baangt.base.BrowserHandling.BrowserDriver.getURL">
 <code class="sig-name descname">getURL</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.BrowserHandling.BrowserDriver.getURL" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>&#64;return: the current URL/URI of the current Tab of the current Browser</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="baangt.base.BrowserHandling.BrowserDriver.goBack">
@@ -315,7 +365,8 @@ If you’re inside an iframe it will go out of the iframe</p>
 <dl class="method">
 <dt id="baangt.base.BrowserHandling.BrowserDriver.javaScript">
 <code class="sig-name descname">javaScript</code><span class="sig-paren">(</span><em class="sig-param">jsText</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.BrowserHandling.BrowserDriver.javaScript" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Execute a given JavaScript in the current Session</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="baangt.base.BrowserHandling.BrowserDriver.sleep">
@@ -334,7 +385,9 @@ functionality.</p>
 <dl class="method">
 <dt id="baangt.base.BrowserHandling.BrowserDriver.submit">
 <code class="sig-name descname">submit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.BrowserHandling.BrowserDriver.submit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Used for forms to call the standard submit-function (similar to pressing “Enter” in Dialogue)
+&#64;return:</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="baangt.base.BrowserHandling.BrowserDriver.takeScreenshot">
