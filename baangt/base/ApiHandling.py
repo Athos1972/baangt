@@ -5,8 +5,12 @@ import logging
 
 logger = logging.getLogger("pyC")
 
+
 class ApiHandling:
     def __init__(self):
+        """
+        This class handles Session Management for API-Calls
+        """
         self.session = {}
 
     def getSession(self, sessionNumber=1):
@@ -35,7 +39,7 @@ class ApiHandling:
             return GC.TESTCASESTATUS_ERROR
 
     def postURL(self, url, content, sessionNumber=1):
-        answer = self.getSession(sessionNumber=sessionNumber).post(url=url, data=content )
+        answer = self.getSession(sessionNumber=sessionNumber).post(url=url, data=content)
 
         return (answer.status_code, answer.json(), dict(answer.headers))
 
