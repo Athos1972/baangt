@@ -4,7 +4,9 @@ values from elements and write them back to ``testDataDict``. But there are no c
 
 # Aim
 Assertions should be available in all test technologies (currently API and Browser). Assertions should follow the 
-existing logic by using method ```findBy``` (similar to current implementation in ``findByAndWaitForValue``).
+existing logic by using method ```findBy``` (similar to current implementation in ``findByAndWaitForValue``). This method
+retrieves the value of an element but doesn't compare to a reference value. It could be a good base though for the assert
+method (just call ``findByAndWaitForValue`` and compare result to given reference parameter in ``testdataDict``)
 
 The simplest type of assertions are to read the attribute or text of an element and compare to a variable from ``testDataDict``.
 They should also be available in Excel Simple Format (implementation in ``TestStepMaster`` in method ``executeDirect``). 
