@@ -16,7 +16,7 @@ if __name__ == '__main__':
         packages=setuptools.find_packages(),
         data_files=[('baangt', ["baangt/ressources/baangtLogo.png"])],
         package_data={"baangt.ressources": ['*.png',]},
-        install_requires=["pandas", "numpy", "pySimpleGui", "beautifulsoup4", "schwifty"],
+        install_requires=["pandas", "numpy", "pySimpleGui", "beautifulsoup4", "schwifty","pytest","requests","xlsxwriter","sqlalchemy","xlrd"],
         classifiers=[
             "Programming Language :: Python :: 3",
             "License :: OSI Approved :: MIT License",
