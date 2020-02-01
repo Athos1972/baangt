@@ -1,8 +1,7 @@
 import sys, getopt
-from baangt.base.TestRun import TestRun
+from baangt.base.TestRun.TestRun import TestRun
 from baangt.base.utils import utils
 from baangt.ui.ui import UI
-
 
 def print_args():
     print("""
