@@ -4,6 +4,11 @@ import pathlib
 import sys
 import os
 from pathlib import Path
+from pluggy import HookspecMarker, HookimplMarker, PluginManager
+
+spec = HookspecMarker("baangt")
+impl = HookimplMarker("baangt")
+pm = PluginManager("baangt")
 
 # fixme: Parameter für Logfile should include stage and browser()
 logFilename:pathlib.Path = Path(os.getcwd())
@@ -44,3 +49,4 @@ if hasattr(sys, 'frozen') and hasattr(sys, '_MEIPASS'):
     logger.debug('running in a PyInstaller bundle')
 else:
     logger.debug('running in a normal Python process')
+
