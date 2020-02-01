@@ -1,4 +1,5 @@
-from models import *
+from app import db
+from app.models import *
 
 #DATABASE_URL = 'sqlite:///testrun.db'
 #engine = create_engine(DATABASE_URL)
@@ -64,8 +65,14 @@ for key, value in locators.items():
 	locator = LocatorType(name=key, description=value)
 	db.session.add(locator)
 
-classname = ClassName(name='ClassName A', description='A Simple Class Name')
-db.session.add(classname)
+classnames = {
+	'Class A': 'A Simple Class Name',
+	'Class B': 'One more Simple Class Name',
+	'Class C': 'A Complex Class Name',
+}
+for key, value in classnames.items():
+	classname = ClassName(name=key, description=value)
+	db.session.add(classname)
 
 db.session.commit()
 print('Done.')

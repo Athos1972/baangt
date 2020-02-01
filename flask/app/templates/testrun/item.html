@@ -91,7 +91,7 @@
     </div>
     {% endif %}
 
-    {% if type == "teststep_sequences" %}
+    {% if type == "teststep_sequence" %}
     <div class="border-bottom pt-3">
         <h4>Test Steps:</h4>
         {% if item.teststeps %}
@@ -117,6 +117,10 @@
         {{ item.locator_type }}
     </div>
     {% endif %}
+
+    <p>
+        <button class="btn btn-danger px-5 my-3" onclick="delete_item('{{ type }}', '{{ item.name}}', '{{ item.id }}')">Delete</button>
+    </p>
 
 
 

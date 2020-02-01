@@ -81,7 +81,14 @@
 
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
 
-            <h1 class="border-bottom py-2">Select an item</h1>
+        <h1 class="py-2">
+            {% with msg = get_flashed_messages() %}
+                {% if msg %}
+                    {{ msg|last }}
+                {% endif %}
+            {% endwith %}
+        </h1>
+        <h3 class="border-bottom pb-2">Please select an item.</h3> 
 
     </main>
 </div>
