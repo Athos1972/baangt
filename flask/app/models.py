@@ -85,7 +85,7 @@ class TestCaseSequence(db.Model):
 	creator_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 	edited = db.Column(db.DateTime, nullable=True)
 	editor_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
-	classname_id = db.Column(db.Integer, db.ForeignKey('classnames.id'), nullable=True)
+	classname_id = db.Column(db.Integer, db.ForeignKey('classnames.id'), nullable=False)
 	creator = db.relationship('User', backref='created_testcase_sequances', lazy='immediate', foreign_keys=[creator_id])
 	editor = db.relationship('User', backref='edited_testcase_sequances', lazy='immediate', foreign_keys=[editor_id])
 	classname = db.relationship('ClassName', backref='testcase_sequences', lazy='immediate', foreign_keys=[classname_id])

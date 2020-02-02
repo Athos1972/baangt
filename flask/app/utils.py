@@ -30,7 +30,6 @@ def getTestStepSequences():
 
 def getTestSteps():
 	choices = []
-	print(models.TestStepExecution.query.all())
 	for item in models.TestStepExecution.query.all():
 		choices.append((f'{item.id}', item.name))
 	return choices

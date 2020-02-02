@@ -40,11 +40,22 @@
         request.send();
     }
 
+    // edit item
+    function edit_item(item_type, item_id) {
+        const request = new XMLHttpRequest();
+        request.open('GET', `/${item_type}/${item_id}/edit`);
+        request.onload = () => {
+            const response = request.responseText;
+            document.querySelector('main').innerHTML = response;
+        };
+        request.send();
+    }
+
     // delete item
     function delete_item(item_type, item_name, item_id) {
         if (confirm(`You are about to delete '${item_name}'`)) {
             const request = new XMLHttpRequest();
-            request.open('POST', `/${item_type}/${item_id}`);
+            request.open('POST', `/${item_type}/${item_id}/delete`);
             request.onload = () => {
                 const response = request.responseText;
                 document.write(response);

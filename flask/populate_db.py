@@ -98,6 +98,7 @@ for i in range(5):
 		name=f'Test Case Sequence #{i}',
 		description=f'Test Case Sequence #{i} is intended for testing the application UI. There are several features wich are described here.',
 		creator=u,
+		classname=classname,
 	)
 	testseq.testrun.append(testrun)
 	if i == 2 or i == 3:

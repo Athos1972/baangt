@@ -119,6 +119,7 @@
     {% endif %}
 
     <p>
+        <button class="btn btn-primary px-5 my-3 mr-3" onclick="edit_item('{{ type }}', '{{ item.id }}')">Edit</button>
         <button class="btn btn-danger px-5 my-3" onclick="delete_item('{{ type }}', '{{ item.name}}', '{{ item.id }}')">Delete</button>
     </p>
 
