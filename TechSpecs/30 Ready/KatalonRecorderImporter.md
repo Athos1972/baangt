@@ -54,6 +54,11 @@ SETTEXT   | XPATH       | //*[@id=TextInput2] | $(TextValue1) <-- Column in tab 
 
 If you have any suggestions, how to improve the UI of the Katalon Recorder Import dialogue, please get in contact.
 
+# Output
+
+The resulting XLSX is not prettyfied, e.g. column widths are standard and not formatted, the header lines are not in bold, etc.
+Please see methods in ``baangt.base.ExportResults.ExcelSheetHelperFunctions`` and apply here too.
+
 # Test
 
 Create unit tests for new functionality
