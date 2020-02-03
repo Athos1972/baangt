@@ -39,7 +39,7 @@ class SingupForm(FlaskForm):
 class TestrunCreateForm(FlaskForm):
 	name = StringField('Name', validators=[DataRequired()])
 	description = StringField('Description', validators=[DataRequired()], widget=TextArea())
-	testcase_sequences = SelectMultipleField('Test Case Sequences', choices=utils.getTestCaseSequences())
+	testcase_sequences = SelectMultipleField('Test Case Sequences')
 
 	@classmethod
 	def new(cls):

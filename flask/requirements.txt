@@ -3,3 +3,4 @@ sqlalchemy>=1.3.12
 flask_sqlalchemy>=2.4.1
 flask_login>=0.4.1
 flask_wtf>=0.14.2
+flask_migrate>=2.5.2

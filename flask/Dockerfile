@@ -18,10 +18,7 @@ RUN pip install pipenv && \
 
 ADD . /testrun
 
-RUN ls
-RUN ls /testrun/app
-
 EXPOSE 5000
 
-CMD pipenv run python populate_db.py
+RUN pipenv run python populate_db.py
 CMD pipenv run flask run --host=0.0.0.0
