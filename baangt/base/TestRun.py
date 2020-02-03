@@ -51,7 +51,7 @@ class TestRun:
         Take overall Time spent for the complete TestRun
         Write results of TestRun to output channel(s)
         """
-        if not self.globalSettings.get(GC.EXECUTION_DONTCLOSEBROWSER):
+        if not self.globalSettings.get("TC." + GC.EXECUTION_DONTCLOSEBROWSER):
             for browserInstance in self.browser.keys():
                 self.browser[browserInstance].closeBrowser()
 

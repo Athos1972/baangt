@@ -182,7 +182,7 @@ class BrowserDriver:
                 argsString = argsString + f" {key}: {value}"
 
         if self.locator:
-            argsString = argsString + f"Locator: {self.locatorType}:{self.locator}"
+            argsString = argsString + f" Locator: {self.locatorType} = {self.locator}"
 
         if logType == logging.DEBUG:
             logger.debug(logText + argsString)
@@ -299,7 +299,7 @@ class BrowserDriver:
                     return self.element.text
             except Exception as e:
                 logger.debug(f"Exception during findByAndWaitForValue, but continuing {str(e)}, "
-                             f"Locator: {self.locatorType}:{self.locator}")
+                             f"Locator: {self.locatorType} = {self.locator}")
                 pass
             time.sleep(0.5)
             duration = time.time() - start
@@ -466,12 +466,13 @@ class BrowserDriver:
             self.locator = id
 
         if loggingOn:
-            self._log(logging.DEBUG, f"Locating Element {self.locatorType}={self.locator}")
+            self._log(logging.DEBUG, f"Locating Element {self.locatorType} = {self.locator}")
 
         successful = self.__tryAndRetry(id, css, xpath, class_name, timeout=timeout)
 
         if not successful and not optional:
-            raise Exceptions.baangtTestStepException(f"Element {self.locatorType}={self.locator} could not be found within timeout of {timeout}")
+            raise Exceptions.baangtTestStepException(f"Element {self.locatorType} = {self.locator} could not be found "
+                                                     f"within timeout of {timeout}")
         return successful
 
     def getURL(self):
@@ -513,7 +514,8 @@ class BrowserDriver:
                 elif class_name:
                     self.element = self.driver.find_element_by_class_name(class_name)
                 elif xpath:
-                    self.element = driverWait.until(ec.visibility_of_element_located((By.XPATH, xpath)))
+                    self.element = driverWait.until(ec.presence_of_element_located((By.XPATH, xpath)))
+                    # self.element = driverWait.until(ec.visibility_of_element_located((By.XPATH, xpath)))
                 wasSuccessful = True
             except StaleElementReferenceException as e:
                 self._log(logging.DEBUG, "Stale Element Exception - retrying " + str(e))

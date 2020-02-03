@@ -60,7 +60,8 @@ click | //div[@id='main']/div[2]/div/div[2]/div/div[5]/button/div[2] |
 
             if lEvent == 'Save':
                 self.fileNameExport = sg.popup_get_text("Name of new Testcase:")
-                self.saveTestCase()
+                if self.fileNameExport:
+                    self.saveTestCase()
 
             if lEvent == "TextIn": # Textinput in TextIn
                 self.__importTranslateAndUpdate(lWindow=lWindow)
@@ -108,6 +109,8 @@ click | //div[@id='main']/div[2]/div/div[2]/div/div[5]/button/div[2] |
 
     def saveTestCaseExecution(self, worksheet):
         for row, line in enumerate(self.outputFormatted, start=1):
+            if not line:
+                continue
             for col, (key, value) in enumerate(line.items()):
                 self.writeCell(worksheet, row, col, value)
 
@@ -168,6 +171,8 @@ click | //div[@id='main']/div[2]/div/div[2]/div/div[5]/button/div[2] |
             return ImportKatalonRecorder.__fillDict("GOTOURL", "", locator)
         elif command == 'goBackAndWait' or command == 'goBack':
             return ImportKatalonRecorder.doTranslategoBackAndWait()
+        elif command == 'select':
+            return ImportKatalonRecorder.doTranslateSelect(locator)
         else:
             logger.exception(f"Translation for command not implemented: {command}")
             return None
@@ -185,7 +190,18 @@ click | //div[@id='main']/div[2]/div/div[2]/div/div[5]/button/div[2] |
         return ImportKatalonRecorder.__fillDict("goBack", "")
 
     @staticmethod
+    def doTranslateSelect(locator):
+        return ImportKatalonRecorder.__fillDict("select", locator)
+
+    @staticmethod
     def __fillDict(activity, locator, value="", locatorType='xpath'):
+        if activity == 'select':
+            activity = 'click'
+            return {"Activity": "click",
+                    "LocatorType": locatorType,
+                    "Locator": ImportKatalonRecorder.doTranslateLocator(locator, "select"),
+                    "Value": str(value)}
+
         return {"Activity": activity,
                 "LocatorType": locatorType,
                 "Locator": ImportKatalonRecorder.doTranslateLocator(locator),
@@ -193,10 +209,27 @@ click | //div[@id='main']/div[2]/div/div[2]/div/div[5]/button/div[2] |
                 }
 
     @staticmethod
-    def doTranslateLocator(locator):
+    def doTranslateLocator(locator, specialInstructions=None):
+
         if "xpath=" in locator:
             # he comes with xpath=(//button[@type='button'])[5]
             locator = locator.replace("xpath=", "")
+        if locator[0:3].upper() == "ID=":
+            # This is an ID. Translate the ID to proper xpath-Syntax
+            if specialInstructions == "select":
+                preLocator = "//select[@id='"
+            else:
+                preLocator = "//*[@id='"
+            postLocator = "']"
+            locator = locator[3:]
+            locator = preLocator + locator + postLocator
+        if locator[0:5].upper() == 'LINK=':
+            # //a[text()='text_i_want_to_find']/@href --> Didn't work. Return Text and Selenium can't handle that
+            # //a[contains(., 'Button')]
+            preLocator = "//a[contains(., '"
+            postLocator = "')]"
+            locator = locator[5:]
+            locator = preLocator + locator + postLocator
         return locator
 
     def exportResult(self):
