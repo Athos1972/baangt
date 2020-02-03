@@ -503,7 +503,10 @@ class BrowserDriver:
 
         internalTimeout = timeout / 3
 
+        lLoopCount = 0
+
         while not wasSuccessful and elapsed < timeout:
+            lLoopCount += 1
             try:
                 driverWait = WebDriverWait(self.driver, timeout=internalTimeout, poll_frequency=pollFrequency)
 
@@ -514,8 +517,15 @@ class BrowserDriver:
                 elif class_name:
                     self.element = self.driver.find_element_by_class_name(class_name)
                 elif xpath:
-                    self.element = driverWait.until(ec.presence_of_element_located((By.XPATH, xpath)))
-                    # self.element = driverWait.until(ec.visibility_of_element_located((By.XPATH, xpath)))
+                    # visibility of element sometimes not true, but still clickable. If we tried already
+                    # 2 times with visibility, let's give it one more try with Presence of element
+                    if lLoopCount > 2:
+                        self._log(logging.INFO, "Tried 2 times to find visible element, now trying presence "
+                                                f"of element instead, XPATH = {xpath}")
+                        self.element = driverWait.until(ec.presence_of_element_located((By.XPATH, xpath)))
+                    else:
+                        self.element = driverWait.until(ec.visibility_of_element_located((By.XPATH, xpath)))
+
                 wasSuccessful = True
             except StaleElementReferenceException as e:
                 self._log(logging.DEBUG, "Stale Element Exception - retrying " + str(e))
