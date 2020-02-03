@@ -1,0 +1,9 @@
+docker build -t testrun .
+echo .....
+echo User = admin, password = 12345 . goto http://localhost:5000
+echo .....
+echo To stop docker:
+echo docker ps
+echo docker stop _name_of_dockerimage_
+echo .....
+docker run -d -p 5000:5000 testrun
