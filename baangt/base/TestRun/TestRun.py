@@ -1,6 +1,6 @@
-from baangt.base.BrowserHandling import BrowserDriver
+from baangt.base.BrowserHandling.BrowserHandling import BrowserDriver
 from baangt.base.ApiHandling import ApiHandling
-from baangt.base.ExportResults import ExportResults
+from baangt.base.ExportResults.ExportResults import ExportResults
 from baangt.base.utils import utils
 from baangt.base import GlobalConstants as GC
 from baangt.base.TestRunExcelImporter import TestRunExcelImporter
@@ -11,8 +11,9 @@ from baangt.TestCaseSequence.TestCaseSequenceMaster import TestCaseSequenceMaste
 import logging
 from pathlib import Path
 import sys
+from baangt.base.Timing.Timing import Timing
+from baangt.base.TestRunUtils import TestRunUtils
 
-from baangt import pm
 logger = logging.getLogger("pyC")
 
 
@@ -27,8 +28,23 @@ class TestRun:
         @param globalSettingsFileNameAndPath: from where to read the <globals>.json
         """
 
-        pm.hook.initTestRun(testRunObject=self, testRunName=testRunName,
-                            globalSettingsFileNameAndPath=globalSettingsFileNameAndPath)
+        self.browser = {}
+        self.apiInstance = None
+        self.testType = None
+        self.kwargs = {}
+        self.dataRecords = {}
+        self.globalSettingsFileNameAndPath = globalSettingsFileNameAndPath
+        self.globalSettings = {}
+        self.testRunName, self.testRunFileName = \
+            self._sanitizeTestRunNameAndFileName(testRunName)
+        self.timing = Timing()
+        self.timing.takeTime(GC.TIMING_TESTRUN)  # Initialize Testrun Duration
+        self.testRunUtils = TestRunUtils()
+        self._initTestRun()
+        self._loadJSONTestRunDefinitions()
+        self._loadExcelTestRunDefinitions()
+        self.executeTestRun()
+        self.tearDown()
 
     def tearDown(self):
         """
