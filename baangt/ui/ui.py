@@ -101,9 +101,6 @@ class UI:
                                 icon=self.iconFileWindow)  # size=(750,400)
         lWindow = self.window
         lWindow.finalize()
-        # lWindow.set_icon(pngbase64=self.iconFileWindow)
-
-        # sg.theme_previewer()
 
         while True:
             lEvent, lValues = lWindow.read(timeout=200)
@@ -143,13 +140,12 @@ class UI:
                 self.modifyValuesOfConfigFileInMemory(lValues=lValues)
                 self.runTestRun()
 
-            if lEvent == "Import KatalonRecorder":
+            if lEvent == "Import Recorder":
                 ImportKatalonRecorder(self.directory)
                 self.getConfigFilesInDirectory()   # Refresh display
 
             if lEvent == 'ToggleFields':
                 lWindow = self.toggleAdditionalFieldsExecute(lWindow=lWindow)
-
 
         self.saveInteractiveGuiConfig()
         lWindow.close()
