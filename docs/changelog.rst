@@ -3,6 +3,8 @@ Change log
 
 
 2020.01
+^^^^^^^
+
 Very first public beta version. Not at all ready for production.
 
 * First version on Pypi (https://pypi.org/project/baangt/), Docker (https://gogs.earthsquad.global/athos/baangt-Docker) and GIT Repository (https://gogs.earthsquad.global/athos/baangt)
