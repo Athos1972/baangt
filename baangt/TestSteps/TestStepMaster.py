@@ -1,7 +1,81 @@
 import baangt.base.GlobalConstants as GC
-from baangt.base.Timing import Timing
-from baangt.base.BrowserHandling import BrowserDriver
+from baangt.base.Timing.Timing import Timing
+from baangt.base.BrowserHandling.BrowserHandling import BrowserDriver
 import sys
+
+from baangt import hook_spec
+from baangt import hook_impl
+from baangt import plugin_manager
+
+
+class TestStepMasterHookSpec:
+    @hook_spec
+    def execute_direct(self, testStepMasterObject, executionCommands):
+        pass
+
+
+class TestStepMasterHookImpl:
+    @hook_impl
+    def execute_direct(self, testStepMasterObject, executionCommands):
+        for key, command in executionCommands.items():
+            if not testStepMasterObject.ifIsTrue and command["Activity"] != "ENDIF":
+                continue
+
+            xpath = None
+            css = None
+            id = None
+            lActivity = command["Activity"].upper()
+            lLocatorType = command["LocatorType"].upper()
+            lLocator = command["Locator"]
+            lValue = command["Value"]
+            lValue2 = command["Value2"]
+            lComparison = command["Comparison"]
+            lTimeout = command["Timeout"]
+            if lTimeout:
+                lTimeout = float(lTimeout)
+            else:
+                lTimeout=20
+            if lLocatorType:
+                if lLocatorType == 'XPATH':
+                    xpath = lLocator
+                elif lLocatorType == 'CSS':
+                    css = lLocator
+                elif lLocatorType == 'ID':
+                    id = lLocator
+            if len(lValue) > 0:
+                lValue = testStepMasterObject.replaceVariables(lValue)
+            if len(lValue2) > 0:
+                lValue2 = testStepMasterObject.replaceVariables(lValue2)
+
+            if lActivity == "COMMENT":
+                continue     # Comment's are ignored
+
+            if lActivity == "GOTOURL":
+                testStepMasterObject.browserSession.goToUrl(lValue)
+            elif lActivity == "SETTEXT":
+                testStepMasterObject.browserSession.findByAndSetText(xpath=xpath, css=css, id=id, value = lValue, timeout=lTimeout)
+            elif lActivity == 'HANDLEIFRAME':
+                testStepMasterObject.browserSession.handleIframe(lLocator)
+            elif lActivity == "CLICK":
+                testStepMasterObject.browserSession.findByAndClick(xpath=xpath, css=css, id=id, timeout=lTimeout)
+            elif lActivity == "IF":
+                if testStepMasterObject.ifActive:
+                    raise BaseException("No nested IFs at this point, sorry...")
+                testStepMasterObject.ifActive = True
+                testStepMasterObject.__doComparisons(lComparison=lComparison, value1=lValue, value2=lValue2)
+            elif lActivity == "ENDIF":
+                if not testStepMasterObject.ifActive:
+                    raise BaseException("ENDIF without IF")
+                testStepMasterObject.ifActive = False
+                testStepMasterObject.ifIsTrue = True
+            elif lActivity == 'GOBACK':
+                testStepMasterObject.browserSession.goBack()
+            else:
+                raise BaseException(f"Unknown command in TestStep {lActivity}")
+
+
+plugin_manager.add_hookspecs(TestStepMasterHookSpec)
+plugin_manager.register(TestStepMasterHookImpl())
 
 
 class TestStepMaster:
@@ -34,61 +108,8 @@ class TestStepMaster:
         """
         This will execute single Operations directly
         """
-        for key, command in executionCommands.items():
-            if not self.ifIsTrue and command["Activity"] != "ENDIF":
-                continue
+        plugin_manager.hook.execute_direct(testStepMasterObject=self, executionCommands=executionCommands)
 
-            xpath = None
-            css = None
-            id = None
-            lActivity = command["Activity"].upper()
-            lLocatorType = command["LocatorType"].upper()
-            lLocator = command["Locator"]
-            lValue = command["Value"]
-            lValue2 = command["Value2"]
-            lComparison = command["Comparison"]
-            lTimeout = command["Timeout"]
-            if lTimeout:
-                lTimeout = float(lTimeout)
-            else:
-                lTimeout=20
-            if lLocatorType:
-                if lLocatorType == 'XPATH':
-                    xpath = lLocator
-                elif lLocatorType == 'CSS':
-                    css = lLocator
-                elif lLocatorType == 'ID':
-                    id = lLocator
-            if len(lValue) > 0:
-                lValue = self.replaceVariables(lValue)
-            if len(lValue2) > 0:
-                lValue2 = self.replaceVariables(lValue2)
-
-            if lActivity == "COMMENT":
-                continue     # Comment's are ignored
-
-            if lActivity == "GOTOURL":
-                self.browserSession.goToUrl(lValue)
-            elif lActivity == "SETTEXT":
-                self.browserSession.findByAndSetText(xpath=xpath, css=css, id=id, value = lValue, timeout=lTimeout)
-            elif lActivity == 'HANDLEIFRAME':
-                self.browserSession.handleIframe(lLocator)
-            elif lActivity == "CLICK":
-                self.browserSession.findByAndClick(xpath=xpath, css=css, id=id, timeout=lTimeout)
-            elif lActivity == "IF":
-                if self.ifActive:
-                    raise BaseException("No nested IFs at this point, sorry...")
-                self.ifActive = True
-                self.__doComparisons(lComparison=lComparison, value1=lValue, value2=lValue2)
-            elif lActivity == "ENDIF":
-                if not self.ifActive:
-                    raise BaseException("ENDIF without IF")
-                self.ifActive = False
-                self.ifIsTrue = True
-            elif lActivity == 'GOBACK':
-                self.browserSession.goBack()
-            else:
-                raise BaseException(f"Unknown command in TestStep {lActivity}")
 
     def __doComparisons(self, lComparison, value1, value2):
         if lComparison == "=":
