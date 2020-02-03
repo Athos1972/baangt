@@ -22,7 +22,7 @@ Features for later
 * Better support for Mass testing APIs
 * Integration with Atlassian Confluence (for Testcase and Testrun definitions)
 * Integration with Atlassian Confluence (to publish results of testruns)
-* Integration with MS Teams to publish results of testruns
+* Integration with MS Teams to publish results of Testruns
 * Grafana Board for Flask-Version
 * Better support for oData V4.0 (similar to SOAP)
 * Support for GraphQL via Graphene
