@@ -1,32 +1,50 @@
-from baangt import impl
-from baangt import pm
+import baangt
 
 from baangt.base.TestRun.TestRun import TestRun
-from baangt.base.Timing import Timing
-from baangt.base.TestRunUtils import TestRunUtils
-from baangt.base import GlobalConstants as GC
 
 
-class TestRunHookImpl:
-    @impl
-    def initTestRun(self, testRunObject, testRunName, globalSettingsFileNameAndPath):
-        testRunObject.browser = {}
-        testRunObject.apiInstance = None
-        testRunObject.testType = None
-        testRunObject.kwargs = {}
-        testRunObject.dataRecords = {}
-        testRunObject.globalSettingsFileNameAndPath = globalSettingsFileNameAndPath
-        testRunObject.globalSettings = {}
-        testRunObject.testRunName, testRunObject.testRunFileName = \
-            TestRun._sanitizeTestRunNameAndFileName(testRunName)
-        testRunObject.timing = Timing()
-        testRunObject.timing.takeTime(GC.TIMING_TESTRUN)  # Initialize Testrun Duration
-        testRunObject.testRunUtils = TestRunUtils()
-        testRunObject._initTestRun()
-        testRunObject._loadJSONTestRunDefinitions()
-        testRunObject._loadExcelTestRunDefinitions()
-        testRunObject.executeTestRun()
-        testRunObject.tearDown()
+class TestRunHookImpl(object):
+
+    @baangt.hook_impl
+    def initTestRun(self, testRunName, globalSettingsFileNameAndPath):
+        return TestRun(testRunName=testRunName, globalSettingsFileNameAndPath=globalSettingsFileNameAndPath)
+
+    @baangt.hook_impl
+    def testRun_tearDown(self, testRunObject):
+        return testRunObject.tearDown()
+
+    @baangt.hook_impl
+    def testRun_getSuccessAndError(self, testRunObject):
+        return testRunObject.testRun_getSuccessAndError()
+
+    @baangt.hook_impl
+    def testRun_getAllTestRunAttributes(self, testRunObject):
+        return testRunObject.getAllTestRunAttributes()
+
+    @baangt.hook_impl
+    def testRun_getBrowser(self, testRunObject, browserInstance=1, browserName=None, browserAttributes=None):
+        return testRunObject.getBrowser(browserInstance, browserName, browserAttributes)
+
+    @baangt.hook_impl
+    def testRun_getAPI(self, testRunObject):
+        return testRunObject._getAPI()
+
+    @baangt.hook_impl
+    def testRun_setResult(self, testRunObject, recordNumber, dataRecordResult):
+        return testRunObject.setResult(recordNumber, dataRecordResult)
+
+    @baangt.hook_impl
+    def testRun_executeTestRun(self, testRunObject):
+        return testRunObject.executeTestRun()
+
+    @baangt.hook_impl
+    def testRun_executeDictSequenceOfClasses(self, testRunObject, dictSequenceOfClasses, counterName, **kwargs):
+        return testRunObject.executeDictSequenceOfClasses(dictSequenceOfClasses, counterName, **kwargs)
+
+    @baangt.hook_impl
+    def testRun_loadJSONGlobals(self, testRunObject):
+        return testRunObject._loadJSONGlobals()
 
 
-pm.register(TestRunHookImpl())
+
+
