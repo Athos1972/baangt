@@ -1,6 +1,10 @@
 Change log
 ==========
 
+2020.02
+^^^^^^^
+* Pypi-Version 2020.02.* deployed
+* First version of baangtDB with Flask
 
 2020.01
 ^^^^^^^
