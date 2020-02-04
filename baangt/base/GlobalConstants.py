@@ -74,7 +74,7 @@ BIT_64 = 8
 BIT_32 = 4
 
 OS_list = ["Linux-32", "Linux-64", "MacOS", "Windows-32", "Windows-64"]
-OS_list_chrome = ['linux32', 'linux64', 'mac32', 'win32']
+OS_list_chrome = ['linux32', 'linux64', 'mac64', 'win32']
 
 GECKO_URL = 'https://api.github.com/repos/mozilla/geckodriver/releases/latest'
 
