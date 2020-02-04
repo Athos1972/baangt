@@ -2,21 +2,23 @@ Beware of data generators
 =========================
 
 In time of big data and machine learning when we see the difficulties to find proper data for test automation we're tempted
-to turn to the silver bullet "RPA" FIXME: WHAT DOES IT MEAN???
+to turn to the silver bullet "RPA" (Robotic Process Automation). Solutions grow like mushrooms, all with the intention to
+reduce effort for test data creation and test case maintenance.
 
 We also use test data generators in ``baangt``, very well dosed, very carefully and **never** to assess, whether the AUT
 (Application Under Test) is suitable for production. We use test data generators based on users data recordings to harden
 the application in early stages. We'll "play" around (automatically), perform random clicks in random orders on buttons,
-extend each field to it's maximum value, fill chinese characters into arabic text fields and so on.
+extend each field to it's maximum length, fill traditional chinese characters into arabic text fields and similar tests.
 
-Don't get me wrong. That's a valuable excercise. It helps to harden the application before the masses of end-users are trying
-to beat it down. But we use those tests not in daily or weekly regression tests or when we assess the latest build.
+That's a valuable excercise. It helps to harden the application before the masses of end-users will try
+to beat it down. But we use those tests not in daily or weekly regression tests or when we assess the latest build or
+increment.
 
-What do we use instead of randomly generated data?
---------------------------------------------------
+What do we use **instead** of random generated data?
+----------------------------------------------------
 
-Beautifully, precious, manually designed and recorded test data from the business department (preferrably key-users or even
-those power end-users). We extend the dataset whenever a new issue arises in the production if in the post-mortem phase of
+Beautifully, precious, manually designed and recorded test data from the business department (preferably key-users or even
+power end-users). We extend the dataset whenever a new issue arises in the production if in the post-mortem phase of
 the issue it turns out, that regression testing could have identified the issue with proper data.
 
 As this test set grows in lines, it grows in value. After a few weeks you've covered tests for all your major business logic
@@ -29,9 +31,9 @@ to competition, if your software is unstable), supporting your whole organizatio
 That's all nice, but it won't work for us because ...
 -----------------------------------------------------
 
-The more you depend on software and the more complex your software and processes are, the less I believe you, that it is
-not possible in your case to run your regression tests with meaningful and reliable test data. Here's a list of lame
-excuses:
+The more you depend on software and the more complex your software and processes are, the less I believe, that it is
+not possible in your case to run your regression tests with meaningful and reliable test data. Here's a list of rather
+lame excuses. If you use any of them, please think again.
 
 
 .. list-table:: Anti-reasons for bad test data
@@ -103,3 +105,10 @@ excuses:
        dynamically out-of-the-box) to create valid test data and find errors long before your customers do. If you come
        across the need for data, that is difficult to obtain (but legal!), contact us with a feature request on the public
        issue tracker. Maybe somebody will pick it up and provide a solution in ``baangt`` base functionality.
+
+
+tl;dr
+-----
+
+Build realistic synthetic data for your regression tests and take good care of it. Also, for every bug found in production
+enhance your test set!
