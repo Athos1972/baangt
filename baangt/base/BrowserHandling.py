@@ -67,6 +67,7 @@ class BrowserDriver:
             GC.BROWSER_FIREFOX: webdriver.Firefox,
             GC.BROWSER_CHROME: webdriver.Chrome,
             GC.BROWSER_SAFARI: webdriver.Safari,
+            GC.BROWSER_EDGE: webdriver.Edge,
             GC.BROWSER_REMOTE: webdriver.Remote}
 
         if browserName in browserNames:
@@ -85,6 +86,8 @@ class BrowserDriver:
                 self.driver = browserNames[browserName](options=self.__createBrowserOptions(browserName=browserName,
                                                                                             desiredCapabilities=desiredCapabilities),
                                                         executable_path=self.__findBrowserDriverPaths(ChromeExecutable))
+            elif browserName == GC.BROWSER_EDGE:
+                self.driver = browserNames[browserName](executable_path=self.__findBrowserDriverPaths("msedgedriver.exe"))
             elif browserName == GC.BROWSER_SAFARI:
                 # SAFARI doesn't provide any options, but desired_capabilities.
                 # Executable_path = the standard safaridriver path.
