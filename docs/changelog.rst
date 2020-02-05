@@ -5,6 +5,7 @@ Change log
 ^^^^^^^
 * Pypi-Version 2020.02.* deployed
 * First version of baangtDB with Flask
+* Support of Edge on Microsoft Platform and Safari on Mac
 
 2020.01
 ^^^^^^^
