@@ -54,7 +54,7 @@ class BrowserDriver:
         else:
             self.screenshotPath = os.getcwd()
 
-    def createNewBrowser(self, browserName=GC.BROWSER_FIREFOX, desiredCapabilities=None, **kwargs):
+    def createNewBrowser(self, browserName=GC.BROWSER_FIREFOX, desiredCapabilities={}, **kwargs):
         """
         Will find the specified executables of the desired browser and start it with the given capabilities.
 
@@ -85,6 +85,13 @@ class BrowserDriver:
                 self.driver = browserNames[browserName](options=self.__createBrowserOptions(browserName=browserName,
                                                                                             desiredCapabilities=desiredCapabilities),
                                                         executable_path=self.__findBrowserDriverPaths(ChromeExecutable))
+            elif browserName == GC.BROWSER_SAFARI:
+                # SAFARI doesn't provide any options, but desired_capabilities.
+                # Executable_path = the standard safaridriver path.
+                if len(desiredCapabilities) == 0:
+                    desiredCapabilities = {}
+                self.driver = browserNames[browserName](desired_capabilities=desiredCapabilities)
+
             elif browserName == GC.BROWSER_REMOTE:
                 self.driver = browserNames[browserName](options=self.__createBrowserOptions(browserName=browserName,
                                                                                             desiredCapabilities=desiredCapabilities),
