@@ -6,9 +6,28 @@ import os
 from pathlib import Path
 from pluggy import HookspecMarker, HookimplMarker, PluginManager
 
-spec = HookspecMarker("baangt")
-impl = HookimplMarker("baangt")
-pm = PluginManager("baangt")
+hook_spec = HookspecMarker("baangt")
+hook_impl = HookimplMarker("baangt")
+plugin_manager = PluginManager("baangt")
+
+from baangt.hookSpecs import baangtHookSpec
+
+plugin_manager.add_hookspecs(baangtHookSpec)
+
+from baangt.base.TestRun.hookImpls import TestRunHookImpl
+from baangt.base.BrowserHandling.hookImpls import BrowserDriverHookImpl
+from baangt.base.Timing.hookImpls import TimingHookImpl
+from baangt.base.ExportResults.hookImpls import \
+    (ExportResultsHookImpl, ExcelSheetHelperFunctionsHookImpl, ExportTimingHookImpl)
+
+
+plugin_manager.register(plugin=TestRunHookImpl())
+plugin_manager.register(plugin=BrowserDriverHookImpl())
+plugin_manager.register(plugin=TimingHookImpl())
+plugin_manager.register(plugin=ExportResultsHookImpl())
+plugin_manager.register(plugin=ExcelSheetHelperFunctionsHookImpl())
+plugin_manager.register(plugin=ExportTimingHookImpl())
+
 
 # fixme: Parameter für Logfile should include stage and browser()
 logFilename:pathlib.Path = Path(os.getcwd())
