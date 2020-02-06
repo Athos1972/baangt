@@ -1,6 +1,21 @@
 from app import models
 
 #
+# item categories
+#
+def getItemCategories():
+	categories = {}
+	categories['main'] = [
+		'testrun',
+		'testcase_sequence',
+		'testcase',
+		'teststep_sequence',
+		'teststep',
+	]
+
+	return categories
+
+#
 # generate choices of items
 #
 

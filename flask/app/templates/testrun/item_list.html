@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ type|name_by_type }}
+{% endblock %}
+
+{% block content %}
+
+<main>
+
+<!-- bread crumb -->
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ type|name_by_type }}</li>
+    </ol>
+</nav>
+
+<!-- flash messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, msg in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ msg }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endfor %}
+{% endwith %}
+
+<!-- item list -->
+<div class="container mt-5">
+    <div class="row border-top border-bottom py-3">
+        <!-- header -->
+        <div class="col-3"><strong>Name</strong></div>
+        <div class="col-2"><strong>Created By</strong></div>
+        <div class="col"><strong>Created</strong></div>
+    </div>
+
+    <!-- item list -->
+    {% for item in items %}
+        <div class="row border-top py-3">
+            <div class="col-3">
+                <a data-toggle="collapse" href="#item{{ item.id }}" aria-expanded="false">
+                    {{ item.name }}
+                </a>
+            </div>
+            <div class="col-2">{{ item.creator.username }}</div>
+            <div class="col">{{ item.created }}</div>
+
+            <div class="col-12 collapse mt-1" id="item{{ item.id }}">
+                {% if item.edited %}
+                    <p><small>
+                        Last edidted {{ item.edited.strftime('%Y-%m-%d %H:%M') }} by {{ item.editor }}
+                    </small></p>
+                {% endif %}
+                <p><strong>Description</strong></p>
+                <p>{{ item.description }}</p>
+                <p>
+                    <button class="btn btn-primary px-5 my-3 mr-3" onclick="edit_item('{{ type }}', '{{ item.id }}')">Edit</button>
+                    <button class="btn btn-danger px-5 my-3" onclick="delete_item('{{ type }}', '{{ item.name}}', '{{ item.id }}')">Delete</button>
+                </p>
+               
+            </div>
+        </div>
+    {% endfor %}
+
+
+
+</div>
+</main>
+
+
+<!-- Load local JS -->
+<script src="{{ url_for('static', filename='testrun.js') }}"></script>
+
+{% endblock %}

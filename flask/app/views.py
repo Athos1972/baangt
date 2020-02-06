@@ -1,12 +1,40 @@
 
 from flask import render_template, redirect, flash, request, url_for
 from flask_login import login_required, current_user, login_user, logout_user
-from app import app, db, models, forms
+from app import app, db, models, forms, utils
 from datetime import datetime
 
 @app.route('/')
 @login_required
 def index():
+	return render_template('testrun/index.html', items=utils.getItemCategories())
+
+@app.route('/<string:item_type>')
+@login_required
+def item_list(item_type):
+	# get item list by type
+	if item_type == 'testrun':
+		items = models.Testrun.query.all()
+	elif item_type == 'testcase_sequence':
+		items = models.TestCaseSequence.query.all()
+	elif item_type == 'testcase':
+		items = models.TestCase.query.all()
+	elif item_type == 'teststep_sequence':
+		items = models.TestStepSequence.query.all()
+	elif item_type == 'teststep':
+		items = models.TestStepExecution.query.all()
+	else:
+		flash(f'Item type "{item_type}" does not exist.', 'warning')
+		return redirect(url_for('index'))
+
+
+	return render_template('testrun/item_list.html', type=item_type, items=items)
+
+
+
+@app.route('/index')
+@login_required
+def index_0():
 	# get the whole bunch of items
 	items = {}
 	items['testruns'] = models.Testrun.query.all()
@@ -64,8 +92,8 @@ def delete_item(item_type, item_id):
 
 		db.session.delete(item)
 		db.session.commit()
-		flash(f"Item '{item.name}' successfully deleted.")
-		return redirect(url_for('index'))
+		flash(f'Item "{item.name}" successfully deleted.', 'success')
+		return redirect(url_for('item_list', item_type=item_type))
 
 	return 'ERROR: Wring request method'
 
@@ -262,7 +290,7 @@ def signup():
 		db.session.commit()
 		# login
 		login_user(user, remember=True)
-		flash(f'User {user.username.capitalize()} successfully created!')
+		flash(f'User {user.username.capitalize()} successfully created!', 'succsess')
 		return redirect(url_for('index'))
 
 	return render_template('testrun/signup.html', form=form)
@@ -277,7 +305,7 @@ def login():
 		user = models.User.query.filter_by(username=form.username.data).first()
 		if user and user.verify_password(form.password.data):
 			login_user(user, remember=True)
-			flash(f'Welcome {user.username.capitalize()}!')
+			flash(f'Welcome {user.username.capitalize()}!', 'success')
 			return redirect(url_for('index'))
 
 	return render_template('testrun/login.html', form=form)

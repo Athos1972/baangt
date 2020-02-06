@@ -183,7 +183,15 @@ class TestStepExecution(db.Model):
 	activity_type = db.relationship('ActivityType', backref='teststeps', lazy='immediate', foreign_keys=[activity_type_id])
 	locator_type = db.relationship('LocatorType', backref='teststeps', lazy='immediate', foreign_keys=[locator_type_id])
 	teststep_sequence = db.relationship('TestStepSequence', backref='teststeps', lazy='immediate', foreign_keys=[teststep_sequence_id])
-	
+	# model extention
+	locator = db.Column(db.String, nullable=True)
+	optional = db.Column(db.Boolean, nullable=True)
+	timeout = db.Column(db.Float(precision='5,2'), nullable=True)
+	release = db.Column(db.String, nullable=True)
+	value = db.Column(db.String, nullable=True)
+	value2 = db.Column(db.String, nullable=True)
+	comparision = db.Column(db.String, nullable=True)
+
 	def __str__(self):
 		return self.name
 
