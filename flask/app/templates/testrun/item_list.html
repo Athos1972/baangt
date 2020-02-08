@@ -49,16 +49,138 @@
             <div class="col">{{ item.created }}</div>
 
             <div class="col-12 collapse mt-1" id="item{{ item.id }}">
+                <!-- edited data -->
                 {% if item.edited %}
                     <p><small>
                         Last edidted {{ item.edited.strftime('%Y-%m-%d %H:%M') }} by {{ item.editor }}
                     </small></p>
                 {% endif %}
-                <p><strong>Description</strong></p>
-                <p>{{ item.description }}</p>
+
+                <ul class="list-group">
+
+                    <!-- description -->
+                    <li class="list-group-item h5 list-group-item-dark">Description</li>
+                    <li class="list-group-item">{{ item.description }}</li>
+
+                    <!-- Testrun fields -->
+                    {% if type == 'testrun' %}
+
+                    <li class="list-group-item h5 list-group-item-dark">{{ 'testcase_sequence'|name_by_type }}</li>
+                    {% if item.testcase_sequences %}
+                        {% for sequence in item.testcase_sequences %}
+                        <li class="list-group-item">{{ sequence }}</li>
+                        {% endfor %}
+                    {% else %}
+                        <li class="list-group-item">No Test Case Sequence Defined</li>
+                    {% endif %}
+
+                    {% endif %}
+
+                    <!-- Class Name -->
+                    {% if type == 'testcase_sequence' or type == 'testcase' or type == 'teststep_sequences' %}
+
+                    <li class="list-group-item h5 list-group-item-dark">Class Name</li>
+                    <li class="list-group-item">{{ item.classname }}</li>
+                    
+                    {% endif %}
+
+                    <!-- Testcase Sequence fields -->
+                    {% if type == 'testcase_sequence' %}
+
+                    <li class="list-group-item h5 list-group-item-dark">Data Files</li>
+                    {% if item.datafiles %}
+                        {% for datafile in item.datafiles %}
+                        <li class="list-group-item">{{ datafile }}</li>
+                        {% endfor %}
+                    {% else %}
+                        <li class="list-group-item">No Data File Defined</li>
+                    {% endif %}
+
+                    <li class="list-group-item h5 list-group-item-dark">{{ 'testcase'|name_by_type }}</li>
+                    {% if item.testcases %}
+                        {% for testcase in item.testcases %}
+                        <li class="list-group-item">{{ testcase }}</li>
+                        {% endfor %}
+                    {% else %}
+                        <li class="list-group-item">No Test Case Defined</li>
+                    {% endif %}
+
+                    {% endif %}
+
+                    <!-- Test Case fields -->
+                    {% if type == 'testcase' %}
+
+                    <li class="list-group-item h5 list-group-item-dark">Browser Type</li>
+                    <li class="list-group-item">{{ item.browser_type }}</li>
+
+                    <li class="list-group-item h5 list-group-item-dark">Test Case Type</li>
+                    <li class="list-group-item">{{ item.testcase_type }}</li>
+
+                    <li class="list-group-item h5 list-group-item-dark">{{ 'teststep_sequence'|name_by_type }}</li>
+                    {% if item.teststep_sequences %}
+                        {% for sequence in item.teststep_sequences %}
+                        <li class="list-group-item">{{ sequence }}</li>
+                        {% endfor %}
+                    {% else %}
+                        <li class="list-group-item">No Test Case Step Sequence Defined</li>
+                    {% endif %}
+
+                    {% endif %}
+
+                    <!-- Test Step Sequence fields -->
+                    {% if type == 'teststep_sequence' %}
+
+                    <li class="list-group-item h5 list-group-item-dark">{{ 'teststep'|name_by_type }}</li>
+                    {% if item.teststeps %}
+                        {% for step in item.teststeps %}
+                        <li class="list-group-item">{{ step }}</li>
+                        {% endfor %}
+                    {% else %}
+                        <li class="list-group-item">No Test Step Defined</li>
+                    {% endif %}
+
+                    {% endif %}
+
+                    <!-- Test Step fields -->
+                    {% if type == 'teststep' %}
+
+                    <li class="list-group-item h5 list-group-item-dark">Activity Type</li>
+                    <li class="list-group-item">{{ item.activity_type }}</li>
+
+                    <li class="list-group-item h5 list-group-item-dark">Locator Type</li>
+                    <li class="list-group-item">{{ item.locator_type }}</li>
+
+                    <li class="list-group-item h5 list-group-item-dark">Locator</li>
+                    <li class="list-group-item">{{ item.locator }}</li>
+
+                    <li class="list-group-item h5 list-group-item-dark">Optional</li>
+                    <li class="list-group-item">{{ item.optional }}</li>
+
+                    <li class="list-group-item h5 list-group-item-dark">Timeout</li>
+                    <li class="list-group-item">{{ item.timeout }}</li>
+
+                    <li class="list-group-item h5 list-group-item-dark">Release</li>
+                    <li class="list-group-item">{{ item.release }}</li>
+
+                    <li class="list-group-item h5 list-group-item-dark">Value</li>
+                    <li class="list-group-item">{{ item.value }}</li>
+
+                    <li class="list-group-item h5 list-group-item-dark">Value 2</li>
+                    <li class="list-group-item">{{ item.value2 }}</li>
+
+                    <li class="list-group-item h5 list-group-item-dark">Comparision</li>
+                    <li class="list-group-item">{{ item.comparision }}</li>
+
+                    {% endif %}
+
+                </ul>
+                
+                <!-- buttons -->
                 <p>
                     <button class="btn btn-primary px-5 my-3 mr-3" onclick="edit_item('{{ type }}', '{{ item.id }}')">Edit</button>
-                    <button class="btn btn-danger px-5 my-3" onclick="delete_item('{{ type }}', '{{ item.name}}', '{{ item.id }}')">Delete</button>
+                    <button class="btn btn-danger px-5 my-3" onclick="delete_item('{{ type }}', '{{ item.name}}', '{{ item.id }}')">
+                        Delete
+                    </button>
                 </p>
                
             </div>

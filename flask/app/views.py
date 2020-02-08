@@ -31,7 +31,7 @@ def item_list(item_type):
 	return render_template('testrun/item_list.html', type=item_type, items=items)
 
 
-
+'''
 @app.route('/index')
 @login_required
 def index_0():
@@ -45,6 +45,7 @@ def index_0():
 	items['teststeps'] = models.TestStepExecution.query.all()
 
 	return render_template('testrun/index.html', items=items)
+'''
 
 @app.route('/<string:item_type>/<int:item_id>', methods=['GET', 'POST'])
 @login_required
