@@ -24,7 +24,20 @@ Insurance and ``baangt``
 ------------------------
 
 Insurance is like banking on steroids - at least when it comes to complexity of the products, processes and system
-landscapes.
+landscapes. Due to the variety of products (Life, P&C, Health, Car/Automotive) and the completely different processes
+for each of the product lines testing in insurance companies is complex and challenging. As in many other industries
+trends of recent years like off-shoring, near-shoring and outsourcing lead to less understanding of the business needs
+by service providers but also to less understanding of the underlying complexity when service providers extend or change
+existing code bases, which makes testing even more important as side-effects are more likely than back in the days when
+the internal IT people of the company knew exactly what they were dealing with.
+
+Business departments especially since the last 5 years, but also during the next 5-10 years face challenges due to
+overaged work force. Companies manage to bring in young talents to take over the responsibility of insurance
+products development and maintenance of existing product landscape. At the same time they are competing on a global market,
+operating inside a strictly defined legal range and need to cut down costs and innovate products to fit modern customer
+needs.
+
+
 
 
 
