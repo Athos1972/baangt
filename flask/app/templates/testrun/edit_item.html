@@ -42,6 +42,41 @@
             {% endif %}
         {% endfor %}
 
+        {% if type == 'testrun' %}
+        <div class="input-group my-3">
+            <div class="input-group-prepend">
+                {{ form.testcase_sequences.label(class="input-group-text") }}
+            </div>
+            <select class="form-control" id="testcase_sequences_2" name="testcase_sequences" onchange="add_chip(this)">
+                <option select="">&lt; Select &gt;</option>
+                {% for seq in form.testcase_sequences.choices %}
+                <option value="{{ seq.0 }}" {% if seq.0 in form.testcase_sequences.data %}disabled{% endif %}>
+                    {{ seq.1 }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div id="testcaseSequences">
+            {% for seq in form.testcase_sequences.choices if seq.0 in form.testcase_sequences.data %}
+            <div class="chip mr-1" data-id="{{ seq.0 }}">
+                <small>{{ seq.1 }}</small>
+                <!--
+                <span class="closebtn" onclick="this.parentElement.style.display='none'">&times;</span>
+            -->
+                <span class="closebtn" onclick="delete_chip(this.parentElement)">&times;</span>
+            </div>
+                <!--
+        <button id="chipButton" type=button class="btn btn-default" onclick="deleteEntry({{ seq.0 }})">
+            {{ seq.1 + ' x'}}
+        </button>
+    -->
+            {% endfor %}
+        </div>
+        {% endif %}
+
+
+
         <p>
             <button class="btn btn-primary px-5 my-3" type="submit">Save</button>
         </p>

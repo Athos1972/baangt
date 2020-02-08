@@ -4,6 +4,30 @@
 		"selected_items":
 		[
 			[
+				"ite",
+				"item_id"
+			],
+			[
+				"set",
+				"setAttribute"
+			],
+			[
+				"create",
+				"createAttribute"
+			],
+			[
+				"new",
+				"new_chip"
+			],
+			[
+				"chip",
+				"chip_area"
+			],
+			[
+				"input",
+				"input-group"
+			],
+			[
 				"user",
 				"user_id"
 			],
@@ -68,10 +92,6 @@
 				"sequence_id"
 			],
 			[
-				"input",
-				"input-group-text"
-			],
-			[
 				"for",
 				"form"
 			],
@@ -118,10 +138,6 @@
 			[
 				"siz",
 				"size-1"
-			],
-			[
-				"set",
-				"setB"
 			],
 			[
 				"global",
@@ -460,10 +476,6 @@
 				"newspost"
 			],
 			[
-				"new",
-				"newspost"
-			],
-			[
 				"ne",
 				"newspost"
 			],
@@ -502,23 +514,106 @@
 			[
 				"enc",
 				"encoded"
-			],
-			[
-				"file",
-				"filename"
-			],
-			[
-				"out",
-				"output"
-			],
-			[
-				"encode",
-				"encoded"
 			]
 		]
 	},
 	"buffers":
 	[
+		{
+			"file": "app/views.py",
+			"settings":
+			{
+				"buffer_size": 10772,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/models.py",
+			"settings":
+			{
+				"buffer_size": 11734,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/forms.py",
+			"settings":
+			{
+				"buffer_size": 4267,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/filters.py",
+			"settings":
+			{
+				"buffer_size": 601,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/templates/base.html",
+			"settings":
+			{
+				"buffer_size": 2379,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/templates/testrun/item_list.html",
+			"settings":
+			{
+				"buffer_size": 7866,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/templates/testrun/edit_item.html",
+			"settings":
+			{
+				"buffer_size": 3112,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/static/js/testrun.js",
+			"settings":
+			{
+				"buffer_size": 3082,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/aguryev/freelancer/power_bi/roboanalyst/app/routes.py",
+			"settings":
+			{
+				"buffer_size": 2045,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/templates/testrun/item.html",
+			"settings":
+			{
+				"buffer_size": 4199,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/static/css/styles.css",
+			"settings":
+			{
+				"buffer_size": 328,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "Packages/Python/Python.sublime-build",
 	"build_system_choices":
@@ -592,6 +687,8 @@
 	},
 	"file_history":
 	[
+		"/home/aguryev/freelancer/baangt/flask/app/templates/testrun/index_old.html",
+		"/home/aguryev/freelancer/baangt/flask/app/models.pyc",
 		"/home/aguryev/freelancer/power_bi/task 1/powerbi_api-master/check_status.py",
 		"/home/aguryev/freelancer/power_bi/task 1/powerbi_api-master/import_pbix.py",
 		"/home/aguryev/freelancer/power_bi/task 1/powerbi_api-master/zeminpowerbi/client.py",
@@ -606,7 +703,6 @@
 		"/home/aguryev/freelancer/power_bi/task_2",
 		"/home/aguryev/freelancer/power_bi/roboanalyst/app/__init__.py",
 		"/home/aguryev/freelancer/power_bi/roboanalyst/app/routes.py",
-		"/home/aguryev/freelancer/baangt/flask/app/templates/testrun/index_old.html",
 		"/home/aguryev/freelancer/baangt/flask/app/templates/testrun/index.html",
 		"/home/aguryev/freelancer/power_bi/roboanalyst/app/templates/index.html",
 		"/home/aguryev/freelancer/baangt/flask/app/templates/testrun/create_item.html",
@@ -718,8 +814,7 @@
 		"/home/aguryev/freelancer/img_circle_recognition/solution/circle.py",
 		"/home/aguryev/freelancer/baangt/flask/static/testrun.js",
 		"/home/aguryev/gf_archive/gf_248060_20200127/preprocess_sephora.py",
-		"/home/aguryev/gf_archive/gf_248060_20200127/box_jenkins.py",
-		"/home/aguryev/freelancer/img_circle_recognition/cv_practical/main.py"
+		"/home/aguryev/gf_archive/gf_248060_20200127/box_jenkins.py"
 	],
 	"find":
 	{
@@ -737,6 +832,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"list-group-item-primary",
 			"post",
 			"imports",
 			"xlsx",
@@ -863,8 +959,7 @@
 			"strncpy",
 			"get_command",
 			"parse_input",
-			"is_var",
-			"trim_recipe"
+			"is_var"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -872,6 +967,7 @@
 		"regex": false,
 		"replace_history":
 		[
+			"list-group-item-dark",
 			"choices=utils.",
 			"description = db.Column(db.String(512)",
 			"name = db.Column(db.String(64)",
@@ -897,8 +993,332 @@
 	"groups":
 	[
 		{
+			"selected": 8,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "app/views.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 10772,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								470,
+								470
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2907.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "app/models.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 11734,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3842,
+								3842
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 912.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "app/forms.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4267,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1834,
+								1834
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 639.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "app/filters.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 601,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								416,
+								416
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 10,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "app/templates/base.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2379,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								545,
+								545
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "app/templates/testrun/item_list.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7866,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								7849,
+								7849
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2038.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "app/templates/testrun/edit_item.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3112,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2706,
+								2706
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 583.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "app/static/js/testrun.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3082,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2599,
+								2599
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 154.0,
+						"translation.y": 855.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "/home/aguryev/freelancer/power_bi/roboanalyst/app/routes.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2045,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								961,
+								961
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 399.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "app/templates/testrun/item.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4199,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3921,
+								3921
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 627.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "app/static/css/styles.css",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 328,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								163,
+								163
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				}
 			]
 		}
 	],
@@ -941,7 +1361,7 @@
 	"project": "application.sublime-project",
 	"replace":
 	{
-		"height": 52.0
+		"height": 72.0
 	},
 	"save_all_on_build": true,
 	"select_file":
