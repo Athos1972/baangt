@@ -92,9 +92,15 @@
 <li class="toctree-l1"><a class="reference internal" href="Developer.html">   For Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">   History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">   Changelog</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">   Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">2020.02</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">2020.01</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="articles/ProductionSucks.html">      Production sucks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="articles/DataDoctor.html">      Test data rulez</a></li>
+<li class="toctree-l1"><a class="reference internal" href="articles/BaangtIndustries.html">      Industries 4 baangt</a></li>
 </ul>
 
             
@@ -161,18 +167,43 @@
             
   <div class="section" id="change-log">
 <h1>Change log<a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h1>
-<p>2020.01
-Very first public beta version. Not at all ready for production.</p>
+<div class="section" id="id1">
+<h2>2020.02<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Pypi-Version 2020.02.* deployed</p></li>
+<li><p>First version of baangtDB with Flask</p></li>
+<li><p>Support of Edge on Microsoft Platform and Safari on Mac</p></li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h2>2020.01<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>Very first public beta version. Not at all ready for production.</p>
 <ul class="simple">
 <li><p>First version on Pypi (<a class="reference external" href="https://pypi.org/project/baangt/">https://pypi.org/project/baangt/</a>), Docker (<a class="reference external" href="https://gogs.earthsquad.global/athos/baangt-Docker">https://gogs.earthsquad.global/athos/baangt-Docker</a>) and GIT Repository (<a class="reference external" href="https://gogs.earthsquad.global/athos/baangt">https://gogs.earthsquad.global/athos/baangt</a>)</p></li>
 <li><p>Support for SimpleExcel and Excel format including some examples</p></li>
+<li><p>Basic UI (interactive mode) and CLI (Command Line Interface with 2 parameters)</p></li>
+<li><dl class="simple">
+<dt>Methods for Web testing implemented:</dt><dd><ul>
+<li><p>SetText(If)</p></li>
+<li><p>Click(If)</p></li>
+<li><p>GotoUrl</p></li>
+<li><p>HandleIframe and Windows (Tabs)</p></li>
+<li><p>If/Endif</p></li>
+<li><p>GoBack</p></li>
+<li><p>simple comparisons (=, &gt;, &lt;)</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>Full support for Excel Data files</p></li>
 <li><p>Experimental support for Katalon Recorder Import to SimpleExcel format</p></li>
 <li><p>Very basic support to Export from Katalon Studio Projects (as subclassed modules)</p></li>
 <li><p>Logs</p></li>
-<li><p>Export result of TestRun to XLS includig Timing information and analysis</p></li>
+<li><p>Export result of TestRun to XLS including statistics, Timing information and analysis</p></li>
 <li><p>Docs created, styled, revisited and stored on <a class="reference external" href="https://baangt.jointhedocs.io">https://baangt.jointhedocs.io</a></p></li>
-<li><p>Runlog: Additionaly to saving execution information in a single Excel sheet for each testrun, also store information in a database for simple comparison of testruns between stages, days, endpoints or whatever else you want to compare. In this version only data storage was implemented. No reporting yet.</p></li>
+<li><p>Runlog: Additionally to saving execution information in a single Excel sheet for each testrun, also store information in a database for simple comparison of testruns between stages, days, endpoints or whatever else you want to compare. In this version only data storage was implemented. No reporting yet.</p></li>
 </ul>
+</div>
 </div>
 
 

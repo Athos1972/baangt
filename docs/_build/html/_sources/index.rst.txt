@@ -29,8 +29,7 @@ and well documented master functionality.
       Contributions <contributors.rst>
       Changelog <changelog.rst>
       Planned Features <PlannedFeatures.rst>
-      :subheader: Articles
-         Production sucks </articles/ProductionSucks.rst>
+   :subheader: Articles </articles/Articles.rst>
 
 
 Indices and tables

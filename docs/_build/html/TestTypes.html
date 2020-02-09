@@ -93,6 +93,12 @@
 <li class="toctree-l2"><a class="reference internal" href="#heartbeat-and-alive-testing">Heartbeat and Alive-Testing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#regression-testing">Regression testing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#performance-testing">Performance testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#end-to-end-e2e-testing">End to End (E2E) Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#lifecycle-tests-of-business-objects">Lifecycle tests of business objects</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#time-travel-tests">Time travel tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cradle-to-the-grave">Cradle to the grave</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#no-oversimplification">No oversimplification</a></li>
 </ul>
 </li>
@@ -102,6 +108,8 @@
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">   Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="articles/ProductionSucks.html">      Production sucks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="articles/DataDoctor.html">      Test data rulez</a></li>
+<li class="toctree-l1"><a class="reference internal" href="articles/BaangtIndustries.html">      Industries 4 baangt</a></li>
 </ul>
 
             
@@ -213,6 +221,37 @@ increments. But you’ll use the same tool: <code class="docutils literal notran
 <p>As of today (Jan 2020) <code class="docutils literal notranslate"><span class="pre">baangt</span></code> does not provide infrastructure monitoring. In order to analyze the results of your
 performance tests you’ll need additional tools, but <code class="docutils literal notranslate"><span class="pre">baangt</span></code> will give indications, which components or which functionalities
 need a closer look by your experts.</p>
+</div>
+<div class="section" id="end-to-end-e2e-testing">
+<h2>End to End (E2E) Testing<a class="headerlink" href="#end-to-end-e2e-testing" title="Permalink to this headline">¶</a></h2>
+<p>Whenever you have more than one system/microservice dealing with a process, you’ll need E2E-Testing. Of course E2E-Tests
+are more complex than just running test cases against one functionality and compare results to the expected values and
+behaviour. In larger organizations you’ll want to have E2E-Regression tests before you release increments to production.
+<code class="docutils literal notranslate"><span class="pre">baangt</span></code> follows a structure of TestCaseSequences where you combine multiple single Testcases into one Sequence, which
+is exactly tailored to run E2E Tests.</p>
+</div>
+<div class="section" id="lifecycle-tests-of-business-objects">
+<h2>Lifecycle tests of business objects<a class="headerlink" href="#lifecycle-tests-of-business-objects" title="Permalink to this headline">¶</a></h2>
+<p>Lifecycle tests come in basically two variations, but can be combined - depending on the requirements of the business.
+Many industries deal with objects, that follow a certain (long) life cycle. The life cycle can go over years or decades.
+These tests are complex and cost a lot of time and effort.</p>
+<div class="section" id="time-travel-tests">
+<h3>Time travel tests<a class="headerlink" href="#time-travel-tests" title="Permalink to this headline">¶</a></h3>
+<p>Often companies have “Time travel” system landscapes, where they
+create copies of the whole system landscape (or large parts of the core systems), change the system time on all servers
+and run tests subsequently with different dates. <code class="docutils literal notranslate"><span class="pre">baangt</span></code> does not support this type of testing out of the box. But
+we provide a functionality to “Pause” Testcase and TestCaseSequence execution. You can easily subclass the corresponding
+master classes and create your own mechanism, when to pause a Testcase or TestCaseSequence.</p>
+</div>
+<div class="section" id="cradle-to-the-grave">
+<h3>Cradle to the grave<a class="headerlink" href="#cradle-to-the-grave" title="Permalink to this headline">¶</a></h3>
+<p>Another common form of lifecycle tests. In this case the system time remains basically the same, but the test cases are
+created in a sequence to follow the birth of an object until it’s deletion. This might be a material, which get’s created,
+production recipe created, work planned, sales contract and order created, produced, delivered, invoiced, paid and
+revenue calculated. In service industries C2G-Tests are designed around a customer. <code class="docutils literal notranslate"><span class="pre">baangt</span></code> fully supports complex
+testcaseSequences running on multiple technologies (Web, API, etc.) also in asynchronous scenarios, for instance if you
+need to wait for nightly batch processing of a mainframe.</p>
+</div>
 </div>
 <div class="section" id="no-oversimplification">
 <h2>No oversimplification<a class="headerlink" href="#no-oversimplification" title="Permalink to this headline">¶</a></h2>
