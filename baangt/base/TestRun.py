@@ -173,6 +173,7 @@ class TestRun:
                     return
             logger.info(f"Starting {counterName}: {key}, {value} ")
             kwargs[counterName] = key
+
             if isinstance(value, list):
                 lFullQualified = value[0]  # First List-Entry must hold the ClassName
             else:

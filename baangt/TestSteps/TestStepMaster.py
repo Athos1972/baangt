@@ -3,25 +3,13 @@ from baangt.base.Timing import Timing
 from baangt.base.BrowserHandling import BrowserDriver
 from baangt.base.ApiHandling import ApiHandling
 import sys
+from pkg_resources import parse_version
+import logging
+
+logger = logging.getLogger("pyC")
 
 
 class TestStepMaster:
-
-    browserCommands = [
-        "GOTOURL",
-        "CLICK",
-        "CLICKIF",
-        "HANDLEIFRAME",
-        "GOBACK"
-    ]
-
-    apiCommands = [
-        "APIURL",
-        "ENDPOINT",
-        "GET",
-        "POST"
-    ]
-
     def __init__(self, **kwargs):
         self.kwargs = kwargs
         self.testRunInstance = kwargs.get(GC.KWARGS_TESTRUNINSTANCE)
@@ -38,6 +26,7 @@ class TestStepMaster:
                                                          sequence=kwargs.get(GC.STRUCTURE_TESTCASESEQUENCE))
         lTestCase = self.testRunUtil.getTestCaseByNumber(lSequence, kwargs.get(GC.STRUCTURE_TESTCASE))
         lTestStep = self.testRunUtil.getTestStepByNumber(lTestCase, kwargs.get(GC.STRUCTURE_TESTSTEP))
+        self.globalRelease = self.testRunInstance.globalSettings.get("Release", "")
         self.ifActive = False
         self.ifIsTrue = True
 
@@ -68,6 +57,9 @@ class TestStepMaster:
             lValue = command["Value"]
             lValue2 = command["Value2"]
             lComparison = command["Comparison"]
+            lTimeout = command["Timeout"]
+            # check release line
+            lRelease = command["Release"]
 
             lTimeout = self.__setTimeout(command["Timeout"])
 
@@ -76,6 +68,10 @@ class TestStepMaster:
                 lValue = self.replaceVariables(lValue)
             if len(lValue2) > 0:
                 lValue2 = self.replaceVariables(lValue2)
+
+            if not TestStepMaster.ifQualifyForExecution(self.globalRelease, lRelease):
+                logger.debug(f"we skipped this line due to {lRelease} disqualifies according to {self.globalRelease} ")
+                continue  # We ignored the steps as it doesn't qualify
 
             if lActivity == "GOTOURL":
                 self.browserSession.goToUrl(lValue)
@@ -111,6 +107,39 @@ class TestStepMaster:
                 self.doSaveData(lValue, lValue2)
             else:
                 raise BaseException(f"Unknown command in TestStep {lActivity}")
+
+    @staticmethod
+    def ifQualifyForExecution(version_global, version_line):
+        """ This function will test version_global and version_line
+            @return True or False
+        """
+        if not version_global.strip():
+            #No value is defined in Release, return True
+            return True
+        if not version_line.strip():
+            # we skipped this line
+            return True
+
+        #split the version line
+        if not len(version_line.strip().split(" ")) == 2:
+            logger.debug(f"Invalid release format {version_line} ")
+            return True
+        comp_operator, version = version_line.strip().split(" ")
+        if comp_operator == "<":
+            return parse_version(version_global) < parse_version(version)
+        elif comp_operator == ">":
+            return parse_version(version_global) > parse_version(version)
+        elif comp_operator == ">=":
+            return parse_version(version_global) >= parse_version(version)
+        elif comp_operator == "<=":
+            return parse_version(version_global) <= parse_version(version)
+        elif comp_operator == "=" or comp_operator == "==":
+            return parse_version(version_global) == parse_version(version)
+        else:
+            logger.debug(f"Global version {version_global}, line version {version_line} ")
+            return False
+
+
 
     def doSaveData(self, toField, valueForField):
         self.testcaseDataDict[toField] = valueForField
