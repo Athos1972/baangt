@@ -565,7 +565,7 @@ class BrowserDriver:
 
         return wasSuccessful
 
-    def findWaitNotVisible(self, xpath=None, id=None, timeout = 90, optional = False):
+    def findWaitNotVisible(self, css=None, xpath=None, id=None, timeout = 90, optional = False):
         """
         You'd use this method when you wait for an element to disappear, for instance Angular Spinner or a popup
         to disapear before you continue with your script in the main screen.
@@ -584,6 +584,8 @@ class BrowserDriver:
                     self.element = self.driver.find_element_by_xpath(xpath)
                 elif id:
                     self.element = self.driver.find_element_by_id(id)
+                elif css:
+                    self.element = self.driver.find_element_by_css_selector(css)
                 time.sleep(0.1)
                 elapsed = time.time() - begin
             except Exception as e:
