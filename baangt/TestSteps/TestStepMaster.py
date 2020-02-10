@@ -2,8 +2,9 @@ import baangt.base.GlobalConstants as GC
 from baangt.base.Timing import Timing
 from baangt.base.BrowserHandling import BrowserDriver
 import sys
-
-
+from pkg_resources import parse_version
+import logging
+logger = logging.getLogger("pyC")
 class TestStepMaster:
     def __init__(self, **kwargs):
         self.kwargs = kwargs
@@ -21,6 +22,7 @@ class TestStepMaster:
                                                          sequence=kwargs.get(GC.STRUCTURE_TESTCASESEQUENCE))
         lTestCase = self.testRunUtil.getTestCaseByNumber(lSequence, kwargs.get(GC.STRUCTURE_TESTCASE))
         lTestStep = self.testRunUtil.getTestStepByNumber(lTestCase, kwargs.get(GC.STRUCTURE_TESTSTEP))
+        self.global_release = kwargs.get("globalSettings").get("Release","")
         self.ifActive = False
         self.ifIsTrue = True
 
@@ -48,6 +50,8 @@ class TestStepMaster:
             lValue2 = command["Value2"]
             lComparison = command["Comparison"]
             lTimeout = command["Timeout"]
+            #check release line
+            lrelease = command["Release"]
             if lTimeout:
                 lTimeout = float(lTimeout)
             else:
@@ -63,6 +67,11 @@ class TestStepMaster:
                 lValue = self.replaceVariables(lValue)
             if len(lValue2) > 0:
                 lValue2 = self.replaceVariables(lValue2)
+
+            if not self.ifQualifyForExecution(self.global_release, lrelease):
+                logger.debug(f"we skipped this line due to {lrelease} disqualifies according to {self.global_release} ")
+                continue  # We ignored the steps as it doesn't qualify
+
 
             if lActivity == "COMMENT":
                 continue     # Comment's are ignored
@@ -89,6 +98,38 @@ class TestStepMaster:
                 self.browserSession.goBack()
             else:
                 raise BaseException(f"Unknown command in TestStep {lActivity}")
+
+    def ifQualifyForExecution(self, version_global, version_line):
+        """ This function will test version_global and version_line
+            @return True or False
+        """
+        if not version_global.strip():
+            #No value is defined in Release, return True
+            return True
+        if not version_line.strip():
+            # we skipped this line
+            return True
+
+        #split the version line
+        if not len(version_line.strip().split(" ")) == 2:
+            logger.debug(f"Invalid release format {version_line} ")
+            return True
+        comp_operator, version = version_line.strip().split(" ")
+        if comp_operator == "<":
+            return parse_version(version_global) < parse_version(version)
+        elif comp_operator == ">":
+            return parse_version(version_global) > parse_version(version)
+        elif comp_operator == ">=":
+            return parse_version(version_global) >= parse_version(version)
+        elif comp_operator == "<=":
+            return parse_version(version_global) <= parse_version(version)
+        elif comp_operator == "=" or comp_operator == "==":
+            return parse_version(version_global) == parse_version(version)
+        else:
+            logger.debug(f"Global version {version_global}, line version {version_line} ")
+            return False
+
+        
 
     def __doComparisons(self, lComparison, value1, value2):
         if lComparison == "=":

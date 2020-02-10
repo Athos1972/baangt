@@ -173,6 +173,8 @@ class TestRun:
                     return
             logger.info(f"Starting {counterName}: {key}, {value} ")
             kwargs[counterName] = key
+            # add global_release in kwargs
+            kwargs["globalSettings"] = self.globalSettings
             if isinstance(value, list):
                 lFullQualified = value[0]  # First List-Entry must hold the ClassName
             else:
