@@ -6,6 +6,8 @@ Change log
 * Pypi-Version 2020.02.* deployed
 * First version of baangtDB with Flask
 * Support of Edge on Microsoft Platform and Safari on Mac
+* Completed support for Versions in SimpleFormat and SimpleAPIFormat (can also be used for ``baangtDB``, subclassed methods and complex Excel TestRun Defintions)
+* Improved support for API-Calls and data extraction from API response to result sheet
 
 2020.01
 ^^^^^^^
