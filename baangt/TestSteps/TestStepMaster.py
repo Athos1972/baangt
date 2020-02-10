@@ -5,6 +5,22 @@ import sys
 
 
 class TestStepMaster:
+
+    browserCommands = [
+        "GOTOURL",
+        "CLICK",
+        "CLICKIF",
+        "HANDLEIFRAME",
+        "GOBACK"
+    ]
+
+    apiCommands = [
+        "APIURL",
+        "ENDPOINT",
+        "GET",
+        "POST"
+    ]
+
     def __init__(self, **kwargs):
         self.kwargs = kwargs
         self.testRunInstance = kwargs.get(GC.KWARGS_TESTRUNINSTANCE)
@@ -42,16 +58,17 @@ class TestStepMaster:
             css = None
             id = None
             lActivity = command["Activity"].upper()
+            if lActivity == "COMMENT":
+                continue     # Comment's are ignored
+
             lLocatorType = command["LocatorType"].upper()
             lLocator = command["Locator"]
             lValue = command["Value"]
             lValue2 = command["Value2"]
             lComparison = command["Comparison"]
-            lTimeout = command["Timeout"]
-            if lTimeout:
-                lTimeout = float(lTimeout)
-            else:
-                lTimeout=20
+
+            lTimeout = self.__setTimeout(command["Timeout"])
+
             if lLocatorType:
                 if lLocatorType == 'XPATH':
                     xpath = lLocator
@@ -59,13 +76,12 @@ class TestStepMaster:
                     css = lLocator
                 elif lLocatorType == 'ID':
                     id = lLocator
+
+            # Replace variables from data file
             if len(lValue) > 0:
                 lValue = self.replaceVariables(lValue)
             if len(lValue2) > 0:
                 lValue2 = self.replaceVariables(lValue2)
-
-            if lActivity == "COMMENT":
-                continue     # Comment's are ignored
 
             if lActivity == "GOTOURL":
                 self.browserSession.goToUrl(lValue)
@@ -89,6 +105,14 @@ class TestStepMaster:
                 self.browserSession.goBack()
             else:
                 raise BaseException(f"Unknown command in TestStep {lActivity}")
+
+
+    def __setTimeout(self, lTimeout):
+        if lTimeout:
+            lTimeout = float(lTimeout)
+        else:
+            lTimeout = 20
+        return lTimeout
 
     def __doComparisons(self, lComparison, value1, value2):
         if lComparison == "=":
@@ -127,6 +151,14 @@ class TestStepMaster:
         self.timing.takeTime(self.timingName) # Why does this not work?
 
     def replaceVariables(self, expression):
+        """
+        The syntax for variables is currently $(<column_name_from_data_file>). Multiple variables can be assigned
+        in one cell, for instance perfectly fine: "http://$(BASEURL)/$(ENDPOINT)"
+
+        @param expression: the current cell, either as fixed value, e.g. "Franzi" or with a varible $(DATE)
+        @return: the replaced value, e.g. if expression was $(DATE) and the value in column "DATE" of data-file was
+            "01.01.2020" then return will be "01.01.2020"
+        """
         if not "$(" in expression:
             return expression
 
@@ -148,9 +180,3 @@ class TestStepMaster:
 
             expression = "".join([left_part, center, right_part])
         return expression
-
-
-if __name__ == '__main__':
-    l_test = TestStepMaster()
-    l_test.testcaseDataDict = {"MANDANT": "DON", "base_url": "portal-fqa", "VN": "12345"}
-    print(l_test.replaceVariables("https://$(MANDANT)-$(base_url).corpnet.at/vigong-produktauswahl/produktauswahl/$(VN)"))
