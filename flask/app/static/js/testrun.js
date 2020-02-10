@@ -64,25 +64,43 @@
         };
     }
 
-    // add chip
-    function add_chip(e) {
-        var chip_area = document.getElementById('testcaseSequences');
+    // select multiple with chips
+    function add_chip(e, name) {
+        var chip_area = document.getElementById(`chips_${name}`);
         var new_chip = document.createElement('div');
         new_chip.setAttribute('class', 'chip mr-1');
         new_chip.setAttribute('data-id', e.options[e.selectedIndex].value);
-        new_chip.innerHTML = `<small>${e.options[e.selectedIndex].text}</small><span class="closebtn" onclick="delete_chip(this.parentElement)">&times;</span>`;
+        new_chip.innerHTML = `
+            <small>${e.options[e.selectedIndex].text}</small>
+            <span class="closebtn" onclick="delete_chip(this.parentElement, '${name}')">&times;</span>
+            `;
         e.options[e.selectedIndex].disabled = true;
         e.selectedIndex = 0;
         chip_area.appendChild(new_chip);
     }
 
-    function delete_chip(e) {
-        var selector = document.getElementById('testcase_sequences_2');
+    function delete_chip(e, name) {
+        var selector = document.getElementById(name);
         for (var i = 1; i < selector.length; i++) {
             if (selector.options[i].value == e.dataset['id']) {
                 selector.options[i].disabled = false;
             }
         }
-        e.style.display='none';
-
+        e.parentElement.removeChild(e);
     }
+
+    function save_item() {
+        document.querySelectorAll('.multyselect').forEach(selector => {
+            selector.setAttribute('multiple','');
+            selector.options[0].selected = false;
+            for (var i = 1; i < selector.length; i++) {
+                if (selector.options[i].disabled) {
+                    selector.options[i].disabled = false;
+                    selector.options[i].selected = true;
+                }
+            }
+            console.log("Ok!");
+        });
+        return true;
+    }
+// type: "select-multiple"

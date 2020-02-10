@@ -138,7 +138,7 @@ def edit_item(item_type, item_id):
 			form.activity_type.data = f'{item.activity_type.id}'
 			form.locator_type.data = f'{item.locator_type.id}'
 	else:
-		flash('ERROR: Wrong Item Type')
+		flash('ERROR: Wrong Item Type', 'warning')
 		return None
 
 	if request.method == 'GET':
@@ -185,7 +185,7 @@ def edit_item(item_type, item_id):
 
 		# update item in db
 		db.session.commit()
-		flash(f"Item '{item.name}' successfully updated.")
+		flash(f'Item "{item.name}" successfully updated.', 'success')
 		return redirect(url_for('index'))
 
 
@@ -212,7 +212,7 @@ def new_item(item_type):
 	elif item_type == 'teststep':
 		form = forms.TestStepCreateForm.new()
 	else:
-		flash('ERROR: Wrong Item Type')
+		flash('ERROR: Wrong Item Type', 'warning')
 		return None
 
 	if form.validate_on_submit():
@@ -268,7 +268,7 @@ def new_item(item_type):
 		# save item to db
 		db.session.add(item)
 		db.session.commit()
-		flash(f"Item '{item.name}' successfully created.")
+		flash(f'Item "{item.name}" successfully created.', 'success')
 		return redirect(url_for('index'))
 
 	return render_template('testrun/create_item.html', type=item_type, form=form)

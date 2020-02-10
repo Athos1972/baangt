@@ -50,6 +50,10 @@ class SingupForm(FlaskForm):
 # testrun items forms
 #
 
+class SelectMultipleFieldNoValidation(SelectMultipleField):
+	def pre_validate(self, form):
+		pass
+
 class TestrunCreateForm(FlaskForm):
 	name = StringField('Name', validators=[DataRequired()])
 	description = StringField('Description', validators=[DataRequired()], widget=TextArea())
@@ -103,7 +107,7 @@ class TestStepSequenceCreateForm(FlaskForm):
 	name = StringField('Name', validators=[DataRequired()])
 	description = StringField('Description', validators=[DataRequired()], widget=TextArea())
 	classname = SelectField('Class Name')
-	teststeps = SelectMultipleField('Test Steps')
+	teststeps = SelectMultipleFieldNoValidation('Test Steps')
 
 	@classmethod
 	def new(cls):

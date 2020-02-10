@@ -4,6 +4,66 @@
 		"selected_items":
 		[
 			[
+				"table",
+				"table_name"
+			],
+			[
+				"tabl",
+				"table_name"
+			],
+			[
+				"dataset",
+				"dataset_name"
+			],
+			[
+				"pa",
+				"path"
+			],
+			[
+				"pat",
+				"path_to_file"
+			],
+			[
+				"get",
+				"getGroupList"
+			],
+			[
+				"u",
+				"update_access"
+			],
+			[
+				"update",
+				"update_access"
+			],
+			[
+				"refresh",
+				"refresh_token"
+			],
+			[
+				"user",
+				"user_id"
+			],
+			[
+				"data",
+				"dataset"
+			],
+			[
+				"group",
+				"group_id"
+			],
+			[
+				"grou",
+				"group_id"
+			],
+			[
+				"co",
+				"connection"
+			],
+			[
+				"work",
+				"worksapce"
+			],
+			[
 				"ite",
 				"item_id"
 			],
@@ -26,10 +86,6 @@
 			[
 				"input",
 				"input-group"
-			],
-			[
-				"user",
-				"user_id"
 			],
 			[
 				"su",
@@ -66,10 +122,6 @@
 			[
 				"re",
 				"responseText"
-			],
-			[
-				"data",
-				"datafiles"
 			],
 			[
 				"Data",
@@ -170,14 +222,6 @@
 			[
 				"puzz",
 				"puzzleGen"
-			],
-			[
-				"get",
-				"get_path_to_file"
-			],
-			[
-				"pat",
-				"path_to_dir"
 			],
 			[
 				"phi",
@@ -348,10 +392,6 @@
 				"sql_col"
 			],
 			[
-				"table",
-				"table_list"
-			],
-			[
 				"gr",
 				"group_name"
 			],
@@ -366,10 +406,6 @@
 			[
 				"gro",
 				"groups"
-			],
-			[
-				"group",
-				"group_name"
 			],
 			[
 				"mar",
@@ -478,138 +514,104 @@
 			[
 				"ne",
 				"newspost"
-			],
-			[
-				"def",
-				"default"
-			],
-			[
-				"R",
-				"R404A"
-			],
-			[
-				"ENC",
-				"ENCODED_FILE"
-			],
-			[
-				"bit",
-				"bitSequence"
-			],
-			[
-				"fre",
-				"frequency"
-			],
-			[
-				"DE",
-				"DECODED_OUTPUT"
-			],
-			[
-				"dec",
-				"decode"
-			],
-			[
-				"fr",
-				"frequency"
-			],
-			[
-				"enc",
-				"encoded"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "app/views.py",
+			"file": "/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/app/routes.py",
 			"settings":
 			{
-				"buffer_size": 10772,
+				"buffer_size": 3531,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "app/models.py",
+			"file": "/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/app/templates/response.html",
 			"settings":
 			{
-				"buffer_size": 11734,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "app/forms.py",
-			"settings":
-			{
-				"buffer_size": 4267,
+				"buffer_size": 862,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "app/filters.py",
+			"file": "/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/app/api.py",
 			"settings":
 			{
-				"buffer_size": 601,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "app/templates/base.html",
-			"settings":
-			{
-				"buffer_size": 2379,
+				"buffer_size": 4823,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "app/templates/testrun/item_list.html",
+			"file": "/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/app/pbi.py",
 			"settings":
 			{
-				"buffer_size": 7866,
+				"buffer_size": 5825,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "app/templates/testrun/edit_item.html",
+			"file": "/home/aguryev/freelancer/power_bi/myanalystpython/salesandInvoices2.txt",
 			"settings":
 			{
-				"buffer_size": 3112,
+				"buffer_size": 12638,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/app/templates/import.html",
+			"settings":
+			{
+				"buffer_size": 893,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "app/static/js/testrun.js",
+			"file": "/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/app/templates/base.html",
 			"settings":
 			{
-				"buffer_size": 3082,
+				"buffer_size": 2840,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "/home/aguryev/freelancer/power_bi/roboanalyst/app/routes.py",
+			"file": "/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/app/forms.py",
 			"settings":
 			{
-				"buffer_size": 2045,
+				"buffer_size": 683,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "app/templates/testrun/item.html",
+			"file": "/home/aguryev/freelancer/power_bi/powerbi_api-master/import_pbix.py",
 			"settings":
 			{
-				"buffer_size": 4199,
+				"buffer_size": 2277,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "app/static/css/styles.css",
+			"file": "/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/config.py",
 			"settings":
 			{
-				"buffer_size": 328,
+				"buffer_size": 772,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/app/__init__.py",
+			"settings":
+			{
+				"buffer_size": 190,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -687,26 +689,43 @@
 	},
 	"file_history":
 	[
+		"/home/aguryev/freelancer/power_bi/myanalystpython/salesandInvoices2.txt",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/customers2.txt",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/.gitignore",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/config.pyc",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/requirementes.txt",
+		"/home/aguryev/freelancer/power_bi/roboanalyst/app/routes.py",
+		"/home/aguryev/freelancer/power_bi/task_2",
+		"/home/aguryev/freelancer/power_bi/roboanalyst/app/pbi.py",
+		"/home/aguryev/freelancer/power_bi/roboanalyst/app/templates/group_list.html",
+		"/home/aguryev/freelancer/power_bi/roboanalyst/app/templates/base.html",
+		"/home/aguryev/freelancer/power_bi/roboanalyst/app/__init__.py",
+		"/home/aguryev/freelancer/power_bi/roboanalyst/app/templates/create_group.html",
+		"/home/aguryev/freelancer/power_bi/roboanalyst/app/utils.py",
+		"/home/aguryev/freelancer/power_bi/roboanalyst/app/templates/group.html",
+		"/home/aguryev/freelancer/power_bi/task 1/powerbi_api-master/import_pbix.py",
+		"/home/aguryev/freelancer/power_bi/roboanalyst/app/templates/index.html",
+		"/home/aguryev/freelancer/baangt/baangt/base/TestRunDatabaseCreate.py",
+		"/home/aguryev/freelancer/baangt/flask/app/static/css/styles.css",
+		"/home/aguryev/freelancer/baangt/flask/app/templates/testrun/item.html",
+		"/home/aguryev/freelancer/baangt/flask/app/static/js/testrun.js",
+		"/home/aguryev/freelancer/baangt/flask/app/templates/testrun/edit_item.html",
+		"/home/aguryev/freelancer/baangt/flask/app/templates/testrun/item_list.html",
+		"/home/aguryev/freelancer/baangt/flask/app/templates/base.html",
+		"/home/aguryev/freelancer/baangt/flask/app/filters.py",
+		"/home/aguryev/freelancer/baangt/flask/app/forms.py",
+		"/home/aguryev/freelancer/baangt/flask/app/models.py",
+		"/home/aguryev/freelancer/baangt/flask/app/views.py",
 		"/home/aguryev/freelancer/baangt/flask/app/templates/testrun/index_old.html",
 		"/home/aguryev/freelancer/baangt/flask/app/models.pyc",
 		"/home/aguryev/freelancer/power_bi/task 1/powerbi_api-master/check_status.py",
-		"/home/aguryev/freelancer/power_bi/task 1/powerbi_api-master/import_pbix.py",
 		"/home/aguryev/freelancer/power_bi/task 1/powerbi_api-master/zeminpowerbi/client.py",
 		"/home/aguryev/freelancer/power_bi/task 1/powerbi_api-master/zeminpowerbi/group.py",
 		"/home/aguryev/freelancer/power_bi/task 1/powerbi_api-master/zeminpowerbi/groups.py",
 		"/home/aguryev/freelancer/power_bi/roboanalyst/app/forms.py",
-		"/home/aguryev/freelancer/power_bi/roboanalyst/app/templates/create_group.html",
-		"/home/aguryev/freelancer/power_bi/roboanalyst/app/templates/base.html",
 		"/home/aguryev/freelancer/power_bi/roboanalyst/config.py",
-		"/home/aguryev/freelancer/power_bi/roboanalyst/app/utils.py",
-		"/home/aguryev/freelancer/power_bi/roboanalyst/app/templates/group.html",
-		"/home/aguryev/freelancer/power_bi/task_2",
-		"/home/aguryev/freelancer/power_bi/roboanalyst/app/__init__.py",
-		"/home/aguryev/freelancer/power_bi/roboanalyst/app/routes.py",
 		"/home/aguryev/freelancer/baangt/flask/app/templates/testrun/index.html",
-		"/home/aguryev/freelancer/power_bi/roboanalyst/app/templates/index.html",
 		"/home/aguryev/freelancer/baangt/flask/app/templates/testrun/create_item.html",
-		"/home/aguryev/freelancer/baangt/flask/app/templates/testrun/item.html",
 		"/home/aguryev/freelancer/power_bi/roboanalyst/app.py",
 		"/home/aguryev/freelancer/power_bi/analyticsasaservice/app.py",
 		"/home/aguryev/freelancer/baangt/flask/application.py",
@@ -718,14 +737,8 @@
 		"/home/aguryev/freelancer/power_bi/task",
 		"/home/aguryev/freelancer/power_bi/analyticsasaservice/app_config.py",
 		"/home/aguryev/freelancer/baangt/flask/app/__init__.py",
-		"/home/aguryev/freelancer/baangt/flask/app/filters.py",
 		"/home/aguryev/freelancer/baangt/flask/app/utils.py",
-		"/home/aguryev/freelancer/baangt/flask/app/views.py",
-		"/home/aguryev/freelancer/baangt/flask/app/models.py",
 		"/home/aguryev/freelancer/baangt/flask/app/static/testrun.js",
-		"/home/aguryev/freelancer/baangt/flask/app/templates/testrun/edit_item.html",
-		"/home/aguryev/freelancer/baangt/flask/app/templates/testrun/item_list.html",
-		"/home/aguryev/freelancer/baangt/flask/app/templates/base.html",
 		"/home/aguryev/freelancer/power_bi/powerbi_api-master/demo.py",
 		"/home/aguryev/freelancer/power_bi/powerbi_api-master/zeminpowerbi/dataset.py",
 		"/home/aguryev/freelancer/power_bi/powerbi_api-master/zeminpowerbi/datasets.py",
@@ -755,7 +768,6 @@
 		"/home/aguryev/freelancer/power_bi/powerbi_api-master/zeminpowerbi/client.py",
 		"/home/aguryev/freelancer/power_bi/powerbi_api-master/zeminpowerbi/__init__.py",
 		"/home/aguryev/freelancer/power_bi/powerbi_api-master/requirements.txt",
-		"/home/aguryev/freelancer/baangt/flask/app/forms.py",
 		"/home/aguryev/freelancer/baangt/flask/populate_db.py",
 		"/home/aguryev/freelancer/baangt/flask/app/templates/testrun/login.html",
 		"/home/aguryev/gf_archive/gf_248151_20200121/readme.md",
@@ -766,7 +778,6 @@
 		"/home/aguryev/freelancer/baangt/flask/.dockerignore",
 		"/home/aguryev/freelancer/baangt/flask/requirements.txt",
 		"/home/aguryev/Downloads/README",
-		"/home/aguryev/freelancer/baangt/baangt/base/TestRunDatabaseCreate.py",
 		"/home/aguryev/freelancer/baangt/baangt.py",
 		"/home/aguryev/freelancer/baangt/TechSpecs/60 InProgress/CONCEPT_DB_UI.md",
 		"/home/aguryev/freelancer/baangt/globals.json",
@@ -805,16 +816,7 @@
 		"/home/aguryev/gf_archive/gf_248151_20200121/solution/test.cpp",
 		"/home/aguryev/gf_archive/gf_248151_20200121/solution/sle.h",
 		"/home/aguryev/gf_archive/gf_248151_20200121/solution/sle.cpp",
-		"/home/aguryev/gf_archive/gf_248151_20200121/solution/qe.h",
-		"/home/aguryev/gf_archive/gf_248151_20200121/solution/qe.cpp",
-		"/home/aguryev/gf_archive/gf_248151_20200121/solution/asr.cpp",
-		"/home/aguryev/gf_archive/gf_248151_20200121/solution/asr.h",
-		"/home/aguryev/freelancer/img_circle_recognition/solution/output.txt",
-		"/home/aguryev/gf_archive/gf_248060_20200127/solution/readme.md",
-		"/home/aguryev/freelancer/img_circle_recognition/solution/circle.py",
-		"/home/aguryev/freelancer/baangt/flask/static/testrun.js",
-		"/home/aguryev/gf_archive/gf_248060_20200127/preprocess_sephora.py",
-		"/home/aguryev/gf_archive/gf_248060_20200127/box_jenkins.py"
+		"/home/aguryev/gf_archive/gf_248151_20200121/solution/qe.h"
 	],
 	"find":
 	{
@@ -832,6 +834,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"PBI_client(3)",
 			"list-group-item-primary",
 			"post",
 			"imports",
@@ -958,8 +961,7 @@
 			"get_var",
 			"strncpy",
 			"get_command",
-			"parse_input",
-			"is_var"
+			"parse_input"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -967,6 +969,7 @@
 		"regex": false,
 		"replace_history":
 		[
+			"PBI_client(USER_ID)",
 			"list-group-item-dark",
 			"choices=utils.",
 			"description = db.Column(db.String(512)",
@@ -993,24 +996,24 @@
 	"groups":
 	[
 		{
-			"selected": 8,
+			"selected": 2,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "app/views.py",
+					"file": "/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/app/routes.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 10772,
+						"buffer_size": 3531,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								470,
-								470
+								3253,
+								3253
 							]
 						],
 						"settings":
@@ -1019,285 +1022,19 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2907.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "app/models.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 11734,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3842,
-								3842
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 912.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 9,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "app/forms.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4267,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1834,
-								1834
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 639.0,
+						"translation.y": 1710.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 5,
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "app/filters.py",
+					"buffer": 1,
+					"file": "/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/app/templates/response.html",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 601,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								416,
-								416
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 10,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "app/templates/base.html",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2379,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								545,
-								545
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "app/templates/testrun/item_list.html",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 7866,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								7849,
-								7849
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 2038.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "app/templates/testrun/edit_item.html",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3112,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2706,
-								2706
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 583.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "app/static/js/testrun.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3082,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2599,
-								2599
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 154.0,
-						"translation.y": 855.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "/home/aguryev/freelancer/power_bi/roboanalyst/app/routes.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2045,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								961,
-								961
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 399.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "app/templates/testrun/item.html",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4199,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3921,
-								3921
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 627.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 8,
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "app/static/css/styles.css",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 328,
+						"buffer_size": 862,
 						"regions":
 						{
 						},
@@ -1310,13 +1047,277 @@
 						],
 						"settings":
 						{
-							"syntax": "Packages/CSS/CSS.sublime-syntax"
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 57.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/app/api.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4823,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3999,
+								3999
+							]
+						],
+						"settings":
+						{
+							"spell_check": false,
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 2736.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/app/pbi.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5825,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4806,
+								4806
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 3306.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "/home/aguryev/freelancer/power_bi/myanalystpython/salesandInvoices2.txt",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 12638,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4464,
+								4464
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/app/templates/import.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 893,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								282,
+								282
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/app/templates/base.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2840,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1499,
+								1499
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/app/forms.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 683,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								569,
+								569
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "/home/aguryev/freelancer/power_bi/powerbi_api-master/import_pbix.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2277,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2277,
+								2277
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 684.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/config.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 772,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								119,
+								119
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/app/__init__.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 190,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								25,
+								25
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 10,
 					"type": "text"
 				}
 			]
