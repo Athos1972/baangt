@@ -23,6 +23,7 @@ and well documented master functionality.
       Structure <Structure.rst>
       Parameters <ParametersConfigFile.rst>
       Data file <DataFile.rst>
+      First API Test <SimpleAPI.rst>
       Types of Tests <TestTypes.rst>
       For Developers <Developer.rst>
       History <HistoryAndReasons.rst>
