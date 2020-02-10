@@ -184,13 +184,16 @@ class UI:
             sg.popup_cancel("No Testrun File selected - can't run")
             return
         runCmd = self._getRunCommand()
-        logger.info(f"Running command: {runCmd}")
-        p = subprocess.run(runCmd, shell=True, close_fds=True)
+        if self.configContents.get("TX.DEBUG"):
+            from baangt.base.TestRun import TestRun
 
-        # from baangt.base.TestRun import TestRun
+            lTestRun = TestRun(f"{Path(self.directory).joinpath(self.testRunFile)}",
+                               globalSettingsFileNameAndPath=f'{Path(self.directory).joinpath(self.tempConfigFile)}')
 
-        # lTestRun = TestRun(f"{Path(self.directory).joinpath(self.testRunFile)}",
-        #                   globalSettingsFileNameAndPath=f'{Path(self.directory).joinpath(self.tempConfigFile)}')
+        else:
+            logger.info(f"Running command: {runCmd}")
+            p = subprocess.run(runCmd, shell=True, close_fds=True)
+
 
         sg.popup_ok("Testrun finished")
         # Remove temporary Configfile, that was created only for this run:

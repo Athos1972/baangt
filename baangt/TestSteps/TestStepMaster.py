@@ -1,6 +1,7 @@
 import baangt.base.GlobalConstants as GC
 from baangt.base.Timing import Timing
 from baangt.base.BrowserHandling import BrowserDriver
+from baangt.base.ApiHandling import ApiHandling
 import sys
 
 
@@ -27,8 +28,8 @@ class TestStepMaster:
         self.testcaseDataDict = kwargs.get(GC.KWARGS_DATA)
         self.timing: Timing = kwargs.get(GC.KWARGS_TIMING)
         self.timingName = self.timing.takeTime(self.__class__.__name__, forceNew=True)
-        self.browserSession : BrowserDriver = kwargs.get(GC.KWARGS_BROWSER)
-        self.apiSession = kwargs.get(GC.KWARGS_API_SESSION)
+        self.browserSession: BrowserDriver = kwargs.get(GC.KWARGS_BROWSER)
+        self.apiSession: ApiHandling = kwargs.get(GC.KWARGS_API_SESSION)
         self.testCaseStatus = None
         self.testStepNumber = kwargs.get(GC.STRUCTURE_TESTSTEP) # Set in TestRun by TestCaseMaster
         self.testRunUtil = self.testRunInstance.testRunUtils
@@ -51,31 +52,24 @@ class TestStepMaster:
         This will execute single Operations directly
         """
         for key, command in executionCommands.items():
+            # when we have an IF-condition and it's condition was not TRUE, then skip whatever comes here until we
+            # reach Endif
             if not self.ifIsTrue and command["Activity"] != "ENDIF":
                 continue
 
-            xpath = None
-            css = None
-            id = None
             lActivity = command["Activity"].upper()
             if lActivity == "COMMENT":
                 continue     # Comment's are ignored
 
             lLocatorType = command["LocatorType"].upper()
             lLocator = command["Locator"]
+            xpath, css, id = self.__setLocator(lLocatorType, lLocator)
+
             lValue = command["Value"]
             lValue2 = command["Value2"]
             lComparison = command["Comparison"]
 
             lTimeout = self.__setTimeout(command["Timeout"])
-
-            if lLocatorType:
-                if lLocatorType == 'XPATH':
-                    xpath = lLocator
-                elif lLocatorType == 'CSS':
-                    css = lLocator
-                elif lLocatorType == 'ID':
-                    id = lLocator
 
             # Replace variables from data file
             if len(lValue) > 0:
@@ -103,9 +97,45 @@ class TestStepMaster:
                 self.ifIsTrue = True
             elif lActivity == 'GOBACK':
                 self.browserSession.goBack()
+            elif lActivity == 'APIURL':
+                self.apiSession.setBaseURL(lValue)
+            elif lActivity == 'ENDPOINT':
+                self.apiSession.setEndPoint(lValue)
+            elif lActivity == 'POST':
+                self.apiSession.postURL(content=lValue)
+            elif lActivity == 'GET':
+                self.apiSession.getURL()
+            elif lActivity == 'HEADER':
+                self.apiSession.setHeaders(setHeaderData=lValue)
+            elif lActivity == 'SAVE':
+                self.doSaveData(lValue, lValue2)
             else:
                 raise BaseException(f"Unknown command in TestStep {lActivity}")
 
+    def doSaveData(self, toField, valueForField):
+        self.testcaseDataDict[toField] = valueForField
+
+    @staticmethod
+    def __setLocator(lLocatorType, lLocator):
+        """
+
+        @param lLocatorType: XPATH, CSS, ID, etc.
+        @param lLocator: Value of the locator
+        @return:
+        """
+        xpath = None
+        css = None
+        id = None
+
+        if lLocatorType:
+            if lLocatorType == 'XPATH':
+                xpath = lLocator
+            elif lLocatorType == 'CSS':
+                css = lLocator
+            elif lLocatorType == 'ID':
+                id = lLocator
+
+        return xpath, css, id
 
     def __setTimeout(self, lTimeout):
         if lTimeout:
@@ -173,8 +203,19 @@ class TestStepMaster:
 
             right_part = expression[len(left_part)+len(center)+3:]
 
-            # Replace the variable with the value from data structure
-            center = self.testcaseDataDict.get(center)
+            if not "." in center:
+                # Replace the variable with the value from data structure
+                center = self.testcaseDataDict.get(center)
+            else:
+                # This is a reference to a DICT with ".": for instance APIHandling.AnswerContent("<bla>")
+                dictVariable = center.split(".")[0]
+                dictValue = center.split(".")[1]
+
+                if dictVariable == 'ANSWER_CONTENT':
+                    center = self.apiSession.session[1].answerJSON.get(dictValue,"Empty")
+                else:
+                    raise BaseException(f"Missing code to replace value for: {center}")
+
             if not center:
                 raise BaseException(f"Variable not found: {center}")
 

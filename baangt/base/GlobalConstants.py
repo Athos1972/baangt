@@ -16,7 +16,7 @@ CLASSES_TESTSTEPMASTER = 'TestStepMaster'
 TIMING_END = "end"
 TIMING_START = "start"
 TIMING_TESTRUN = "Complete Testrun"
-TIMING_DURATION = "Dauer"
+TIMING_DURATION = "Duration"
 TIMESTAMP = "timestamp"
 TIMELOG = "timelog"
 

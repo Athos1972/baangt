@@ -1,5 +1,6 @@
 from baangt.base import GlobalConstants as GC
 from baangt.base.Timing import Timing
+# from baangt.base.TestRun import TestRun  # Circular import
 from baangt.TestSteps.Exceptions import *
 
 class TestCaseMaster:
@@ -30,7 +31,13 @@ class TestCaseMaster:
                                                                browserAttributes=self.browserSettings)
                 self.kwargs[GC.KWARGS_BROWSER] = self.browser
         elif self.testCaseType == GC.KWARGS_API_SESSION:
+            # FIXME: For now we're using session_number always = 1. We need to be able to run e.g. 10 sessions with
+            # FIXME: Parallel API-Test.
             self.apiInstance = self.testRunInstance.getAPI()
+            self.kwargs[GC.KWARGS_API_SESSION] = self.apiInstance
+
+            # For API-Tests we assume status = Passed and actively set it to error if not.
+            self.kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS] = GC.TESTCASESTATUS_SUCCESS
         self.execute()
         self.tearDown()
 
@@ -46,6 +53,8 @@ class TestCaseMaster:
 
     def _finalizeTestCase(self):
         tcData = self.kwargs[GC.KWARGS_DATA]
+        tcData[GC.TIMING_DURATION] = self.timing.takeTime(self.timingName)   # Write the End-Record for this Testcase
+
         tcData[GC.TIMELOG] = self.timing.returnTime()
 
         self.timing.resetTime()
@@ -64,7 +73,6 @@ class TestCaseMaster:
             elif tcData[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_SUCCESS:
                 tcData[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
 
-
     def tearDown(self):
         if self.kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR:
             # Try taking a Screenshot
@@ -73,6 +81,4 @@ class TestCaseMaster:
                                                               self.browser.takeScreenshot()
 
         self._checkAndSetTestcaseStatusIfFailExpected()
-
-        self.timing.takeTime(self.timingName)
 
