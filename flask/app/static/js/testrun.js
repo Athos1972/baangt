@@ -1,4 +1,4 @@
-    document.addEventListener('DOMContentLoaded', () => {
+/*   document.addEventListener('DOMContentLoaded', () => {
         // set links
         document.querySelectorAll('.dropdown-item').forEach(link => {
             link.onclick = () => {
@@ -17,8 +17,8 @@
         });
 
     });
-
-    // get testrun item
+*/
+    // get item
     function load_item(item_type, item_id) {
         const request = new XMLHttpRequest();
         request.open('GET', `/${item_type}/${item_id}`);
@@ -29,7 +29,7 @@
         request.send();
     }
 
-    // create testrun item
+    // create new item
     function new_item(item_type) {
         const request = new XMLHttpRequest();
         request.open('GET', `/${item_type}/new`);
@@ -89,7 +89,7 @@
         e.parentElement.removeChild(e);
     }
 
-    function save_item() {
+    function get_chips() {
         document.querySelectorAll('.multyselect').forEach(selector => {
             selector.setAttribute('multiple','');
             selector.options[0].selected = false;

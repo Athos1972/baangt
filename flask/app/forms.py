@@ -1,23 +1,9 @@
 from flask_wtf import FlaskForm
-from wtforms.fields import StringField, PasswordField, SelectMultipleField, SelectField
+from wtforms.fields import StringField, PasswordField, SelectMultipleField, SelectField, FloatField
 from wtforms.widgets import TextArea, ListWidget, CheckboxInput
 from wtforms.validators import ValidationError, DataRequired, EqualTo
 from app.models import User
 from app import utils
-
-#
-# fields
-#
-
-class MultiCheckboxField(SelectMultipleField):
-    """
-    A multiple-select, except displays a list of checkboxes.
-
-    Iterating the field will produce subfields, allowing custom rendering of
-    the enclosed checkbox fields.
-    """
-    widget = ListWidget(prefix_label=False)
-    option_widget = CheckboxInput()
 
 
 #
@@ -50,14 +36,10 @@ class SingupForm(FlaskForm):
 # testrun items forms
 #
 
-class SelectMultipleFieldNoValidation(SelectMultipleField):
-	def pre_validate(self, form):
-		pass
-
 class TestrunCreateForm(FlaskForm):
 	name = StringField('Name', validators=[DataRequired()])
 	description = StringField('Description', validators=[DataRequired()], widget=TextArea())
-	testcase_sequences = SelectMultipleField('Test Case Sequences', option_widget=CheckboxInput(), widget=ListWidget(prefix_label=False))
+	testcase_sequences = SelectMultipleField('Test Case Sequences')
 
 	@classmethod
 	def new(cls):
@@ -107,7 +89,7 @@ class TestStepSequenceCreateForm(FlaskForm):
 	name = StringField('Name', validators=[DataRequired()])
 	description = StringField('Description', validators=[DataRequired()], widget=TextArea())
 	classname = SelectField('Class Name')
-	teststeps = SelectMultipleFieldNoValidation('Test Steps')
+	teststeps = SelectMultipleField('Test Steps')
 
 	@classmethod
 	def new(cls):
@@ -123,6 +105,14 @@ class TestStepCreateForm(FlaskForm):
 	description = StringField('Description', validators=[DataRequired()], widget=TextArea())
 	activity_type = SelectField('Activity Type')
 	locator_type = SelectField('Locator Type')
+	# model extension
+	locator = StringField('Locator')
+	optional = SelectField('Optional', choices=(('1', 'True'), ('2', 'False')))
+	timeout = FloatField('Timeout')
+	release = StringField('Release')
+	value = StringField('Value')
+	value2 = StringField('Value 2')
+	comparision = StringField('Comparision')
 
 	@classmethod
 	def new(cls):

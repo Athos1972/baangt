@@ -137,6 +137,18 @@ def edit_item(item_type, item_id):
 		if request.method == 'GET':
 			form.activity_type.data = f'{item.activity_type.id}'
 			form.locator_type.data = f'{item.locator_type.id}'
+			# model extension
+			form.locator.data = item.locator
+			if item.optional:
+				form.optional.data = '1'
+			else:
+				form.optional.data = '2'
+			form.timeout.data = item.timeout
+			form.release.data = item.release
+			form.value.data = item.value
+			form.value2.data = item.value2
+			form.comparision.data = item.comparision
+
 	else:
 		flash('ERROR: Wrong Item Type', 'warning')
 		return None
@@ -181,6 +193,14 @@ def edit_item(item_type, item_id):
 			item.edited = datetime.utcnow()
 			item.activity_type = models.ActivityType.query.get(int(form.activity_type.data))
 			item.locator_type = models.LocatorType.query.get(int(form.locator_type.data))
+			# model extension
+			item.locator=form.locator.data
+			item.optional=[None, True, False][int(form.optional.data)]
+			item.timeout=form.timeout.data
+			item.release=form.release.data
+			item.value=form.value.data
+			item.value2=form.value2.data
+			item.comparision=form.comparision.data
 			
 
 		# update item in db
@@ -203,14 +223,19 @@ def new_item(item_type):
 	#
 	if item_type == 'testrun':
 		form = forms.TestrunCreateForm.new()
+		chips = ['testcase_sequences']
 	elif item_type == 'testcase_sequence':
 		form = forms.TestCaseSequenceCreateForm.new()
+		chips = ['datafiles', 'testcases']
 	elif item_type == 'testcase':
 		form = forms.TestCaseCreateForm.new()
+		chips = ['testcase_stepsequences']
 	elif item_type == 'teststep_sequence':
 		form = forms.TestStepSequenceCreateForm.new()
+		chips = ['teststeps']
 	elif item_type == 'teststep':
 		form = forms.TestStepCreateForm.new()
+		chips = []
 	else:
 		flash('ERROR: Wrong Item Type', 'warning')
 		return None
@@ -257,12 +282,22 @@ def new_item(item_type):
 			)
 		# test step
 		elif item_type == 'teststep':
+			print('*********** Timeout')
+			print(type(form.timeout.data))
 			item = models.TestStepExecution(
 				name=form.name.data,
 				description=form.description.data,
 				creator=current_user,
 				activity_type=models.ActivityType.query.get(int(form.activity_type.data)),
 				locator_type=models.LocatorType.query.get(int(form.locator_type.data)),
+				# model extension
+				locator=form.locator.data,
+				optional=[None, True, False][int(form.optional.data)],
+				timeout=form.timeout.data,
+				release=form.release.data,
+				value=form.value.data,
+				value2=form.value2.data,
+				comparision=form.comparision.data,
 			)
 
 		# save item to db
@@ -271,7 +306,8 @@ def new_item(item_type):
 		flash(f'Item "{item.name}" successfully created.', 'success')
 		return redirect(url_for('index'))
 
-	return render_template('testrun/create_item.html', type=item_type, form=form)
+	return render_template('testrun/create_item.html', type=item_type, chips=chips, form=form)
+	#return render_template('testrun/edit_item.html', type=item_type, item=None, form=form)
 
 #
 # user authentication

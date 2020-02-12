@@ -1,3 +1,4 @@
+from datetime import datetime
 from . import app
 
 @app.template_filter('name_by_type')
@@ -30,3 +31,7 @@ def item_name(item_type, plural=True):
 		name += 's'
 
 	return name
+
+@app.template_filter('time')
+def format_time(time):
+	return time.strftime('%Y-%m-%d %H:%M')

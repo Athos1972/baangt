@@ -20,3 +20,7 @@
 .closebtn:hover {
   color: #000;
 }
+
+.fixed-label {
+  width: 11rem;
+}

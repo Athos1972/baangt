@@ -30,23 +30,37 @@
 
 <!-- item list -->
 <div class="container mt-5">
+
+    <!-- item title -->
+    <div class="row mb-3">
+        <div class="col-md-9">
+            <h2>{{ type|name_by_type }}</h2>
+        </div>
+        <!-- create button -->
+        <div class="col-md-3">
+            <a class="btn btn-primary" href="/{{ type }}/new" role="button">
+                <strong>&plus; </strong>new {{ type|name_by_type(False) }}
+            </a>
+        </div>
+    </div>
+
+    <!-- header -->
     <div class="row border-top border-bottom py-3">
-        <!-- header -->
-        <div class="col-3"><strong>Name</strong></div>
-        <div class="col-2"><strong>Created By</strong></div>
+        <div class="col-md-4"><strong>Name</strong></div>
+        <div class="col-md-3"><strong>Created By</strong></div>
         <div class="col"><strong>Created</strong></div>
     </div>
 
     <!-- item list -->
     {% for item in items %}
         <div class="row border-top py-3">
-            <div class="col-3">
+            <div class="col-md-4">
                 <a data-toggle="collapse" href="#item{{ item.id }}" aria-expanded="false">
                     {{ item.name }}
                 </a>
             </div>
-            <div class="col-2">{{ item.creator.username }}</div>
-            <div class="col">{{ item.created }}</div>
+            <div class="col-md-3">{{ item.creator.username }}</div>
+            <div class="col">{{ item.created|time }}</div>
 
             <div class="col-12 collapse mt-1" id="item{{ item.id }}">
                 <!-- edited data -->
@@ -143,33 +157,89 @@
 
                     <!-- Test Step fields -->
                     {% if type == 'teststep' %}
+                    <li class="list-group-item h5 list-group-item-dark">Parameters</li>
+                    <li class="list-group-item">
+                        <div class="row border-bottom py-2">
+                            <div class="col-md-3">
+                                <strong>Activity Type</strong>
+                            </div>
+                            <div class="col">
+                                {{ item.activity_type }}
+                            </div>
+                        </div>
 
-                    <li class="list-group-item h5 list-group-item-dark">Activity Type</li>
-                    <li class="list-group-item">{{ item.activity_type }}</li>
+                        <div class="row border-bottom py-2">
+                            <div class="col-md-3">
+                                <strong>Locator Type</strong>
+                            </div>
+                            <div class="col-md-9">
+                                {{ item.locator_type }}
+                            </div>
+                        </div>
 
-                    <li class="list-group-item h5 list-group-item-dark">Locator Type</li>
-                    <li class="list-group-item">{{ item.locator_type }}</li>
+                        <div class="row border-bottom py-2">
+                            <div class="col-md-3">
+                                <strong>Locator</strong>
+                            </div>
+                            <div class="col-md-9">
+                                {{ item.locator }}
+                            </div>
+                        </div>
 
-                    <li class="list-group-item h5 list-group-item-dark">Locator</li>
-                    <li class="list-group-item">{{ item.locator }}</li>
+                        <div class="row border-bottom py-2">
+                            <div class="col-md-3">
+                                <strong>Optional</strong>
+                            </div>
+                            <div class="col-md-9">
+                                {{ item.optional }}
+                            </div>
+                        </div>
 
-                    <li class="list-group-item h5 list-group-item-dark">Optional</li>
-                    <li class="list-group-item">{{ item.optional }}</li>
+                        <div class="row border-bottom py-2">
+                            <div class="col-md-3">
+                                <strong>Timeout</strong>
+                            </div>
+                            <div class="col-md-9">
+                                {{ item.timeout }}
+                            </div>
+                        </div>
 
-                    <li class="list-group-item h5 list-group-item-dark">Timeout</li>
-                    <li class="list-group-item">{{ item.timeout }}</li>
+                        <div class="row border-bottom py-2">
+                            <div class="col-md-3">
+                                <strong>Release</strong>
+                            </div>
+                            <div class="col-md-9">
+                                {{ item.release }}
+                            </div>
+                        </div>
 
-                    <li class="list-group-item h5 list-group-item-dark">Release</li>
-                    <li class="list-group-item">{{ item.release }}</li>
+                        <div class="row border-bottom py-2">
+                            <div class="col-md-3">
+                                <strong>Value</strong>
+                            </div>
+                            <div class="col-md-9">
+                                {{ item.value }}
+                            </div>
+                        </div>
 
-                    <li class="list-group-item h5 list-group-item-dark">Value</li>
-                    <li class="list-group-item">{{ item.value }}</li>
+                        <div class="row border-bottom py-2">
+                            <div class="col-md-3">
+                                <strong>Value 2</strong>
+                            </div>
+                            <div class="col-md-9">
+                                {{ item.value2 }}
+                            </div>
+                        </div>
 
-                    <li class="list-group-item h5 list-group-item-dark">Value 2</li>
-                    <li class="list-group-item">{{ item.value2 }}</li>
-
-                    <li class="list-group-item h5 list-group-item-dark">Comparision</li>
-                    <li class="list-group-item">{{ item.comparision }}</li>
+                        <div class="row border-bottom py-2">
+                            <div class="col-md-3">
+                                <strong>Comparision</strong>
+                            </div>
+                            <div class="col-md-9">
+                                {{ item.comparision }}
+                            </div>
+                        </div>
+                    </li>
 
                     {% endif %}
 
@@ -177,7 +247,7 @@
                 
                 <!-- buttons -->
                 <p>
-                    <button class="btn btn-primary px-5 my-3 mr-3" onclick="edit_item('{{ type }}', '{{ item.id }}')">Edit</button>
+                    <a class="btn btn-primary px-5 my-3 mr-3" href="/{{ type }}/{{ item.id }}/edit" role="button">Edit</a>
                     <button class="btn btn-danger px-5 my-3" onclick="delete_item('{{ type }}', '{{ item.name}}', '{{ item.id }}')">
                         Delete
                     </button>
