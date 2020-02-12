@@ -602,6 +602,8 @@ class BrowserDriver:
                 tar = tarfile.open(filename, "r:gz")
                 tar.extractall(path)
                 tar.close()
+
+
             else:
                 file = requests.get(url)
                 path_zip = path.joinpath(GC.GECKO_DRIVER.replace('exe', 'zip'))
@@ -637,4 +639,9 @@ class BrowserDriver:
             with zipfile.ZipFile(path_zip, 'r') as zip_ref:
                 zip_ref.extractall(path)
 
+                # permissions
+
+            if platform.system().lower() != GC.WIN_PLATFORM:
+                file_path = path.joinpath(GC.CHROME_DRIVER.replace('.exe', ''))
+                os.chmod(file_path, 0o777)
         os.remove(path_zip)
