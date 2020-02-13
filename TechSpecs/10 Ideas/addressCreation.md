@@ -33,7 +33,7 @@ When this activity is called, we shall call a singleton class "AddressGenerate" 
 Value-Field. This class is **not** in scope of the current specification. The method "returnAddress" provides a dict of 
 fields and values, which shall be stored in TestDataDict (with (optional) prefix taken from value2).
 
-After the fields were filled, they'll be used by the testcase to fill in fields of the UI or API.
+After the fields were filled, they'll be used by the testcase to fill values for the UI or API.
 
 ### Fields
 The following fields are part of the return value of method ``returnAddress``:
@@ -51,3 +51,12 @@ Values must be mapped into a ``Dict``.
 If a prefix was povided in field ``Value2``, the fieldnames shall be concatenated with this prefix, e.g. if 
 prefix = ``PremiumPayer_``, then the resulting fieldname for ``CountryCode`` in testDataDict would become 
 ``PremiumPayer_CountryCode``.
+
+## Scope / DOD
+* Implementation provided (in line with coding standards and PEP-8 conformity)
+* Functional test executed and passed (in this case it means to also create a new simpleXLS-Format for a site where
+address data can be entered)
+* Enhance existing documentation in docs-Folder in RST-Format
+    * in this case in simpleExample.rst and SimpleAPI.rst
+* Unit-Tests in tests-folder providing reasonable coverage of the provided functionality
+* git Commit to feature branch and PullRequest on Gogs created
