@@ -65,3 +65,11 @@ PATH_EXPORT = 'ExportPath'
 PATH_IMPORT = 'ImportPath'
 PATH_SCREENSHOTS = 'ScreenshotPath'
 PATH_ROOT = 'RootPath'
+
+ADDRESS_COUNTRYCODE = "CountryCode"
+ADDRESS_POSTLCODE = "PostlCode"
+ADDRESS_CITYNAME = "CityName"
+ADDRESS_STREETNAME = "StreetName"
+ADDRESS_HOUSENUMBER = "HouseNumber"
+ADDRESS_ADDITION1 = "Addition1"
+ADDRESS_ADDITION2 = "Addition2"
