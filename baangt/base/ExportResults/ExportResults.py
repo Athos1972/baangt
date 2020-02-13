@@ -2,7 +2,7 @@ import xlsxwriter
 import logging
 import json
 import baangt.base.GlobalConstants as GC
-from baangt.base.Timing import Timing
+from baangt.base.Timing.Timing import Timing
 import sys
 from baangt.base.utils import utils
 from pathlib import Path
@@ -14,7 +14,10 @@ from sqlalchemy.orm import sessionmaker
 from baangt.base.DataBaseORM import DATABASE_URL, TestrunLog
 from datetime import datetime
 
+from baangt import plugin_manager
+
 logger = logging.getLogger("pyC")
+
 
 class ExportResults:
     def __init__(self, **kwargs):
@@ -39,7 +42,8 @@ class ExportResults:
         self.__setHeaderDetailSheet()
         self.makeSummary()
         self.exportResult()
-        self.exportTiming = ExportTiming(self.dataRecords, self.timingsheet)
+        self.exportTiming = ExportTiming(self.dataRecords,
+                                                        self.timingsheet)
         self.closeExcel()
         self.exportToDataBase()
 
