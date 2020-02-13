@@ -1,0 +1,252 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Installation &mdash; baangt 2020.1.1.b11 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="What is baangt" href="OverviewUsage.html" />
+    <link rel="prev" title="Welcome to baangt!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> baangt
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">   Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#install-from-sources">Install from sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#docker">Docker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-pip-package">Install PIP-Package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="OverviewUsage.html">   Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simpleExample.html">   First Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Structure.html">   Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ParametersConfigFile.html">   Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DataFile.html">   Data file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TestTypes.html">   Types of Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Developer.html">   For Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">   History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">   Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="articles/ProductionSucks.html">      Production sucks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="articles/DataDoctor.html">      Test data rulez</a></li>
+<li class="toctree-l1"><a class="reference internal" href="articles/BaangtIndustries.html">      Industries 4 baangt</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">baangt</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Installation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/Installation.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>There are various ways to install and use <code class="docutils literal notranslate"><span class="pre">baangt</span></code> depending on your requirements and setup.</p>
+<div class="section" id="install-from-sources">
+<h2>Install from sources<a class="headerlink" href="#install-from-sources" title="Permalink to this headline">¶</a></h2>
+<p>Install sources from GIT (Please adjust to your virtual environment as per your preferences</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">gogs</span><span class="o">.</span><span class="n">earthsquad</span><span class="o">.</span><span class="k">global</span><span class="o">/</span><span class="n">athos</span><span class="o">/</span><span class="n">baangt</span>
+<span class="n">cd</span> <span class="n">baangt</span>
+<span class="n">pip3</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>
+<span class="n">python3</span> <span class="n">baangtIA</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="docker">
+<h2>Docker<a class="headerlink" href="#docker" title="Permalink to this headline">¶</a></h2>
+<p>Install from GIT:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">gogs</span><span class="o">.</span><span class="n">earthsquad</span><span class="o">.</span><span class="k">global</span><span class="o">/</span><span class="n">athos</span><span class="o">/</span><span class="n">baangt</span><span class="o">-</span><span class="n">Docker</span>
+<span class="n">cd</span> <span class="n">baangt</span><span class="o">-</span><span class="n">Docker</span>
+<span class="n">Make</span> <span class="n">build</span>
+<span class="n">Make</span> <span class="n">run</span>
+</pre></div>
+</div>
+<p>then use your preferred VNC-Client with <code class="docutils literal notranslate"><span class="pre">vnc://localhost:5902</span></code>. Unless you changed the default password, the
+password is <code class="docutils literal notranslate"><span class="pre">password</span></code> .</p>
+</div>
+<div class="section" id="install-pip-package">
+<h2>Install PIP-Package<a class="headerlink" href="#install-pip-package" title="Permalink to this headline">¶</a></h2>
+<p>If you’re planning to implement subclassing you can also use the pip package:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">baangt</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="OverviewUsage.html" class="btn btn-neutral float-right" title="What is baangt" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to baangt!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Bernhard Buhl
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -51,7 +51,7 @@ class TestRun:
         Take overall Time spent for the complete TestRun
         Write results of TestRun to output channel(s)
         """
-        if not self.globalSettings.get(GC.EXECUTION_DONTCLOSEBROWSER):
+        if not self.globalSettings.get("TC." + GC.EXECUTION_DONTCLOSEBROWSER):
             for browserInstance in self.browser.keys():
                 self.browser[browserInstance].closeBrowser()
 
@@ -62,6 +62,7 @@ class TestRun:
             self.apiInstance.tearDown()
 
         ExportResults(**self.kwargs)
+
 
         successful, error = self.getSuccessAndError()
         logger.info(f"Finished execution of Testrun {self.testRunName}. "
@@ -94,10 +95,11 @@ class TestRun:
         if global setting TC.EXECUTION_SLOW is set, inform the browser instance about it.
 
         @param browserInstance: Number of the requested browser instance. If none is provided, always the default
-          browser instance will be returned
+        browser instance will be returned
         @param browserName: one of the browser names (e.g. FF, Chrome) from GC.BROWSER*
         @param browserAttributes: optional Browser Attributes
         @return: the browser instance of base class BrowserDriver
+
         """
         if browserInstance not in self.browser.keys():
             logger.info(f"opening new instance {browserInstance} of browser {browserName}")
@@ -148,13 +150,14 @@ class TestRun:
         The Sequence of which class instance to create is defined by the TestRunAttributes.
 
         Before instancing the class it is checked, whether the class was loaded already and if not, will be loaded
-            (only if the classname is fully qualified (e.g baangt<projectname>.TestSteps.myTestStep).
+        (only if the classname is fully qualified (e.g baangt<projectname>.TestSteps.myTestStep).
         If the testcase-Status is already "error" (GC.TESTCASESTATUS_ERROR) we'll stop the loop.
 
         @param dictSequenceOfClasses: The list of classes to be instanced. Must be a dict of {Enum, Classname},
-                                      can be also {enum: [classname, <whatEverElse>]}
+        can be also {enum: [classname, <whatEverElse>]}
         @param counterName: Which Structure element we're currently looping, e.g. "TestStep" (GC.STRUCTURE_TESTSTEP)
         @param kwargs: TestrunAttributes, this TestRun, the Timings-Instance, the datarecord
+
         """
         if not kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES):
             kwargs[GC.KWARGS_TESTRUNATTRIBUTES] = self.getAllTestRunAttributes()
@@ -171,6 +174,7 @@ class TestRun:
                     return
             logger.info(f"Starting {counterName}: {key}, {value} ")
             kwargs[counterName] = key
+
             if isinstance(value, list):
                 lFullQualified = value[0]  # First List-Entry must hold the ClassName
             else:

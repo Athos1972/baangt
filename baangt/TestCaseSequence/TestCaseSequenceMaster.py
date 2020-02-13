@@ -25,7 +25,6 @@ class TestCaseSequenceMaster:
         # Extract relevant data for this TestSequence:
         self.testSequenceData = self.testrunAttributes[GC.STRUCTURE_TESTCASESEQUENCE].get(
             kwargs.get(GC.STRUCTURE_TESTCASESEQUENCE))[1]
-        # self.recordPointer = self.testSequenceData[GC.DATABASE_FROM_LINE]
         self.testCases = self.testSequenceData[GC.STRUCTURE_TESTCASE]
         self.kwargs = kwargs
         self.timingName = self.timing.takeTime(self.__class__.__name__,forceNew=True)
@@ -60,7 +59,7 @@ class TestCaseSequenceMaster:
         parallelInstances = int(parallelInstances)
         browserInstances = {}
         for n in range(0, int(parallelInstances)):
-            # fixme: Browser should come from Testcase - not hardcoded. It's not that easy, as we might have many
+            # fixme: Browser should come from Testcase definition - not hardcoded. It's not that easy, as we might have many
             # fixme: Testcases, some Browser, some API and we might even have different browsers. For now we'll only
             # fixme: take Browser from globals-file
             lBrowserName = self.testRunInstance.globalSettings.get("TC.Browser", GC.BROWSER_FIREFOX)

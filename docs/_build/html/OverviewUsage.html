@@ -1,36 +1,175 @@
 
-<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta charset="utf-8" />
-    <title>What is baangt &#8212; baangt 2020.1.1.b11 documentation</title>
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>What is baangt &mdash; baangt 2020.1.1.b11 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Parameters in Configuration files (globals)" href="ParametersConfigFile.html" />
-    <link rel="prev" title="Welcome to baangt’s documentation!" href="index.html" />
+    <link rel="next" title="Jump-start into worry free production deployments" href="simpleExample.html" />
+    <link rel="prev" title="Installation" href="Installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
    
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-  </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
           
 
-          <div class="body" role="main">
+          
+            <a href="index.html" class="icon icon-home"> baangt
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Installation.html">   Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">   Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-fastest-simplest-way-to-record-test-cases">The fastest, simplest way to record test cases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#still-simple-and-more-powerful-ways">Still simple and more powerful ways:</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#hey-why-not-do-everything-in-excel">Hey, why not do everything in Excel?</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#subclassing-for-multiply-used-functionality">Subclassing for multiply used functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#baangtdb-for-flexible-powerful-enterprise-grade-test-automation"><code class="docutils literal notranslate"><span class="pre">BaangtDB</span></code> for flexible, powerful enterprise grade test automation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#to-sum-it-up">To sum it up</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simpleExample.html">   First Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Structure.html">   Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ParametersConfigFile.html">   Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DataFile.html">   Data file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TestTypes.html">   Types of Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Developer.html">   For Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">   History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">   Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="articles/ProductionSucks.html">      Production sucks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="articles/DataDoctor.html">      Test data rulez</a></li>
+<li class="toctree-l1"><a class="reference internal" href="articles/BaangtIndustries.html">      Industries 4 baangt</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">baangt</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>What is <code class="docutils literal notranslate"><span class="pre">baangt</span></code></li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/OverviewUsage.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="what-is-baangt">
 <h1>What is <code class="docutils literal notranslate"><span class="pre">baangt</span></code><a class="headerlink" href="#what-is-baangt" title="Permalink to this headline">¶</a></h1>
@@ -63,7 +202,7 @@ the maintenance of data and test sequence can be done without ANY other tools (e
 people who know best what to test: Your business department.</p>
 <div class="section" id="hey-why-not-do-everything-in-excel">
 <h3>Hey, why not do everything in Excel?<a class="headerlink" href="#hey-why-not-do-everything-in-excel" title="Permalink to this headline">¶</a></h3>
-<p>There is one serious drawback from this flexibilty: it’s change. Of course you started with 1 sheet, but later had some additional
+<p>There is one serious drawback from this flexibilty: it’s <strong>change</strong>. Of course you started with 1 sheet, but later had some additional
 requirements and simply added a second sheet to cover those whithout changing the definitions of the first excel sheet.
 You’re still happy as you need both behaviours tested (imagine one test set for regional customers and another test set
 for customers from other countries). Great. Everything works. After having some serious problems in production and fixing
@@ -72,11 +211,35 @@ times, deleting and re-adding objects from a shopping chart, etc.). The basic te
 the other two cases, but for a specific card you’ll need changes. Simple. You copy one of the original sheets and adjust
 accordingly. You immediately sleep better because now also those cases are part of your growing regression test set. Wonderful.
 You continue like this for 2 months, end up with 2 or 3 datafiles and 20 test case definitions. That’s not uncommon. Also
-not uncommon is “Change”. For more direct communication with the endusers the AUT (Application under test) get’s enriched
+not uncommon is “<strong>Change</strong>”. For more direct communication with the endusers the AUT (Application under test) get’s enriched
 with a Sentry-Popup. Wonderful idea. But wait… It’s not so great after all, because now you have to update 20 test case
 definitions with a way to deal with the new popup. Imagine corporate environments where we have many 1.000 or many 10.000
 tests.</p>
 </div>
+</div>
+<div class="section" id="subclassing-for-multiply-used-functionality">
+<h2>Subclassing for multiply used functionality<a class="headerlink" href="#subclassing-for-multiply-used-functionality" title="Permalink to this headline">¶</a></h2>
+<p>The existing classes <code class="docutils literal notranslate"><span class="pre">baangt.TestCase.TestCaseMaster</span></code> and <code class="docutils literal notranslate"><span class="pre">baangt.TestStep.TestStepMaster</span></code> can easily be subclassed
+and enriched with static functionality - even when you use the Excel version of <code class="docutils literal notranslate"><span class="pre">baangt.py</span></code>. Yes, you’ll need to know
+some basics of powerful Python Language and most probably an IDE.</p>
+<p>An example could look as simple like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">baangt.TestStep</span> <span class="kn">import</span> <span class="n">TestStepMaster</span>
+
+<span class="k">class</span> <span class="nc">myTestStep</span><span class="p">(</span><span class="n">TestStepMaster</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">():</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">goToURL</span><span class="p">(</span><span class="s2">&quot;http://www.google.com&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">findByAndSetText</span><span class="p">(</span><span class="n">xpath</span><span class="o">=</span><span class="s1">&#39;//input[@type=&quot;text&quot;]&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s1">&#39;baangt&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">findByAndClick</span><span class="p">(</span><span class="n">xpath</span><span class="o">=</span><span class="s1">&#39;(//input[contains(@type,&#39;</span><span class="n">submit</span><span class="s1">&#39;)])[3]&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>That’s it. All the rest is taken care of by <code class="docutils literal notranslate"><span class="pre">baangt</span></code>. You’ll also receive a nice export file showing timing information
+for your TestCase.</p>
+<p>You can subclass any other functionality, that doesn’t fully fit your needs (IBAN-Generation, Browser-Handling, Timing)
+and also create your own Assertion-classes (for instance if you need to receive data from a Host-System or
+RFC/SOAP-Connection or any other source that is not natively supported by <code class="docutils literal notranslate"><span class="pre">baangt.py</span></code>). Of course you’d only
+re-implement methods, that you need to enrich and consume everything else from the framework.</p>
+<p>Please consider creating pull-requests if you think some of your custom implemented functionality could be useful for
+others.</p>
 </div>
 <div class="section" id="baangtdb-for-flexible-powerful-enterprise-grade-test-automation">
 <h2><code class="docutils literal notranslate"><span class="pre">BaangtDB</span></code> for flexible, powerful enterprise grade test automation<a class="headerlink" href="#baangtdb-for-flexible-powerful-enterprise-grade-test-automation" title="Permalink to this headline">¶</a></h2>
@@ -125,79 +288,52 @@ comfort for free.</p>
 </div>
 
 
+           </div>
+           
           </div>
-          
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="index.html">baangt</a></h1>
-
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">What is <code class="docutils literal notranslate"><span class="pre">baangt</span></code></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#the-fastest-simplest-way-to-record-test-cases">The fastest, simplest way to record test cases</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#still-simple-and-more-powerful-ways">Still simple and more powerful ways:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#baangtdb-for-flexible-powerful-enterprise-grade-test-automation"><code class="docutils literal notranslate"><span class="pre">BaangtDB</span></code> for flexible, powerful enterprise grade test automation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#to-sum-it-up">To sum it up</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="ParametersConfigFile.html">Parameters in Configuration files (<code class="docutils literal notranslate"><span class="pre">globals</span></code>)</a></li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="index.html" title="previous chapter">Welcome to baangt’s documentation!</a></li>
-      <li>Next: <a href="ParametersConfigFile.html" title="next chapter">Parameters in Configuration files (<code class="docutils literal notranslate"><span class="pre">globals</span></code>)</a></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="simpleExample.html" class="btn btn-neutral float-right" title="Jump-start into worry free production deployments" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
     </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+  
 
+  <hr/>
 
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Bernhard Buhl
 
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
-
-
-
+</footer>
 
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2020, Bernhard Buhl.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-      |
-      <a href="_sources/OverviewUsage.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
 
-    
+    </section>
 
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
     
-  </body>
+   
+
+</body>
 </html>

@@ -1,5 +1,6 @@
 from baangt.base import GlobalConstants as GC
 from baangt.base.Timing import Timing
+# from baangt.base.TestRun import TestRun  # Circular import
 from baangt.TestSteps.Exceptions import *
 
 class TestCaseMaster:
@@ -30,7 +31,13 @@ class TestCaseMaster:
                                                                browserAttributes=self.browserSettings)
                 self.kwargs[GC.KWARGS_BROWSER] = self.browser
         elif self.testCaseType == GC.KWARGS_API_SESSION:
+            # FIXME: For now we're using session_number always = 1. We need to be able to run e.g. 10 sessions with
+            # FIXME: Parallel API-Test.
             self.apiInstance = self.testRunInstance.getAPI()
+            self.kwargs[GC.KWARGS_API_SESSION] = self.apiInstance
+
+            # For API-Tests we assume status = Passed and actively set it to error if not.
+            self.kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS] = GC.TESTCASESTATUS_SUCCESS
         self.execute()
         self.tearDown()
 
@@ -45,8 +52,26 @@ class TestCaseMaster:
             self._finalizeTestCase()
 
     def _finalizeTestCase(self):
-        self.kwargs[GC.KWARGS_DATA][GC.TIMELOG] = self.timing.returnTime()
+        tcData = self.kwargs[GC.KWARGS_DATA]
+        tcData[GC.TIMING_DURATION] = self.timing.takeTime(self.timingName)   # Write the End-Record for this Testcase
+
+        tcData[GC.TIMELOG] = self.timing.returnTime()
+
         self.timing.resetTime()
+
+    def _checkAndSetTestcaseStatusIfFailExpected(self):
+        """
+        If this Testcase is supposed to fail and failed, he's actually successful.
+        If this Testcase is supposed to fail and doesn't, he's actually failed.
+        @return: Directly sets the Testcasestatus accordingly.
+        """
+        tcData = self.kwargs[GC.KWARGS_DATA]
+
+        if tcData.get(GC.TESTCASE_EXPECTED_ERROR_FIELD) == 'X':
+            if tcData[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR:
+                tcData[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_SUCCESS
+            elif tcData[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_SUCCESS:
+                tcData[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
 
     def tearDown(self):
         if self.kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR:
@@ -54,4 +79,6 @@ class TestCaseMaster:
             if self.testCaseType == GC.KWARGS_BROWSER:
                 self.kwargs[GC.KWARGS_DATA][GC.SCREENSHOTS] = self.kwargs[GC.KWARGS_DATA][GC.SCREENSHOTS] + '\n' +\
                                                               self.browser.takeScreenshot()
-        self.timing.takeTime(self.timingName)
+
+        self._checkAndSetTestcaseStatusIfFailExpected()
+

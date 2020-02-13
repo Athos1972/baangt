@@ -1,36 +1,175 @@
 
-<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta charset="utf-8" />
-    <title>Jump-start into worry free production deployments &#8212; baangt 2020.1.1.b11 documentation</title>
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Jump-start into worry free production deployments &mdash; baangt 2020.1.1.b11 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Structure of baangt" href="Structure.html" />
-    <link rel="prev" title="What is baangt" href="OverviewUsage.html" />
+    <link rel="prev" title="What is baangt" href="OverviewUsage.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
    
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-  </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
           
 
-          <div class="body" role="main">
+          
+            <a href="index.html" class="icon icon-home"> baangt
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Installation.html">   Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="OverviewUsage.html">   Overview</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">   First Steps</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisits">Prerequisits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#let-s-dive-right-into-it">Let’s dive right into it</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#extend-the-script">Extend the Script:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#a-bit-further">A bit further</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#recording-a-test-case-with-katalon-recorder">Recording a test case with Katalon Recorder</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tweaking-the-result">Tweaking the result</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Structure.html">   Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ParametersConfigFile.html">   Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DataFile.html">   Data file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TestTypes.html">   Types of Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Developer.html">   For Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">   History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">   Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="articles/ProductionSucks.html">      Production sucks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="articles/DataDoctor.html">      Test data rulez</a></li>
+<li class="toctree-l1"><a class="reference internal" href="articles/BaangtIndustries.html">      Industries 4 baangt</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">baangt</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Jump-start into worry free production deployments</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/simpleExample.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="jump-start-into-worry-free-production-deployments">
 <h1>Jump-start into worry free production deployments<a class="headerlink" href="#jump-start-into-worry-free-production-deployments" title="Permalink to this headline">¶</a></h1>
@@ -126,7 +265,7 @@ definitely enjoy having more tools in your toolbox:</p>
 <p>You might want to execute the test case from within Katalon Recorder so make sure everything was recorded proplery.</p>
 </div>
 </li>
-<li><p>Hit the export-Button of the recorder, chose format “other”</p></li>
+<li><p>Hit the export-Button of the recorder, chose format <code class="docutils literal notranslate"><span class="pre">other</span></code></p></li>
 <li><p>Click “Export to Clipboard”</p></li>
 <li><dl class="simple">
 <dt>Switch over to <code class="docutils literal notranslate"><span class="pre">baangt</span></code> and press the button “Import KatalonRecorder”</dt><dd><ul class="simple">
@@ -147,82 +286,134 @@ the last step above, click on the “data”-Tab and start to enter values and l
 </div>
 </div>
 </div>
+<div class="section" id="tweaking-the-result">
+<h2>Tweaking the result<a class="headerlink" href="#tweaking-the-result" title="Permalink to this headline">¶</a></h2>
+<p>You managed to have a working recording. Congratulations! Let’s learn a bit more about the structure of the created XLSX</p>
+<table class="colwidths-given docutils align-default" id="id3">
+<caption><span class="caption-text">Fields in Tab <a href="#id1"><span class="problematic" id="id2">``</span></a>TestStepExecution`</span><a class="headerlink" href="#id3" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Column Name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Activtity</span></code></p></td>
+<td><p>Set’s the activity of this TestStep. Activities are:</p>
+<ul class="simple">
+<li><p>GoToURL</p></li>
+<li><p>click</p></li>
+<li><p>setText</p></li>
+<li><p>SetTextIF</p></li>
+<li><p>clickIF</p></li>
+<li><p>goBack</p></li>
+<li><p>If</p></li>
+<li><p>EndIf</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">LocatorType</span></code></p></td>
+<td><p>Most of the activities need a locator. We’re big fans of XPATH as locatorType, due to speed and ease of use. Sooner
+or later you’ll anyway end up needing XPATH, so why not use it always when there’s no downside? If you prefer
+writing CSS-Paths then use value <code class="docutils literal notranslate"><span class="pre">CSS</span></code> for the locator. And if you’re luck enough to have unique IDs in your
+page simply use <code class="docutils literal notranslate"><span class="pre">ID</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Locator</span></code></p></td>
+<td><p>The locator is the specification, on which element <code class="docutils literal notranslate"><span class="pre">Activity</span></code> should happen.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Value</span></code></p></td>
+<td><p>For instance activity <code class="docutils literal notranslate"><span class="pre">SetText</span></code> requires a value (The text to send to a Web-element). You may use fixed values
+(which will rarely happen) or values from your test data source, in the simple cases the sheet <code class="docutils literal notranslate"><span class="pre">Data</span></code> .
+The column names in the sheet <code class="docutils literal notranslate"><span class="pre">data</span></code> can be used as variable names (e.g. if you created a column “Quantity” in
+your data tab, you can use <code class="docutils literal notranslate"><span class="pre">$(Quantity)</span></code> in the field value.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Comparison</span></code> and <code class="docutils literal notranslate"><span class="pre">Value2</span></code></p></td>
+<td><p>For some activities (e.g. IF) you not only need the Value-Field but also a comparison operator and a
+second field or value to compare to. Values for <code class="docutils literal notranslate"><span class="pre">comparison</span></code> are <code class="docutils literal notranslate"><span class="pre">eq</span></code> and <code class="docutils literal notranslate"><span class="pre">=</span></code>. The field <code class="docutils literal notranslate"><span class="pre">value2</span></code>
+follows the same logic as <code class="docutils literal notranslate"><span class="pre">value</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Timeout</span></code></p></td>
+<td><p>Sometimes you’ll want to overwrite the default timeout settings of <code class="docutils literal notranslate"><span class="pre">baangt</span></code>. Here’s your chance. Values in seconds,
+decimals are OK (<code class="docutils literal notranslate"><span class="pre">0.5</span></code> is a valid value, so is <code class="docutils literal notranslate"><span class="pre">90</span></code>).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Optional</span></code></p></td>
+<td><p>Usually, when <code class="docutils literal notranslate"><span class="pre">baangt</span></code> tries to execute an activity and can’t (after timeout), it will throw an exception,
+report in the Logs and stop the current test case. If you set <code class="docutils literal notranslate"><span class="pre">optional</span></code> to <code class="docutils literal notranslate"><span class="pre">True</span></code> or <code class="docutils literal notranslate"><span class="pre">X</span></code>, <code class="docutils literal notranslate"><span class="pre">baangt</span></code>
+will continue execution of the test case, even if the activity wasn’t possible.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Release</span></code></p></td>
+<td><p>Often you’ll face situations, where you want to run a test case in several stages (e.g. DEV, Pre-Quality, Quality,
+Migration, Pre-Production, etc.) and the software version on each stage is different. A test case, that works on
+Pre-Production will not pass on Dev-System as Dev is already further developed. If you change the test case to work
+on Dev-System and you need to test a Hotfix deployment on Pre-Production, what will you do? In other test solutions
+you would “simply” copy your test case, have one version for DEV, one for Pre-Production. Do that with 100s of
+different test cases and watch yourselve drown in chaos. OR you could use <code class="docutils literal notranslate"><span class="pre">baangt</span></code> where this problem is solved.
+Software moves through the stages of your system landscape as it evolves. Use this field to conditionally execute
+different “branches” of your test cases, depending on the version on the current stage. <code class="docutils literal notranslate"><span class="pre">Release</span></code> can be any
+string value. You can add “&gt; ” “&lt; ” and “= ” as the first 2 characters to signal to <code class="docutils literal notranslate"><span class="pre">baangt</span></code> to only execute
+the step when current release is greater than, lower than or exactly equal to the value afterwards, for instance</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="mf">2019.05</span>
+</pre></div>
+</div>
+<p>will run the line onlf, if the Version is <code class="docutils literal notranslate"><span class="pre">2019.05a</span></code> or <code class="docutils literal notranslate"><span class="pre">2019.06</span></code>. We are aware, that your version numbers might
+follow different nomenclature, so we made it very easy to subclass the corresponding logic.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 
 
+           </div>
+           
           </div>
-          
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="index.html">baangt</a></h1>
-
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="OverviewUsage.html">What is <code class="docutils literal notranslate"><span class="pre">baangt</span></code></a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Jump-start into worry free production deployments</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#prerequisits">Prerequisits</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#let-s-dive-right-into-it">Let’s dive right into it</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="Structure.html">Structure of baangt</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ParametersConfigFile.html">Parameters in Configuration files (<code class="docutils literal notranslate"><span class="pre">globals</span></code>)</a></li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="OverviewUsage.html" title="previous chapter">What is <code class="docutils literal notranslate"><span class="pre">baangt</span></code></a></li>
-      <li>Next: <a href="Structure.html" title="next chapter">Structure of baangt</a></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Structure.html" class="btn btn-neutral float-right" title="Structure of baangt" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="OverviewUsage.html" class="btn btn-neutral float-left" title="What is baangt" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
     </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+  
 
+  <hr/>
 
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Bernhard Buhl
 
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
-
-
-
+</footer>
 
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2020, Bernhard Buhl.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-      |
-      <a href="_sources/simpleExample.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
 
-    
+    </section>
 
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
     
-  </body>
+   
+
+</body>
 </html>

@@ -6,7 +6,7 @@ if __name__ == '__main__':
 
     setuptools.setup(
         name="baangt", # Replace with your own username
-        version="2020.1.1b12",
+        version="2020.2.0b3",
         author="Bernhard Buhl",
         author_email="buhl@buhl-consulting.com.cy",
         description="Basic And Advanced NextGeneration Testing",
@@ -14,11 +14,14 @@ if __name__ == '__main__':
         long_description_content_type="text/markdown",
         url="https://baangt.org",
         packages=setuptools.find_packages(),
-        install_requires=["pandas", "numpy", "pySimpleGui", "beautifulsoup4", "schwifty"],
+        data_files=[('baangt', ["baangt/ressources/baangtLogo.png"])],
+        package_data={"baangt.ressources": ['*.png',]},
+        install_requires=["pandas", "numpy", "pySimpleGui", "beautifulsoup4", "schwifty","pytest","requests","xlsxwriter","sqlalchemy","xlrd","selenium","pyperclip"],
         classifiers=[
             "Programming Language :: Python :: 3",
             "License :: OSI Approved :: MIT License",
             "Operating System :: OS Independent",
         ],
+        include_package_data=True,
         python_requires='>=3.6',
     )

@@ -1,0 +1,7 @@
+{
+    "exportFilesBasePath": "",
+    "TC.Lines": "",
+    "TC.dontCloseBrowser": "True",
+    "TC.slowExecution": "True",
+    "TC.ParallelRuns": "2"
+}

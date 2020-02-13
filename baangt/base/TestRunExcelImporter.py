@@ -63,7 +63,7 @@ class TestRunExcelImporter:
         if xlsTab:
             testRunAttributes[GC.EXPORT_FORMAT][GC.EXP_FIELDLIST] = self._getRowAsList(xlsTab)
         else:
-            # Default Value
+            # Default Value as there are no explicit values from the TestRunDefinition:
             testRunAttributes[GC.EXPORT_FORMAT][GC.EXP_FIELDLIST] = [GC.TESTCASESTATUS,
                                                                      GC.TIMING_DURATION,
                                                                      GC.TIMELOG]
@@ -81,7 +81,7 @@ class TestRunExcelImporter:
                 "TestDataFileName": self.fileName,
                 "Sheetname": "data",
                 "ParallelRuns": 1,
-                "FromLine": 1,
+                "FromLine": 0,
                 "ToLine": 999999
                 },
             }
@@ -92,23 +92,32 @@ class TestRunExcelImporter:
 
 
         xlsTab = self._getTab("TestCase")
+        # if Tab "TestCase" exists, then take the definitions from there. Otherwise (means simpleFormat)
+        # we need to create "dummy" data ourselves.
         if xlsTab:
             lTestCaseDict = self.getRowsWithHeadersAsDict(xlsTab=xlsTab)
         else:
-            lTestCaseDict = {1: {"TestCaseSequenceNumber": 1,
-                             "TestCaseNumber": 1,
-                             "TestCaseType": GC.KWARGS_BROWSER,
-                             "TestCaseClass": GC.CLASSES_TESTCASE,
-                             GC.KWARGS_BROWSER: GC.BROWSER_FIREFOX,
-                             GC.BROWSER_ATTRIBUTES: ""}}
+            # Dirty, but not possible in any other way in API-Simple-Format:
+            if "API" in self.fileName.upper():
+                lTestCaseDict = {1: {"TestCaseSequenceNumber": 1,
+                                 "TestCaseNumber": 1,
+                                 "TestCaseType": GC.KWARGS_API_SESSION,
+                                 "TestCaseClass": GC.CLASSES_TESTCASE}}
+            else:
+                lTestCaseDict = {1: {"TestCaseSequenceNumber": 1,
+                                 "TestCaseNumber": 1,
+                                 "TestCaseType": GC.KWARGS_BROWSER,
+                                 "TestCaseClass": GC.CLASSES_TESTCASE,
+                                 GC.KWARGS_BROWSER: GC.BROWSER_FIREFOX,
+                                 GC.BROWSER_ATTRIBUTES: ""}}
         for key, testCase in lTestCaseDict.items():
             testSequenceRoot = testrunSequence[testCase["TestCaseSequenceNumber"]][1]
             testSequenceRoot[GC.STRUCTURE_TESTCASE] = {testCase["TestCaseNumber"]: []}
             testSequenceRoot[GC.STRUCTURE_TESTCASE][testCase["TestCaseNumber"]].append(testCase["TestCaseClass"])
             testSequenceRoot[GC.STRUCTURE_TESTCASE][testCase["TestCaseNumber"]].append(
                 {"TestCaseType": testCase["TestCaseType"],
-                 GC.KWARGS_BROWSER: testCase["Browser"],
-                 GC.BROWSER_ATTRIBUTES: testCase["BrowserAttributes"]
+                 GC.KWARGS_BROWSER: testCase.get("Browser"),
+                 GC.BROWSER_ATTRIBUTES: testCase.get("BrowserAttributes")
                  })
 
         xlsTab = self._getTab("TestStep")

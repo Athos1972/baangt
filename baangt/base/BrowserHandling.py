@@ -17,6 +17,12 @@ from pathlib import Path
 import json
 import sys
 import platform
+import requests
+import ctypes
+from urllib.request import urlretrieve
+import tarfile
+import zipfile
+import requests
 
 logger = logging.getLogger("pyC")
 
@@ -54,7 +60,7 @@ class BrowserDriver:
         else:
             self.screenshotPath = os.getcwd()
 
-    def createNewBrowser(self, browserName=GC.BROWSER_FIREFOX, desiredCapabilities=None, **kwargs):
+    def createNewBrowser(self, browserName=GC.BROWSER_FIREFOX, desiredCapabilities={}, **kwargs):
         """
         Will find the specified executables of the desired browser and start it with the given capabilities.
 
@@ -67,6 +73,7 @@ class BrowserDriver:
             GC.BROWSER_FIREFOX: webdriver.Firefox,
             GC.BROWSER_CHROME: webdriver.Chrome,
             GC.BROWSER_SAFARI: webdriver.Safari,
+            GC.BROWSER_EDGE: webdriver.Edge,
             GC.BROWSER_REMOTE: webdriver.Remote}
 
         if browserName in browserNames:
@@ -77,14 +84,34 @@ class BrowserDriver:
                 GeckoExecutable = GeckoExecutable + ".exe"
                 ChromeExecutable = ChromeExecutable + ".exe"
 
+
+            lCurPath = Path(os.getcwd())
+            lCurPath = lCurPath.joinpath("browserDrivers")
+
             if browserName == GC.BROWSER_FIREFOX:
+                lCurPath = lCurPath.joinpath(GeckoExecutable)
+                if not(os.path.isfile(str(lCurPath))):
+                    self.downloadDriver(browserName)
                 self.driver = browserNames[browserName](options=self.__createBrowserOptions(browserName=browserName,
                                                                                             desiredCapabilities=desiredCapabilities),
                                                         executable_path=self.__findBrowserDriverPaths(GeckoExecutable))
+
             elif browserName == GC.BROWSER_CHROME:
+                lCurPath = lCurPath.joinpath(ChromeExecutable)
+                if not (os.path.isfile(str(lCurPath))):
+                    self.downloadDriver(browserName)
                 self.driver = browserNames[browserName](options=self.__createBrowserOptions(browserName=browserName,
                                                                                             desiredCapabilities=desiredCapabilities),
                                                         executable_path=self.__findBrowserDriverPaths(ChromeExecutable))
+            elif browserName == GC.BROWSER_EDGE:
+                self.driver = browserNames[browserName](executable_path=self.__findBrowserDriverPaths("msedgedriver.exe"))
+            elif browserName == GC.BROWSER_SAFARI:
+                # SAFARI doesn't provide any options, but desired_capabilities.
+                # Executable_path = the standard safaridriver path.
+                if len(desiredCapabilities) == 0:
+                    desiredCapabilities = {}
+                self.driver = browserNames[browserName](desired_capabilities=desiredCapabilities)
+
             elif browserName == GC.BROWSER_REMOTE:
                 self.driver = browserNames[browserName](options=self.__createBrowserOptions(browserName=browserName,
                                                                                             desiredCapabilities=desiredCapabilities),
@@ -133,6 +160,14 @@ class BrowserDriver:
         return self.slowExecution
 
     def __createBrowserOptions(self, browserName, desiredCapabilities):
+        """
+        Translates desired capabilities from the Testrun (or globals) into specific BrowserOptions for the
+        currently active browser
+
+        @param browserName: any of the GC.BROWSER*
+        @param desiredCapabilities: Settings from TestRun or globals
+        @return: the proper BrowserOptions for the currently active browser.
+        """
         if browserName == GC.BROWSER_CHROME:
             lOptions = ChromeOptions()
         elif browserName == GC.BROWSER_FIREFOX:
@@ -174,7 +209,7 @@ class BrowserDriver:
                 argsString = argsString + f" {key}: {value}"
 
         if self.locator:
-            argsString = argsString + f"Locator: {self.locatorType}:{self.locator}"
+            argsString = argsString + f" Locator: {self.locatorType} = {self.locator}"
 
         if logType == logging.DEBUG:
             logger.debug(logText + argsString)
@@ -213,8 +248,10 @@ class BrowserDriver:
         return lFile
 
     def handleIframe(self, iframe=None):
-        """Give an IFRAME and it will try to go into.
-        If you're inside an iframe it will go out of the iframe"""
+        """
+        Give an IFRAME and it will try to go into.
+        If you're inside an iframe it will go out of the iframe
+        """
         if iframe:
             self._log(logging.DEBUG, "Going into Iframe: ", **{"iframe": iframe})
             # frame_to_be_availble_and_switch_to_it doesn't work.
@@ -265,7 +302,17 @@ class BrowserDriver:
 
     def findByAndWaitForValue(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=20,
                               optional=False):
+        """
 
+        @param id: ID of the element
+        @param css: CSS-Locator
+        @param xpath: XPATH-Locator
+        @param class_name: Class-Name
+        @param iframe: Iframe to use (use only if changed. If you set an iframe before, you don't need to set it again!)
+        @param timeout: Timeout in Seconds before raising an error or returning back (depending on "optional")
+        @param optional: If set to "True" and the operation can not be executed, just a log entry is written but no error raised
+        @return: the text of the element, if element was found
+        """
         start = time.time()
         found = False
         duration = 0
@@ -279,7 +326,7 @@ class BrowserDriver:
                     return self.element.text
             except Exception as e:
                 logger.debug(f"Exception during findByAndWaitForValue, but continuing {str(e)}, "
-                             f"Locator: {self.locatorType}:{self.locator}")
+                             f"Locator: {self.locatorType} = {self.locator}")
                 pass
             time.sleep(0.5)
             duration = time.time() - start
@@ -289,6 +336,9 @@ class BrowserDriver:
 
     def findByAndSetText(self, id=None, css=None, xpath=None, class_name=None, value=None, iframe=None,
                          timeout=60, optional=False):
+        """
+        Please see documentation in findBy and __doSomething
+        """
         self.findBy(id=id,
                     css=css,
                     xpath=xpath,
@@ -300,6 +350,17 @@ class BrowserDriver:
 
     def findByAndSetTextIf(self, id=None, css=None, xpath=None, class_name=None, value=None, iframe=None,
                            timeout=60):
+        """
+        Helper function to not have to write:
+        If <condition>:
+            findByAndSetText(locator)
+
+        instead use:
+        findByAndSetTextIf(locator, value).
+
+        If value is evaluated into "True" the Text is set.
+
+        """
         if not value:
             return True
 
@@ -317,6 +378,12 @@ class BrowserDriver:
                        iframe = None,
                        timeout = 60,
                        retries = 5):
+        """
+        This is a method not recommended to be used regularly. Sometimes (especially with Angular Frontends) it gets
+        pretty hard to set a value into a field. Chrome, but also FF will show the value, but the DOM will not have it.
+        Ths Method should be your last ressort. Here we try <retries> time to set a value. Then we read the element again
+        and compare value to what we'd expect. If value is different and we're less than <retries>-Times, we'll try again.
+        """
 
         tries = 0
 
@@ -334,10 +401,17 @@ class BrowserDriver:
             tries += 1
 
     def submit(self):
+        """
+        Used for forms to call the standard submit-function (similar to pressing "Enter" in Dialogue)
+        @return:
+        """
         self.element.submit()
 
     def findByAndClick(self, id = None, css=None, xpath=None, class_name=None, iframe=None, timeout=20, optional=False):
-
+        """
+        Execute a Click on an element identified by it's locator.
+        @return wasSuccessful says, whether the element was found.
+        """
         wasSuccessful = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout,
                                     optional=optional)
 
@@ -351,6 +425,16 @@ class BrowserDriver:
 
     def findByAndClickIf(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=60,
                          value=None, optional=False):
+        """
+        Convenience method to not have to write:
+        if <condition>:
+            findByAndClick(locator)
+
+        instead write:
+        findByAndClickIf(locator, value).
+
+        If value is evaluated to "True", the click-event is executed.
+        """
         if not value:
             return True
 
@@ -362,6 +446,10 @@ class BrowserDriver:
 
     def findByAndForceText(self, id=None, css=None, xpath=None, class_name=None, value=None,
                            iframe=None, timeout=60, optional=False):
+        """
+        Convenience Method. Please see documentation in findBy and __doSomething.
+
+        """
 
         self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
 
@@ -369,6 +457,23 @@ class BrowserDriver:
 
     def findBy(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=60, loggingOn=True,
                optional=False):
+        """
+        chose any single locator (ID, CSS, XPATH, CLASS_NAME) to identify an element within the page. if slowExectuion
+        is set, we'll pause for slowExecutionTimeoutInSeconds.
+
+        @param id: ID of the element
+        @param css: CSS-Locator
+        @param xpath: XPATH
+        @param class_name: Class-Name
+        @param iframe: Name of an Iframe. Use only, if you didn't set the Iframe previously already!
+        @param timeout: How many seconds shall we try/retry, default = 60 Seconds
+        @param loggingOn: Shall this request be logged? Default = Yes
+        @param optional: If set to true and within Timeout we can't find the element, we just return this info. If set to False (=default), an Exception is raised
+        @return: True if element was located, False if element couldn't be found.
+        """
+
+        if self.slowExecution:
+            time.sleep(self.slowExecutionTimeoutInSeconds)
 
         if self.slowExecution:
             time.sleep(self.slowExecutionTimeoutInSeconds)
@@ -391,18 +496,32 @@ class BrowserDriver:
             self.locator = id
 
         if loggingOn:
-            self._log(logging.DEBUG, f"Locating Element {self.locatorType}={self.locator}")
+            self._log(logging.DEBUG, f"Locating Element {self.locatorType} = {self.locator}")
 
         successful = self.__tryAndRetry(id, css, xpath, class_name, timeout=timeout)
 
         if not successful and not optional:
-            raise Exceptions.baangtTestStepException(f"Element {self.locatorType}={self.locator} could not be found within timeout of {timeout}")
+            raise Exceptions.baangtTestStepException(f"Element {self.locatorType} = {self.locator} could not be found "
+                                                     f"within timeout of {timeout}")
         return successful
 
     def getURL(self):
+        """
+
+        @return: the current URL/URI of the current Tab of the current Browser
+        """
         return self.driver.current_url
 
     def __tryAndRetry(self, id=None, css=None, xpath=None, class_name=None, timeout=20):
+        """
+        In: Locator
+        Out: Boolean whether the element was found or not.
+
+        Also sets the self.element for further use by other Methods (for instance to setText or read existing value)
+
+        The method is resistant to common timing problems (can't work 100% of the time but will remove at least 80%
+        of your pain compared to directly calling Selenium Methods).
+        """
 
         wasSuccessful = False
         begin = time.time()
@@ -414,7 +533,10 @@ class BrowserDriver:
 
         internalTimeout = timeout / 3
 
+        lLoopCount = 0
+
         while not wasSuccessful and elapsed < timeout:
+            lLoopCount += 1
             try:
                 driverWait = WebDriverWait(self.driver, timeout=internalTimeout, poll_frequency=pollFrequency)
 
@@ -425,7 +547,15 @@ class BrowserDriver:
                 elif class_name:
                     self.element = self.driver.find_element_by_class_name(class_name)
                 elif xpath:
-                    self.element = driverWait.until(ec.visibility_of_element_located((By.XPATH, xpath)))
+                    # visibility of element sometimes not true, but still clickable. If we tried already
+                    # 2 times with visibility, let's give it one more try with Presence of element
+                    if lLoopCount > 2:
+                        self._log(logging.INFO, "Tried 2 times to find visible element, now trying presence "
+                                                f"of element instead, XPATH = {xpath}")
+                        self.element = driverWait.until(ec.presence_of_element_located((By.XPATH, xpath)))
+                    else:
+                        self.element = driverWait.until(ec.visibility_of_element_located((By.XPATH, xpath)))
+
                 wasSuccessful = True
             except StaleElementReferenceException as e:
                 self._log(logging.DEBUG, "Stale Element Exception - retrying " + str(e))
@@ -455,7 +585,12 @@ class BrowserDriver:
 
         return wasSuccessful
 
-    def findWaitNotVisible(self, xpath=None, id=None, timeout = 90):
+    def findWaitNotVisible(self, css=None, xpath=None, id=None, timeout = 90, optional = False):
+        """
+        You'd use this method when you wait for an element to disappear, for instance Angular Spinner or a popup
+        to disapear before you continue with your script in the main screen.
+
+        """
         self._log(logging.DEBUG, "Waiting for Element to disappear", **{"xpath":xpath, "timeout":timeout})
         time.sleep(0.5)
 
@@ -469,18 +604,32 @@ class BrowserDriver:
                     self.element = self.driver.find_element_by_xpath(xpath)
                 elif id:
                     self.element = self.driver.find_element_by_id(id)
+                elif css:
+                    self.element = self.driver.find_element_by_css_selector(css)
                 time.sleep(0.1)
                 elapsed = time.time() - begin
             except Exception as e:
                 # Element gone - exit
                 stillHere = False
-        self._log(logging.DEBUG, f"Element was gone after {format(elapsed, '.2f')} seconds")
+                self._log(logging.DEBUG, f"Element was gone after {format(elapsed, '.2f')} seconds")
+                return
+
+        raise Exceptions.baangtTestStepException(f"Element still here after {timeout} seconds. Locator: xpath={xpath}, id={id}")
 
     @staticmethod
     def sleep(sleepTimeinSeconds):
         time.sleep(sleepTimeinSeconds)
 
     def __doSomething(self, command, value=None, timeout=20, xpath=None, optional=False):
+        """
+        Will interact in an element (that was found before by findBy-Method and stored in self.element) as defined by
+        ``command``.
+
+        Command can be "SETTEXT" (GC.CMD_SETTEXT), "CLICK" (GC.CMD_CLICK), "FORCETEXT" (GC.CMD_FORCETEXT).
+
+        Similarly to __try_and_retry the method is pretty robust when it comes to error handling of timing issues.
+
+        """
         didWork = False
         elapsed = 0
         begin = time.time()
@@ -545,7 +694,85 @@ class BrowserDriver:
 
 
     def javaScript(self, jsText):
-        # self.driver.execute_async_script(jsText)
+        """Execute a given JavaScript in the current Session"""
         self.driver.execute_script(jsText)
-        # self.driver.execute(jsText)
 
+    def downloadDriver(self,browserName):
+        path = Path(os.getcwd())
+        path = path.joinpath("browserDrivers")
+        tar_url = ''
+        url = ''
+        if str(browserName) == GC.BROWSER_FIREFOX:
+            response = requests.get(GC.GECKO_URL)
+            gecko = response.json()
+            gecko = gecko['assets']
+            gecko_length_results = len(gecko)
+            drivers_url_dict = []
+
+            for i in range(gecko_length_results):
+                drivers_url_dict.append(gecko[i]['browser_download_url'])
+
+            zipbObj = zip(GC.OS_list, drivers_url_dict)
+            geckoDriversDict = dict(zipbObj)
+            if platform.system().lower() == GC.WIN_PLATFORM:
+                if ctypes.sizeof(ctypes.c_voidp) == GC.BIT_64:
+                    url = geckoDriversDict[GC.OS_list[4]]
+                else:
+                    url = geckoDriversDict[GC.OS_list[3]]
+            elif platform.system().lower() == GC.LINUX_PLATFORM:
+                if ctypes.sizeof(ctypes.c_voidp) == GC.BIT_64:
+                    tar_url = geckoDriversDict[GC.OS_list[1]]
+                else:
+                    tar_url = geckoDriversDict[GC.OS_list[0]]
+            else:
+                tar_url = geckoDriversDict[GC.OS_list[2]]
+
+            if tar_url != '':
+                path_zip = path.joinpath(GC.GECKO_DRIVER.replace('exe', 'tar.gz'))
+                filename, headers = urlretrieve(tar_url,path_zip)
+                tar = tarfile.open(filename, "r:gz")
+                tar.extractall(path)
+                tar.close()
+
+
+            else:
+                file = requests.get(url)
+                path_zip = path.joinpath(GC.GECKO_DRIVER.replace('exe', 'zip'))
+                open(path_zip, 'wb').write(file.content)
+                with zipfile.ZipFile(path_zip, 'r') as zip_ref:
+                    zip_ref.extractall(path)
+
+
+        else:
+            response = requests.get(GC.CHROME_URL)
+            chromeversion = response.text
+            chromedriver_url_dict = []
+
+            for i in range(len(GC.OS_list_chrome)):
+                OS = GC.OS_list_chrome[i]
+                chrome = 'http://chromedriver.storage.googleapis.com/{ver}/chromedriver_{os}.zip'.format(
+                    ver=chromeversion,
+                    os=OS)
+
+                chromedriver_url_dict.append(chrome)
+
+            zipbObjChrome = zip(GC.OS_list, chromedriver_url_dict)
+            chromeDriversDict = dict(zipbObjChrome)
+            if platform.system().lower() == GC.WIN_PLATFORM:
+                url = chromeDriversDict[GC.OS_list[3]]
+            elif platform.system().lower() == GC.LINUX_PLATFORM:
+                url = chromeDriversDict[GC.OS_list[1]]
+            else:
+                url = chromeDriversDict[GC.OS_list[2]]
+            file = requests.get(url)
+            path_zip = path.joinpath(GC.CHROME_DRIVER.replace('exe', 'zip'))
+            open(path_zip, 'wb').write(file.content)
+            with zipfile.ZipFile(path_zip, 'r') as zip_ref:
+                zip_ref.extractall(path)
+
+                # permissions
+
+            if platform.system().lower() != GC.WIN_PLATFORM:
+                file_path = path.joinpath(GC.CHROME_DRIVER.replace('.exe', ''))
+                os.chmod(file_path, 0o777)
+        os.remove(path_zip)

@@ -16,13 +16,17 @@ CLASSES_TESTSTEPMASTER = 'TestStepMaster'
 TIMING_END = "end"
 TIMING_START = "start"
 TIMING_TESTRUN = "Complete Testrun"
-TIMING_DURATION = "Dauer"
+TIMING_DURATION = "Duration"
 TIMESTAMP = "timestamp"
 TIMELOG = "timelog"
+
+GECKO_DRIVER = "geckodriver.exe"
+CHROME_DRIVER = "chromedriver.exe"
 
 BROWSER_FIREFOX = "FF"
 BROWSER_CHROME = "CHROME"
 BROWSER_SAFARI = "SAFARI"
+BROWSER_EDGE = "EDGE"
 BROWSER_REMOTE = 'REMOTE'
 BROWSER_MODE_HEADLESS = "HEADLESS"
 BROWSER_ATTRIBUTES = "BrowserAttributes"
@@ -36,6 +40,7 @@ TESTCASESTATUS_SUCCESS = "OK"
 TESTCASESTATUS_ERROR = "Failed"
 TESTCASESTATUS_WAITING = "Paused"
 TESTCASEERRORLOG = "TCErrorLog"
+TESTCASE_EXPECTED_ERROR_FIELD = "TC Expected Error"
 
 DATABASE_FROM_LINE = "FromLine"
 DATABASE_TO_LINE = "ToLine"
@@ -63,3 +68,25 @@ PATH_EXPORT = 'ExportPath'
 PATH_IMPORT = 'ImportPath'
 PATH_SCREENSHOTS = 'ScreenshotPath'
 PATH_ROOT = 'RootPath'
+
+ADDRESS_COUNTRYCODE = "CountryCode"
+ADDRESS_POSTLCODE = "PostlCode"
+ADDRESS_CITYNAME = "CityName"
+ADDRESS_STREETNAME = "StreetName"
+ADDRESS_HOUSENUMBER = "HouseNumber"
+ADDRESS_ADDITION1 = "Addition1"
+ADDRESS_ADDITION2 = "Addition2"
+
+WIN_PLATFORM = 'windows'
+LINUX_PLATFORM = 'linux'
+
+BIT_64 = 8
+BIT_32 = 4
+
+OS_list = ["Linux-32", "Linux-64", "MacOS", "Windows-32", "Windows-64"]
+OS_list_chrome = ['linux32', 'linux64', 'mac64', 'win32']
+
+GECKO_URL = 'https://api.github.com/repos/mozilla/geckodriver/releases/latest'
+
+
+CHROME_URL= 'https://chromedriver.storage.googleapis.com/LATEST_RELEASE'

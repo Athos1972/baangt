@@ -33,7 +33,19 @@ in one place.
 After subclassing you'll need to replace the standard ``BrowserHandling`` with ``MyCustomBrowser`` in order for baangt
 to use it.
 
+Debugging
+---------
+
+Yeah, sometimes the logs alone are not enough, even when you set loglevel to ``debug``. In such cases you'll want to set
+breakpoints and expect the program to halt on the breakpoint. You've two chances to achieve that:
+
+* Start baangtIA.py from CLI using:
+    ``python3 baangtIA.py --run=<PathAndFileOfTestrunName> --globals=<PathAndFileNameForGlobals>``
+* Use ``TX.DEBUG`` as flag in ``baangt`` interactive starter (=the UI, that comes when you start CLI without parameter
+  ``--run``) with value ``True``
+
 Plugins
 -------
 
-Please make yourself familiar with https://pluggy.readthedocs.io/en/latest/ in order to implement Plugins. If you're stuck let me know.
+Please make yourself familiar with https://pluggy.readthedocs.io/en/latest/ in order to implement Plugins.
+If you're stuck let me know.

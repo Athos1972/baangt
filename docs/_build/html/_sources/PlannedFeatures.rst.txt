@@ -1,0 +1,40 @@
+Future Features
+===============
+We implement all features for 3 operating Systems (Mac, Windows, Debian Linux and Ubuntu on Docker).
+
+Short/Medium term features
+---------------------------
+* Executables on Mac, Linux and Windows (Most probably 2020.02)
+* Download browser Driver (if needed) (2020.02)
+* Refactoring of Multiprocessing (2020.02)
+* BaangtDB powered by Flask (2020.02)
+* Stop the shame of having no unit tests (2020.02)
+* Provide support for Plugins (2020.03)
+* Nicer interactive UI-Starter (2020.03)
+* Build-In Proxy-Server for Network traffic and timing logs (2020.03) (most probably not possible in Windows and MAC but should work in Linux)
+* Double Opt-In Automation (2020.03)
+* Support for Selenium Grid V4 (2020.03)
+
+Features for later
+------------------
+* Proof of concept with PyWinAuto
+* Integration with SAP Gui Scripting via VBS and PyWinAuto
+* Better support for Mass testing APIs
+* Integration with Atlassian Confluence (for Testcase and Testrun definitions)
+* Integration with Atlassian Confluence (to publish results of testruns)
+* Integration with MS Teams to publish results of Testruns
+* Grafana Board for Flask-Version
+* Better support for oData V4.0 (similar to SOAP)
+* Support for GraphQL via Graphene
+
+PRO-Features
+------------
+There's no time plan yet, when a pro version will be released. So far whatever we do goes into the open source version.
+Future features might include:
+
+* DB-Migration tools (to ease the pain of upgrading databases)
+* Multi-User environment (who did when which activity)
+* History of Testcases (what was changed when. If urgently needed we could come up with DB-Dump and GIT diff or so.)
+* Test-Canons (deliberately stop test cases multiple times at certain test steps, wait for trigger, then resume. After first Testcase *finished* his first waiting period, start second round of Testcases (that's how the name "Canon" came up). So far implemented in customer project, but needs to be polished up for public version)
+* XML/PDF-Compare
+

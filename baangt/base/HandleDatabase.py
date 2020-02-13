@@ -41,7 +41,7 @@ class HandleDatabase:
         """
         Interprets the Range and creates a DICT of values, that we can loop over later
 
-        @return: Setzt das self.rangeDict
+        @return: Creates empty self.rangeDict
         """
         for lRangeLine in self.range:
             for x in range(lRangeLine[0], lRangeLine[1]+1):
@@ -62,9 +62,9 @@ class HandleDatabase:
                 lRange.append(HandleDatabase.__buildRangeOfRecordsOneEntry(rangeFromConfigFile))
 
         # Make sure these are numbers:
-        for range in lRange:
-            range[0] = HandleDatabase.__sanitizeNumbers(range[0])
-            range[1] = HandleDatabase.__sanitizeNumbers(range[1])
+        for lRangeLine in lRange:
+            lRangeLine[0] = HandleDatabase.__sanitizeNumbers(lRangeLine[0])
+            lRangeLine[1] = HandleDatabase.__sanitizeNumbers(lRangeLine[1])
 
         return lRange
 
@@ -115,7 +115,9 @@ class HandleDatabase:
             # All records were processed
             return None
         try:
-            lRecord = self.dataDict[list(self.rangeDict.keys())[0]]
+            # the topmost record of the RangeDict (RangeDict was built by the range(s) from the TestRun
+            # - 1 because there's a header line in the Excel-Sheet.
+            lRecord = self.dataDict[(list(self.rangeDict.keys())[0])-1]
         except Exception as e:
             logger.debug(f"Couldn't read record from database: {list(self.rangeDict.keys())[0]}")
             self.rangeDict.pop(list(self.rangeDict.keys())[0])
