@@ -16,6 +16,7 @@ from datetime import datetime
 
 logger = logging.getLogger("pyC")
 
+
 class ExportResults:
     def __init__(self, **kwargs):
         self.testList = []
@@ -233,6 +234,7 @@ class ExportResults:
         self.workbook.close()
         # Next line doesn't work on MAC. Returns "not authorized"
         # subprocess.Popen([self.filename], shell=True)
+
 
 class ExcelSheetHelperFunctions:
     def __init__(self):

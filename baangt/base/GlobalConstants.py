@@ -20,6 +20,9 @@ TIMING_DURATION = "Duration"
 TIMESTAMP = "timestamp"
 TIMELOG = "timelog"
 
+GECKO_DRIVER = "geckodriver.exe"
+CHROME_DRIVER = "chromedriver.exe"
+
 BROWSER_FIREFOX = "FF"
 BROWSER_CHROME = "CHROME"
 BROWSER_SAFARI = "SAFARI"
@@ -73,3 +76,17 @@ ADDRESS_STREETNAME = "StreetName"
 ADDRESS_HOUSENUMBER = "HouseNumber"
 ADDRESS_ADDITION1 = "Addition1"
 ADDRESS_ADDITION2 = "Addition2"
+
+WIN_PLATFORM = 'windows'
+LINUX_PLATFORM = 'linux'
+
+BIT_64 = 8
+BIT_32 = 4
+
+OS_list = ["Linux-32", "Linux-64", "MacOS", "Windows-32", "Windows-64"]
+OS_list_chrome = ['linux32', 'linux64', 'mac64', 'win32']
+
+GECKO_URL = 'https://api.github.com/repos/mozilla/geckodriver/releases/latest'
+
+
+CHROME_URL= 'https://chromedriver.storage.googleapis.com/LATEST_RELEASE'
