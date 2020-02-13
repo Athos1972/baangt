@@ -140,14 +140,17 @@ def edit_item(item_type, item_id):
 			# model extension
 			form.locator.data = item.locator
 			if item.optional:
-				form.optional.data = '1'
-			else:
 				form.optional.data = '2'
-			form.timeout.data = item.timeout
-			form.release.data = item.release
-			form.value.data = item.value
-			form.value2.data = item.value2
-			form.comparision.data = item.comparision
+			else:
+				form.optional.data = '1'
+			if item.timeout:
+				form.timeout.data = f'{item.timeout}'
+			else:
+				form.timeout.data = ''
+			form.release.data = item.release or ''
+			form.value.data = item.value or ''
+			form.value2.data = item.value2 or ''
+			form.comparision.data = utils.getComparisionId(item.comparision)
 
 	else:
 		flash('ERROR: Wrong Item Type', 'warning')
@@ -194,13 +197,19 @@ def edit_item(item_type, item_id):
 			item.activity_type = models.ActivityType.query.get(int(form.activity_type.data))
 			item.locator_type = models.LocatorType.query.get(int(form.locator_type.data))
 			# model extension
-			item.locator=form.locator.data
-			item.optional=[None, True, False][int(form.optional.data)]
-			item.timeout=form.timeout.data
-			item.release=form.release.data
-			item.value=form.value.data
-			item.value2=form.value2.data
-			item.comparision=form.comparision.data
+			item.locator = form.locator.data
+			item.optional = [None, False, True][int(form.optional.data)]
+			try:
+				item.timeout = float(form.timeout.data)
+			except ValueError:
+				item.timeout = None
+			item.release = form.release.data or None
+			item.value = form.value.data or None
+			item.value2 = form.value2.data or None
+			if form.comparision.data == '0':
+				item.comparision = None
+			else:
+				item.comparision = utils.COMPARISIONS[int(form.comparision.data)-1]
 			
 
 		# update item in db
@@ -282,8 +291,6 @@ def new_item(item_type):
 			)
 		# test step
 		elif item_type == 'teststep':
-			print('*********** Timeout')
-			print(type(form.timeout.data))
 			item = models.TestStepExecution(
 				name=form.name.data,
 				description=form.description.data,
@@ -292,13 +299,19 @@ def new_item(item_type):
 				locator_type=models.LocatorType.query.get(int(form.locator_type.data)),
 				# model extension
 				locator=form.locator.data,
-				optional=[None, True, False][int(form.optional.data)],
-				timeout=form.timeout.data,
-				release=form.release.data,
-				value=form.value.data,
-				value2=form.value2.data,
-				comparision=form.comparision.data,
+				optional=[None, False, True][int(form.optional.data)],
 			)
+			try:
+				item.timeout = float(form.timeout.data)
+			except ValueError:
+				item.timeout = None
+			item.release = form.release.data or None
+			item.value = form.value.data or None
+			item.value2 = form.value2.data or None
+			if form.comparision.data == '0':
+				item.comparision = None
+			else:
+				item.comparision = utils.COMPARISIONS[int(form.comparision.data)-1]
 
 		# save item to db
 		db.session.add(item)

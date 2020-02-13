@@ -186,6 +186,32 @@
                             </div>
                         </div>
 
+                        
+
+                        <div class="row py-2">
+                            <div class="col-md-2">
+                                <strong>Value</strong>
+                            </div>
+                            <div class="col-md-2">
+                                <strong>Comparision</strong>
+                            </div>
+                            <div class="col-md-2">
+                                <strong>Value 2</strong>
+                            </div>
+                        </div>
+
+                        <div class="row border-bottom py-2">
+                            <div class="col-md-2">
+                                {% if item.value %}{{ item.value }}{% endif %}
+                            </div>
+                            <div class="col-md-2">
+                                {% if item.comparision %}{{ item.comparision }}{% endif %}
+                            </div>
+                            <div class="col-md-2">
+                                {% if item.value2 %}{{ item.value2 }}{% endif %}
+                            </div>
+                        </div>
+
                         <div class="row border-bottom py-2">
                             <div class="col-md-3">
                                 <strong>Optional</strong>
@@ -200,7 +226,7 @@
                                 <strong>Timeout</strong>
                             </div>
                             <div class="col-md-9">
-                                {{ item.timeout }}
+                                {% if item.timeout %}{{ item.timeout }}{% endif %}
                             </div>
                         </div>
 
@@ -209,34 +235,7 @@
                                 <strong>Release</strong>
                             </div>
                             <div class="col-md-9">
-                                {{ item.release }}
-                            </div>
-                        </div>
-
-                        <div class="row border-bottom py-2">
-                            <div class="col-md-3">
-                                <strong>Value</strong>
-                            </div>
-                            <div class="col-md-9">
-                                {{ item.value }}
-                            </div>
-                        </div>
-
-                        <div class="row border-bottom py-2">
-                            <div class="col-md-3">
-                                <strong>Value 2</strong>
-                            </div>
-                            <div class="col-md-9">
-                                {{ item.value2 }}
-                            </div>
-                        </div>
-
-                        <div class="row border-bottom py-2">
-                            <div class="col-md-3">
-                                <strong>Comparision</strong>
-                            </div>
-                            <div class="col-md-9">
-                                {{ item.comparision }}
+                                {% if item.release %}{{ item.release }}{% endif %}
                             </div>
                         </div>
                     </li>

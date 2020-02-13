@@ -78,3 +78,26 @@ def getLocatorTypes():
 	for item in models.LocatorType.query.all():
 		choices.append((f'{item.id}', item.name))
 	return choices
+
+
+#
+# Comaprisions
+#
+
+COMPARISIONS = [
+	'=',
+	'>',
+	'<',
+	'>=',
+	'<=',
+	'<>',
+]
+
+def getComparisionChoices():
+	return [('0', 'N/A')] + [(f'{i+1}', COMPARISIONS[i]) for i in range(len(COMPARISIONS))]
+
+def getComparisionId(option):
+	for i in range(len(COMPARISIONS)):
+		if option == COMPARISIONS[i]:
+			return f'{i+1}'
+	return '0'
