@@ -120,7 +120,11 @@ You managed to have a working recording. Congratulations! Let's learn a bit more
        writing CSS-Paths then use value ``CSS`` for the locator. And if you're luck enough to have unique IDs in your
        page simply use ``ID``.
    * - ``Locator``
-     - The locator is the specification, on which element ``Activity`` should happen.
+     - The locator is the specification, on which element ``Activity`` should happen. As in the value fields you may
+       use variable replacement here too in order to replace Locators with values from the data file, for instance the
+       following would work fine:
+       ``//*[@id($(CUSTOMERNUMBER))]`` - this would create an XPATH-Statement where $(CUSTOMERNUMBER) is replaced by the
+       actual value of the current test record.
    * - ``Value``
      - For instance activity ``SetText`` requires a value (The text to send to a Web-element). You may use fixed values
        (which will rarely happen) or values from your test data source, in the simple cases the sheet ``Data`` .
@@ -205,3 +209,6 @@ More details on Activities
             $(POSTCODE) = 7040
 
             $(YEAR2DATE) > $(YEARTOMONTH)
+
+       Another use of the If-Statement is with ``LocatorType`` and ``Locator`` and comparison. You'd use that, when you
+       want conditional execution of a larger block of statements depending on an element present or not present.

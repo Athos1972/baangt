@@ -4,10 +4,12 @@ Change log
 2020.02
 ^^^^^^^
 * Pypi-Version 2020.02.* deployed
-* First version of baangtDB with Flask
-* Support of Edge on Microsoft Platform and Safari on Mac
+* First version of baangtDB with Flask (including Docker Container). No DOCS yet, as it's still under heavy development.
+* Support of Edge on Microsoft Platform and Safari on Apple/Mac
 * Completed support for Versions in SimpleFormat and SimpleAPIFormat (can also be used for ``baangtDB``, subclassed methods and complex Excel TestRun Defintions)
 * Improved support for API-Calls and data extraction from API response to result sheet
+* Added logical comparison for IF-conditions, whether a field exists or not (using LocatorType and Locator). You can see an example in file ``BaangtDBFill.xlsx``
+
 
 2020.01
 ^^^^^^^

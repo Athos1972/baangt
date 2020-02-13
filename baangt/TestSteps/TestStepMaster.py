@@ -51,13 +51,14 @@ class TestStepMaster:
                 continue     # Comment's are ignored
 
             lLocatorType = command["LocatorType"].upper()
-            lLocator = command["Locator"]
+            lLocator = self.replaceVariables(command["Locator"])
             xpath, css, id = self.__setLocator(lLocatorType, lLocator)
 
-            lValue = command["Value"]
-            lValue2 = command["Value2"]
+            lValue = str(command["Value"])
+            lValue2 = str(command["Value2"])
             lComparison = command["Comparison"]
-            lTimeout = command["Timeout"]
+            lOptional = TestStepMaster._sanitizeXField(command["Optional"])
+
             # check release line
             lRelease = command["Release"]
 
@@ -85,6 +86,10 @@ class TestStepMaster:
                 if self.ifActive:
                     raise BaseException("No nested IFs at this point, sorry...")
                 self.ifActive = True
+                # Originally we had only Comparisons. Now we also want to check for existance of Field
+                if not lValue and lLocatorType and lLocator:
+                    lValue = self.browserSession.findBy(xpath=xpath, css=css, id=id, optional=lOptional, timeout=lTimeout)
+
                 self.__doComparisons(lComparison=lComparison, value1=lValue, value2=lValue2)
             elif lActivity == "ENDIF":
                 if not self.ifActive:
@@ -107,6 +112,23 @@ class TestStepMaster:
                 self.doSaveData(lValue, lValue2)
             else:
                 raise BaseException(f"Unknown command in TestStep {lActivity}")
+
+    @staticmethod
+    def _sanitizeXField(inField):
+        """
+        When "X" or "True" is sent, then use this
+        @param inField:
+        @return:
+        """
+        lXField = True
+
+        if not inField:
+            lXField = False
+
+        if inField.upper() == 'FALSE':
+            lXField = False
+
+        return lXField
 
     @staticmethod
     def ifQualifyForExecution(version_global, version_line):
@@ -173,7 +195,27 @@ class TestStepMaster:
             lTimeout = 20
         return lTimeout
 
+    @staticmethod
+    def anyting2Boolean(valueIn):
+        if isinstance(valueIn, bool):
+            return valueIn
+
+        if isinstance(valueIn, int):
+            return bool(valueIn)
+
+        if isinstance(valueIn, str):
+            if valueIn.lower() in ("yes", "true", "1", "ok"):
+                return True
+            else:
+                return False
+
+        raise TypeError(f"Anything2Boolean had a wrong value: {valueIn}. Don't know how to convert that to boolean")
+
     def __doComparisons(self, lComparison, value1, value2):
+        if isinstance(value1, bool) or isinstance(value2, bool):
+            value1 = TestStepMaster.anyting2Boolean(value1)
+            value2 = TestStepMaster.anyting2Boolean(value2)
+
         if lComparison == "=":
             if value1 == value2:
                 self.ifIsTrue = True
