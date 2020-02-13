@@ -8,7 +8,7 @@ from selenium.webdriver.firefox.options import Options as ffOptions
 from selenium.common.exceptions import *
 from selenium.webdriver.common import keys
 from baangt.base import GlobalConstants as GC
-from baangt.base.Timing import Timing
+from baangt.base.Timing.Timing import Timing
 from baangt.TestSteps import Exceptions
 import uuid
 import time
