@@ -68,3 +68,6 @@ class Timing:
     def __format_time(startAndEndTimeAsDict):
         return time.strftime("%H:%M:%S", time.localtime(startAndEndTimeAsDict[GC.TIMING_END] -
                                                         startAndEndTimeAsDict[GC.TIMING_START]))
+
+if __name__ == '__main__':
+    test = Timing()

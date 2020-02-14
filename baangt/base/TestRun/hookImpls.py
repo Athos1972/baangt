@@ -6,7 +6,7 @@ from baangt.base.TestRun.TestRun import TestRun
 class TestRunHookImpl(object):
 
     @baangt.hook_impl
-    def initTestRun(self, testRunName, globalSettingsFileNameAndPath):
+    def testRun_init(self, testRunName, globalSettingsFileNameAndPath):
         return TestRun(testRunName=testRunName, globalSettingsFileNameAndPath=globalSettingsFileNameAndPath)
 
     @baangt.hook_impl
