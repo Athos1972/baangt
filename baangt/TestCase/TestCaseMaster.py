@@ -1,5 +1,5 @@
 from baangt.base import GlobalConstants as GC
-from baangt.base.Timing import Timing
+from baangt.base.Timing.Timing import Timing
 from baangt.TestSteps.Exceptions import *
 
 class TestCaseMaster:
