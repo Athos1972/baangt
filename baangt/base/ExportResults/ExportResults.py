@@ -149,7 +149,6 @@ class ExportResults:
         self.__writeSummaryCell("TestSequence settings follow:", "", row=16+len(self.testRunInstance.globalSettings),
                                 format=self.cellFormatBold)
         lSequence = self.testRunInstance.testRunUtils.getSequenceByNumber(testRunName=self.testRunName, sequence="1")
-        # fixme: Here is a new bug (Earthsquad-Demo.XLS --> he doesn't find Sequence1 and then breaks. Theoretically there should always be a sequence 1 - even in simple XLS-Format.
         if lSequence:
             for key, value in lSequence[1].items():
                 if isinstance(value, list) or isinstance(value, dict):
@@ -188,10 +187,22 @@ class ExportResults:
 
     def __setHeaderDetailSheet(self):
         i = 0
+        self.__extendFieldList()  # Add fields with name "RESULT_*" to output fields.
         for column in self.fieldListExport:
             self.worksheet.write(0, i, column)
             i += 1
         self.worksheet.write(0, len(self.fieldListExport), "JSON")
+
+    def __extendFieldList(self):
+        """
+        Fields, that start with "RESULT_" shall always be exported.
+
+        @return:
+        """
+        for key in self.dataRecords[0].keys():
+            if "RESULT_" in key:
+                if not key in self.fieldListExport:
+                    self.fieldListExport.append(key)
 
     def _exportData(self):
         for key, value in self.dataRecords.items():
@@ -226,6 +237,7 @@ class ExportResults:
         self.workbook.close()
         # Next line doesn't work on MAC. Returns "not authorized"
         # subprocess.Popen([self.filename], shell=True)
+
 
 class ExcelSheetHelperFunctions:
     def __init__(self):

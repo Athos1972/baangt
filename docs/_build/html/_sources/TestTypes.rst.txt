@@ -56,6 +56,40 @@ As of today (Jan 2020) ``baangt`` does not provide infrastructure monitoring. In
 performance tests you'll need additional tools, but ``baangt`` will give indications, which components or which functionalities
 need a closer look by your experts.
 
+End to End (E2E) Testing
+------------------------
+
+Whenever you have more than one system/microservice dealing with a process, you'll need E2E-Testing. Of course E2E-Tests
+are more complex than just running test cases against one functionality and compare results to the expected values and
+behaviour. In larger organizations you'll want to have E2E-Regression tests before you release increments to production.
+``baangt`` follows a structure of TestCaseSequences where you combine multiple single Testcases into one Sequence, which
+is exactly tailored to run E2E Tests.
+
+Lifecycle tests of business objects
+-----------------------------------
+Lifecycle tests come in basically two variations, but can be combined - depending on the requirements of the business.
+Many industries deal with objects, that follow a certain (long) life cycle. The life cycle can go over years or decades.
+These tests are complex and cost a lot of time and effort.
+
+Time travel tests
+^^^^^^^^^^^^^^^^^
+
+Often companies have "Time travel" system landscapes, where they
+create copies of the whole system landscape (or large parts of the core systems), change the system time on all servers
+and run tests subsequently with different dates. ``baangt`` does not support this type of testing out of the box. But
+we provide a functionality to "Pause" Testcase and TestCaseSequence execution. You can easily subclass the corresponding
+master classes and create your own mechanism, when to pause a Testcase or TestCaseSequence.
+
+Cradle to the grave
+^^^^^^^^^^^^^^^^^^^
+
+Another common form of lifecycle tests. In this case the system time remains basically the same, but the test cases are
+created in a sequence to follow the birth of an object until it's deletion. This might be a material, which get's created,
+production recipe created, work planned, sales contract and order created, produced, delivered, invoiced, paid and
+revenue calculated. In service industries C2G-Tests are designed around a customer. ``baangt`` fully supports complex
+testcaseSequences running on multiple technologies (Web, API, etc.) also in asynchronous scenarios, for instance if you
+need to wait for nightly batch processing of a mainframe.
+
 No oversimplification
 ---------------------
 

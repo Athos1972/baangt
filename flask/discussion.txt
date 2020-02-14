@@ -1,0 +1,6 @@
+First: In the TestSteps apart from the locatoryType should also be the locator - otherwise it won't work :)
+Also there are new fields on this level: Optional (boolean), Timeout (dec 5,2), Release (string), value2 (String), comparison (string). You can see the fields for instance in SimpleTheInternet.xlsx. I guess that shouldn't be a big problem :)
+The assignment of elements to other elements though is not ideal. Think of a bank with 100 systems, 1000 Testruns and 100.000 Teststeps. As I see the assignment from one level to the next is simply by clicking on a (full) list of elements of the lower level. I think this needs another idea :)
+About testing the functionality: There is a repository baangt-Docker that uses VNC and has all necessary dependencies installed (Firefox, Geckodriver, etc.). This should be a good base for testing. 
+anyway. About interfacing the database with the testrun: In the same way as now in TestRun.py
+called from __init__ there are methods _loadJSONTestRunDefinition and _loadExcelTestRunDefinition. Either you export the structures below a given testrun from the database into JSON-format, that can be read by this method OR we make a new method like _loadDbTestRunDefinition where the DB-Structures are filled into Dict.

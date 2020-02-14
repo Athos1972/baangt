@@ -66,7 +66,7 @@ class Timing:
 
     @staticmethod
     def __format_time(startAndEndTimeAsDict):
-        return time.strftime("%H:%M:%S", time.localtime(startAndEndTimeAsDict[GC.TIMING_END] -
+        return time.strftime("%H:%M:%S", time.gmtime(startAndEndTimeAsDict[GC.TIMING_END] -
                                                         startAndEndTimeAsDict[GC.TIMING_START]))
 
 if __name__ == '__main__':

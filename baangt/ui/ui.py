@@ -101,9 +101,6 @@ class UI:
                                 icon=self.iconFileWindow)  # size=(750,400)
         lWindow = self.window
         lWindow.finalize()
-        # lWindow.set_icon(pngbase64=self.iconFileWindow)
-
-        # sg.theme_previewer()
 
         while True:
             lEvent, lValues = lWindow.read(timeout=200)
@@ -143,13 +140,12 @@ class UI:
                 self.modifyValuesOfConfigFileInMemory(lValues=lValues)
                 self.runTestRun()
 
-            if lEvent == "Import KatalonRecorder":
+            if lEvent == "Import Recorder":
                 ImportKatalonRecorder(self.directory)
                 self.getConfigFilesInDirectory()   # Refresh display
 
             if lEvent == 'ToggleFields':
                 lWindow = self.toggleAdditionalFieldsExecute(lWindow=lWindow)
-
 
         self.saveInteractiveGuiConfig()
         lWindow.close()
@@ -188,8 +184,17 @@ class UI:
             sg.popup_cancel("No Testrun File selected - can't run")
             return
         runCmd = self._getRunCommand()
-        logger.info(f"Running command: {runCmd}")
-        p = subprocess.run(runCmd, shell=True)
+        if self.configContents.get("TX.DEBUG"):
+            from baangt.base.TestRun import TestRun
+
+            lTestRun = TestRun(f"{Path(self.directory).joinpath(self.testRunFile)}",
+                               globalSettingsFileNameAndPath=f'{Path(self.directory).joinpath(self.tempConfigFile)}')
+
+        else:
+            logger.info(f"Running command: {runCmd}")
+            p = subprocess.run(runCmd, shell=True, close_fds=True)
+
+
         sg.popup_ok("Testrun finished")
         # Remove temporary Configfile, that was created only for this run:
         try:

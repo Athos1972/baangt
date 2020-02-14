@@ -52,7 +52,7 @@ class TestRun:
         Take overall Time spent for the complete TestRun
         Write results of TestRun to output channel(s)
         """
-        if not self.globalSettings.get(GC.EXECUTION_DONTCLOSEBROWSER):
+        if not self.globalSettings.get("TC." + GC.EXECUTION_DONTCLOSEBROWSER):
             for browserInstance in self.browser.keys():
                 self.browser[browserInstance].closeBrowser()
 
@@ -63,6 +63,7 @@ class TestRun:
             self.apiInstance.tearDown()
 
         ExportResults(**self.kwargs)
+
 
         successful, error = self.getSuccessAndError()
         logger.info(f"Finished execution of Testrun {self.testRunName}. "
@@ -174,6 +175,7 @@ class TestRun:
                     return
             logger.info(f"Starting {counterName}: {key}, {value} ")
             kwargs[counterName] = key
+
             if isinstance(value, list):
                 lFullQualified = value[0]  # First List-Entry must hold the ClassName
             else:

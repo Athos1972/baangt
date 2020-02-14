@@ -1,0 +1,1258 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"db",
+				"db_item"
+			],
+			[
+				"sta",
+				"status_code"
+			],
+			[
+				"table",
+				"table_name"
+			],
+			[
+				"tabl",
+				"table_name"
+			],
+			[
+				"dataset",
+				"dataset_name"
+			],
+			[
+				"pa",
+				"path"
+			],
+			[
+				"pat",
+				"path_to_file"
+			],
+			[
+				"get",
+				"getGroupList"
+			],
+			[
+				"u",
+				"update_access"
+			],
+			[
+				"update",
+				"update_access"
+			],
+			[
+				"refresh",
+				"refresh_token"
+			],
+			[
+				"user",
+				"user_id"
+			],
+			[
+				"data",
+				"dataset"
+			],
+			[
+				"group",
+				"group_id"
+			],
+			[
+				"grou",
+				"group_id"
+			],
+			[
+				"co",
+				"connection"
+			],
+			[
+				"work",
+				"worksapce"
+			],
+			[
+				"ite",
+				"item_id"
+			],
+			[
+				"set",
+				"setAttribute"
+			],
+			[
+				"create",
+				"createAttribute"
+			],
+			[
+				"new",
+				"new_chip"
+			],
+			[
+				"chip",
+				"chip_area"
+			],
+			[
+				"input",
+				"input-group"
+			],
+			[
+				"su",
+				"success"
+			],
+			[
+				"login",
+				"login_required"
+			],
+			[
+				"list",
+				"list-group-item"
+			],
+			[
+				"path",
+				"path_to_import_status"
+			],
+			[
+				"path_to",
+				"path_to_import_response"
+			],
+			[
+				"class",
+				"classname_id"
+			],
+			[
+				"test",
+				"testcase_sequences"
+			],
+			[
+				"testst",
+				"teststeps"
+			],
+			[
+				"re",
+				"responseText"
+			],
+			[
+				"Data",
+				"DataFile"
+			],
+			[
+				"tes",
+				"testrun"
+			],
+			[
+				"getTest",
+				"getTestSteps"
+			],
+			[
+				"getTes",
+				"getTestCases"
+			],
+			[
+				"seq",
+				"sequence_id"
+			],
+			[
+				"for",
+				"form"
+			],
+			[
+				"query",
+				"querySelector"
+			],
+			[
+				"item",
+				"item_type"
+			],
+			[
+				"response",
+				"responseText"
+			],
+			[
+				"quer",
+				"querySelector"
+			],
+			[
+				"noi",
+				"noisy_circle"
+			],
+			[
+				"Test",
+				"TestCaseType"
+			],
+			[
+				"created",
+				"createdBy"
+			],
+			[
+				"model",
+				"model_fit"
+			],
+			[
+				"df",
+				"df_forecast"
+			],
+			[
+				"sle",
+				"slePtr"
+			],
+			[
+				"siz",
+				"size-1"
+			],
+			[
+				"global",
+				"globalSettings"
+			],
+			[
+				"globa",
+				"globalsString"
+			],
+			[
+				"glo",
+				"globalsString"
+			],
+			[
+				"de",
+				"declarative_base"
+			],
+			[
+				"print",
+				"print_usage"
+			],
+			[
+				"draw",
+				"draw_sudoku"
+			],
+			[
+				"sudo",
+				"sudoku_img"
+			],
+			[
+				"puzz",
+				"puzzleGen"
+			],
+			[
+				"phi",
+				"phi_1"
+			],
+			[
+				"y",
+				"y_test"
+			],
+			[
+				"x_",
+				"x_test"
+			],
+			[
+				"score",
+				"score"
+			],
+			[
+				"dt",
+				"data_filenames"
+			],
+			[
+				"goo",
+				"goodreads_data"
+			],
+			[
+				"not",
+				"not_rated"
+			],
+			[
+				"rew",
+				"reviews"
+			],
+			[
+				"opt",
+				"option\tTag"
+			],
+			[
+				"fetch",
+				"fetchall"
+			],
+			[
+				"book",
+				"book_id"
+			],
+			[
+				"pass",
+				"password1"
+			],
+			[
+				"font-fa",
+				"font-family\tproperty"
+			],
+			[
+				"marg",
+				"margin-left\tproperty"
+			],
+			[
+				"margin",
+				"margin-right\tproperty"
+			],
+			[
+				"bac",
+				"background-image\tproperty"
+			],
+			[
+				"Chil",
+				"ChildInline"
+			],
+			[
+				"mod",
+				"models"
+			],
+			[
+				"clas",
+				"class_id"
+			],
+			[
+				"cla",
+				"class_id"
+			],
+			[
+				"Child",
+				"ChildAdmin"
+			],
+			[
+				"field",
+				"fieldsets"
+			],
+			[
+				"date",
+				"date_list"
+			],
+			[
+				"ch",
+				"children"
+			],
+			[
+				"json",
+				"json_children"
+			],
+			[
+				"ma",
+				"max_length"
+			],
+			[
+				"wid",
+				"width\tproperty"
+			],
+			[
+				"align",
+				"alignment-baseline\tproperty"
+			],
+			[
+				"ali",
+				"align-self\tproperty"
+			],
+			[
+				"back",
+				"background-size\tproperty"
+			],
+			[
+				"conn",
+				"conn_pre"
+			],
+			[
+				"sq",
+				"sqlite3"
+			],
+			[
+				"last",
+				"last_name"
+			],
+			[
+				"is",
+				"is_active"
+			],
+			[
+				"_",
+				"_create_user"
+			],
+			[
+				"mr",
+				"margin\tproperty"
+			],
+			[
+				"bo",
+				"bottom\tvertical-align"
+			],
+			[
+				"bottom",
+				"text-bottom\tvertical-align"
+			],
+			[
+				"fon",
+				"font-style\tproperty"
+			],
+			[
+				"auth",
+				"auth-logo"
+			],
+			[
+				"backgroun",
+				"background-color\tproperty"
+			],
+			[
+				"sql",
+				"sql_col"
+			],
+			[
+				"gr",
+				"group_name"
+			],
+			[
+				"eve",
+				"event"
+			],
+			[
+				"event",
+				"events_list"
+			],
+			[
+				"gro",
+				"groups"
+			],
+			[
+				"mar",
+				"margin-bottom\tproperty"
+			],
+			[
+				"font",
+				"font-weight\tproperty"
+			],
+			[
+				"Article",
+				"SiteArticle"
+			],
+			[
+				"time",
+				"time_start"
+			],
+			[
+				"repl",
+				"replacement_string"
+			],
+			[
+				"coun",
+				"count_two_word_sequance"
+			],
+			[
+				"patt",
+				"pattern_two_word_sequance"
+			],
+			[
+				"patte",
+				"pattern_non_alphanumeric"
+			],
+			[
+				"alig",
+				"align-content\tproperty"
+			],
+			[
+				"jum",
+				"jumbotron-middle"
+			],
+			[
+				"nav-",
+				"nav-link"
+			],
+			[
+				"sty",
+				"stylesheet"
+			],
+			[
+				"text",
+				"text-color"
+			],
+			[
+				"gre",
+				"grid-template-columns\tproperty"
+			],
+			[
+				"col",
+				"color\tproperty"
+			],
+			[
+				"grid-co",
+				"grid-column-gap\tproperty"
+			],
+			[
+				"ba",
+				"background-color\tproperty"
+			],
+			[
+				"padd",
+				"padding-top\tproperty"
+			],
+			[
+				"margi",
+				"margin-bottom\tproperty"
+			],
+			[
+				"border",
+				"border-color\tproperty"
+			],
+			[
+				"all",
+				"align-self\tproperty"
+			],
+			[
+				"en",
+				"environ"
+			],
+			[
+				"url",
+				"urlpatterns"
+			],
+			[
+				"post",
+				"post_id"
+			],
+			[
+				"User",
+				"UserInfo"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "app/views.py",
+			"settings":
+			{
+				"buffer_size": 11062,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/forms.py",
+			"settings":
+			{
+				"buffer_size": 3866,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/templates/testrun/item_list.html",
+			"settings":
+			{
+				"buffer_size": 8243,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/filters.py",
+			"settings":
+			{
+				"buffer_size": 725,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/models.py",
+			"settings":
+			{
+				"buffer_size": 11734,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/static/js/testrun.js",
+			"settings":
+			{
+				"buffer_size": 3690,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/templates/testrun/create_item.html",
+			"settings":
+			{
+				"buffer_size": 2583,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "Packages/Python/Python.sublime-build",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"markdow",
+				"Markdown Preview: Preview in Browser"
+			],
+			[
+				"mardown pre",
+				"Markdown Preview: Preview in Browser"
+			],
+			[
+				"mardow",
+				"Markdown Preview: Preview in Browser"
+			],
+			[
+				"down",
+				"Markdown Preview: Preview in Browser"
+			],
+			[
+				"mark",
+				"Markdown Preview: Preview in Browser"
+			],
+			[
+				"mard",
+				"Markdown Preview: Preview in Browser"
+			],
+			[
+				"rem",
+				"Package Control: Remove Package"
+			],
+			[
+				"mardown",
+				"Markdown Preview: Preview in Browser"
+			],
+			[
+				"Install Package",
+				"Package Control: Install Package"
+			],
+			[
+				"Install Pack\t",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/home/aguryev/freelancer/baangt/flask/app/templates/testrun/edit_item.html",
+		"/home/aguryev/freelancer/baangt/flask/app/templates/testrun/index.html",
+		"/home/aguryev/freelancer/baangt/flask/app/templates/testrun/index_old.html",
+		"/home/aguryev/freelancer/baangt/flask/app/views.pyc",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/config.py",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/app/app_config.py",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/app/utils.py",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/app/requirements.txt",
+		"/home/aguryev/freelancer/baangt/flask/app/templates/testrun/login.html",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/app/my_auth.py",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/app/pbi.py",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/app/app.py",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/app/templates/singup_qb.html",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/app/templates/singup_pbi.html",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/app/templates/index.html",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/app/static/css/styles.css",
+		"/home/aguryev/freelancer/power_bi/task_3",
+		"/home/aguryev/cs50/project0/css/style.css",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/app/templates/base.html",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/app/templates/auth.html",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/app/templates/cabinet.html",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/powerbi_api-master/zeminpowerbi/client.py",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/app/api.py",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/app/routes.py",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/app/templates/dashboard.html",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/app/templates/display.html",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/app/templates/login_pbi.html",
+		"/home/aguryev/freelancer/baangt/flask/app/templates/testrun/login_pbi.html",
+		"/home/aguryev/freelancer/baangt/flask/app/templates/base.html",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/app/templates/login.html",
+		"/home/aguryev/cs50/project0/index.html",
+		"/home/aguryev/freelancer/baangt/flask/app/forms.py",
+		"/home/aguryev/freelancer/baangt/flask/app/static/js/testrun.js",
+		"/home/aguryev/freelancer/baangt/flask/app/views.py",
+		"/home/aguryev/freelancer/baangt/flask/app/templates/testrun/item.html",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/app/__init__.py",
+		"/home/aguryev/freelancer/power_bi/powerbi_api-master/import_pbix.py",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/app/forms.py",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/app/templates/base.html",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/app/templates/import.html",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/salesandInvoices2.txt",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/app/templates/response.html",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/customers2.txt",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/.gitignore",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/config.pyc",
+		"/home/aguryev/freelancer/power_bi/myanalystpython/roboanalyst/requirementes.txt",
+		"/home/aguryev/freelancer/power_bi/roboanalyst/app/routes.py",
+		"/home/aguryev/freelancer/power_bi/task_2",
+		"/home/aguryev/freelancer/power_bi/roboanalyst/app/pbi.py",
+		"/home/aguryev/freelancer/power_bi/roboanalyst/app/templates/group_list.html",
+		"/home/aguryev/freelancer/power_bi/roboanalyst/app/templates/base.html",
+		"/home/aguryev/freelancer/power_bi/roboanalyst/app/__init__.py",
+		"/home/aguryev/freelancer/power_bi/roboanalyst/app/templates/create_group.html",
+		"/home/aguryev/freelancer/power_bi/roboanalyst/app/utils.py",
+		"/home/aguryev/freelancer/power_bi/roboanalyst/app/templates/group.html",
+		"/home/aguryev/freelancer/power_bi/task 1/powerbi_api-master/import_pbix.py",
+		"/home/aguryev/freelancer/power_bi/roboanalyst/app/templates/index.html",
+		"/home/aguryev/freelancer/baangt/baangt/base/TestRunDatabaseCreate.py",
+		"/home/aguryev/freelancer/baangt/flask/app/static/css/styles.css",
+		"/home/aguryev/freelancer/baangt/flask/app/templates/testrun/item_list.html",
+		"/home/aguryev/freelancer/baangt/flask/app/filters.py",
+		"/home/aguryev/freelancer/baangt/flask/app/models.py",
+		"/home/aguryev/freelancer/baangt/flask/app/models.pyc",
+		"/home/aguryev/freelancer/power_bi/task 1/powerbi_api-master/check_status.py",
+		"/home/aguryev/freelancer/power_bi/task 1/powerbi_api-master/zeminpowerbi/client.py",
+		"/home/aguryev/freelancer/power_bi/task 1/powerbi_api-master/zeminpowerbi/group.py",
+		"/home/aguryev/freelancer/power_bi/task 1/powerbi_api-master/zeminpowerbi/groups.py",
+		"/home/aguryev/freelancer/power_bi/roboanalyst/app/forms.py",
+		"/home/aguryev/freelancer/power_bi/roboanalyst/config.py",
+		"/home/aguryev/freelancer/baangt/flask/app/templates/testrun/create_item.html",
+		"/home/aguryev/freelancer/power_bi/roboanalyst/app.py",
+		"/home/aguryev/freelancer/power_bi/analyticsasaservice/app.py",
+		"/home/aguryev/freelancer/baangt/flask/application.py",
+		"/home/aguryev/freelancer/power_bi/roboanalyst/templates/base.html",
+		"/home/aguryev/freelancer/power_bi/roboanalyst/templates/index.html",
+		"/home/aguryev/freelancer/power_bi/roboanalyst/requirementes.txt",
+		"/home/aguryev/freelancer/power_bi/roboanalyst/app/config.py",
+		"/home/aguryev/freelancer/power_bi/analyticsasaservice/my_auth.py",
+		"/home/aguryev/freelancer/power_bi/task",
+		"/home/aguryev/freelancer/power_bi/analyticsasaservice/app_config.py",
+		"/home/aguryev/freelancer/baangt/flask/app/__init__.py",
+		"/home/aguryev/freelancer/baangt/flask/app/utils.py",
+		"/home/aguryev/freelancer/baangt/flask/app/static/testrun.js",
+		"/home/aguryev/freelancer/power_bi/powerbi_api-master/demo.py",
+		"/home/aguryev/freelancer/power_bi/powerbi_api-master/zeminpowerbi/dataset.py",
+		"/home/aguryev/freelancer/power_bi/powerbi_api-master/zeminpowerbi/datasets.py",
+		"/home/aguryev/freelancer/power_bi/powerbi_api-master/pushcsv.py",
+		"/home/aguryev/freelancer/power_bi/powerbi_api-master/solution_1.py",
+		"/home/aguryev/freelancer/power_bi/powerbi_api-master/check_status.py",
+		"/home/aguryev/freelancer/power_bi/powerbi_api-master/data/import_status.json",
+		"/home/aguryev/freelancer/power_bi/powerbi_api-master/data/import_response.json",
+		"/home/aguryev/freelancer/power_bi/powerbi_api-master/data/token.json",
+		"/home/aguryev/freelancer/power_bi/powerbi_api-master/import_response.json",
+		"/home/aguryev/freelancer/power_bi/analyticsasaservice/ms-identity-python-webapp-master/README.md",
+		"/home/aguryev/freelancer/power_bi/analyticsasaservice/app_config_b2c.py",
+		"/home/aguryev/freelancer/power_bi/powerbi_api-master/data/info.json",
+		"/home/aguryev/freelancer/power_bi/analyticsasaservice/requirements.txt",
+		"/home/aguryev/freelancer/power_bi/analyticsasaservice/ms-identity-python-webapp-master/app.py",
+		"/home/aguryev/django/yavir/yavir/settings.py",
+		"/home/aguryev/gf_archive/gf_248060_20200127/preprocess.py",
+		"/home/aguryev/freelancer/power_bi/powerbi_api-master/zeminpowerbi/group.py",
+		"/home/aguryev/freelancer/power_bi/powerbi_api-master/data/refresh_token_username.py",
+		"/home/aguryev/freelancer/power_bi/powerbi_api-master/data/refresh_token.py",
+		"/home/aguryev/freelancer/power_bi/powerbi_api-master/config.json",
+		"/home/aguryev/freelancer/power_bi/powerbi_api-master/zeminpowerbi/groups.py",
+		"/home/aguryev/freelancer/power_bi/powerbi_api-master/readme.md",
+		"/home/aguryev/freelancer/power_bi/powerbi_api-master/zeminpowerbi/setting.py",
+		"/home/aguryev/freelancer/power_bi/powerbi_api-master/data/requirements.txt",
+		"/home/aguryev/freelancer/power_bi/powerbi_api-master/zeminpowerbi/client.py",
+		"/home/aguryev/freelancer/power_bi/powerbi_api-master/zeminpowerbi/__init__.py",
+		"/home/aguryev/freelancer/power_bi/powerbi_api-master/requirements.txt",
+		"/home/aguryev/freelancer/baangt/flask/populate_db.py",
+		"/home/aguryev/gf_archive/gf_248151_20200121/readme.md",
+		"/home/aguryev/freelancer/baangt/flask/Dockerfile",
+		"/home/aguryev/freelancer/baangt/flask/discussion.txt",
+		"/home/aguryev/freelancer/baangt/baangt/base/CliAndInteractive.py",
+		"/home/aguryev/freelancer/baangt/baangt/base/TestRun.py",
+		"/home/aguryev/freelancer/baangt/flask/.dockerignore",
+		"/home/aguryev/freelancer/baangt/flask/requirements.txt",
+		"/home/aguryev/Downloads/README",
+		"/home/aguryev/freelancer/baangt/baangt.py",
+		"/home/aguryev/freelancer/baangt/TechSpecs/60 InProgress/CONCEPT_DB_UI.md",
+		"/home/aguryev/freelancer/baangt/globals.json",
+		"/home/aguryev/freelancer/baangt/flask/start_docker.sh",
+		"/home/aguryev/freelancer/baangt/baangt/base/HandleDatabase.py",
+		"/home/aguryev/freelancer/baangt/baangt/ui/ui.py",
+		"/home/aguryev/freelancer/baangt/baangt/TestSteps/TestStepMaster.py",
+		"/home/aguryev/freelancer/baangt/flask/task"
+	],
+	"find":
+	{
+		"height": 40.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"item",
+			"print",
+			"PBI_client(3)",
+			"list-group-item-primary",
+			"post",
+			"imports",
+			"xlsx",
+			"print",
+			"\"",
+			"choices=",
+			"fileName",
+			"faileName",
+			"flask",
+			"description = db.Column(db.String",
+			"name = db.Column(db.String",
+			"plt",
+			"btn-sm ml-3",
+			"data-class",
+			"testrun",
+			"<div class=\"collapse\" id=\"Testruns\">\n                            {% for testrun in items.testruns %}\n                                <a class=\"dropdown-item\" id=\"testrun_{{ testrun.id}}\" href=\"#\">{{ testrun }}</a>\n                            {% endfor %}\n                        </div>\n                    </li>",
+			"get(i)",
+			"session",
+			"editedBy",
+			"createdBy",
+			"SQLAlchemy",
+			"now()",
+			"setw",
+			"__",
+			"staticmethod",
+			"gamma",
+			"eps",
+			"testRunInstance",
+			"name",
+			"wait",
+			"waiting",
+			"paused",
+			"db.",
+			"file",
+			"start",
+			"exportResu",
+			"export",
+			"</head>",
+			"АНКЕТА-ОПИТУВАННЯ",
+			"<body>",
+			"insane",
+			"Easy",
+			"puzzle",
+			"np",
+			"id;",
+			"session",
+			"ssession",
+			"login",
+			"forms",
+			"butt",
+			"call",
+			"user",
+			"index",
+			"sql",
+			"back",
+			"username",
+			"AUTH_USER_MODEL",
+			"html,",
+			".container ",
+			"container",
+			"body",
+			"html",
+			"logo-sfdc",
+			"page-wrap",
+			"load",
+			"_reset",
+			"page-wrap",
+			"box",
+			"default",
+			"from",
+			"img_url",
+			"sequance",
+			"exampl",
+			"-",
+			":",
+			"td",
+			"th",
+			"title",
+			"social",
+			"AUTHENTICA",
+			"backend",
+			";\n",
+			"nullptr",
+			"found",
+			"->free",
+			"int x",
+			"printf",
+			"bpt->prev",
+			"chunk",
+			"meta->bpt",
+			"fread(",
+			"fwrite(",
+			"fread(",
+			"printf(",
+			"SEEK_SET",
+			"Time:",
+			"pointer:",
+			"meta",
+			"bpt->ptr",
+			"time",
+			"photo",
+			"main",
+			"static",
+			"card",
+			"'user'",
+			"User",
+			"user",
+			"malloc",
+			"command not",
+			"pos",
+			"commands",
+			"malloc",
+			"get_dep",
+			"malloc",
+			"printf",
+			"trim_string",
+			"remove_comments",
+			"malloc",
+			"line_co",
+			"malloc",
+			"start",
+			"malloc",
+			"get_var",
+			"strncpy"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"PBI_client(USER_ID)",
+			"list-group-item-dark",
+			"choices=utils.",
+			"description = db.Column(db.String(512)",
+			"name = db.Column(db.String(64)",
+			"btn-sm ml-4",
+			"data-type",
+			"item",
+			"db.session",
+			"editor_id",
+			"creator_id",
+			"utcnow",
+			"",
+			"sequence",
+			"div",
+			"cartrade",
+			"link"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 3,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "app/views.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 11062,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								9771,
+								9771
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 3474.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "app/forms.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3866,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1565,
+								1565
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 399.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "app/templates/testrun/item_list.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8243,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1910,
+								1910
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 741.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "app/filters.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 725,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								722,
+								722
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 285.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "app/models.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 11734,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								626,
+								626
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "app/static/js/testrun.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3690,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3131,
+								3131
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 513.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "app/templates/testrun/create_item.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2583,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1888,
+								1888
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 399.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 28.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "Packages/Python/Python.sublime-build",
+	"project": "application.sublime-project",
+	"replace":
+	{
+		"height": 52.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

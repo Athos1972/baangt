@@ -8,3 +8,7 @@ geckodriver.log
 baangt.ini
 /Screenshots
 /docs/logs
+__pycache__
+*.pyc
+*.db
+venv

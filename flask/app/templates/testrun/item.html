@@ -1,0 +1,162 @@
+    <div class="border-bottom pt-3">
+        <h1 >{{ item }}</h1>
+        <p><small>
+                Created {{ item.created.strftime('%Y-%m-%d %H:%M') }} by {{ item.creator }}
+        </small></p>
+    
+        {% if item.edited %}
+        <p><small>
+            Last edidted {{ item.edited.strftime('%Y-%m-%d %H:%M') }} by {{ item.editor }}
+        </small></p>
+        {% endif %}
+    </div>
+
+    <div class="border-bottom pt-3">
+        <h4>Description:</h4>
+        <p>{{ item.description }}</div>
+    <div>
+
+    {% if type == "testrun" %}
+    <div class="border-bottom pt-3">
+        <h4>Test Case Sequences:</h4>
+        {% if item.testcase_sequences %}
+            <ul>
+            {% for sequence in item.testcase_sequences %}
+                <li>{{ sequence }}</li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No Test Case Sequence Defined</p>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% if type == "testcase_sequence" or type == "testcase" or type == "teststep_sequences" %}
+    <div class="border-bottom pt-3">
+        <h4>Class Name:</h4>
+        {{ item.classname }}
+    </div>
+    {% endif %}
+
+    {% if type == "testcase_sequence" %}
+    <div class="border-bottom pt-3">
+        <h4>Data Files:</h4>
+        {% if item.datafiles %}
+            <ul>
+            {% for datafile in item.datafiles %}
+                <li>{{ datafile }}</li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No Data File Defined</p>
+        {% endif %}
+    </div>
+
+    <div class="border-bottom pt-3">
+        <h4>Test Cases:</h4>
+        {% if item.testcases %}
+            <ul>
+            {% for testcase in item.testcases %}
+                <li>{{ testcase }}</li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No Test Case Defined</p>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% if type == "testcase" %}
+    <div class="border-bottom pt-3">
+        <h4>Browser Type:</h4>
+        {{ item.browser_type }}
+    </div>
+
+    <div class="border-bottom pt-3">
+        <h4>Test Case Type:</h4>
+        {{ item.testcase_type }}
+    </div>
+
+    <div class="border-bottom pt-3">
+        <h4>Test Case Step Sequence:</h4>
+        {% if item.teststep_sequences %}
+            <ul>
+            {% for sequence in item.teststep_sequences %}
+                <li>{{ sequence }}</li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No Test Case Step Sequence Defined</p>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% if type == "teststep_sequence" %}
+    <div class="border-bottom pt-3">
+        <h4>Test Steps:</h4>
+        {% if item.teststeps %}
+            <ul>
+            {% for step in item.teststeps %}
+                <li>{{ step }}</li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No Test Step Defined</p>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% if type == "teststep" %}
+    <div class="border-bottom pt-3">
+        <h4>Activity Type:</h4>
+        {{ item.activity_type }}
+    </div>
+
+    <div class="border-bottom pt-3">
+        <h4>Locator Type:</h4>
+        {{ item.locator_type }}
+    </div>
+
+    <div class="border-bottom pt-3">
+        <h4>Locator:</h4>
+        {{ item.locator }}
+    </div>
+
+    <div class="border-bottom pt-3">
+        <h4>Optional:</h4>
+        {{ item.optional }}
+    </div>
+
+    <div class="border-bottom pt-3">
+        <h4>Timeout:</h4>
+        {{ item.timeout }}
+    </div>
+
+    <div class="border-bottom pt-3">
+        <h4>Release:</h4>
+        {{ item.release }}
+    </div>
+
+    <div class="border-bottom pt-3">
+        <h4>Value:</h4>
+        {{ item.value }}
+    </div>
+
+    <div class="border-bottom pt-3">
+        <h4>Value 2:</h4>
+        {{ item.value2 }}
+    </div>
+
+    <div class="border-bottom pt-3">
+        <h4>Comparision:</h4>
+        {{ item.comparision }}
+    </div>
+    {% endif %}
+
+    <p>
+        <button class="btn btn-primary px-5 my-3 mr-3" onclick="edit_item('{{ type }}', '{{ item.id }}')">Edit</button>
+        <button class="btn btn-danger px-5 my-3" onclick="delete_item('{{ type }}', '{{ item.name}}', '{{ item.id }}')">Delete</button>
+    </p>
+
+
+

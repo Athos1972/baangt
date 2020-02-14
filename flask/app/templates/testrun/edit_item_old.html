@@ -1,0 +1,25 @@
+<div class="border-bottom pt-3">
+    <h1 >Edit '{{ item.name }}'</h1>
+</div>
+
+<form class="pr-5" method="post" action="/{{ type }}/{{ item.id }}/edit">
+    {{ form.hidden_tag() }}
+
+    {% for field in form %}
+        {% if field.name != "csrf_token" %}
+        <div class="input-group my-3">
+            {% for error in field.errors %}
+                <p class="text-danger">{{ error }}</p>
+            {% endfor %}
+            <div class="input-group-prepend">
+                {{ field.label(class="input-group-text") }}
+            </div>
+            {{ field(class="form-control", value=field.data)}}
+        </div>
+        {% endif %}
+    {% endfor %}
+
+    <p>
+        <button class="btn btn-primary px-5 my-3" type="submit">Save</button>
+    </p>
+</form>

@@ -11,6 +11,18 @@ for instance to slowly retest a single testrecord or to not close the browser af
 
    * - Parameter
      - Description
+   * - ``Release``
+     - As you move your maturing software through the system landscape you might still need regression test results based
+       on "old" release functionality, while on lower stages you might want to (regression)-test already newer versions
+       or newer functionality. In ``baangt`` there is no need to copy test cases in those situations. You simply update
+       your test case definition with the apropriate version number (e.g. >= 2020-10) and set the proper ``Release`` in
+       the config file, for instance "2020-09" when you want to run on final quality and the changes from verison "2020-10"
+       are not there yet.
+
+            Note for developers:
+
+            It's a static method - if you need to apply different versioning schema for your system landscape,
+            simply subclass TestStepMaster and overwrite only the method ``ifQualifyForExecution``.
    * - ``TC.slowExecution``
      - When set to ``true`` the browser will stop for a short time after each command, so that you can also visually see what the browser is doing
    * - ``dontCloseBrowser``

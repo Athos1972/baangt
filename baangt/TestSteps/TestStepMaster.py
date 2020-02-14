@@ -1,81 +1,12 @@
 import baangt.base.GlobalConstants as GC
 from baangt.base.Timing.Timing import Timing
 from baangt.base.BrowserHandling.BrowserHandling import BrowserDriver
+from baangt.base.ApiHandling import ApiHandling
 import sys
+from pkg_resources import parse_version
+import logging
 
-from baangt import hook_spec
-from baangt import hook_impl
-from baangt import plugin_manager
-
-
-class TestStepMasterHookSpec:
-    @hook_spec
-    def execute_direct(self, testStepMasterObject, executionCommands):
-        pass
-
-
-class TestStepMasterHookImpl:
-    @hook_impl
-    def execute_direct(self, testStepMasterObject, executionCommands):
-        for key, command in executionCommands.items():
-            if not testStepMasterObject.ifIsTrue and command["Activity"] != "ENDIF":
-                continue
-
-            xpath = None
-            css = None
-            id = None
-            lActivity = command["Activity"].upper()
-            lLocatorType = command["LocatorType"].upper()
-            lLocator = command["Locator"]
-            lValue = command["Value"]
-            lValue2 = command["Value2"]
-            lComparison = command["Comparison"]
-            lTimeout = command["Timeout"]
-            if lTimeout:
-                lTimeout = float(lTimeout)
-            else:
-                lTimeout=20
-            if lLocatorType:
-                if lLocatorType == 'XPATH':
-                    xpath = lLocator
-                elif lLocatorType == 'CSS':
-                    css = lLocator
-                elif lLocatorType == 'ID':
-                    id = lLocator
-            if len(lValue) > 0:
-                lValue = testStepMasterObject.replaceVariables(lValue)
-            if len(lValue2) > 0:
-                lValue2 = testStepMasterObject.replaceVariables(lValue2)
-
-            if lActivity == "COMMENT":
-                continue     # Comment's are ignored
-
-            if lActivity == "GOTOURL":
-                testStepMasterObject.browserSession.goToUrl(lValue)
-            elif lActivity == "SETTEXT":
-                testStepMasterObject.browserSession.findByAndSetText(xpath=xpath, css=css, id=id, value = lValue, timeout=lTimeout)
-            elif lActivity == 'HANDLEIFRAME':
-                testStepMasterObject.browserSession.handleIframe(lLocator)
-            elif lActivity == "CLICK":
-                testStepMasterObject.browserSession.findByAndClick(xpath=xpath, css=css, id=id, timeout=lTimeout)
-            elif lActivity == "IF":
-                if testStepMasterObject.ifActive:
-                    raise BaseException("No nested IFs at this point, sorry...")
-                testStepMasterObject.ifActive = True
-                testStepMasterObject.__doComparisons(lComparison=lComparison, value1=lValue, value2=lValue2)
-            elif lActivity == "ENDIF":
-                if not testStepMasterObject.ifActive:
-                    raise BaseException("ENDIF without IF")
-                testStepMasterObject.ifActive = False
-                testStepMasterObject.ifIsTrue = True
-            elif lActivity == 'GOBACK':
-                testStepMasterObject.browserSession.goBack()
-            else:
-                raise BaseException(f"Unknown command in TestStep {lActivity}")
-
-
-plugin_manager.add_hookspecs(TestStepMasterHookSpec)
-plugin_manager.register(TestStepMasterHookImpl())
+logger = logging.getLogger("pyC")
 
 
 class TestStepMaster:
@@ -85,8 +16,8 @@ class TestStepMaster:
         self.testcaseDataDict = kwargs.get(GC.KWARGS_DATA)
         self.timing: Timing = kwargs.get(GC.KWARGS_TIMING)
         self.timingName = self.timing.takeTime(self.__class__.__name__, forceNew=True)
-        self.browserSession : BrowserDriver = kwargs.get(GC.KWARGS_BROWSER)
-        self.apiSession = kwargs.get(GC.KWARGS_API_SESSION)
+        self.browserSession: BrowserDriver = kwargs.get(GC.KWARGS_BROWSER)
+        self.apiSession: ApiHandling = kwargs.get(GC.KWARGS_API_SESSION)
         self.testCaseStatus = None
         self.testStepNumber = kwargs.get(GC.STRUCTURE_TESTSTEP) # Set in TestRun by TestCaseMaster
         self.testRunUtil = self.testRunInstance.testRunUtils
@@ -95,6 +26,7 @@ class TestStepMaster:
                                                          sequence=kwargs.get(GC.STRUCTURE_TESTCASESEQUENCE))
         lTestCase = self.testRunUtil.getTestCaseByNumber(lSequence, kwargs.get(GC.STRUCTURE_TESTCASE))
         lTestStep = self.testRunUtil.getTestStepByNumber(lTestCase, kwargs.get(GC.STRUCTURE_TESTSTEP))
+        self.globalRelease = self.testRunInstance.globalSettings.get("Release", "")
         self.ifActive = False
         self.ifIsTrue = True
 
@@ -108,10 +40,182 @@ class TestStepMaster:
         """
         This will execute single Operations directly
         """
-        plugin_manager.hook.execute_direct(testStepMasterObject=self, executionCommands=executionCommands)
+        for key, command in executionCommands.items():
+            # when we have an IF-condition and it's condition was not TRUE, then skip whatever comes here until we
+            # reach Endif
+            if not self.ifIsTrue and command["Activity"] != "ENDIF":
+                continue
 
+            lActivity = command["Activity"].upper()
+            if lActivity == "COMMENT":
+                continue     # Comment's are ignored
+
+            lLocatorType = command["LocatorType"].upper()
+            lLocator = self.replaceVariables(command["Locator"])
+            xpath, css, id = self.__setLocator(lLocatorType, lLocator)
+
+            lValue = str(command["Value"])
+            lValue2 = str(command["Value2"])
+            lComparison = command["Comparison"]
+            lOptional = TestStepMaster._sanitizeXField(command["Optional"])
+
+            # check release line
+            lRelease = command["Release"]
+
+            lTimeout = self.__setTimeout(command["Timeout"])
+
+            # Replace variables from data file
+            if len(lValue) > 0:
+                lValue = self.replaceVariables(lValue)
+            if len(lValue2) > 0:
+                lValue2 = self.replaceVariables(lValue2)
+
+            if not TestStepMaster.ifQualifyForExecution(self.globalRelease, lRelease):
+                logger.debug(f"we skipped this line due to {lRelease} disqualifies according to {self.globalRelease} ")
+                continue  # We ignored the steps as it doesn't qualify
+
+            if lActivity == "GOTOURL":
+                self.browserSession.goToUrl(lValue)
+            elif lActivity == "SETTEXT":
+                self.browserSession.findByAndSetText(xpath=xpath, css=css, id=id, value = lValue, timeout=lTimeout)
+            elif lActivity == 'HANDLEIFRAME':
+                self.browserSession.handleIframe(lLocator)
+            elif lActivity == "CLICK":
+                self.browserSession.findByAndClick(xpath=xpath, css=css, id=id, timeout=lTimeout)
+            elif lActivity == "IF":
+                if self.ifActive:
+                    raise BaseException("No nested IFs at this point, sorry...")
+                self.ifActive = True
+                # Originally we had only Comparisons. Now we also want to check for existance of Field
+                if not lValue and lLocatorType and lLocator:
+                    lValue = self.browserSession.findBy(xpath=xpath, css=css, id=id, optional=lOptional, timeout=lTimeout)
+
+                self.__doComparisons(lComparison=lComparison, value1=lValue, value2=lValue2)
+            elif lActivity == "ENDIF":
+                if not self.ifActive:
+                    raise BaseException("ENDIF without IF")
+                self.ifActive = False
+                self.ifIsTrue = True
+            elif lActivity == 'GOBACK':
+                self.browserSession.goBack()
+            elif lActivity == 'APIURL':
+                self.apiSession.setBaseURL(lValue)
+            elif lActivity == 'ENDPOINT':
+                self.apiSession.setEndPoint(lValue)
+            elif lActivity == 'POST':
+                self.apiSession.postURL(content=lValue)
+            elif lActivity == 'GET':
+                self.apiSession.getURL()
+            elif lActivity == 'HEADER':
+                self.apiSession.setHeaders(setHeaderData=lValue)
+            elif lActivity == 'SAVE':
+                self.doSaveData(lValue, lValue2)
+            else:
+                raise BaseException(f"Unknown command in TestStep {lActivity}")
+
+    @staticmethod
+    def _sanitizeXField(inField):
+        """
+        When "X" or "True" is sent, then use this
+        @param inField:
+        @return:
+        """
+        lXField = True
+
+        if not inField:
+            lXField = False
+
+        if inField.upper() == 'FALSE':
+            lXField = False
+
+        return lXField
+
+    @staticmethod
+    def ifQualifyForExecution(version_global, version_line):
+        """ This function will test version_global and version_line
+            @return True or False
+        """
+        if not version_global.strip():
+            #No value is defined in Release, return True
+            return True
+        if not version_line.strip():
+            # we skipped this line
+            return True
+
+        #split the version line
+        if not len(version_line.strip().split(" ")) == 2:
+            logger.debug(f"Invalid release format {version_line} ")
+            return True
+        comp_operator, version = version_line.strip().split(" ")
+        if comp_operator == "<":
+            return parse_version(version_global) < parse_version(version)
+        elif comp_operator == ">":
+            return parse_version(version_global) > parse_version(version)
+        elif comp_operator == ">=":
+            return parse_version(version_global) >= parse_version(version)
+        elif comp_operator == "<=":
+            return parse_version(version_global) <= parse_version(version)
+        elif comp_operator == "=" or comp_operator == "==":
+            return parse_version(version_global) == parse_version(version)
+        else:
+            logger.debug(f"Global version {version_global}, line version {version_line} ")
+            return False
+
+
+
+    def doSaveData(self, toField, valueForField):
+        self.testcaseDataDict[toField] = valueForField
+
+    @staticmethod
+    def __setLocator(lLocatorType, lLocator):
+        """
+
+        @param lLocatorType: XPATH, CSS, ID, etc.
+        @param lLocator: Value of the locator
+        @return:
+        """
+        xpath = None
+        css = None
+        id = None
+
+        if lLocatorType:
+            if lLocatorType == 'XPATH':
+                xpath = lLocator
+            elif lLocatorType == 'CSS':
+                css = lLocator
+            elif lLocatorType == 'ID':
+                id = lLocator
+
+        return xpath, css, id
+
+    def __setTimeout(self, lTimeout):
+        if lTimeout:
+            lTimeout = float(lTimeout)
+        else:
+            lTimeout = 20
+        return lTimeout
+
+    @staticmethod
+    def anyting2Boolean(valueIn):
+        if isinstance(valueIn, bool):
+            return valueIn
+
+        if isinstance(valueIn, int):
+            return bool(valueIn)
+
+        if isinstance(valueIn, str):
+            if valueIn.lower() in ("yes", "true", "1", "ok"):
+                return True
+            else:
+                return False
+
+        raise TypeError(f"Anything2Boolean had a wrong value: {valueIn}. Don't know how to convert that to boolean")
 
     def __doComparisons(self, lComparison, value1, value2):
+        if isinstance(value1, bool) or isinstance(value2, bool):
+            value1 = TestStepMaster.anyting2Boolean(value1)
+            value2 = TestStepMaster.anyting2Boolean(value2)
+
         if lComparison == "=":
             if value1 == value2:
                 self.ifIsTrue = True
@@ -148,6 +252,14 @@ class TestStepMaster:
         self.timing.takeTime(self.timingName) # Why does this not work?
 
     def replaceVariables(self, expression):
+        """
+        The syntax for variables is currently $(<column_name_from_data_file>). Multiple variables can be assigned
+        in one cell, for instance perfectly fine: "http://$(BASEURL)/$(ENDPOINT)"
+
+        @param expression: the current cell, either as fixed value, e.g. "Franzi" or with a varible $(DATE)
+        @return: the replaced value, e.g. if expression was $(DATE) and the value in column "DATE" of data-file was
+            "01.01.2020" then return will be "01.01.2020"
+        """
         if not "$(" in expression:
             return expression
 
@@ -162,16 +274,21 @@ class TestStepMaster:
 
             right_part = expression[len(left_part)+len(center)+3:]
 
-            # Replace the variable with the value from data structure
-            center = self.testcaseDataDict.get(center)
+            if not "." in center:
+                # Replace the variable with the value from data structure
+                center = self.testcaseDataDict.get(center)
+            else:
+                # This is a reference to a DICT with ".": for instance APIHandling.AnswerContent("<bla>")
+                dictVariable = center.split(".")[0]
+                dictValue = center.split(".")[1]
+
+                if dictVariable == 'ANSWER_CONTENT':
+                    center = self.apiSession.session[1].answerJSON.get(dictValue,"Empty")
+                else:
+                    raise BaseException(f"Missing code to replace value for: {center}")
+
             if not center:
                 raise BaseException(f"Variable not found: {center}")
 
             expression = "".join([left_part, center, right_part])
         return expression
-
-
-if __name__ == '__main__':
-    l_test = TestStepMaster()
-    l_test.testcaseDataDict = {"MANDANT": "DON", "base_url": "portal-fqa", "VN": "12345"}
-    print(l_test.replaceVariables("https://$(MANDANT)-$(base_url).corpnet.at/vigong-produktauswahl/produktauswahl/$(VN)"))
