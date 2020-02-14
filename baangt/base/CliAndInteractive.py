@@ -1,7 +1,7 @@
 import sys, getopt
-from baangt.base.TestRun.TestRun import TestRun
 from baangt.base.utils import utils
 from baangt.ui.ui import UI
+from baangt import plugin_manager
 
 def print_args():
     print("""
@@ -47,10 +47,14 @@ def getGlobalSettings():
 
 def callTestrun(testRunFile):
     if ".XLSX" in testRunFile.upper() or ".JSON" in testRunFile.upper():
-        TestRun(testRunName=utils.sanitizeFileName(testRunFile),
-                globalSettingsFileNameAndPath=utils.sanitizeFileName(getGlobalSettings()))
+
+        plugin_manager.hook.testRun_init(testRunName=utils.sanitizeFileName(testRunFile),
+                                         globalSettingsFileNameAndPath=utils.sanitizeFileName(getGlobalSettings()))
+
     else:
         sys.exit(f"Unknown Filetype - should be XLSX or JSON: {testRunFile}")
+
+
 
 
 def run():
