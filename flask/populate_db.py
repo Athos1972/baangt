@@ -1,3 +1,4 @@
+import json
 from app import db
 from app.models import *
 
@@ -164,6 +165,7 @@ for i in range(7):
 
 db.session.commit()
 
+'''
 for i in range(4):
 	if i%3 == 0:
 		u = admin
@@ -178,6 +180,33 @@ for i in range(4):
 		teststep_sequence=TestStepSequence.query.get(i%2 + 1),
 	)
 	db.session.add(testcase)
+'''
+# get teststeps from json
+path_to_json = 'teststeps.json'
+with open(path_to_json, 'r') as f:
+	steps = json.load(f)
+# populate teststeps
+for step in steps:
+	# get activity type
+	for a in activities:
+		if a.name.upper() == step.get('activity_type').upper():
+			activity = a
+			break
+	# get locator type
+	for l in locators:
+		if l.name.upper() == step.get('locator_type').upper():
+			locator = l
+			break
+	# create Test Step
+	teststepex  = TestStepExecution(
+		name=step.get('name'),
+		description=step.get('description'),
+		creator=admin,
+		activity_type=activity,
+		locator_type=locator,
+	)
+	db.session.add(testcase)
+
 
 db.session.commit()
 print('Done.')

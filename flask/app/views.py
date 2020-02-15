@@ -1,8 +1,13 @@
 
-from flask import render_template, redirect, flash, request, url_for
+from flask import render_template, redirect, flash, request, url_for, send_from_directory
 from flask_login import login_required, current_user, login_user, logout_user
 from app import app, db, models, forms, utils
 from datetime import datetime
+
+# handle favicon requests
+@app.route('/favicon.ico') 
+def favicon(): 
+    return send_from_directory('static/media', 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 @app.route('/')
 @login_required

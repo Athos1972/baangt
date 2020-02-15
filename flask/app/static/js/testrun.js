@@ -66,30 +66,55 @@
 
     // select multiple with chips
     function add_chip(e, name) {
-        var chip_area = document.getElementById(`chips_${name}`);
-        var new_chip = document.createElement('div');
-        new_chip.setAttribute('class', 'chip mr-1');
-        new_chip.setAttribute('data-id', e.options[e.selectedIndex].value);
-        new_chip.innerHTML = `
-            <small>${e.options[e.selectedIndex].text}</small>
-            <span class="closebtn" onclick="delete_chip(this.parentElement, '${name}')">&times;</span>
-            `;
-        e.options[e.selectedIndex].disabled = true;
-        e.selectedIndex = 0;
-        chip_area.appendChild(new_chip);
+        // check if option exists
+        const text = e.value;
+        for (var i = 0; i < e.list.childElementCount; i++) {
+            const opt_text = e.list.children[i].text.toUpperCase();
+            if (text === e.list.children[i].text) {
+                // create chip
+                var chip_area = document.getElementById(`chips_${name}`);
+                var new_chip = document.createElement('div');
+                new_chip.setAttribute('class', 'chip mr-1');
+                new_chip.setAttribute('data-id', i);
+                new_chip.innerHTML = `
+                    <small>${e.list.children[i].text}</small>
+                    <span class="closebtn" onclick="delete_chip(this.parentElement, '${name}')">&times;</span>
+                    `;
+                chip_area.appendChild(new_chip);
+                // remove selected option from list
+                e.value = '';
+                e.list.children[i].disabled = true;
+            }
+        }
     }
 
     function delete_chip(e, name) {
-        var selector = document.getElementById(name);
-        for (var i = 1; i < selector.length; i++) {
-            if (selector.options[i].value == e.dataset['id']) {
-                selector.options[i].disabled = false;
+        var list = document.getElementById(`${name}Opt`);
+        list.children[e.dataset['id']].disabled = false;
+        /*
+        for (var i = 1; i < list.childElementCount; i++) {
+            if (list.children[i].text == e.dataset['id']) {
+                list.children[i].disabled = false;
             }
         }
+        */
         e.parentElement.removeChild(e);
     }
 
     function get_chips() {
+        document.querySelectorAll('datalist').forEach(list => {
+            // create multyselect field
+            const name = list.id.substring(0, list.id.length - 3);
+            const selector = document.getElementById(name);
+            const chips_area = document.getElementById(`chips_${name}`);
+            chips_area.querySelectorAll('div').forEach(chip => {
+                value = chip.dataset['id'];
+                selector.options[value].selected = true;
+            });
+        });
+
+
+/*
         document.querySelectorAll('.multyselect').forEach(selector => {
             selector.setAttribute('multiple','');
             selector.options[0].selected = false;
@@ -101,6 +126,19 @@
             }
             console.log("Ok!");
         });
-        return true;
+*/
+        return false;
+    }
+
+    function filter_options(e) {
+        const text = e.value.toUpperCase();
+        for (var i = 0; i < e.list.childElementCount; i++) {
+            const opt_text = e.list.children[i].text.toUpperCase();
+            if (!opt_text.includes(text)) {
+                e.list.children[i].style.display = opt_text ? 'list-item':'none';
+            }
+
+
+        }
     }
 // type: "select-multiple"
