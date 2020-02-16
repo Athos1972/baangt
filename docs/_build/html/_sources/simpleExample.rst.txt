@@ -113,23 +113,18 @@ You managed to have a working recording. Congratulations! Let's learn a bit more
    * - Column Name
      - Description
    * - ``Activtity``
-     - Set's the activity of this TestStep. Activities are:
-
-       * GoToURL
-       * click
-       * setText
-       * SetTextIF
-       * clickIF
-       * goBack
-       * If
-       * EndIf
+     - Set's the activity of this TestStep. Activities are desribed in more details in next chapter
    * - ``LocatorType``
      - Most of the activities need a locator. We're big fans of XPATH as locatorType, due to speed and ease of use. Sooner
        or later you'll anyway end up needing XPATH, so why not use it always when there's no downside? If you prefer
        writing CSS-Paths then use value ``CSS`` for the locator. And if you're luck enough to have unique IDs in your
        page simply use ``ID``.
    * - ``Locator``
-     - The locator is the specification, on which element ``Activity`` should happen.
+     - The locator is the specification, on which element ``Activity`` should happen. As in the value fields you may
+       use variable replacement here too in order to replace Locators with values from the data file, for instance the
+       following would work fine:
+       ``//*[@id($(CUSTOMERNUMBER))]`` - this would create an XPATH-Statement where $(CUSTOMERNUMBER) is replaced by the
+       actual value of the current test record.
    * - ``Value``
      - For instance activity ``SetText`` requires a value (The text to send to a Web-element). You may use fixed values
        (which will rarely happen) or values from your test data source, in the simple cases the sheet ``Data`` .
@@ -164,3 +159,56 @@ You managed to have a working recording. Congratulations! Let's learn a bit more
 
        will run the line onlf, if the Version is ``2019.05a`` or ``2019.06``. We are aware, that your version numbers might
        follow different nomenclature, so we made it very easy to subclass the corresponding logic.
+
+More details on Activities
+--------------------------
+
+       * GoToURL
+       * click
+       * setText
+       * SetTextIF
+       * clickIF
+       * goBack
+       * If
+       * EndIf
+
+.. list-table:: Details of activities
+   :widths: 25 75
+   :header-rows: 1
+
+   * - Activity
+     - Description
+   * - GoToURL
+     - Navigate to the given URL. Column ``Value`` must provide the URL. You may want to use variables in your URL-String,
+       for instance your URL might look like ``https://$(STAGE).earthsquad.global/``. ``$(STAGE)`` will be replaced
+       during runtime of the test data with the value of ``STAGE`` from either Global settings or settings in the
+       ``testCaseSequence``.
+   * - click
+     - Will click on the object specified by the ``locator``.
+   * - clickIF
+     - Will click on the object specified by the locator IF the field in testDataDict, that you enter in Column ``value``
+       has a value. This small and simple extension can save you hours and hours of work in maintenance of testcases.
+       Imagine you've 10 checkboxes, that in various combinations provide different test results and you have to test
+       all possible combinations. Using 1 column in your datafile for each checkbox and the ``clickif`` you can create
+       your testCases in minutes instead of hours or days. Imagine 50 checkboxes - with ``baangt`` your effort is still
+       just minutes.
+   * - setText
+     - Write the text given in column ``value`` to the element specified by ``locator``. Only rarely will you have fixed
+       values. Usually you'll assign columns of the test data using variable replacement (e.g. ``$(POSTCODE)`` to set the
+       text from column ``POSTCODE`` from the datafile into the destination element.
+   * - setTextIF
+     - Same as SetText, but will only do something in cases where there is a value in the datafile. Similarly to clickIF
+       this little helper functionality can help you save hours and hours in creation and maintenance of rocksolid and
+       bulletproof test cases.
+   * - goBack
+     - Trigger the "back"-Button of the browser.
+   * - If/Endif
+     - The block between IF and ENDIF is only executed, when the condition evaluated by ``value|comparator|value2`` is
+       is true, for instance:
+
+            $(POSTCODE) = 7040
+
+            $(YEAR2DATE) > $(YEARTOMONTH)
+
+       Another use of the If-Statement is with ``LocatorType`` and ``Locator`` and comparison. You'd use that, when you
+       want conditional execution of a larger block of statements depending on an element present or not present.

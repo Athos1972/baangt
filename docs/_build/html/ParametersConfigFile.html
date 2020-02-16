@@ -88,15 +88,15 @@
 <li class="toctree-l1"><a class="reference internal" href="Structure.html">   Structure</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">   Parameters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="DataFile.html">   Data file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SimpleAPI.html">   First API Test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="TestTypes.html">   Types of Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Developer.html">   For Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">   History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">   Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="articles/ProductionSucks.html">      Production sucks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="articles/DataDoctor.html">      Test data rulez</a></li>
-<li class="toctree-l1"><a class="reference internal" href="articles/BaangtIndustries.html">      Industries 4 baangt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">:subheader: Articles</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
 </ul>
 
             
@@ -178,16 +178,30 @@ for instance to slowly retest a single testrecord or to not close the browser af
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">TC.slowExecution</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Release</span></code></p></td>
+<td><p>As you move your maturing software through the system landscape you might still need regression test results based
+on “old” release functionality, while on lower stages you might want to (regression)-test already newer versions
+or newer functionality. In <code class="docutils literal notranslate"><span class="pre">baangt</span></code> there is no need to copy test cases in those situations. You simply update
+your test case definition with the apropriate version number (e.g. &gt;= 2020-10) and set the proper <code class="docutils literal notranslate"><span class="pre">Release</span></code> in
+the config file, for instance “2020-09” when you want to run on final quality and the changes from verison “2020-10”
+are not there yet.</p>
+<blockquote>
+<div><p>Note for developers:</p>
+<p>It’s a static method - if you need to apply different versioning schema for your system landscape,
+simply subclass TestStepMaster and overwrite only the method <code class="docutils literal notranslate"><span class="pre">ifQualifyForExecution</span></code>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">TC.slowExecution</span></code></p></td>
 <td><p>When set to <code class="docutils literal notranslate"><span class="pre">true</span></code> the browser will stop for a short time after each command, so that you can also visually see what the browser is doing</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dontCloseBrowser</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">dontCloseBrowser</span></code></p></td>
 <td><p>When the browser or script finds an error usually it takes a screenshot and moves on to the next testcase. With this setting to <code class="docutils literal notranslate"><span class="pre">True</span></code> the Browsersession will stop right at the error</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">TC.BrowserOptions</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">TC.BrowserOptions</span></code></p></td>
 <td><p>Set the value to <code class="docutils literal notranslate"><span class="pre">{'HEADLESS':</span> <span class="pre">'True'}</span></code> to run Chrome/Firefox in headless mode.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">TC.Lines</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">TC.Lines</span></code></p></td>
 <td><p>Which lines from datafile to process.</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">linennumber</span></code> e.g. <code class="docutils literal notranslate"><span class="pre">5</span></code>. Will execute the selected testrun using line 5 from the datafile</p></li>
@@ -196,10 +210,10 @@ for instance to slowly retest a single testrecord or to not close the browser af
 <p>Combinations are possible and allowed, in this case separate the numbers by comma e.g. <code class="docutils literal notranslate"><span class="pre">5,</span> <span class="pre">10-20,</span> <span class="pre">30-90</span></code></p>
 </td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">TC.Browser</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">TC.Browser</span></code></p></td>
 <td><p>If the testcase is WEB-Testing, then you can overwrite the browser, which is defined inside the testrun definition. If the testcase is not a Web-Testcase this setting doesn’t have any effect. Valid values are <code class="docutils literal notranslate"><span class="pre">Chrome</span></code>, <code class="docutils literal notranslate"><span class="pre">FF</span></code> and <code class="docutils literal notranslate"><span class="pre">Safari</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">TC.ParallelRuns</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">TC.ParallelRuns</span></code></p></td>
 <td><p>Number of parallel sessions to be executing. Values depend largely on your hardware and internet connection. Debugging works only in a single session.</p></td>
 </tr>
 </tbody>

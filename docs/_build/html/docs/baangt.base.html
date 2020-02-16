@@ -86,15 +86,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../Structure.html">   Structure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ParametersConfigFile.html">   Parameters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../DataFile.html">   Data file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SimpleAPI.html">   First API Test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../TestTypes.html">   Types of Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Developer.html">   For Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../HistoryAndReasons.html">   History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contributors.html">   Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">   Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PlannedFeatures.html">   Planned Features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../articles/ProductionSucks.html">      Production sucks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../articles/DataDoctor.html">      Test data rulez</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../articles/BaangtIndustries.html">      Industries 4 baangt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../articles/Articles.html">:subheader: Articles</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
 </ul>
 
             
@@ -182,12 +182,12 @@
 
 <dl class="method">
 <dt id="baangt.base.ApiHandling.ApiHandling.getURL">
-<code class="sig-name descname">getURL</code><span class="sig-paren">(</span><em class="sig-param">url</em>, <em class="sig-param">sessionNumber=1</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.ApiHandling.ApiHandling.getURL" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">getURL</code><span class="sig-paren">(</span><em class="sig-param">url=None</em>, <em class="sig-param">sessionNumber=1</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.ApiHandling.ApiHandling.getURL" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="baangt.base.ApiHandling.ApiHandling.postURL">
-<code class="sig-name descname">postURL</code><span class="sig-paren">(</span><em class="sig-param">url</em>, <em class="sig-param">content</em>, <em class="sig-param">sessionNumber=1</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.ApiHandling.ApiHandling.postURL" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">postURL</code><span class="sig-paren">(</span><em class="sig-param">url=None</em>, <em class="sig-param">content=None</em>, <em class="sig-param">sessionNumber=1</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.ApiHandling.ApiHandling.postURL" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -196,8 +196,18 @@
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="baangt.base.ApiHandling.ApiHandling.setBaseURL">
+<code class="sig-name descname">setBaseURL</code><span class="sig-paren">(</span><em class="sig-param">url</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.ApiHandling.ApiHandling.setBaseURL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="baangt.base.ApiHandling.ApiHandling.setEndPoint">
+<code class="sig-name descname">setEndPoint</code><span class="sig-paren">(</span><em class="sig-param">endpoint</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.ApiHandling.ApiHandling.setEndPoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="baangt.base.ApiHandling.ApiHandling.setHeaders">
-<code class="sig-name descname">setHeaders</code><span class="sig-paren">(</span><em class="sig-param">sessionNumber</em>, <em class="sig-param">setHeaderData</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.ApiHandling.ApiHandling.setHeaders" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">setHeaders</code><span class="sig-paren">(</span><em class="sig-param">sessionNumber=1</em>, <em class="sig-param">setHeaderData=None</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.ApiHandling.ApiHandling.setHeaders" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -240,6 +250,11 @@ Main Methods:
 &#64;param desiredCapabilities: DICT of desiredCapabilities for this browser
 &#64;param kwargs: Currently (Jan2020) not used</p>
 </dd></dl>
+
+<dl class="method">
+<dt id="baangt.base.BrowserHandling.BrowserDriver.downloadDriver">
+<code class="sig-name descname">downloadDriver</code><span class="sig-paren">(</span><em class="sig-param">browserName</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.BrowserHandling.BrowserDriver.downloadDriver" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="baangt.base.BrowserHandling.BrowserDriver.findBy">
@@ -326,7 +341,7 @@ and compare value to what we’d expect. If value is different and we’re less 
 
 <dl class="method">
 <dt id="baangt.base.BrowserHandling.BrowserDriver.findWaitNotVisible">
-<code class="sig-name descname">findWaitNotVisible</code><span class="sig-paren">(</span><em class="sig-param">xpath=None</em>, <em class="sig-param">id=None</em>, <em class="sig-param">timeout=90</em>, <em class="sig-param">optional=False</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.BrowserHandling.BrowserDriver.findWaitNotVisible" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">findWaitNotVisible</code><span class="sig-paren">(</span><em class="sig-param">css=None</em>, <em class="sig-param">xpath=None</em>, <em class="sig-param">id=None</em>, <em class="sig-param">timeout=90</em>, <em class="sig-param">optional=False</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.BrowserHandling.BrowserDriver.findWaitNotVisible" title="Permalink to this definition">¶</a></dt>
 <dd><p>You’d use this method when you wait for an element to disappear, for instance Angular Spinner or a popup
 to disapear before you continue with your script in the main screen.</p>
 </dd></dl>

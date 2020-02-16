@@ -11,6 +11,8 @@ and well documented master functionality.
 
 
 .. image:: screenshotBaangtIA.png
+   :target: https://www.baangt.org
+
 
 
 .. toctree::
@@ -31,6 +33,7 @@ and well documented master functionality.
       Changelog <changelog.rst>
       Planned Features <PlannedFeatures.rst>
    :subheader: Articles </articles/Articles.rst>
+      Web <http://www.baangt.org>
 
 
 Indices and tables
