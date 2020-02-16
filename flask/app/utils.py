@@ -94,7 +94,7 @@ COMPARISIONS = [
 ]
 
 def getComparisionChoices():
-	return [('0', 'N/A')] + [(f'{i+1}', COMPARISIONS[i]) for i in range(len(COMPARISIONS))]
+	return [('0', 'none')] + [(f'{i+1}', COMPARISIONS[i]) for i in range(len(COMPARISIONS))]
 
 def getComparisionId(option):
 	for i in range(len(COMPARISIONS)):

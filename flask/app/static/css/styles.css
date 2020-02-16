@@ -28,3 +28,25 @@ body {
 .fixed-label {
   width: 11rem;
 }
+
+.text-break {
+  word-wrap: break-word;
+}
+
+
+/* widths */
+.w-20 {
+  width: 20%;
+}
+
+.w-40 {
+  width: 40%;
+}
+
+.w-60 {
+  width: 60%;
+}
+
+.w-80 {
+  width: 80%;
+}

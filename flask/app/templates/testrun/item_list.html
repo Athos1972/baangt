@@ -47,34 +47,54 @@
     <!-- header -->
     <div class="row border-top border-bottom py-3">
         <div class="col-md-4"><strong>Name</strong></div>
-        <div class="col-md-3"><strong>Created By</strong></div>
-        <div class="col"><strong>Created</strong></div>
+
+        <!-- Test Step fields -->
+        {% if type == 'teststep' %}
+            <div class="col-md-5"><strong>Description</strong></div>
+            <div class="col"><strong>Activity Type</strong></div>
+        {% else %}
+            <div class="col-md-3"><strong>Created By</strong></div>
+            <div class="col"><strong>Created</strong></div>
+        {% endif %}
     </div>
 
     <!-- item list -->
     {% for item in items %}
         <div class="row border-top py-3">
-            <div class="col-md-4">
+            <div class="col-md-4 text-break">
                 <a data-toggle="collapse" href="#item{{ item.id }}" aria-expanded="false">
                     {{ item.name }}
                 </a>
             </div>
-            <div class="col-md-3">{{ item.creator.username }}</div>
-            <div class="col">{{ item.created|time }}</div>
+            {% if type == 'teststep' %}
+                <div class="col-md-5 text-break text-break">{{ item.description }}</div>
+                <div class="col">{{ item.activity_type }}</div>
+            {% else %}
+                <div class="col-md-3">{{ item.creator.username }}</div>
+                <div class="col">{{ item.created|time }}</div>
+            {% endif %}
 
             <div class="col-12 collapse mt-1" id="item{{ item.id }}">
+                <!-- created data -->
+                {% if type == 'teststep' %}
+                    <p><small>
+                        Created {{ item.created|time }} by {{ item.creator }}
+                    </small></p>
+                {% endif %}
                 <!-- edited data -->
                 {% if item.edited %}
                     <p><small>
-                        Last edidted {{ item.edited.strftime('%Y-%m-%d %H:%M') }} by {{ item.editor }}
+                        Last edidted {{ item.edited|time }} by {{ item.editor }}
                     </small></p>
                 {% endif %}
 
                 <ul class="list-group">
 
                     <!-- description -->
-                    <li class="list-group-item h5 list-group-item-dark">Description</li>
-                    <li class="list-group-item">{{ item.description }}</li>
+                    {% if not type == 'teststep' %}
+                        <li class="list-group-item h5 list-group-item-dark">Description</li>
+                        <li class="list-group-item">{{ item.description }}</li>
+                    {% endif %}
 
                     <!-- Testrun fields -->
                     {% if type == 'testrun' %}
@@ -159,6 +179,7 @@
                     {% if type == 'teststep' %}
                     <li class="list-group-item h5 list-group-item-dark">Parameters</li>
                     <li class="list-group-item">
+                        <!-- 
                         <div class="row border-bottom py-2">
                             <div class="col-md-3">
                                 <strong>Activity Type</strong>
@@ -167,27 +188,9 @@
                                 {{ item.activity_type }}
                             </div>
                         </div>
+                        -->
 
-                        <div class="row border-bottom py-2">
-                            <div class="col-md-3">
-                                <strong>Locator Type</strong>
-                            </div>
-                            <div class="col-md-9">
-                                {{ item.locator_type }}
-                            </div>
-                        </div>
-
-                        <div class="row border-bottom py-2">
-                            <div class="col-md-3">
-                                <strong>Locator</strong>
-                            </div>
-                            <div class="col-md-9">
-                                {{ item.locator }}
-                            </div>
-                        </div>
-
-                        
-
+                        <!-- Valu/Comparision -->
                         <div class="row py-2">
                             <div class="col-md-2">
                                 <strong>Value</strong>
@@ -202,15 +205,35 @@
 
                         <div class="row border-bottom py-2">
                             <div class="col-md-2">
-                                {% if item.value %}{{ item.value }}{% endif %}
+                                {{ item.value }}
                             </div>
                             <div class="col-md-2">
-                                {% if item.comparision %}{{ item.comparision }}{% endif %}
+                                {{ item.comparision }}
                             </div>
                             <div class="col-md-2">
-                                {% if item.value2 %}{{ item.value2 }}{% endif %}
+                                {{ item.value2 }}
                             </div>
                         </div>
+
+                        <!-- others -->
+                        <div class="row border-bottom py-2">
+                            <div class="col-md-3">
+                                <strong>Locator Type</strong>
+                            </div>
+                            <div class="col-md-9">
+                                {{ item.locator_type }}
+                            </div>
+                        </div>
+
+                        <div class="row border-bottom py-2">
+                            <div class="col-md-3">
+                                <strong>Locator</strong>
+                            </div>
+                            <div class="col-md-9">
+                                {% if item.timeout %}{{ item.locator }}{% endif %}
+                            </div>
+                        </div>
+
 
                         <div class="row border-bottom py-2">
                             <div class="col-md-3">

@@ -44,7 +44,29 @@
             {% for error in field.errors %}
                 <p class="text-danger">{{ error }}</p>
             {% endfor %}
-            
+
+            {% if field.name == 'value' %}
+                <div class="input-group mt-3">
+                    <div class="input-group-prepend w-60 ml-0">
+                        {{ form.value.label(class="input-group-text w-80") }}
+                        {{ form.comparision.label(class="input-group-text w-40") }}
+                    </div>
+                    <div class="input-group-append w-40">
+                        {{ form.value2.label(class="input-group-text w-100") }}
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group w-40">
+                        {{ form.value(class="form-control w-50", value=form.value.data) }}
+                    </div>
+                    <div class="input-group w-20">
+                        {{ form.comparision(class="form-control", value=form.comparision.data) }}
+                    </div>
+                    <div class="input-group w-40">
+                        {{ form.value2(class="form-control", value=form.value2.data) }}                    
+                    </div>
+                </div>
+            {% elif field.name != 'comparision' and field.name != 'value2' %}
             <div class="input-group my-3">
                 <div class="input-group-prepend">
                     {{ field.label(class="input-group-text fixed-label") }}
@@ -52,6 +74,16 @@
 
                 {% if field.data is iterable and field.data is not string %}
                 <!-- choices for chips -->
+                    <input type="text" class="form-control" list="{{ field.name }}Opt" data-name="{{ field.name }}"
+                        onkeyup="filter_options(this)" oninput="add_chip(this, '{{ field.name }}')">
+                    <datalist id="{{ field.name }}Opt">
+                        {% for option in field.choices %}
+                            <option {% if option.0 in field.data %}disabled{% endif %}>
+                                {{ option.1 }}
+                            </option>
+                        {% endfor %}
+                    </datalist>
+<!--
                     <select class="form-control multyselect" id="{{ field.name }}" name="{{ field.name }}"
                     onchange="add_chip(this, '{{ field.name }}')">
                         <option value="0" select="">&lt; Select &gt;</option>
@@ -61,7 +93,7 @@
                             </option>
                         {% endfor %}
                     </select>
-                
+-->                
                 {% else %}
                 <!-- other fields -->
                     {{ field(class="form-control", value=field.data) }}
@@ -70,14 +102,25 @@
 
             <!-- chips -->
             {% if field.data is iterable and field.data is not string %}
+                <!-- multi-select -->
+                <select class="d-none" id="{{ field.name }}" name="{{ field.name }}" multiple>
+                    {% for option in field.choices %}
+                        <option value="{{ option.0 }}">
+                            {{ option.1 }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <!-- chips -->
                 <div id="chips_{{ field.name }}">
                     {% for option in field.choices if option.0 in field.data %}
-                        <div class="chip mr-1" data-id="{{ option.0 }}">
+                        <div class="chip mr-1" data-id="{{ option.0|int - 1 }}">
                             <small>{{ option.1 }}</small>
                             <span class="closebtn" onclick="delete_chip(this.parentElement, '{{ field.name }}')">&times;</span>
                         </div>
                     {% endfor %}
                 </div>
+            {% endif %}
             {% endif %}
             {% endif %}
 

@@ -82,7 +82,7 @@
                     `;
                 chip_area.appendChild(new_chip);
                 // remove selected option from list
-                e.value = '';
+                e.value = null;
                 e.list.children[i].disabled = true;
             }
         }

@@ -143,7 +143,7 @@ def edit_item(item_type, item_id):
 			form.activity_type.data = f'{item.activity_type.id}'
 			form.locator_type.data = f'{item.locator_type.id}'
 			# model extension
-			form.locator.data = item.locator
+			form.locator.data = item.locator or ''
 			if item.optional:
 				form.optional.data = '2'
 			else:
@@ -220,7 +220,7 @@ def edit_item(item_type, item_id):
 		# update item in db
 		db.session.commit()
 		flash(f'Item "{item.name}" successfully updated.', 'success')
-		return redirect(url_for('index'))
+		return redirect(url_for('item_list', item_type=item_type))
 
 
 	return render_template('testrun/edit_item.html', type=item_type, item=item, form=form)
@@ -322,7 +322,7 @@ def new_item(item_type):
 		db.session.add(item)
 		db.session.commit()
 		flash(f'Item "{item.name}" successfully created.', 'success')
-		return redirect(url_for('index'))
+		return redirect(url_for('item_list', item_type=item_type))
 
 	return render_template('testrun/create_item.html', type=item_type, chips=chips, form=form)
 	#return render_template('testrun/edit_item.html', type=item_type, item=None, form=form)

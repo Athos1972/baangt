@@ -185,7 +185,7 @@ class TestStepExecution(db.Model):
 	teststep_sequence = db.relationship('TestStepSequence', backref='teststeps', lazy='immediate', foreign_keys=[teststep_sequence_id])
 	# model extension
 	locator = db.Column(db.String, nullable=True)
-	optional = db.Column(db.Boolean, nullable=True)
+	optional = db.Column(db.Boolean, nullable=False, default=False)
 	timeout = db.Column(db.Float(precision='5,2'), nullable=True)
 	release = db.Column(db.String, nullable=True)
 	value = db.Column(db.String, nullable=True)
