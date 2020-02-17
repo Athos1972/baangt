@@ -135,10 +135,28 @@
         for (var i = 0; i < e.list.childElementCount; i++) {
             const opt_text = e.list.children[i].text.toUpperCase();
             if (!opt_text.includes(text)) {
-                e.list.children[i].style.display = opt_text ? 'list-item':'none';
+                e.list.children[i].style.display = opt_text ? 'list-item' : 'none';
             }
 
 
         }
+    }
+
+    function filter_items(e) {
+        const text = e.value.toUpperCase();
+        document.querySelectorAll('.testrun-item').forEach(item => {
+            var display = false;
+            item.querySelectorAll('.filtered').forEach(property => {
+                const value = property.innerHTML.toUpperCase();
+                if (value.includes(text)) {
+                    display = true;
+                }
+            });
+
+            item.style.display = display ? '' : 'none';
+
+        });
+
+
     }
 // type: "select-multiple"
