@@ -185,7 +185,7 @@ class UI:
             return
         runCmd = self._getRunCommand()
         if self.configContents.get("TX.DEBUG"):
-            from baangt.base.TestRun import TestRun
+            from baangt.base.TestRun.TestRun import TestRun
 
             lTestRun = TestRun(f"{Path(self.directory).joinpath(self.testRunFile)}",
                                globalSettingsFileNameAndPath=f'{Path(self.directory).joinpath(self.tempConfigFile)}')
