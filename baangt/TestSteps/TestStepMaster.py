@@ -52,6 +52,10 @@ class TestStepMaster:
 
             lLocatorType = command["LocatorType"].upper()
             lLocator = self.replaceVariables(command["Locator"])
+
+            if lLocator and not lLocatorType:   # If locatorType is empty, default it to XPATH
+                lLocatorType = 'XPATH'
+
             xpath, css, id = self.__setLocator(lLocatorType, lLocator)
 
             lValue = str(command["Value"])
