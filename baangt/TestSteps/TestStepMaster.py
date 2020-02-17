@@ -1,6 +1,6 @@
 import baangt.base.GlobalConstants as GC
-from baangt.base.Timing import Timing
-from baangt.base.BrowserHandling import BrowserDriver
+from baangt.base.Timing.Timing import Timing
+from baangt.base.BrowserHandling.BrowserHandling import BrowserDriver
 from baangt.base.ApiHandling import ApiHandling
 import sys
 from pkg_resources import parse_version

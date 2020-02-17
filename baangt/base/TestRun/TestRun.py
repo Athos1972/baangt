@@ -1,11 +1,9 @@
-from baangt.base.BrowserHandling import BrowserDriver
+from baangt.base.BrowserHandling.BrowserHandling import BrowserDriver
 from baangt.base.ApiHandling import ApiHandling
-from baangt.base.ExportResults import ExportResults
-from baangt.base.Timing import Timing
+from baangt.base.ExportResults.ExportResults import ExportResults
 from baangt.base.utils import utils
 from baangt.base import GlobalConstants as GC
 from baangt.base.TestRunExcelImporter import TestRunExcelImporter
-from baangt.base.TestRunUtils import TestRunUtils
 # needed - they'll be used dynamically later
 from baangt.TestSteps.TestStepMaster import TestStepMaster
 from baangt.TestCase.TestCaseMaster import TestCaseMaster
@@ -13,6 +11,8 @@ from baangt.TestCaseSequence.TestCaseSequenceMaster import TestCaseSequenceMaste
 import logging
 from pathlib import Path
 import sys
+from baangt.base.Timing.Timing import Timing
+from baangt.base.TestRunUtils import TestRunUtils
 
 logger = logging.getLogger("pyC")
 
@@ -27,6 +27,7 @@ class TestRun:
         @param testRunName: The name of the TestRun to be executed.
         @param globalSettingsFileNameAndPath: from where to read the <globals>.json
         """
+
         self.browser = {}
         self.apiInstance = None
         self.testType = None
@@ -34,8 +35,8 @@ class TestRun:
         self.dataRecords = {}
         self.globalSettingsFileNameAndPath = globalSettingsFileNameAndPath
         self.globalSettings = {}
-
-        self.testRunName, self.testRunFileName = TestRun._sanitizeTestRunNameAndFileName(testRunName)
+        self.testRunName, self.testRunFileName = \
+            self._sanitizeTestRunNameAndFileName(testRunName)
         self.timing = Timing()
         self.timing.takeTime(GC.TIMING_TESTRUN)  # Initialize Testrun Duration
         self.testRunUtils = TestRunUtils()
@@ -265,3 +266,7 @@ class TestRun:
             lFileName = None
 
         return lRunName, lFileName
+
+
+if __name__ == '__main__':
+    print(1)

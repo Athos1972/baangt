@@ -1,0 +1,9 @@
+2020-01-29 17:45:58,958 _ DEBUG _ __init__ _ <module> : Value of sys._MEIPASS None
+2020-01-29 17:45:58,958 _ DEBUG _ __init__ _ <module> : Value of __file__: C:\Users\Administrator\Desktop\GitProject\baangt\baangt\__init__.py
+2020-01-29 17:45:58,959 _ DEBUG _ __init__ _ <module> : Value of sys.executable: C:\Users\Administrator\AppData\Local\Programs\Python\Python36-32\python.exe
+2020-01-29 17:45:58,959 _ DEBUG _ __init__ _ <module> : Value of sys.argv[0]: C:/Users/Administrator/Desktop/GitProject/baangt/baangt/ui/ui.py
+2020-01-29 17:45:58,959 _ DEBUG _ __init__ _ <module> : Value of sys.path: ['C:\\Users\\Administrator\\Desktop\\GitProject\\baangt\\baangt\\ui', 'C:\\Users\\Administrator\\Desktop\\GitProject\\baangt', 'C:\\Users\\Administrator\\AppData\\Local\\Programs\\Python\\Python36-32\\python36.zip', 'C:\\Users\\Administrator\\AppData\\Local\\Programs\\Python\\Python36-32\\DLLs', 'C:\\Users\\Administrator\\AppData\\Local\\Programs\\Python\\Python36-32\\lib', 'C:\\Users\\Administrator\\AppData\\Local\\Programs\\Python\\Python36-32', 'C:\\Users\\Administrator\\AppData\\Roaming\\Python\\Python36\\site-packages', 'C:\\Users\\Administrator\\AppData\\Local\\Programs\\Python\\Python36-32\\lib\\site-packages']
+2020-01-29 17:45:58,960 _ DEBUG _ __init__ _ <module> : Value of os.path: <module 'ntpath' from 'C:\\Users\\Administrator\\AppData\\Local\\Programs\\Python\\Python36-32\\lib\\ntpath.py'>
+2020-01-29 17:45:58,961 _ DEBUG _ __init__ _ <module> : Value of os.getcwd(): C:\Users\Administrator\Desktop\GitProject\baangt\baangt\ui
+2020-01-29 17:45:58,961 _ DEBUG _ __init__ _ <module> : Value of Path.cwd(): C:\Users\Administrator\Desktop\GitProject\baangt\baangt\ui
+2020-01-29 17:45:58,961 _ DEBUG _ __init__ _ <module> : running in a normal Python process
