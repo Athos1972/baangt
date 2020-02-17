@@ -3,12 +3,15 @@ Change log
 
 2020.02
 ^^^^^^^
+Summary: Web- and API-Tests XLSX-SimpleFormat are almost completed. Shouldn't take much longer to have a production ready version.
+
 * Pypi-Version 2020.02.* deployed
-* First version of baangtDB with Flask (including Docker Container). No DOCS yet, as it's still under heavy development.
+* First version of baangtDB with Flask (including Docker Container). No DOCS yet, as it's still under heavy development. For an early preview you can navigate to ``/flask`` directory and execute ``./start_docker.sh``
 * Support of Edge on Microsoft Platform and Safari on Apple/Mac
 * Completed support for Versions in SimpleFormat and SimpleAPIFormat (can also be used for ``baangtDB``, subclassed methods and complex Excel TestRun Defintions)
 * Improved support for API-Calls and data extraction from API response to result sheet
 * Added logical comparison for IF-conditions, whether a field exists or not (using LocatorType and Locator). You can see an example in file ``BaangtDBFill.xlsx``
+* Plugin structure for TestRun, ExportResults and BrowserHandling implemented. Example in separate repository https://gogs.earthsquad.global/athos/baangt-Plugin. If you subclassed those classes, you need to adjust the import statements (e.g. ``from baangt.base.TestRun`` to ``baangt.base.TestRun.TestRun``)
 
 
 2020.01
