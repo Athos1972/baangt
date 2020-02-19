@@ -4,6 +4,10 @@ import xlsxwriter
 from pathlib import Path
 import pyperclip
 import logging
+import re
+from baangt.base.ExportResults.ExportResults import ExcelSheetHelperFunctions
+#re for to extract 'text' from  //input[@type='text']  
+extract_var=r'.*\'(.*)\''
 
 logger = logging.getLogger("pyC")
 
@@ -13,6 +17,7 @@ class ImportKatalonRecorder:
         self.directory = directory
         self.clipboardText = ""
         self.outputText = ""
+        self.outputData ={}
 
         self.clipboardText = """open | https://www.orf.at/ | 
 click | //main[@id='content']/div[2]/div/div[2]/a/div[2]/div | 
@@ -89,11 +94,15 @@ click | //div[@id='main']/div[2]/div/div[2]/div/div[5]/button/div[2] |
         lExcel.close()
 
     def saveTestData(self, worksheet):
-        # fixme: We should translate the values in Testcase with VariableNames and then write those to data.
-        self.writeCell(worksheet,0,0, "Dummy")
-        self.writeCell(worksheet,1,0, "Dummy")
-        self.writeCell(worksheet,2,0, "Dummy")
-        pass
+        # fixed: Translated the values in Testcase with VariableNames and then write those to data.
+        for index, data in enumerate(sorted(self.outputData.items())):
+                #remove $( and ) from header
+                header = re.search(r'.*\((.*)\)',data[0]).groups()[0]
+                self.writeCell(worksheet,0,index, header)
+                self.writeCell(worksheet,1,index,data[1])
+
+        for i in range(len(self.outputData)):
+            ExcelSheetHelperFunctions.set_column_autowidth(worksheet,i)
 
     def saveTestCaseHeader(self, worksheet):
         self.writeCell(worksheet, 0, 0, "Activity")
@@ -113,6 +122,9 @@ click | //div[@id='main']/div[2]/div/div[2]/div/div[5]/button/div[2] |
                 continue
             for col, (key, value) in enumerate(line.items()):
                 self.writeCell(worksheet, row, col, value)
+        for i in range(len(self.outputFormatted)):
+            ExcelSheetHelperFunctions.set_column_autowidth(worksheet,i)
+
 
     def writeCell(self, sheet, cellRow, cellCol, value, format=None):
         sheet.write(cellRow, cellCol, value)
@@ -139,6 +151,9 @@ click | //div[@id='main']/div[2]/div/div[2]/div/div[5]/button/div[2] |
                     continue
 
                 lineOut.append(self.doTranslate(line))
+        #Further process into $('variable') and value format
+        lineOut,self.outputData = ImportKatalonRecorder.splitVariable(lineOut)
+
 
         self.outputText = ""
         self.outputFormatted = lineOut
@@ -232,5 +247,48 @@ click | //div[@id='main']/div[2]/div/div[2]/div/div[5]/button/div[2] |
             locator = preLocator + locator + postLocator
         return locator
 
+    @staticmethod
+    def splitVariable(lines):
+        #make outputData empty if already there
+        """ This function will process each line and format the
+            'Value' column in format $(variabe).
+
+        @output: list(lines), list(outputData)
+        """
+        
+        outputData={}
+        #loop through line and process if 'Value' column there
+        for line in lines:
+            #Check for GOTOURL activity
+            if line['Activity']=="GOTOURL":
+                #we should make variable for ur
+                line['Value'] = ImportKatalonRecorder.prepareKeyValue(outputData,'url',line['Value'])
+
+            elif line['Value'].strip():
+                #we will make it variable
+                result = re.search(extract_var, line['Locator'])
+                if result:
+                    #create variable format like $(value)
+                    result=result.groups()[0]
+                
+                    line['Value'] = ImportKatalonRecorder.prepareKeyValue(outputData,result,line['Value'])
+        return lines,outputData
+
+
+    @staticmethod
+    def prepareKeyValue(outputData,key,value):
+        """ This function will append key and value in 
+            outputData
+            if variable key exist, it will rename by
+                    key1, key2, ...
+        """
+        for i in range(1,100):
+            var = "$("+key+str(i)+")"
+            if not outputData.get(var,None):
+                outputData[var]=value
+                return var
+            else:
+                 continue
+ 
     def exportResult(self):
         pass
