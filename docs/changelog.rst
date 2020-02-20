@@ -10,6 +10,7 @@ Summary: Web- and API-Tests XLSX-SimpleFormat are almost completed. Shouldn't ta
 * Support of Edge on Microsoft Platform and Safari on Apple/Mac
 * Completed support for Versions in SimpleFormat and SimpleAPIFormat (can also be used for ``baangtDB``, subclassed methods and complex Excel TestRun Defintions)
 * SimpleFormat now with default ``locatorType`` = ``xpath``. No breaking change. Just a tiny little convenience when filling in long Excel Testcase definitions.
+* Katalon Importer now creates proper data fields in data tab for simple format XLSX and refers proper variable (column) names in Teststep-Definition
 * Improved support for API-Calls and data extraction from API response to result sheet
 * Added logical comparison for IF-conditions, whether a field exists or not (using LocatorType and Locator). You can see an example in file ``BaangtDBFill.xlsx``
 * Plugin structure for TestRun, ExportResults and BrowserHandling implemented. Example in separate repository https://gogs.earthsquad.global/athos/baangt-Plugin. If you subclassed those classes, you need to adjust the import statements (e.g. ``from baangt.base.TestRun`` to ``baangt.base.TestRun.TestRun``)
