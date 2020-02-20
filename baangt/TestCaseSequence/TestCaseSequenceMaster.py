@@ -1,7 +1,7 @@
 from baangt.base.HandleDatabase import HandleDatabase
 from baangt.TestCaseSequence.TestCaseSequenceParallel import TestCaseSequenceParallel
 from baangt.base.Timing.Timing import Timing
-from baangt.base.utils import utils
+from baangt.base.Utils import utils
 import baangt.base.GlobalConstants as GC
 import multiprocessing
 from pathlib import Path

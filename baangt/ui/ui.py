@@ -6,7 +6,7 @@ import platform
 import subprocess
 import configparser
 import baangt.base.GlobalConstants as GC
-from baangt.base.utils import utils
+from baangt.base.Utils import utils
 from baangt.ui.ImportKatalonRecorder import ImportKatalonRecorder
 import logging
 import json

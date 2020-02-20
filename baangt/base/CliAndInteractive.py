@@ -1,5 +1,5 @@
 import sys, getopt
-from baangt.base.utils import utils
+from baangt.base.Utils import utils
 from baangt.ui.ui import UI
 from baangt import plugin_manager
 
