@@ -35,7 +35,7 @@ logFilename = logFilename.joinpath('logs')
 pathlib.Path(logFilename).mkdir(parents=True, exist_ok=True)
 logFilename = logFilename.joinpath(datetime.now().strftime("%Y%m%d_%H%M%S") + '.log')
 
-print(f"Logfile verwendet: {logFilename}")
+print(f"Logfile used: {logFilename}")
 
 # Bit more advanced logging
 logger = logging.getLogger('pyC')
