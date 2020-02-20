@@ -14,7 +14,7 @@ Summary: Web- and API-Tests XLSX-SimpleFormat are almost completed. Shouldn't ta
 * Improved support for API-Calls and data extraction from API response to result sheet
 * Added logical comparison for IF-conditions, whether a field exists or not (using LocatorType and Locator). You can see an example in file ``BaangtDBFill.xlsx``
 * Plugin structure for TestRun, ExportResults and BrowserHandling implemented. Example in separate repository https://gogs.earthsquad.global/athos/baangt-Plugin. If you subclassed those classes, you need to adjust the import statements (e.g. ``from baangt.base.TestRun`` to ``baangt.base.TestRun.TestRun``)
-
+* Apart from exporting to XLSX it's now also possible to export testrun results to CSV. In simpleFormat you can set parameter ``TC.Export Format`` to the value ``CSV``. In baangtDB and full Excel format you can use Testrun property ``Export format``
 
 2020.01
 ^^^^^^^
