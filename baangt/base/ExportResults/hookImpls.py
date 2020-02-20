@@ -17,11 +17,11 @@ class ExportResultsHookImpl:
 
     @baangt.hook_impl
     def exportResults_exportResult(self, exportResultsObject, **kwargs):
-        return exportResultsObject.exportResult(**kwargs)
+        return exportResultsObject.exportResultExcel(**kwargs)
 
     @baangt.hook_impl
     def exportResults_makeSummary(self, exportResultsObject):
-        return exportResultsObject.makeSummary()
+        return exportResultsObject.makeSummaryExcel()
 
     @baangt.hook_impl
     def exportResults_closeExcel(self, exportResultsObject, line, cellNumber, testRecordDict, fieldName, strip=False):
