@@ -17,7 +17,6 @@ from pathlib import Path
 import json
 import sys
 import platform
-import requests
 import ctypes
 from urllib.request import urlretrieve
 import tarfile
@@ -88,21 +87,36 @@ class BrowserDriver:
             lCurPath = Path(os.getcwd())
             lCurPath = lCurPath.joinpath("browserDrivers")
 
+            browserProxy = kwargs.get('browserProxy')
+            browserInstance = kwargs.get('browserInstance', 'unknown')
             if browserName == GC.BROWSER_FIREFOX:
                 lCurPath = lCurPath.joinpath(GeckoExecutable)
                 if not(os.path.isfile(str(lCurPath))):
                     self.downloadDriver(browserName)
+
+                profile = None
+                firefox_proxy = browserProxy.selenium_proxy() if browserProxy else None
+                if firefox_proxy:
+                    profile = webdriver.FirefoxProfile()
+                    profile.set_proxy(firefox_proxy)
                 self.driver = browserNames[browserName](options=self.__createBrowserOptions(browserName=browserName,
                                                                                             desiredCapabilities=desiredCapabilities),
-                                                        executable_path=self.__findBrowserDriverPaths(GeckoExecutable))
+                                                        executable_path=self.__findBrowserDriverPaths(GeckoExecutable),
+                                                        firefox_profile=profile)
 
+                browserProxy.new_har("baangt-firefox-{}".format(browserInstance),
+                                     options={'captureHeaders': True, 'captureContent': True}) \
+                    if firefox_proxy else None
             elif browserName == GC.BROWSER_CHROME:
                 lCurPath = lCurPath.joinpath(ChromeExecutable)
                 if not (os.path.isfile(str(lCurPath))):
                     self.downloadDriver(browserName)
-                self.driver = browserNames[browserName](options=self.__createBrowserOptions(browserName=browserName,
-                                                                                            desiredCapabilities=desiredCapabilities),
+                self.driver = browserNames[browserName](chrome_options=self.__createBrowserOptions(browserName=browserName,
+                                                                                            desiredCapabilities=desiredCapabilities,
+                                                                                            browserProxy=browserProxy),
                                                         executable_path=self.__findBrowserDriverPaths(ChromeExecutable))
+                browserProxy.new_har("baangt-chrome-{}".format(browserInstance),
+                                     options={'captureHeaders': True, 'captureContent': True}) if browserProxy else None
             elif browserName == GC.BROWSER_EDGE:
                 self.driver = browserNames[browserName](executable_path=self.__findBrowserDriverPaths("msedgedriver.exe"))
             elif browserName == GC.BROWSER_SAFARI:
@@ -116,7 +130,7 @@ class BrowserDriver:
                 self.driver = browserNames[browserName](options=self.__createBrowserOptions(browserName=browserName,
                                                                                             desiredCapabilities=desiredCapabilities),
                                                         command_executor='http://localhost:4444/wd/hub',
-                                                        desired_capabilities = desiredCapabilities)
+                                                        desired_capabilities=desiredCapabilities)
         else:
             raise SystemExit("Browsername unknown")
 
@@ -159,7 +173,8 @@ class BrowserDriver:
 
         return self.slowExecution
 
-    def __createBrowserOptions(self, browserName, desiredCapabilities):
+
+    def __createBrowserOptions(self, browserName, desiredCapabilities, browserProxy=None):
         """
         Translates desired capabilities from the Testrun (or globals) into specific BrowserOptions for the
         currently active browser
@@ -168,24 +183,26 @@ class BrowserDriver:
         @param desiredCapabilities: Settings from TestRun or globals
         @return: the proper BrowserOptions for the currently active browser.
         """
+
         if browserName == GC.BROWSER_CHROME:
             lOptions = ChromeOptions()
+            lOptions.add_argument('--proxy-server={0}'.format(browserProxy.proxy)) if browserProxy else None
         elif browserName == GC.BROWSER_FIREFOX:
             lOptions = ffOptions()
         else:
             return None
 
-        if not desiredCapabilities:
+        if not desiredCapabilities and not browserProxy:
             return None
 
         # sometimes instead of DICT comes a string with DICT-Format
         if isinstance(desiredCapabilities, str) and "{" in desiredCapabilities and "}" in desiredCapabilities:
             desiredCapabilities = json.loads(desiredCapabilities.replace("'", '"'))
 
-        if not isinstance(desiredCapabilities, dict):
+        if not isinstance(desiredCapabilities, dict) and not browserProxy:
             return None
 
-        if desiredCapabilities.get(GC.BROWSER_MODE_HEADLESS):
+        if isinstance(desiredCapabilities, dict) and desiredCapabilities.get(GC.BROWSER_MODE_HEADLESS):
             logger.debug("Starting in Headless mode")
             lOptions.headless = True
             lOptions.add_argument("--window-size=1920,1080")
