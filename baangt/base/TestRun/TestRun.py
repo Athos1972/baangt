@@ -13,7 +13,7 @@ from pathlib import Path
 import sys
 from baangt.base.Timing.Timing import Timing
 from baangt.base.TestRunUtils import TestRunUtils
-
+import time
 logger = logging.getLogger("pyC")
 
 
@@ -31,6 +31,7 @@ class TestRun:
         self.browser = {}
         self.apiInstance = None
         self.testType = None
+        self.networkInfo = None
         self.kwargs = {}
         self.dataRecords = {}
         self.globalSettingsFileNameAndPath = globalSettingsFileNameAndPath
@@ -41,6 +42,8 @@ class TestRun:
         self.timing.takeTime(GC.TIMING_TESTRUN)  # Initialize Testrun Duration
         self.testRunUtils = TestRunUtils()
         self._initTestRun()
+        self.browserProxyAndServer = self.getBrowserProxyAndServer() \
+            if self.globalSettings.get('TC.' + GC.NETWORK_INFO) == 'True' else None
         self._loadJSONTestRunDefinitions()
         self._loadExcelTestRunDefinitions()
         self.executeTestRun()
@@ -62,9 +65,12 @@ class TestRun:
         if self.apiInstance:
             self.apiInstance.tearDown()
 
+        if self.browserProxyAndServer:
+            network_info = self.browserProxyAndServer[0].har
+            self.browserProxyAndServer[1].stop()
+            self.kwargs['networkInfo'] = network_info
+
         ExportResults(**self.kwargs)
-
-
         successful, error = self.getSuccessAndError()
         logger.info(f"Finished execution of Testrun {self.testRunName}. "
                     f"{successful} Testcases successfully executed, {error} errors")
@@ -105,8 +111,11 @@ class TestRun:
         if browserInstance not in self.browser.keys():
             logger.info(f"opening new instance {browserInstance} of browser {browserName}")
             self._getBrowserInstance(browserInstance=browserInstance)
+            browser_proxy = self.browserProxyAndServer[0] if self.browserProxyAndServer else None
             self.browser[browserInstance].createNewBrowser(browserName=browserName,
-                                                           desiredCapabilities=browserAttributes)
+                                                           desiredCapabilities=browserAttributes,
+                                                           browserProxy=browser_proxy,
+                                                           browserInstance=browserInstance)
             if self.globalSettings.get("TC." + GC.EXECUTION_SLOW):
                 self.browser[browserInstance].slowExecutionToggle()
         else:
@@ -116,6 +125,18 @@ class TestRun:
     def _getBrowserInstance(self, browserInstance):
         self.browser[browserInstance] = BrowserDriver(timing=self.timing,
                                                       screenshotPath=self.globalSettings[GC.PATH_SCREENSHOTS])
+
+    def downloadBrowserProxy(self):
+        pass
+
+    def getBrowserProxyAndServer(self):
+        from browsermobproxy import Server
+        server = Server(GC.PATH_BROWSER_PROXY)
+        server.start()
+        time.sleep(1)
+        proxy = server.create_proxy()
+        time.sleep(1)
+        return proxy, server
 
     def getAPI(self):
         if not self.apiInstance:
@@ -150,7 +171,7 @@ class TestRun:
         This is the main loop of the TestCaseSequence, TestCases, TestStepSequences and TestSteps.
         The Sequence of which class instance to create is defined by the TestRunAttributes.
 
-        Before instancing the class it is checked, whether the class was loaded already and if not, will be loaded
+        Before instancgetBrowsering the class it is checked, whether the class was loaded already and if not, will be loaded
         (only if the classname is fully qualified (e.g baangt<projectname>.TestSteps.myTestStep).
         If the testcase-Status is already "error" (GC.TESTCASESTATUS_ERROR) we'll stop the loop.
 
