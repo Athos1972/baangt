@@ -89,4 +89,7 @@ OS_list_chrome = ['linux32', 'linux64', 'mac64', 'win32']
 GECKO_URL = 'https://api.github.com/repos/mozilla/geckodriver/releases/latest'
 
 
-CHROME_URL= 'https://chromedriver.storage.googleapis.com/LATEST_RELEASE'
+CHROME_URL = 'https://chromedriver.storage.googleapis.com/LATEST_RELEASE'
+NETWORK_INFO = 'NetworkInfo'
+PATH_BROWSER_PROXY = "../../browsermob-proxy/bin/browsermob-proxy.bat"
+BROWSER_PROXY_URL = 'https://github.com/lightbody/browsermob-proxy/releases/download/browsermob-proxy/browsermob-proxy-bin.zip'
