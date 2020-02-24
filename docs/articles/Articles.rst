@@ -11,4 +11,4 @@ This section contains articles, that are not exactly documentation. Some are mor
     Test data rulez </articles/DataDoctor.rst>
     Industries 4 baangt </articles/BaangtIndustries.rst>
     Stop testing! </articles/StopTesting.rst>
-    bAanGtILE </articles/AgileWorkflowIntegrations.rst>
+    bAanGtILE </articles/AgileWorkflowIntegration.rst>
