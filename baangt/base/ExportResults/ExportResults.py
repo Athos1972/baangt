@@ -26,7 +26,10 @@ class ExportResults:
         self.testRunName = self.testRunInstance.testRunName
         self.dataRecords = self.testRunInstance.dataRecords
 
-        self.exportFormat = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.EXPORT_FORMAT)[GC.EXPORT_FORMAT]
+        try:
+            self.exportFormat = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.EXPORT_FORMAT)[GC.EXPORT_FORMAT]
+        except KeyError:
+            self.exportFormat = GC.EXP_XLSX
 
         self.fileName = self.__getOutputFileName()
         logger.info("Export-Sheet for results: " + self.fileName)

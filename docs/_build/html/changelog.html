@@ -169,13 +169,18 @@
 <h1>Change log<a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
 <h2>2020.02<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>Summary: Web- and API-Tests XLSX-SimpleFormat are almost completed. Shouldn’t take much longer to have a production ready version.</p>
 <ul class="simple">
 <li><p>Pypi-Version 2020.02.* deployed</p></li>
-<li><p>First version of baangtDB with Flask (including Docker Container). No DOCS yet, as it’s still under heavy development.</p></li>
+<li><p>First version of baangtDB with Flask (including Docker Container). No DOCS yet, as it’s still under heavy development. For an early preview you can navigate to <code class="docutils literal notranslate"><span class="pre">/flask</span></code> directory and execute <code class="docutils literal notranslate"><span class="pre">./start_docker.sh</span></code></p></li>
 <li><p>Support of Edge on Microsoft Platform and Safari on Apple/Mac</p></li>
 <li><p>Completed support for Versions in SimpleFormat and SimpleAPIFormat (can also be used for <code class="docutils literal notranslate"><span class="pre">baangtDB</span></code>, subclassed methods and complex Excel TestRun Defintions)</p></li>
+<li><p>SimpleFormat now with default <code class="docutils literal notranslate"><span class="pre">locatorType</span></code> = <code class="docutils literal notranslate"><span class="pre">xpath</span></code>. No breaking change. Just a tiny little convenience when filling in long Excel Testcase definitions.</p></li>
+<li><p>Katalon Importer now creates proper data fields in data tab for simple format XLSX and refers proper variable (column) names in Teststep-Definition</p></li>
 <li><p>Improved support for API-Calls and data extraction from API response to result sheet</p></li>
 <li><p>Added logical comparison for IF-conditions, whether a field exists or not (using LocatorType and Locator). You can see an example in file <code class="docutils literal notranslate"><span class="pre">BaangtDBFill.xlsx</span></code></p></li>
+<li><p>Plugin structure for TestRun, ExportResults and BrowserHandling implemented. Example in separate repository <a class="reference external" href="https://gogs.earthsquad.global/athos/baangt-Plugin">https://gogs.earthsquad.global/athos/baangt-Plugin</a>. If you subclassed those classes, you need to adjust the import statements (e.g. <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">baangt.base.TestRun</span></code> to <code class="docutils literal notranslate"><span class="pre">baangt.base.TestRun.TestRun</span></code>)</p></li>
+<li><p>Apart from exporting to XLSX it’s now also possible to export testrun results to CSV. In simpleFormat you can set parameter <code class="docutils literal notranslate"><span class="pre">TC.Export</span> <span class="pre">Format</span></code> to the value <code class="docutils literal notranslate"><span class="pre">CSV</span></code>. In baangtDB and full Excel format you can use Testrun property <code class="docutils literal notranslate"><span class="pre">Export</span> <span class="pre">format</span></code></p></li>
 </ul>
 </div>
 <div class="section" id="id2">
