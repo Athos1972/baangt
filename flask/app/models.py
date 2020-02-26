@@ -76,6 +76,11 @@ class Testrun(db.Model):
 	def __str__(self):
 		return self.name
 
+	def to_json(self):
+		return {
+			'TestCaseSequence' : [x.to_json() for x in self.testcase_sequences],
+		}
+
 class TestCaseSequence(db.Model):
 	__tablename__ = 'testcase_sequences'
 	id = db.Column(db.Integer, primary_key=True)
@@ -98,6 +103,17 @@ class TestCaseSequence(db.Model):
 
 	def __str__(self):
 		return self.name
+
+	def to_json(self):
+		if len(self.datafiles) > 0:
+			TestDataFileName = self.datafiles[0].filename
+		else:
+			TestDataFileName = ''
+		return {
+			'SequenceClass': self.classname.name,
+			'TestDataFileName': TestDataFileName,
+			'TestCase' : [x.to_json() for x in self.testcases],
+		}
 
 class DataFile(db.Model):
 	__tablename__ = 'datafiles'
@@ -143,6 +159,14 @@ class TestCase(db.Model):
 	def __str__(self):
 		return self.name
 
+	def to_json(self):
+		return {
+			'TestCaseClass': self.classname.name,
+			'TestCaseType': self.testcase_type.name,
+			'Browser': self.browser_type.name,
+			'TestStepSequences' : [x.to_json() for x in self.teststep_sequences],
+		}
+
 class TestStepSequence(db.Model):
 	__tablename__ = 'teststep_sequences'
 	id = db.Column(db.Integer, primary_key=True)
@@ -165,6 +189,12 @@ class TestStepSequence(db.Model):
 
 	def __str__(self):
 		return self.name
+
+	def to_json(self):
+		return {
+			'TestStepClass': self.classname.name,
+			'TestSteps' : [x.to_json() for x in self.teststeps],
+		}
 
 class TestStepExecution(db.Model):
 	__tablename__ = 'teststep_executions'
@@ -194,6 +224,19 @@ class TestStepExecution(db.Model):
 
 	def __str__(self):
 		return self.name
+
+	def to_json(self):
+		return {
+			'Activity': self.activity_type.name,
+			'LocatorType': self.locator_type.name,
+			'Locator': self.locator,
+			'Value': self.value,
+			'Comparison': self.comparision,
+			'Value2': self.value2,
+			'Timeout': self.timeout,
+			'Optional': self.optional,
+			'Release': self.release,
+		}
 
 #
 # supporting entities

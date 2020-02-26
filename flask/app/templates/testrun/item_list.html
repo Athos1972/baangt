@@ -46,8 +46,50 @@
 
     <!-- filter box -->
     <div class="row mb-3">
-        <input type="text" id="filter" placeholder="Search..." onkeyup="filter_items(this)">
+        <div class="col-md-9">
+            <input type="text" id="filter" placeholder="Search..." onkeyup="filter_items(this)">
+        </div>
+        <!-- Testrun Import button -->
+        {% if type == 'testrun' %}
+        <div class="col-md-3">
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#importModal">
+                <strong>&plus; </strong>from XLSX
+            </button>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Select XLSX file to import</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroupFileAddon">Upload</span>
+                            </div>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="inputGroupFile" aria-describedby="inputGroupFileAddon">
+                                <label class="custom-file-label" for="inputGroupFile">Choose file</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Import</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% endif %}
     </div>
+
+    
 
     <!-- header -->
     <div class="row border-top border-bottom py-3">
@@ -275,6 +317,10 @@
                 <!-- buttons -->
                 <p>
                     <a class="btn btn-primary px-5 my-3 mr-3" href="/{{ type }}/{{ item.id }}/edit" role="button">Edit</a>
+                    <!-- Testrun Export button -->
+                    {% if type == 'testrun' %}
+                        <a class="btn btn-success px-5 my-3 mr-3" href="/testrun/xlsx/{{ item.id }}" role="button">Export to XLSX</a>
+                    {% endif %}
                     <button class="btn btn-danger px-5 my-3" onclick="delete_item('{{ type }}', '{{ item.name}}', '{{ item.id }}')">
                         Delete
                     </button>

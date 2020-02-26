@@ -1,4 +1,5 @@
 import json
+import xlrd
 from app import db
 from app.models import *
 
@@ -182,6 +183,7 @@ for i in range(4):
 	db.session.add(testcase)
 '''
 # get teststeps from json
+print('Creating from JSON...')
 path_to_json = 'teststeps.json'
 with open(path_to_json, 'r') as f:
 	steps = json.load(f)
@@ -207,6 +209,120 @@ for step in steps:
 	)
 	db.session.add(testcase)
 
-
 db.session.commit()
+
+# set Sample Drop items
+print('Creating Sample Drop Items...')
+testrun  = Testrun(
+	name=f'Sample Drop Testrun',
+	description=f'Sample Drop Testrun from "DropsTestRunDefinition.xlsx"',
+	creator=admin,
+)
+db.session.add(testrun)
+db.session.commit()
+
+classname = ClassName(
+	name='GC.CLASSES_TESTCASESEQUENCE',
+	description='Classname for Sample Drop Test Case Sequence')
+db.session.add(classname)
+datafile  = DataFile(
+		filename=f'DropsTestExample.xlsx',
+		creator=admin,
+	)
+db.session.add(datafile)
+db.session.commit()
+testseq  = TestCaseSequence(
+	name=f'Sample Drop Test Case Sequence',
+	description=f'Sample Drop Test Case Sequence from "DropsTestRunDefinition.xlsx"',
+	creator=admin,
+	classname=classname,
+)
+testseq.testrun.append(testrun)
+testseq.datafiles.append(datafile)
+db.session.add(testseq)
+db.session.commit()
+
+
+classname = ClassName(
+	name='GC.CLASSES_TESTCASE',
+	description='Classname for Sample Drop Test Case')
+db.session.add(classname)
+db.session.commit()
+testcase  = TestCase(
+	name=f'Sample Drop Test Case',
+	description=f'Sample Drop Test Case from "DropsTestRunDefinition.xlsx"',
+	creator=admin,
+	classname=classname,
+	browser_type=BrowserType.query.get(1),
+	testcase_type=TestCaseType.query.get(1), 
+)
+testcase.testcase_sequence.append(testseq)
+db.session.add(testcase)
+db.session.commit()
+
+classname = ClassName(
+	name='GC.CLASSES_TESTSTEPMASTER',
+	description='Classname for Sample Drop Test Step')
+db.session.add(classname)
+db.session.commit()
+teststepseq  = TestStepSequence(
+	name=f'Sample Drop Test Step',
+	description=f'Sample Drop Test Case from "DropsTestRunDefinition.xlsx"',
+	creator=admin,
+	classname=classname,
+)
+teststepseq.testcase.append(testcase)
+db.session.add(testcase)
+db.session.commit()
+
+# 1
+teststepex  = TestStepExecution(
+	name=f'Sample Drop Test Step Execution Number 1',
+	description=f'Sample Drop Test Step Execution Number 1 from "DropsTestRunDefinition.xlsx"',
+	creator=admin,
+	teststep_sequence=teststepseq,
+	activity_type=ActivityType.query.get(1),
+	locator_type=LocatorType.query.get(1),
+	value = 'https://drops.earthsquad.global',
+)
+db.session.add(teststepex)
+# 2
+teststepex  = TestStepExecution(
+	name=f'Sample Drop Test Step Execution Number 2',
+	description=f'Sample Drop Test Step Execution Number 2 from "DropsTestRunDefinition.xlsx"',
+	creator=admin,
+	teststep_sequence=teststepseq,
+	activity_type=ActivityType.query.get(2),
+	locator_type=LocatorType.query.get(1),
+	locator = "(//input[@step='any'])[1]",
+	value = '$(Username)',
+	timeout = 5,
+)
+db.session.add(teststepex)
+# 3
+teststepex  = TestStepExecution(
+	name=f'Sample Drop Test Step Execution Number 3',
+	description=f'Sample Drop Test Step Execution Number 3 from "DropsTestRunDefinition.xlsx"',
+	creator=admin,
+	teststep_sequence=teststepseq,
+	activity_type=ActivityType.query.get(2),
+	locator_type=LocatorType.query.get(1),
+	locator = "(//input[@step='any'])[2]",
+	value = '$(Password)',
+	timeout = 0.2,
+)
+db.session.add(teststepex)
+# 4
+teststepex  = TestStepExecution(
+	name=f'Sample Drop Test Step Execution Number 4',
+	description=f'Sample Drop Test Step Execution Number 4 from "DropsTestRunDefinition.xlsx"',
+	creator=admin,
+	teststep_sequence=teststepseq,
+	activity_type=ActivityType.query.get(3),
+	locator_type=LocatorType.query.get(1),
+	locator = "//button[contains(.,'Submit')]",
+)
+db.session.add(teststepex)
+db.session.commit()
+
 print('Done.')

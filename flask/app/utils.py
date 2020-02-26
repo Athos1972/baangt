@@ -1,4 +1,7 @@
-from app import models
+from app import models, db
+from datetime import datetime
+from os import path
+import xlsxwriter, xlrd, json
 
 #
 # item categories
@@ -101,3 +104,370 @@ def getComparisionId(option):
 		if option == COMPARISIONS[i]:
 			return f'{i+1}'
 	return '0'
+
+#
+# Get Items By Name
+#
+
+def getBrowserTypeByName(name):
+	# browser mapper
+	bm = {
+		'BROWSER_FIREFOX': "FF",
+		'BROWSER_CHROME': "Chrome",
+		'BROWSER_SAFARI': "Safari",
+		'BROWSER_EDGE': "Edge",
+	}
+	return models.BrowserType.query.filter_by(name=bm[name.split('.')[-1]]).first()
+
+def getTestCaseTypeByName(name):
+	return models.TestCaseType.query.filter_by(name=name).first()
+
+def getActivityTypeByName(name):
+	return models.ActivityType.query.filter_by(name=name).first()
+
+def getLocatorTypeByName(name):
+	if name:
+		return models.LocatorType.query.filter_by(name=name).first()
+	else:
+		return models.LocatorType.query.get(1)
+
+
+#
+# Testrun format convertions
+#
+
+def exportXLSX(testrun_id):
+	#
+	# Exports Testrun to XLSX
+	#
+
+	# get testrun
+	testrun = models.Testrun.query.get(testrun_id)
+	testrun_json = testrun.to_json()
+
+	# create workbook
+	headers = {
+		'TestRun': [
+			'Attribute',
+			'Value',
+		],
+
+		'TestCaseSequence': [
+			'Number',
+			'SequenceClass',
+			'TestDataFileName',
+		],
+		
+		'TestCase': [
+			'TestCaseSequenceNumber',
+			'TestCaseNumber',
+			'TestCaseClass'
+			'TestCaseType',
+			'Browser',
+		],
+		
+		'TestStep': [
+			'TestCaseSequenceNumber',
+			'TestCaseNumber',
+			'TestStepNumber',
+			'TestStepClass',
+		],
+		
+		'TestStepExecution': [
+			'TestCaseSequenceNumber',
+			'TestCaseNumber',
+			'TestStepNumber',
+			'TestStepExecutionNumber',
+			'Activity',
+			'LocatorType',
+			'Locator',
+			'Value',
+			'Comparison',
+			'Value2',
+			'Timeout',
+			'Optional',
+			'Release',
+		],
+	}
+
+	xlsx_name = f'Testrun_{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.xlsx'
+	workbook = xlsxwriter.Workbook(xlsx_name)
+	worksheets = {}
+	for sheet in headers:
+		worksheets[sheet] = workbook.add_worksheet(sheet)
+
+	# write headers
+	for key, items in headers.items():
+		for col in range(len(items)):
+			worksheets[key].write(0, col, items[col])
+
+	# write data
+	# to TestRun
+	worksheets['TestRun'].write(1, 0, 'Export Format')
+	worksheets['TestRun'].write(1, 1, 'XLSX')
+
+	# to TestCaseSequence
+	i = 1 # i for TestCaseSequence Number
+	for testcase_sequence in testrun.testcase_sequences: 
+		worksheets['TestCaseSequence'].write(i, 0, i)
+		worksheets['TestCaseSequence'].write(i, 1, testcase_sequence.classname.name)
+		worksheets['TestCaseSequence'].write(i, 2, testcase_sequence.datafiles[0].filename)
+
+		# to TestCase
+		j = 1 # j for TestCase 
+		for testcase in testcase_sequence.testcases:
+			worksheets['TestCase'].write(j, 0, i)
+			worksheets['TestCase'].write(j, 1, j)
+			worksheets['TestCase'].write(j, 2, testcase.classname.name)
+			worksheets['TestCase'].write(j, 3, testcase.testcase_type.name)
+			worksheets['TestCase'].write(j, 4, testcase.browser_type.name)
+
+			# to TestStep
+			k = 1 # k for TestStep
+			for teststep_sequence in testcase.teststep_sequences:
+				worksheets['TestStep'].write(k, 0, i)
+				worksheets['TestStep'].write(k, 1, j)
+				worksheets['TestStep'].write(k, 2, k)
+				worksheets['TestStep'].write(k, 3, teststep_sequence.classname.name)
+
+				# to TestStepExecution
+				m = 1 # m for TestStepExecution
+				for teststep in teststep_sequence.teststeps:
+					worksheets['TestStepExecution'].write(m, 0, i)
+					worksheets['TestStepExecution'].write(m, 1, j)
+					worksheets['TestStepExecution'].write(m, 2, k)
+					worksheets['TestStepExecution'].write(m, 3, m)
+					worksheets['TestStepExecution'].write(m, 4, teststep.activity_type.name)
+					worksheets['TestStepExecution'].write(m, 5, teststep.locator_type.name)
+					worksheets['TestStepExecution'].write(m, 6, teststep.locator)
+					worksheets['TestStepExecution'].write(m, 7, teststep.value)
+					worksheets['TestStepExecution'].write(m, 8, teststep.comparision)
+					worksheets['TestStepExecution'].write(m, 9, teststep.value2)
+					worksheets['TestStepExecution'].write(m, 10, teststep.timeout)
+					worksheets['TestStepExecution'].write(m, 11, teststep.optional)
+					worksheets['TestStepExecution'].write(m, 12, teststep.release)
+
+					m += 1
+				k += 1
+			j += 1
+		i += 1
+
+	workbook.close()
+
+def importXLSX(user, xlsx_file):
+	#
+	# imports testrun from xlsx file
+	#
+
+	# open xlsx
+	xl = xlrd.open_workbook(file_contents=xlsx_file.read())
+
+	# create Testrun object
+	file_name = path.basename(xlsx_file.name)
+	testrun  = Testrun(
+		name=file_name,
+		description=f'Imported from "{file_name}"',
+		creator=user,
+	)
+	db.session.add(testrun)
+	db.session.commit()
+
+	# create TestCaseSequences
+	testcase_sequences = {}
+	if 'TestCaseSequence' in xl.sheet_names():
+		# get sheet
+		testcase_sequence_sheet = xl.sheet_by_name('TestCaseSequence')
+		# get headers as dict
+		headers = {h[1]: h[0] for h in enumerate(testcase_sequence_sheet.row_values(0))}
+		# get TestCaseSequences
+		for row in range(1, testcase_sequence_sheet.nrows):
+			n = int(testcase_sequence_sheet.cell(row, headers['Number']).value)
+			# ClassName
+			classname = ClassName(
+				name=testcase_sequence_sheet.cell(row, headers['SequenceClass']).value,
+				description=f'Imported from "{file_name}"',
+			)
+			db.session.add(classname)
+			# DataFile
+			datafile  = DataFile(
+				filename=testcase_sequence_sheet.cell(row, headers['TestDataFileName']).value,
+				creator=user,
+			)
+			db.session.add(datafile)
+			db.session.commit()
+
+			testcase_sequences[n] = TestCaseSequence(
+				name=f'{file_name}_{row}',
+				description=f'Imported from "{file_name}"',
+				creator=user,
+				classname=classname,
+				datafiles=[datafile],
+				testruns=[testrun],
+			)
+			db.session.add(testcase_sequences[n])
+			
+	else:
+		# create default TestCaseSequence
+		# ClassName
+		classname = ClassName(
+			name='GC.CLASSES_TESTCASESEQUENCE',
+			description=f'Default for TestCaseSequence',
+		)
+		db.session.add(classname)
+		# DataFile
+		datafile  = DataFile(
+			filename=file_name,
+			creator=user,
+		)
+		db.session.add(datafile)
+		db.session.commit()
+		# TestCaseSequence
+		testcase_sequences[1] = TestCaseSequence(
+			name=f'{file_name}_1',
+			description=f'Default for "{file_name}"',
+			creator=user,
+			classname=classname,
+			datafiles=[datafile],
+			testruns=[testrun],
+		)
+		db.session.add(testcase_sequences[1])
+
+	db.session.commit()
+
+	# create TestCases
+	testcases = {}
+	if 'TestCase' in xl.sheet_names():
+		# get sheet
+		testcase_sheet = xl.sheet_by_name('TestCase')
+		# get headers as dict
+		headers = {h[1]: h[0] for h in enumerate(testcase_sheet.row_values(0))}
+		# get TestCases
+		for row in range(1, testcase_sheet.nrows):
+			n = int(testcase_sheet.cell(row, headers['TestCaseNumber']).value)
+			# ClassName
+			classname = ClassName(
+				name=testcase_sheet.cell(row, headers['TestCaseClass']).value,
+				description=f'Imported from "{file_name}"',
+			)
+			db.session.add(classname)
+			db.session.commit()
+			# TestCase
+			testcases[n]  = TestCase(
+				name=f'{file_name}_{row}',
+				description=f'Imported from "{file_name}"',
+				creator=user,
+				classname=classname,
+				browser_type=getBrowserTypeByName(testcase_sheet.cell(row, headers['Browser']).value),
+				testcase_type=getTestCaseTypeByName(testcase_sheet.cell(row, headers['TestCaseType']).value),
+				testcase_sequence=[testcase_sequences[int(testcase_sheet.cell(row, headers['TestCaseSequenceNumber']).value)]]
+			)
+			db.session.add(testcases[n])
+	else:
+		# create default TestCase
+		# ClassName
+		classname = ClassName(
+			name='GC.CLASSES_TESTCASE',
+			description='Default for TestCase',
+		)
+		db.session.add(classname)
+		db.session.commit()
+		# TestCase
+		testcases[1]  = TestCase(
+			name=f'{file_name}_1',
+			description=f'Default for "{file_name}"',
+			creator=user,
+			classname=classname,
+			browser_type=getBrowserTypeByName('GC.BROWSER_FIREFOX'),
+			testcase_type=getTestCaseTypeByName('Browser'),
+			testcase_sequence=[testcase_sequences[1]]
+		)
+		db.session.add(testcases[1])
+
+	db.session.commit()
+
+	# create TestSteps
+	teststeps = {}
+	if 'TestStep' in xl.sheet_names():
+		# get sheet
+		teststep_sheet = xl.sheet_by_name('TestStep')
+		# get headers as dict
+		headers = {h[1]: h[0] for h in enumerate(teststep_sheet.row_values(0))}
+		# get TestSteps
+		for row in range(1, teststep_sheet.nrows):
+			n = int(teststep_sheet.cell(row, headers['TestStepNumber']).value)
+			# ClassName
+			classname = ClassName(
+				name=teststep_sheet.cell(row, headers['TestStepClass']).value,
+				description=f'Imported from "{file_name}"',
+			)
+			db.session.add(classname)
+			db.session.commit()
+			# TestCase
+			teststeps[n]  = TestStepSequence(
+				name=f'{file_name}_{row}',
+				description=f'Imported from "{file_name}"',
+				creator=user,
+				classname=classname,
+				testcase=[testcases[int(teststep_sheet.cell(row, headers['TestCaseNumber']).value)]],
+			)
+			db.session.add(teststeps[n])
+	else:
+		# create default TestStep
+		# ClassName
+		classname = ClassName(
+			name='GC.CLASSES_TESTSTEPMASTER',
+			description='Default for TestStep',
+		)
+		db.session.add(classname)
+		db.session.commit()
+		# TestStep
+		teststep[1]  = TestStepSequence(
+			name=f'{file_name}_1',
+			description=f'Default for "{file_name}"',
+			creator=user,
+			classname=classname,
+			testcase=[testcase[1]]
+		)
+		db.session.add(teststeps[1])
+
+	db.session.commit()
+
+	# create TestStepsExecutions
+	if 'TestStepExecution' in xl.sheet_names():
+		# get sheet
+		teststep_execution_sheet = xl.sheet_by_name('TestStepExecution')
+		# get headers as dict
+		headers = {h[1]: h[0] for h in enumerate(teststep_executions_sheet.row_values(0))}
+		# get TestStepExecutions
+		for row in range(1, teststep_executions_sheet.nrows):
+			n = int(teststep_sheet.cell(row, headers['TestStepExecutionNumber']).value)
+			# TestStepExecution
+			teststepex  = TestStepExecution(
+				name=f'{file_name}_{row}',
+				description=f'Imported from "{file_name}"',
+				creator=user,
+				teststep_sequence=teststeps[int(teststep_execution_sheet.cell(row, headers['TestStepNumber']).value)],
+				activity_type=getActivityTypeByName(teststep_execution_sheet.cell(row, headers['Activity']).value),
+				locator_type=getLocatorTypeByName(teststep_execution_sheet.cell(row, headers['LocatorType']).value),
+				locator=teststep_execution_sheet.cell(row, headers['Locator']).value,
+				value=teststep_execution_sheet.cell(row, headers['Value']).value,
+				comparision=teststep_execution_sheet.cell(row, headers['Comparison']).value,
+				value2=teststep_execution_sheet.cell(row, headers['Value2']).value,
+				timeout=teststep_execution_sheet.cell(row, headers['Timeout']).value,
+				optional=teststep_execution_sheet.cell(row, headers['Optional']).value,
+				release=teststep_execution_sheet.cell(row, headers['Release']).value,
+			)
+			db.session.add(teststepex)
+
+
+
+
+
+
+
+
+
+
+
+
+

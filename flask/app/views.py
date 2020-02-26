@@ -36,22 +36,6 @@ def item_list(item_type):
 	return render_template('testrun/item_list.html', type=item_type, items=items)
 
 
-'''
-@app.route('/index')
-@login_required
-def index_0():
-	# get the whole bunch of items
-	items = {}
-	items['testruns'] = models.Testrun.query.all()
-	items['testcase_sequances'] = models.TestCaseSequence.query.all()
-	#items['datafiles'] = models.DataFile.query.all()
-	items['testcases'] = models.TestCase.query.all()
-	items['teststep_sequences'] = models.TestStepSequence.query.all()
-	items['teststeps'] = models.TestStepExecution.query.all()
-
-	return render_template('testrun/index.html', items=items)
-'''
-
 @app.route('/<string:item_type>/<int:item_id>', methods=['GET', 'POST'])
 @login_required
 def get_item(item_type, item_id):
@@ -68,9 +52,6 @@ def get_item(item_type, item_id):
 		item = models.TestStepExecution.query.get(item_id)
 	else:
 		return 'ERROR: Wrong Item'
-
-	
-
 
 	return render_template('testrun/item.html', type=item_type, item=item)
 
@@ -226,9 +207,6 @@ def edit_item(item_type, item_id):
 	return render_template('testrun/edit_item.html', type=item_type, item=item, form=form)
 
 
-
-
-
 @app.route('/<string:item_type>/new', methods=['GET', 'POST'])
 @login_required
 def new_item(item_type):
@@ -326,6 +304,19 @@ def new_item(item_type):
 
 	return render_template('testrun/create_item.html', type=item_type, chips=chips, form=form)
 	#return render_template('testrun/edit_item.html', type=item_type, item=None, form=form)
+
+
+@app.route('/testrun/xlsx/<int:item_id>', methods=['GET', 'POST'])
+@login_required
+def to_xlsx(item_id):
+	#
+	# export Testrun object to XLSX
+	#
+
+	utils.exportXLSX(item_id)
+
+	flash(f'Testrun #{item_id} successfully exported to XLSX.', 'success')
+	return redirect(url_for('item_list', item_type='testrun'))
 
 #
 # user authentication
