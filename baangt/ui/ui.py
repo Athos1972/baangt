@@ -62,10 +62,10 @@ class UI:
                             sg.Button("Details", size=(10, 1), font="Helvetica 10", key="ToggleFields")])
 
         # Baangt Logo
-        lPathLogo = Path(__file__).parent.parent.parent.joinpath("ressources").joinpath("baangtLogo.png")
+        lPathLogo = Path(__file__).parent.parent.parent.joinpath("ressources").joinpath("baangtLogo2020Small.png")
         # when in pip-Package, this doesn't work.
         if not lPathLogo.exists():
-            lPathLogo = Path(__file__).parent.parent.joinpath("ressources").joinpath("baangtLogo.png")
+            lPathLogo = Path(__file__).parent.parent.joinpath("ressources").joinpath("baangtLogo2020Small.png")
 
         lColumnRight = [[sg.Image(filename=lPathLogo)]]
 
