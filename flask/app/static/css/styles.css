@@ -2,6 +2,7 @@ body {
   min-width: 420px;
 }
 
+/* chips */
 .chip {
   display: inline-block;
   padding: 0 10px;
@@ -21,6 +22,7 @@ body {
   cursor: pointer;
 }
 
+/* input groups */
 .closebtn:hover {
   color: #000;
 }
@@ -31,6 +33,11 @@ body {
 
 .text-break {
   word-wrap: break-word;
+}
+
+/* buttons */
+.btn-right {
+  width: 10rem;
 }
 
 

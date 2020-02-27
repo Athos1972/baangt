@@ -1,6 +1,6 @@
+import os
 from app import models, db
 from datetime import datetime
-from os import path
 import xlsxwriter, xlrd, json
 
 #
@@ -123,6 +123,9 @@ def getTestCaseTypeByName(name):
 	return models.TestCaseType.query.filter_by(name=name).first()
 
 def getActivityTypeByName(name):
+	print('*********** ActivityType')
+	print(f"'{name}'")
+	print(models.ActivityType.query.filter_by(name=name).all())
 	return models.ActivityType.query.filter_by(name=name).first()
 
 def getLocatorTypeByName(name):
@@ -130,6 +133,12 @@ def getLocatorTypeByName(name):
 		return models.LocatorType.query.filter_by(name=name).first()
 	else:
 		return models.LocatorType.query.get(1)
+
+def getBooleanValue(value):
+	if value:
+		return True
+	else:
+		return False
 
 
 #
@@ -190,8 +199,8 @@ def exportXLSX(testrun_id):
 		],
 	}
 
-	xlsx_name = f'Testrun_{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.xlsx'
-	workbook = xlsxwriter.Workbook(xlsx_name)
+	xlsx_file = f'Testrun_{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.xlsx'
+	workbook = xlsxwriter.Workbook(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static/files', xlsx_file))
 	worksheets = {}
 	for sheet in headers:
 		worksheets[sheet] = workbook.add_worksheet(sheet)
@@ -253,6 +262,8 @@ def exportXLSX(testrun_id):
 		i += 1
 
 	workbook.close()
+	return xlsx_file
+
 
 def importXLSX(user, xlsx_file):
 	#
@@ -260,11 +271,14 @@ def importXLSX(user, xlsx_file):
 	#
 
 	# open xlsx
-	xl = xlrd.open_workbook(file_contents=xlsx_file.read())
+	try:
+		xl = xlrd.open_workbook(file_contents=xlsx_file.read())
+	except XLRDError:
+		return 0
 
 	# create Testrun object
-	file_name = path.basename(xlsx_file.name)
-	testrun  = Testrun(
+	file_name = os.path.basename(xlsx_file.filename)
+	testrun  = models.Testrun(
 		name=file_name,
 		description=f'Imported from "{file_name}"',
 		creator=user,
@@ -283,46 +297,46 @@ def importXLSX(user, xlsx_file):
 		for row in range(1, testcase_sequence_sheet.nrows):
 			n = int(testcase_sequence_sheet.cell(row, headers['Number']).value)
 			# ClassName
-			classname = ClassName(
+			classname = models.ClassName(
 				name=testcase_sequence_sheet.cell(row, headers['SequenceClass']).value,
 				description=f'Imported from "{file_name}"',
 			)
 			db.session.add(classname)
 			# DataFile
-			datafile  = DataFile(
+			datafile  = models.DataFile(
 				filename=testcase_sequence_sheet.cell(row, headers['TestDataFileName']).value,
 				creator=user,
 			)
 			db.session.add(datafile)
 			db.session.commit()
 
-			testcase_sequences[n] = TestCaseSequence(
+			testcase_sequences[n] = models.TestCaseSequence(
 				name=f'{file_name}_{row}',
 				description=f'Imported from "{file_name}"',
 				creator=user,
 				classname=classname,
 				datafiles=[datafile],
-				testruns=[testrun],
+				testrun=[testrun],
 			)
 			db.session.add(testcase_sequences[n])
 			
 	else:
 		# create default TestCaseSequence
 		# ClassName
-		classname = ClassName(
+		classname = models.ClassName(
 			name='GC.CLASSES_TESTCASESEQUENCE',
 			description=f'Default for TestCaseSequence',
 		)
 		db.session.add(classname)
 		# DataFile
-		datafile  = DataFile(
+		datafile  = models.DataFile(
 			filename=file_name,
 			creator=user,
 		)
 		db.session.add(datafile)
 		db.session.commit()
 		# TestCaseSequence
-		testcase_sequences[1] = TestCaseSequence(
+		testcase_sequences[1] = models.TestCaseSequence(
 			name=f'{file_name}_1',
 			description=f'Default for "{file_name}"',
 			creator=user,
@@ -345,14 +359,14 @@ def importXLSX(user, xlsx_file):
 		for row in range(1, testcase_sheet.nrows):
 			n = int(testcase_sheet.cell(row, headers['TestCaseNumber']).value)
 			# ClassName
-			classname = ClassName(
+			classname = models.ClassName(
 				name=testcase_sheet.cell(row, headers['TestCaseClass']).value,
 				description=f'Imported from "{file_name}"',
 			)
 			db.session.add(classname)
 			db.session.commit()
 			# TestCase
-			testcases[n]  = TestCase(
+			testcases[n]  = models.TestCase(
 				name=f'{file_name}_{row}',
 				description=f'Imported from "{file_name}"',
 				creator=user,
@@ -365,14 +379,14 @@ def importXLSX(user, xlsx_file):
 	else:
 		# create default TestCase
 		# ClassName
-		classname = ClassName(
+		classname = models.ClassName(
 			name='GC.CLASSES_TESTCASE',
 			description='Default for TestCase',
 		)
 		db.session.add(classname)
 		db.session.commit()
 		# TestCase
-		testcases[1]  = TestCase(
+		testcases[1]  = models.TestCase(
 			name=f'{file_name}_1',
 			description=f'Default for "{file_name}"',
 			creator=user,
@@ -396,14 +410,14 @@ def importXLSX(user, xlsx_file):
 		for row in range(1, teststep_sheet.nrows):
 			n = int(teststep_sheet.cell(row, headers['TestStepNumber']).value)
 			# ClassName
-			classname = ClassName(
+			classname = models.ClassName(
 				name=teststep_sheet.cell(row, headers['TestStepClass']).value,
 				description=f'Imported from "{file_name}"',
 			)
 			db.session.add(classname)
 			db.session.commit()
 			# TestCase
-			teststeps[n]  = TestStepSequence(
+			teststeps[n]  = models.TestStepSequence(
 				name=f'{file_name}_{row}',
 				description=f'Imported from "{file_name}"',
 				creator=user,
@@ -414,14 +428,14 @@ def importXLSX(user, xlsx_file):
 	else:
 		# create default TestStep
 		# ClassName
-		classname = ClassName(
+		classname = models.ClassName(
 			name='GC.CLASSES_TESTSTEPMASTER',
 			description='Default for TestStep',
 		)
 		db.session.add(classname)
 		db.session.commit()
 		# TestStep
-		teststep[1]  = TestStepSequence(
+		teststep[1]  = models.TestStepSequence(
 			name=f'{file_name}_1',
 			description=f'Default for "{file_name}"',
 			creator=user,
@@ -437,27 +451,31 @@ def importXLSX(user, xlsx_file):
 		# get sheet
 		teststep_execution_sheet = xl.sheet_by_name('TestStepExecution')
 		# get headers as dict
-		headers = {h[1]: h[0] for h in enumerate(teststep_executions_sheet.row_values(0))}
+		headers = {h[1]: h[0] for h in enumerate(teststep_execution_sheet.row_values(0))}
 		# get TestStepExecutions
-		for row in range(1, teststep_executions_sheet.nrows):
-			n = int(teststep_sheet.cell(row, headers['TestStepExecutionNumber']).value)
+		for row in range(1, teststep_execution_sheet.nrows):
+			n = int(teststep_execution_sheet.cell(row, headers['TestStepExecutionNumber']).value)
 			# TestStepExecution
-			teststepex  = TestStepExecution(
+			teststepex  = models.TestStepExecution(
 				name=f'{file_name}_{row}',
 				description=f'Imported from "{file_name}"',
 				creator=user,
 				teststep_sequence=teststeps[int(teststep_execution_sheet.cell(row, headers['TestStepNumber']).value)],
 				activity_type=getActivityTypeByName(teststep_execution_sheet.cell(row, headers['Activity']).value),
 				locator_type=getLocatorTypeByName(teststep_execution_sheet.cell(row, headers['LocatorType']).value),
-				locator=teststep_execution_sheet.cell(row, headers['Locator']).value,
-				value=teststep_execution_sheet.cell(row, headers['Value']).value,
-				comparision=teststep_execution_sheet.cell(row, headers['Comparison']).value,
-				value2=teststep_execution_sheet.cell(row, headers['Value2']).value,
-				timeout=teststep_execution_sheet.cell(row, headers['Timeout']).value,
-				optional=teststep_execution_sheet.cell(row, headers['Optional']).value,
-				release=teststep_execution_sheet.cell(row, headers['Release']).value,
+				locator=teststep_execution_sheet.cell(row, headers['Locator']).value or None,
+				value=teststep_execution_sheet.cell(row, headers['Value']).value or None,
+				comparision=teststep_execution_sheet.cell(row, headers['Comparison']).value or None,
+				value2=teststep_execution_sheet.cell(row, headers['Value2']).value or None,
+				timeout=teststep_execution_sheet.cell(row, headers['Timeout']).value or None,
+				optional=getBooleanValue(teststep_execution_sheet.cell(row, headers['Optional']).value),
+				release=teststep_execution_sheet.cell(row, headers['Release']).value or None,
 			)
 			db.session.add(teststepex)
+
+	db.session.commit()
+
+	return 1
 
 
 

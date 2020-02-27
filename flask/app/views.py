@@ -17,9 +17,14 @@ def index():
 @app.route('/<string:item_type>')
 @login_required
 def item_list(item_type):
+	# placeholder for import form
+	form = None
 	# get item list by type
 	if item_type == 'testrun':
 		items = models.Testrun.query.all()
+		# build form for importing a testrun
+		form = forms.TestrunImportForm()
+		
 	elif item_type == 'testcase_sequence':
 		items = models.TestCaseSequence.query.all()
 	elif item_type == 'testcase':
@@ -32,8 +37,7 @@ def item_list(item_type):
 		flash(f'Item type "{item_type}" does not exist.', 'warning')
 		return redirect(url_for('index'))
 
-
-	return render_template('testrun/item_list.html', type=item_type, items=items)
+	return render_template('testrun/item_list.html', type=item_type, items=items, form=form)
 
 
 @app.route('/<string:item_type>/<int:item_id>', methods=['GET', 'POST'])
@@ -313,9 +317,31 @@ def to_xlsx(item_id):
 	# export Testrun object to XLSX
 	#
 
-	utils.exportXLSX(item_id)
+	result = utils.exportXLSX(item_id)
+	url = url_for('static', filename=f'files/{result}')
 
-	flash(f'Testrun #{item_id} successfully exported to XLSX.', 'success')
+	#flash(f'Testrun #{item_id} successfully exported to XLSX.', 'success')
+	#return redirect(url_for('item_list', item_type='testrun'))
+	return f'Success: <a href="{url}">{result}</a>' 
+
+@app.route('/testrun/import', methods=['POST'])
+@login_required
+def import_testsun():
+	#
+	# imports testrun from file
+	#
+
+	# only import from XLSX is available now
+	form = forms.TestrunImportForm()
+
+	if form.validate_on_submit():
+		if utils.importXLSX(current_user, form.file.data) == 1:
+			flash(f'Testrun successfully imported from "{form.file.data.filename}"', 'success')
+		else:
+			flash(f'ERROR: Cannot imported from "{form.file.data.filename}"', 'danger')
+	else:
+		flash(f'File is required for import', 'warning')
+
 	return redirect(url_for('item_list', item_type='testrun'))
 
 #

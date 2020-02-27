@@ -113,20 +113,6 @@
             });
         });
 
-
-/*
-        document.querySelectorAll('.multyselect').forEach(selector => {
-            selector.setAttribute('multiple','');
-            selector.options[0].selected = false;
-            for (var i = 1; i < selector.length; i++) {
-                if (selector.options[i].disabled) {
-                    selector.options[i].disabled = false;
-                    selector.options[i].selected = true;
-                }
-            }
-            console.log("Ok!");
-        });
-*/
         return false;
     }
 
@@ -156,7 +142,38 @@
             item.style.display = display ? '' : 'none';
 
         });
-
-
     }
-// type: "select-multiple"
+
+
+    function get_file(e) {
+        // get filename
+        const filename = e.files[0].name;
+        const label = e.parentElement.querySelector('label');
+        label.innerText = filename;
+    }
+
+    function set_export_id(item_id) {
+        // set item_id in modal
+        const btn = document.querySelector('#exportButton')
+        btn.setAttribute('data-id', item_id);
+        btn.style.display = '';
+        // set modal body
+        document.querySelector('#exportRequest').style.display = '';
+        document.querySelector('#exportResponse').style.display = 'none';
+    }
+
+    function exportTestrun(e) {
+        const request = new XMLHttpRequest();
+        request.open('GET', `/testrun/xlsx/${e.dataset['id']}`);
+        request.onload = () => {
+            // get request
+            const response = request.responseText;
+            // set export modal body 
+            const exportResponse = document.querySelector('#exportResponse');
+            exportResponse.innerHTML = response;
+            exportResponse.style.display = '';
+            document.querySelector('#exportRequest').style.display = 'none';
+            document.querySelector('#exportButton').style.display = 'none';
+        };
+        request.send();
+    }

@@ -38,8 +38,8 @@
         </div>
         <!-- create button -->
         <div class="col-md-3">
-            <a class="btn btn-primary" href="/{{ type }}/new" role="button">
-                <strong>&plus; </strong>new {{ type|name_by_type(False) }}
+            <a class="btn btn-primary btn-right" href="/{{ type }}/new" role="button">
+                <strong>&plus; </strong>create {{ type|name_by_type(False) }}
             </a>
         </div>
     </div>
@@ -52,44 +52,41 @@
         <!-- Testrun Import button -->
         {% if type == 'testrun' %}
         <div class="col-md-3">
-            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#importModal">
-                <strong>&plus; </strong>from XLSX
+            <button type="button" class="btn btn-success btn-right" data-toggle="modal" data-target="#importModal">
+                <strong>&plus; </strong>import {{ type|name_by_type(False) }}
             </button>
         </div>
 
-        <!-- Modal -->
+        <!-- Import Modal -->
         <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Select XLSX file to import</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">Import {{ type|name_by_type(False) }}</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="inputGroupFileAddon">Upload</span>
-                            </div>
+                    <form method="post" enctype="multipart/form-data" action="{{ url_for('import_testsun') }}">
+                        {{ form.hidden_tag() }}
+                        <div class="modal-body">
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="inputGroupFile" aria-describedby="inputGroupFileAddon">
-                                <label class="custom-file-label" for="inputGroupFile">Choose file</label>
+                                <!--input type="file" class="custom-file-input" id="customFile" onchange="get_file(this)"-->
+                                {{ form.file(class="custom-file-input", accept=".xlsx", onchange="get_file(this)") }}
+                                <label class="custom-file-label" for="{{ form.file.name }}">Choose a file</label>
                             </div>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Import</button>
-                    </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Import</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
 
         {% endif %}
     </div>
-
-    
 
     <!-- header -->
     <div class="row border-top border-bottom py-3">
@@ -251,7 +248,7 @@
                         </div>
 
                         <div class="row border-bottom py-2">
-                            <div class="col-md-2">
+                            <div class="col-md-2 text-break">
                                 {{ item.value }}
                             </div>
                             <div class="col-md-2">
@@ -319,7 +316,10 @@
                     <a class="btn btn-primary px-5 my-3 mr-3" href="/{{ type }}/{{ item.id }}/edit" role="button">Edit</a>
                     <!-- Testrun Export button -->
                     {% if type == 'testrun' %}
-                        <a class="btn btn-success px-5 my-3 mr-3" href="/testrun/xlsx/{{ item.id }}" role="button">Export to XLSX</a>
+                        <!--a class="btn btn-success px-5 my-3 mr-3" href="/testrun/xlsx/{{ item.id }}" role="button">Export</a-->
+                        <button type="button" class="btn btn-success px-5 my-3 mr-3" data-toggle="modal" data-target="#exportModal" onmousedown="set_export_id('{{ item.id }}')">
+                            Export
+                        </button>
                     {% endif %}
                     <button class="btn btn-danger px-5 my-3" onclick="delete_item('{{ type }}', '{{ item.name}}', '{{ item.id }}')">
                         Delete
@@ -329,6 +329,38 @@
             </div>
         </div>
     {% endfor %}
+
+    <!--Export  Modal -->
+    <div class="modal fade" id="exportModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exportLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exportLabel">Export Testrun</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="exportModalBody">
+                    <div id="exportResponse">
+                    </div>
+                    <div id="exportRequest">
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="xlsxRadio" name="formatRadio" class="custom-control-input" checked>
+                            <label class="custom-control-label" for="xlsxRadio">XLSX</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="jsonRadio" name="formatRadio" class="custom-control-input" disabled>
+                            <label class="custom-control-label" for="jsonRadio">JSON</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="exportButton" onclick="exportTestrun(this)">Export</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 
