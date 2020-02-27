@@ -4,7 +4,7 @@ We implement all features for 3 operating Systems (Mac, Windows, Debian Linux an
 
 Short/Medium term features
 ---------------------------
-* Refactoring of Multiprocessing (2020.02)
+* Refactoring of Multiprocessing (2020.03)
 * Executables on Mac, Linux and Windows (2020.03)
 * Nicer interactive UI-Starter (2020.03)
     * Phase 1 done 2020.02
