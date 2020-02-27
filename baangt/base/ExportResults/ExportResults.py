@@ -346,7 +346,8 @@ class ExportNetWork:
             data_list = [browser_name, status, method, url, content_type, content_size,
                          headers, params, response, start_date_time, duration]
 
-            [self.sheet.write(index + 1, i, str(data_list[i]), style) for i in range(len(data_list))]
+            [self.sheet.write(index + 1, i, str(data_list[i]), style) if data_list[i] else
+             self.sheet.write(index + 1, i, 'null', style) for i in range(len(data_list))]
 
 
 class ExportTiming:
