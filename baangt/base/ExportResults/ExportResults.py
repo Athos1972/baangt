@@ -291,7 +291,7 @@ class ExcelSheetHelperFunctions:
 
 class ExportNetWork:
 
-    headers = ['Status', 'Method', 'URL', 'Type', 'Size', 'Headers',
+    headers = ['BrowserName', 'Status', 'Method', 'URL', 'ContentType', 'ContentSize', 'Headers',
                'Params', 'Response', 'startDateTime', 'Duration/ms']
 
     def __init__(self, networkInfo:dict, workbook: xlsxwriter.Workbook, sheet:xlsxwriter.worksheet):
@@ -331,18 +331,20 @@ class ExportNetWork:
 
     def write_content(self, style=None):
         for index, entry in enumerate(self.networkInfo['log']['entries']):
+            browser_name = entry['pageref']
             status = entry['response']['status']
             method = entry['request']['method']
             url = entry['request']['url']
-            type = entry['response']['content']['mimeType']
-            size = entry['response']['content']['size']
+            content_type = entry['response']['content']['mimeType']
+            content_size = entry['response']['content']['size']
             headers = entry['response']['headers']
             params = entry['request']['queryString']
             response = entry['response']['content']['text'] if 'text' in entry['response']['content'] else ''
             start_date_time = entry['startedDateTime']
             duration = entry['time']
 
-            data_list = [status, method, url, type, size, headers, params, response, start_date_time, duration]
+            data_list = [browser_name, status, method, url, content_type, content_size,
+                         headers, params, response, start_date_time, duration]
 
             [self.sheet.write(index + 1, i, str(data_list[i]), style) for i in range(len(data_list))]
 
