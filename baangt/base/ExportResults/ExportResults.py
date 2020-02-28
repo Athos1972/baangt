@@ -23,6 +23,7 @@ class ExportResults:
     def __init__(self, **kwargs):
         self.testList = []
         self.testRunInstance = kwargs.get(GC.KWARGS_TESTRUNINSTANCE)
+        self.networkInfo = kwargs.get('networkInfo')
         self.testRunName = self.testRunInstance.testRunName
         self.dataRecords = self.testRunInstance.dataRecords
 
@@ -316,6 +317,67 @@ class ExcelSheetHelperFunctions:
         if not lengths:
             return None
         return max(lengths)
+
+
+class ExportNetWork:
+
+    headers = ['BrowserName', 'Status', 'Method', 'URL', 'ContentType', 'ContentSize', 'Headers',
+               'Params', 'Response', 'startDateTime', 'Duration/ms']
+
+    def __init__(self, networkInfo:dict, workbook: xlsxwriter.Workbook, sheet:xlsxwriter.worksheet):
+        self.networkInfo = networkInfo
+        self.workbook = workbook
+        self.sheet = sheet
+        header_style = self.get_header_style()
+        self.write_header(style=header_style)
+        content_style = self.get_content_style()
+        self.write_content(style=content_style)
+        self.set_column_width()
+
+    def set_column_width(self):
+        [ExcelSheetHelperFunctions.set_column_autowidth(self.sheet, i) for i in range(len(ExportNetWork.headers))]
+
+    def get_header_style(self):
+        header_style = self.workbook.add_format()
+        header_style.set_bg_color("#00CCFF")
+        header_style.set_color("#FFFFFF")
+        header_style.set_align('center')
+        header_style.set_align('venter')
+        header_style.set_bold()
+        header_style.set_border()
+        return header_style
+
+    def get_content_style(self):
+        content_style = self.workbook.add_format()
+        content_style.set_color("black")
+        content_style.set_align('center')
+        content_style.set_align('venter')
+        content_style.set_border()
+        return content_style
+
+    def write_header(self, style=None):
+        for index, value in enumerate(ExportNetWork.headers):
+            self.sheet.write(0, index, value, style)
+
+    def write_content(self, style=None):
+        for index, entry in enumerate(self.networkInfo['log']['entries']):
+            browser_name = entry['pageref']
+            status = entry['response']['status']
+            method = entry['request']['method']
+            url = entry['request']['url']
+            content_type = entry['response']['content']['mimeType']
+            content_size = entry['response']['content']['size']
+            headers = entry['response']['headers']
+            params = entry['request']['queryString']
+            response = entry['response']['content']['text'] if 'text' in entry['response']['content'] else ''
+            start_date_time = entry['startedDateTime']
+            duration = entry['time']
+
+            data_list = [browser_name, status, method, url, content_type, content_size,
+                         headers, params, response, start_date_time, duration]
+
+            [self.sheet.write(index + 1, i, str(data_list[i]), style) if data_list[i] else
+             self.sheet.write(index + 1, i, 'null', style) for i in range(len(data_list))]
 
 
 class ExportTiming:
