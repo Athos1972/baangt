@@ -41,7 +41,7 @@ class ExportResults:
             self.summarySheet = self.workbook.add_worksheet("Summary")
             self.worksheet = self.workbook.add_worksheet("Output")
             self.timingSheet = self.workbook.add_worksheet("Timing")
-
+            self.networkSheet = self.workbook.add_worksheet("Network")
             self.cellFormatGreen = self.workbook.add_format()
             self.cellFormatGreen.set_bg_color('green')
             self.cellFormatRed = self.workbook.add_format()
@@ -54,6 +54,9 @@ class ExportResults:
             self.exportResultExcel()
             self.exportTiming = ExportTiming(self.dataRecords,
                                             self.timingSheet)
+            self.exportNetWork = ExportNetWork(self.networkInfo,
+                                               self.workbook,
+                                               self.networkSheet)
             self.closeExcel()
         elif self.exportFormat == GC.EXP_CSV:
             self.export2CSV()
