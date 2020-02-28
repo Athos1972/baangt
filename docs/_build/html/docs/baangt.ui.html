@@ -86,15 +86,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../Structure.html">   Structure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ParametersConfigFile.html">   Parameters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../DataFile.html">   Data file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SimpleAPI.html">   First API Test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../TestTypes.html">   Types of Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Developer.html">   For Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../HistoryAndReasons.html">   History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contributors.html">   Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">   Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PlannedFeatures.html">   Planned Features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../articles/ProductionSucks.html">      Production sucks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../articles/DataDoctor.html">      Test data rulez</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../articles/BaangtIndustries.html">      Industries 4 baangt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../articles/Articles.html">:subheader: Articles</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
 </ul>
 
             
@@ -216,6 +216,17 @@
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="baangt.ui.ImportKatalonRecorder.ImportKatalonRecorder.prepareKeyValue">
+<em class="property">static </em><code class="sig-name descname">prepareKeyValue</code><span class="sig-paren">(</span><em class="sig-param">outputData</em>, <em class="sig-param">key</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.ui.ImportKatalonRecorder.ImportKatalonRecorder.prepareKeyValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will append key and value in 
+outputData
+if variable key exist, it will rename by</p>
+<blockquote>
+<div><p>key1, key2, …</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
 <dt id="baangt.ui.ImportKatalonRecorder.ImportKatalonRecorder.saveTestCase">
 <code class="sig-name descname">saveTestCase</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#baangt.ui.ImportKatalonRecorder.ImportKatalonRecorder.saveTestCase" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -234,6 +245,16 @@
 <dt id="baangt.ui.ImportKatalonRecorder.ImportKatalonRecorder.saveTestData">
 <code class="sig-name descname">saveTestData</code><span class="sig-paren">(</span><em class="sig-param">worksheet</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.ui.ImportKatalonRecorder.ImportKatalonRecorder.saveTestData" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="baangt.ui.ImportKatalonRecorder.ImportKatalonRecorder.splitVariable">
+<em class="property">static </em><code class="sig-name descname">splitVariable</code><span class="sig-paren">(</span><em class="sig-param">lines</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.ui.ImportKatalonRecorder.ImportKatalonRecorder.splitVariable" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>This function will process each line and format the</dt><dd><p>‘Value’ column in format $(variabe).</p>
+</dd>
+</dl>
+<p>&#64;output: list(lines), list(outputData)</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="baangt.ui.ImportKatalonRecorder.ImportKatalonRecorder.startWindow">

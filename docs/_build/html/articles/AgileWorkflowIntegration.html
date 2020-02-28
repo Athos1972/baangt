@@ -1,0 +1,235 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Agile: Where does baangt fit in? &mdash; baangt 2020.1.1.b11 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> baangt
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Installation.html">   Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../OverviewUsage.html">   Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../simpleExample.html">   First Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Structure.html">   Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ParametersConfigFile.html">   Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../DataFile.html">   Data file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SimpleAPI.html">   First API Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../TestTypes.html">   Types of Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Developer.html">   For Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../HistoryAndReasons.html">   History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributors.html">   Contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">   Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PlannedFeatures.html">   Planned Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Articles.html">:subheader: Articles</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">baangt</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Agile: Where does <code class="docutils literal notranslate"><span class="pre">baangt</span></code> fit in?</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/articles/AgileWorkflowIntegration.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="agile-where-does-baangt-fit-in">
+<h1>Agile: Where does <code class="docutils literal notranslate"><span class="pre">baangt</span></code> fit in?<a class="headerlink" href="#agile-where-does-baangt-fit-in" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">baangt</span></code> supports all you ever dreamed of - you can start right away with TDD, where you create Test-Cases before you
+even write code (Just don’t forget to set the test case version number to a future version).</p>
+<p>Increment testing is the next logical consequence, where you’ll use your test cases defined in the previous step to verify
+results from the current sprint. Once run, optimized and stable you’ll want to keep the system at least at this good state,
+so you’ll want to enrich your regression test set with those successful tests from your last sprint.</p>
+<p>On the unrelated subject of negative test cases:</p>
+<blockquote>
+<div><p>Don’t forget how important negative test cases are. Those are test cases, where you <strong>need</strong> the system to stop
+processing, because it is not supposed to accept a value or process or state. <code class="docutils literal notranslate"><span class="pre">baangt</span></code> makes this very simple for
+you! Define your parameters as with any other test case and set value of <em>TC Expected Error</em> to <code class="docutils literal notranslate"><span class="pre">X</span></code>. That’s it,
+<code class="docutils literal notranslate"><span class="pre">baangt</span></code> will be happy, when the testcase fails and raise an error, when the test case is successful.</p>
+</div></blockquote>
+<p>In CDCT and Service tests (parts of the testing pyramid) you’ll use the API functions of <code class="docutils literal notranslate"><span class="pre">baangt</span></code> to
+ensure stable and proper outcome from your (micro-)services.</p>
+<p>Finally in E2E-Testing <code class="docutils literal notranslate"><span class="pre">baangt</span></code> will help you to organize and keep track of your complex E2E-Scenarios where
+you might start with mainframe or SAP-Systems to create master data, then change to WEB to use the created master
+data in your frontend test cases and finally call some APIs to verify results in the backend systems were as expected.</p>
+<div class="section" id="we-can-do-that-with-every-software-what-s-so-special-about-baangt">
+<h2>We can do that with every software, what’s so special about baangt?<a class="headerlink" href="#we-can-do-that-with-every-software-what-s-so-special-about-baangt" title="Permalink to this headline">¶</a></h2>
+<p>Thanks for asking. Well, you might be able to achieve that with expensive software like Tricentis Tosca or HP Runner, but
+think again. How long does it take you to transfer information from business department via IT-Guys to the test automation
+planners, experts, implementers and testers? Is the test case still relevant by then?</p>
+<p>With <code class="docutils literal notranslate"><span class="pre">baangt</span></code> being free and open source and mostly depending on MS Excel you don’t have expensive nor complex
+client installation procedures. Everybody in your organization can record test cases and run them for validation
+by themselves. You’ll still want to keep your skilled guys in central test automation or central test management, but
+how much faster will they be? How much better will your regression test rate be and how much more motivated will the whole
+organization be, when things start to move faster than they’re now (if you’re still moving at all)?</p>
+<p>Anything missing? Let us know! Interested? Go for it!</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Bernhard Buhl
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

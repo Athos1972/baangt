@@ -106,7 +106,7 @@ Tweaking the result
 
 You managed to have a working recording. Congratulations! Let's learn a bit more about the structure of the created XLSX
 
-.. list-table:: Fields in Tab ``TestStepExecution`
+.. list-table:: Fields in Tab ``TestStepExecution``
    :widths: 25 75
    :header-rows: 1
 

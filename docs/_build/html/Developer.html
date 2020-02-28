@@ -88,9 +88,11 @@
 <li class="toctree-l1"><a class="reference internal" href="Structure.html">   Structure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ParametersConfigFile.html">   Parameters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="DataFile.html">   Data file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SimpleAPI.html">   First API Test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="TestTypes.html">   Types of Tests</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">   For Developers</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#subclassing">Subclassing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#debugging">Debugging</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#plugins">Plugins</a></li>
 </ul>
 </li>
@@ -98,9 +100,8 @@
 <li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">   Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="articles/ProductionSucks.html">      Production sucks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="articles/DataDoctor.html">      Test data rulez</a></li>
-<li class="toctree-l1"><a class="reference internal" href="articles/BaangtIndustries.html">      Industries 4 baangt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">:subheader: Articles</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
 </ul>
 
             
@@ -193,9 +194,24 @@ in one place.</p>
 <p>After subclassing you’ll need to replace the standard <code class="docutils literal notranslate"><span class="pre">BrowserHandling</span></code> with <code class="docutils literal notranslate"><span class="pre">MyCustomBrowser</span></code> in order for baangt
 to use it.</p>
 </div>
+<div class="section" id="debugging">
+<h2>Debugging<a class="headerlink" href="#debugging" title="Permalink to this headline">¶</a></h2>
+<p>Yeah, sometimes the logs alone are not enough, even when you set loglevel to <code class="docutils literal notranslate"><span class="pre">debug</span></code>. In such cases you’ll want to set
+breakpoints and expect the program to halt on the breakpoint. You’ve two chances to achieve that:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Start baangtIA.py from CLI using:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">baangtIA.py</span> <span class="pre">--run=&lt;PathAndFileOfTestrunName&gt;</span> <span class="pre">--globals=&lt;PathAndFileNameForGlobals&gt;</span></code></p>
+</dd>
+</dl>
+</li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">TX.DEBUG</span></code> as flag in <code class="docutils literal notranslate"><span class="pre">baangt</span></code> interactive starter (=the UI, that comes when you start CLI without parameter
+<code class="docutils literal notranslate"><span class="pre">--run</span></code>) with value <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
+</ul>
+</div>
 <div class="section" id="plugins">
 <h2>Plugins<a class="headerlink" href="#plugins" title="Permalink to this headline">¶</a></h2>
-<p>Please make yourself familiar with <a class="reference external" href="https://pluggy.readthedocs.io/en/latest/">https://pluggy.readthedocs.io/en/latest/</a> in order to implement Plugins. If you’re stuck let me know.</p>
+<p>Please make yourself familiar with <a class="reference external" href="https://pluggy.readthedocs.io/en/latest/">https://pluggy.readthedocs.io/en/latest/</a> in order to implement Plugins.
+If you’re stuck let me know.</p>
 </div>
 </div>
 

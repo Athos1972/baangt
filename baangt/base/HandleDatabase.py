@@ -4,7 +4,7 @@ import itertools
 import json
 import baangt.base.CustGlobalConstants as CGC
 import baangt.base.GlobalConstants as GC
-from baangt.base.utils import utils
+from baangt.base.Utils import utils
 import baangt.TestSteps.Exceptions
 from pathlib import Path
 

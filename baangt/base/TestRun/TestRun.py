@@ -1,7 +1,7 @@
 from baangt.base.BrowserHandling.BrowserHandling import BrowserDriver
 from baangt.base.ApiHandling import ApiHandling
 from baangt.base.ExportResults.ExportResults import ExportResults
-from baangt.base.utils import utils
+from baangt.base.Utils import utils
 from baangt.base import GlobalConstants as GC
 from baangt.base.TestRunExcelImporter import TestRunExcelImporter
 # needed - they'll be used dynamically later

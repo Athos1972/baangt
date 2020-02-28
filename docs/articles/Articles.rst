@@ -10,3 +10,5 @@ This section contains articles, that are not exactly documentation. Some are mor
     Production sucks </articles/ProductionSucks.rst>
     Test data rulez </articles/DataDoctor.rst>
     Industries 4 baangt </articles/BaangtIndustries.rst>
+    Stop testing! </articles/StopTesting.rst>
+    bAanGtILE </articles/AgileWorkflowIntegration.rst>

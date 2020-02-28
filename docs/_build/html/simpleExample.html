@@ -92,21 +92,24 @@
 <li class="toctree-l3"><a class="reference internal" href="#recording-a-test-case-with-katalon-recorder">Recording a test case with Katalon Recorder</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#tweaking-the-result">Tweaking the result</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tweaking-the-result">Tweaking the result</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#more-details-on-activities">More details on Activities</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Structure.html">   Structure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ParametersConfigFile.html">   Parameters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="DataFile.html">   Data file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SimpleAPI.html">   First API Test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="TestTypes.html">   Types of Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Developer.html">   For Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">   History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">   Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="articles/ProductionSucks.html">      Production sucks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="articles/DataDoctor.html">      Test data rulez</a></li>
-<li class="toctree-l1"><a class="reference internal" href="articles/BaangtIndustries.html">      Industries 4 baangt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">:subheader: Articles</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
 </ul>
 
             
@@ -289,8 +292,8 @@ the last step above, click on the “data”-Tab and start to enter values and l
 <div class="section" id="tweaking-the-result">
 <h2>Tweaking the result<a class="headerlink" href="#tweaking-the-result" title="Permalink to this headline">¶</a></h2>
 <p>You managed to have a working recording. Congratulations! Let’s learn a bit more about the structure of the created XLSX</p>
-<table class="colwidths-given docutils align-default" id="id3">
-<caption><span class="caption-text">Fields in Tab <a href="#id1"><span class="problematic" id="id2">``</span></a>TestStepExecution`</span><a class="headerlink" href="#id3" title="Permalink to this table">¶</a></caption>
+<table class="colwidths-given docutils align-default" id="id1">
+<caption><span class="caption-text">Fields in Tab <code class="docutils literal notranslate"><span class="pre">TestStepExecution</span></code></span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
 <colgroup>
 <col style="width: 25%" />
 <col style="width: 75%" />
@@ -302,18 +305,7 @@ the last step above, click on the “data”-Tab and start to enter values and l
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Activtity</span></code></p></td>
-<td><p>Set’s the activity of this TestStep. Activities are:</p>
-<ul class="simple">
-<li><p>GoToURL</p></li>
-<li><p>click</p></li>
-<li><p>setText</p></li>
-<li><p>SetTextIF</p></li>
-<li><p>clickIF</p></li>
-<li><p>goBack</p></li>
-<li><p>If</p></li>
-<li><p>EndIf</p></li>
-</ul>
-</td>
+<td><p>Set’s the activity of this TestStep. Activities are desribed in more details in next chapter</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">LocatorType</span></code></p></td>
 <td><p>Most of the activities need a locator. We’re big fans of XPATH as locatorType, due to speed and ease of use. Sooner
@@ -322,7 +314,11 @@ writing CSS-Paths then use value <code class="docutils literal notranslate"><spa
 page simply use <code class="docutils literal notranslate"><span class="pre">ID</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Locator</span></code></p></td>
-<td><p>The locator is the specification, on which element <code class="docutils literal notranslate"><span class="pre">Activity</span></code> should happen.</p></td>
+<td><p>The locator is the specification, on which element <code class="docutils literal notranslate"><span class="pre">Activity</span></code> should happen. As in the value fields you may
+use variable replacement here too in order to replace Locators with values from the data file, for instance the
+following would work fine:
+<code class="docutils literal notranslate"><span class="pre">//*[&#64;id($(CUSTOMERNUMBER))]</span></code> - this would create an XPATH-Statement where $(CUSTOMERNUMBER) is replaced by the
+actual value of the current test record.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Value</span></code></p></td>
 <td><p>For instance activity <code class="docutils literal notranslate"><span class="pre">SetText</span></code> requires a value (The text to send to a Web-element). You may use fixed values
@@ -364,6 +360,76 @@ follow different nomenclature, so we made it very easy to subclass the correspon
 </tr>
 </tbody>
 </table>
+<div class="section" id="more-details-on-activities">
+<h3>More details on Activities<a class="headerlink" href="#more-details-on-activities" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li><p>GoToURL</p></li>
+<li><p>click</p></li>
+<li><p>setText</p></li>
+<li><p>SetTextIF</p></li>
+<li><p>clickIF</p></li>
+<li><p>goBack</p></li>
+<li><p>If</p></li>
+<li><p>EndIf</p></li>
+</ul>
+</div></blockquote>
+<table class="colwidths-given docutils align-default" id="id2">
+<caption><span class="caption-text">Details of activities</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Activity</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>GoToURL</p></td>
+<td><p>Navigate to the given URL. Column <code class="docutils literal notranslate"><span class="pre">Value</span></code> must provide the URL. You may want to use variables in your URL-String,
+for instance your URL might look like <code class="docutils literal notranslate"><span class="pre">https://$(STAGE).earthsquad.global/</span></code>. <code class="docutils literal notranslate"><span class="pre">$(STAGE)</span></code> will be replaced
+during runtime of the test data with the value of <code class="docutils literal notranslate"><span class="pre">STAGE</span></code> from either Global settings or settings in the
+<code class="docutils literal notranslate"><span class="pre">testCaseSequence</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>click</p></td>
+<td><p>Will click on the object specified by the <code class="docutils literal notranslate"><span class="pre">locator</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p>clickIF</p></td>
+<td><p>Will click on the object specified by the locator IF the field in testDataDict, that you enter in Column <code class="docutils literal notranslate"><span class="pre">value</span></code>
+has a value. This small and simple extension can save you hours and hours of work in maintenance of testcases.
+Imagine you’ve 10 checkboxes, that in various combinations provide different test results and you have to test
+all possible combinations. Using 1 column in your datafile for each checkbox and the <code class="docutils literal notranslate"><span class="pre">clickif</span></code> you can create
+your testCases in minutes instead of hours or days. Imagine 50 checkboxes - with <code class="docutils literal notranslate"><span class="pre">baangt</span></code> your effort is still
+just minutes.</p></td>
+</tr>
+<tr class="row-odd"><td><p>setText</p></td>
+<td><p>Write the text given in column <code class="docutils literal notranslate"><span class="pre">value</span></code> to the element specified by <code class="docutils literal notranslate"><span class="pre">locator</span></code>. Only rarely will you have fixed
+values. Usually you’ll assign columns of the test data using variable replacement (e.g. <code class="docutils literal notranslate"><span class="pre">$(POSTCODE)</span></code> to set the
+text from column <code class="docutils literal notranslate"><span class="pre">POSTCODE</span></code> from the datafile into the destination element.</p></td>
+</tr>
+<tr class="row-even"><td><p>setTextIF</p></td>
+<td><p>Same as SetText, but will only do something in cases where there is a value in the datafile. Similarly to clickIF
+this little helper functionality can help you save hours and hours in creation and maintenance of rocksolid and
+bulletproof test cases.</p></td>
+</tr>
+<tr class="row-odd"><td><p>goBack</p></td>
+<td><p>Trigger the “back”-Button of the browser.</p></td>
+</tr>
+<tr class="row-even"><td><p>If/Endif</p></td>
+<td><p>The block between IF and ENDIF is only executed, when the condition evaluated by <code class="docutils literal notranslate"><span class="pre">value|comparator|value2</span></code> is
+is true, for instance:</p>
+<blockquote>
+<div><p>$(POSTCODE) = 7040</p>
+<p>$(YEAR2DATE) &gt; $(YEARTOMONTH)</p>
+</div></blockquote>
+<p>Another use of the If-Statement is with <code class="docutils literal notranslate"><span class="pre">LocatorType</span></code> and <code class="docutils literal notranslate"><span class="pre">Locator</span></code> and comparison. You’d use that, when you
+want conditional execution of a larger block of statements depending on an element present or not present.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 

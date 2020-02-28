@@ -19,7 +19,7 @@ class TestStepMaster:
         self.browserSession: BrowserDriver = kwargs.get(GC.KWARGS_BROWSER)
         self.apiSession: ApiHandling = kwargs.get(GC.KWARGS_API_SESSION)
         self.testCaseStatus = None
-        self.testStepNumber = kwargs.get(GC.STRUCTURE_TESTSTEP) # Set in TestRun by TestCaseMaster
+        self.testStepNumber = kwargs.get(GC.STRUCTURE_TESTSTEP)    # Set in TestRun by TestCaseMaster
         self.testRunUtil = self.testRunInstance.testRunUtils
         # check, if this TestStep has additional Parameters and if so, execute
         lSequence = self.testRunUtil.getSequenceByNumber(testRunName=self.testRunInstance.testRunName,
@@ -34,7 +34,6 @@ class TestStepMaster:
             # This TestStepMaster-Instance should actually do something - activitites are described
             # in the TestExecutionSteps
             self.executeDirect(lTestStep[1][GC.STRUCTURE_TESTSTEPEXECUTION])
-
 
     def executeDirect(self, executionCommands):
         """
@@ -52,6 +51,10 @@ class TestStepMaster:
 
             lLocatorType = command["LocatorType"].upper()
             lLocator = self.replaceVariables(command["Locator"])
+
+            if lLocator and not lLocatorType:   # If locatorType is empty, default it to XPATH
+                lLocatorType = 'XPATH'
+
             xpath, css, id = self.__setLocator(lLocatorType, lLocator)
 
             lValue = str(command["Value"])
@@ -62,7 +65,7 @@ class TestStepMaster:
             # check release line
             lRelease = command["Release"]
 
-            lTimeout = self.__setTimeout(command["Timeout"])
+            lTimeout = TestStepMaster.__setTimeout(command["Timeout"])
 
             # Replace variables from data file
             if len(lValue) > 0:
@@ -77,7 +80,7 @@ class TestStepMaster:
             if lActivity == "GOTOURL":
                 self.browserSession.goToUrl(lValue)
             elif lActivity == "SETTEXT":
-                self.browserSession.findByAndSetText(xpath=xpath, css=css, id=id, value = lValue, timeout=lTimeout)
+                self.browserSession.findByAndSetText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout)
             elif lActivity == 'HANDLEIFRAME':
                 self.browserSession.handleIframe(lLocator)
             elif lActivity == "CLICK":
@@ -88,7 +91,8 @@ class TestStepMaster:
                 self.ifActive = True
                 # Originally we had only Comparisons. Now we also want to check for existance of Field
                 if not lValue and lLocatorType and lLocator:
-                    lValue = self.browserSession.findBy(xpath=xpath, css=css, id=id, optional=lOptional, timeout=lTimeout)
+                    lValue = self.browserSession.findBy(xpath=xpath, css=css, id=id, optional=lOptional,
+                                                        timeout=lTimeout)
 
                 self.__doComparisons(lComparison=lComparison, value1=lValue, value2=lValue2)
             elif lActivity == "ENDIF":
@@ -136,13 +140,13 @@ class TestStepMaster:
             @return True or False
         """
         if not version_global.strip():
-            #No value is defined in Release, return True
+            # No value is defined in Release, return True
             return True
         if not version_line.strip():
             # we skipped this line
             return True
 
-        #split the version line
+        # split the version line
         if not len(version_line.strip().split(" ")) == 2:
             logger.debug(f"Invalid release format {version_line} ")
             return True
@@ -161,8 +165,6 @@ class TestStepMaster:
             logger.debug(f"Global version {version_global}, line version {version_line} ")
             return False
 
-
-
     def doSaveData(self, toField, valueForField):
         self.testcaseDataDict[toField] = valueForField
 
@@ -176,7 +178,7 @@ class TestStepMaster:
         """
         xpath = None
         css = None
-        id = None
+        lId = None
 
         if lLocatorType:
             if lLocatorType == 'XPATH':
@@ -184,11 +186,12 @@ class TestStepMaster:
             elif lLocatorType == 'CSS':
                 css = lLocator
             elif lLocatorType == 'ID':
-                id = lLocator
+                lId = lLocator
 
-        return xpath, css, id
+        return xpath, css, lId
 
-    def __setTimeout(self, lTimeout):
+    @staticmethod
+    def __setTimeout(lTimeout):
         if lTimeout:
             lTimeout = float(lTimeout)
         else:
@@ -249,7 +252,7 @@ class TestStepMaster:
                 self.testcaseDataDict = GC.TESTCASESTATUS_ERROR
             else:
                 sys.exit("No idea, what happened here. Unknown condition appeared")
-        self.timing.takeTime(self.timingName) # Why does this not work?
+        self.timing.takeTime(self.timingName)   # Why does this not work?
 
     def replaceVariables(self, expression):
         """
@@ -260,7 +263,7 @@ class TestStepMaster:
         @return: the replaced value, e.g. if expression was $(DATE) and the value in column "DATE" of data-file was
             "01.01.2020" then return will be "01.01.2020"
         """
-        if not "$(" in expression:
+        if "$(" not in expression:
             return expression
 
         while "$(" in expression:
@@ -274,7 +277,7 @@ class TestStepMaster:
 
             right_part = expression[len(left_part)+len(center)+3:]
 
-            if not "." in center:
+            if "." not in center:
                 # Replace the variable with the value from data structure
                 center = self.testcaseDataDict.get(center)
             else:
@@ -283,7 +286,7 @@ class TestStepMaster:
                 dictValue = center.split(".")[1]
 
                 if dictVariable == 'ANSWER_CONTENT':
-                    center = self.apiSession.session[1].answerJSON.get(dictValue,"Empty")
+                    center = self.apiSession.session[1].answerJSON.get(dictValue, "Empty")
                 else:
                     raise BaseException(f"Missing code to replace value for: {center}")
 

@@ -6,7 +6,7 @@ import platform
 import subprocess
 import configparser
 import baangt.base.GlobalConstants as GC
-from baangt.base.utils import utils
+from baangt.base.Utils import utils
 from baangt.ui.ImportKatalonRecorder import ImportKatalonRecorder
 import logging
 import json
@@ -62,10 +62,10 @@ class UI:
                             sg.Button("Details", size=(10, 1), font="Helvetica 10", key="ToggleFields")])
 
         # Baangt Logo
-        lPathLogo = Path(__file__).parent.parent.parent.joinpath("ressources").joinpath("baangtLogo.png")
+        lPathLogo = Path(__file__).parent.parent.parent.joinpath("ressources").joinpath("baangtLogo2020Small.png")
         # when in pip-Package, this doesn't work.
         if not lPathLogo.exists():
-            lPathLogo = Path(__file__).parent.parent.joinpath("ressources").joinpath("baangtLogo.png")
+            lPathLogo = Path(__file__).parent.parent.joinpath("ressources").joinpath("baangtLogo2020Small.png")
 
         lColumnRight = [[sg.Image(filename=lPathLogo)]]
 
@@ -185,7 +185,7 @@ class UI:
             return
         runCmd = self._getRunCommand()
         if self.configContents.get("TX.DEBUG"):
-            from baangt.base.TestRun import TestRun
+            from baangt.base.TestRun.TestRun import TestRun
 
             lTestRun = TestRun(f"{Path(self.directory).joinpath(self.testRunFile)}",
                                globalSettingsFileNameAndPath=f'{Path(self.directory).joinpath(self.tempConfigFile)}')

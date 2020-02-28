@@ -1,0 +1,330 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>How to create a simple API Test &mdash; baangt 2020.1.1.b11 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Types of tests" href="TestTypes.html" />
+    <link rel="prev" title="Special functions in datafiles" href="DataFile.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> baangt
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Installation.html">   Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="OverviewUsage.html">   Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simpleExample.html">   First Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Structure.html">   Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ParametersConfigFile.html">   Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DataFile.html">   Data file</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">   First API Test</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#steps-to-test-the-simple-api-format">Steps to test the simple API Format:</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#play-around">Play around</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#activities-for-api-tests">Activities for API-Tests:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#special-data-fields-in-api-tests">Special data fields in API-Tests:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="TestTypes.html">   Types of Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Developer.html">   For Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">   History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">   Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">:subheader: Articles</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">baangt</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>How to create a simple API Test</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/SimpleAPI.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="how-to-create-a-simple-api-test">
+<h1>How to create a simple API Test<a class="headerlink" href="#how-to-create-a-simple-api-test" title="Permalink to this headline">¶</a></h1>
+<p>API-Tests are usually something, that the classic business people wouldn’t know about. With <code class="docutils literal notranslate"><span class="pre">baangt</span></code> and a bit
+of effort it should be possible even for business people to do some simple API-Tests.</p>
+<p>As with all tests in <code class="docutils literal notranslate"><span class="pre">baangt</span></code> also API-Tests are defined in a simple format in MS Excel. See <code class="docutils literal notranslate"><span class="pre">MovieSimpleAPI.xlsx</span></code>
+as working example.</p>
+<blockquote>
+<div><p>Prerequisit for simple API definition format:</p>
+<ul class="simple">
+<li><p>Filename must contain the word “api”, otherwise simple format will try to create a browser test run.</p></li>
+</ul>
+</div></blockquote>
+<div class="section" id="steps-to-test-the-simple-api-format">
+<h2>Steps to test the simple API Format:<a class="headerlink" href="#steps-to-test-the-simple-api-format" title="Permalink to this headline">¶</a></h2>
+<p>Fire up <code class="docutils literal notranslate"><span class="pre">baangt</span></code>, chose file <code class="docutils literal notranslate"><span class="pre">MovieSimpleApi.XLSX</span></code> as your run definition. Start the testrun by clicking on the
+button <code class="docutils literal notranslate"><span class="pre">Execute</span></code>.  After a few seconds you should see the popup “Testrun finished”. Now open the result file
+<code class="docutils literal notranslate"><span class="pre">baangt_MovieSimpleAPI_&lt;date&gt;.xlsx</span></code> and see overview and details of the API Test run.</p>
+<div class="section" id="play-around">
+<h3>Play around<a class="headerlink" href="#play-around" title="Permalink to this headline">¶</a></h3>
+<p>To extend this very simple example you could want to add the field “Actors” to your result sheet. To do so, add one line
+in the Tab <code class="docutils literal notranslate"><span class="pre">TestStepExecution</span></code>.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Activity</span></code> is <code class="docutils literal notranslate"><span class="pre">SAVE</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Value</span></code> is <code class="docutils literal notranslate"><span class="pre">RESULT_Actors</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Value2</span></code> is <code class="docutils literal notranslate"><span class="pre">$(ANSWER_CONTENT.Actors)</span></code></p></li>
+</ul>
+<p>Save the Excel-Sheet. Re-run the test case and you should see the new column “Result_Actors” with the values retrieved
+from the API.</p>
+</div>
+</div>
+<div class="section" id="activities-for-api-tests">
+<h2>Activities for API-Tests:<a class="headerlink" href="#activities-for-api-tests" title="Permalink to this headline">¶</a></h2>
+<p>(Even though we write all activtities in UPPER CASE, you can write them in any way you like)</p>
+<table class="colwidths-given docutils align-default" id="id1">
+<caption><span class="caption-text">Values for Activities for simple API format</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Activity</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">APIURL</span></code></p></td>
+<td><p>Set’s the main URI/URL for your API-Tests. Could be omitted, if you want to always specify full path in ENDPOINT.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ENDPOINT</span></code></p></td>
+<td><p>Set’s the Endpoint-Name for the following API-Call. E.g. if your Endpoint is located at
+<a class="reference external" href="https://app-eu.earthsquad.global/api/rest-auth/login">https://app-eu.earthsquad.global/api/rest-auth/login</a> and during this test case execution you’d call a lot of APIs
+on this server, then you’d set <code class="docutils literal notranslate"><span class="pre">APIURL</span></code> to <a class="reference external" href="https://app-eu.earthsquad.global">https://app-eu.earthsquad.global</a> and set <code class="docutils literal notranslate"><span class="pre">ENDPOINT</span></code> to “/api/rest-auth/login”</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">POST</span></code></p></td>
+<td><p>Send a “POST”-Request to the API. Place the content, that you want to send to this endpoint in the column <code class="docutils literal notranslate"><span class="pre">value</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">GET</span></code></p></td>
+<td><p>Send a “GET”-Request to the API. URL-Parameters are taken from <code class="docutils literal notranslate"><span class="pre">APIURL</span></code> and <code class="docutils literal notranslate"><span class="pre">ENDPOINT</span></code>. Result is stored for
+immediate retrieval (see below).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">HEADER</span></code></p></td>
+<td><p>Set additional parameters for the next API-Calls into the Header. In combination with the special fields (see below)
+it’s easy to take a result from one API-Request and use it (or parts of it) as input for the next call.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SAVE</span></code></p></td>
+<td><p>Save a value from the header or from result to output file (XLSX). <code class="docutils literal notranslate"><span class="pre">value</span></code> is the field-name. If you name it
+“RESULT_&lt;something&gt;” it is automatically added to the export field list. If you work in API-Simple mode, this is
+your only chance to get fields added into the result sheet.
+<code class="docutils literal notranslate"><span class="pre">value2</span></code> is the source (e.g. <code class="docutils literal notranslate"><span class="pre">$(ANSWER_CONTENT.imdbRating)</span></code> would retrieve the value “imdbRating” of the
+answer of your API-Call.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="special-data-fields-in-api-tests">
+<h2>Special data fields in API-Tests:<a class="headerlink" href="#special-data-fields-in-api-tests" title="Permalink to this headline">¶</a></h2>
+<p>In WEB-Testing you check results either via <code class="docutils literal notranslate"><span class="pre">Assert</span></code>-Statement or via mapping the text or attribute of an element to a
+field in the TestDataDictionary. In API-Tests you have some automatic internal variables, that you can use without
+manually declaring them:</p>
+<table class="colwidths-given docutils align-default" id="id2">
+<caption><span class="caption-text">Special Internal Variables in API-Testing</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Contents</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>RESULT_CODE</p></td>
+<td><p>Result code of the last call to an API. Ideally you’d be able to match result codes as described in here
+<a class="reference external" href="https://restfulapi.net/http-status-codes/">https://restfulapi.net/http-status-codes/</a>, but in the end setting the status code is the job of the developer of
+the API you’re using - they might follow a different path or simply have bugs.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ANSWER_HEADER</p></td>
+<td><p>Last Header. You can access a certain part of the header by using $(ANSWER_HEADER.&lt;partName&gt;), so if you want to
+use the part <code class="docutils literal notranslate"><span class="pre">login_key</span></code> of a header you’d write <code class="docutils literal notranslate"><span class="pre">$(ANSWER_HEADER.LOGIN_KEY)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>ANSWER_CONTENT</p></td>
+<td><p>Last content of an API-Call (Post, Get, etc.). Again you can access/extract/replace parts of this content using
+the “.” like described in the line above (e.g. <code class="docutils literal notranslate"><span class="pre">$(ANSWER_CONTENT.FRANZI)</span></code> to refer to a content part <code class="docutils literal notranslate"><span class="pre">FRANZI</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="TestTypes.html" class="btn btn-neutral float-right" title="Types of tests" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="DataFile.html" class="btn btn-neutral float-left" title="Special functions in datafiles" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Bernhard Buhl
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

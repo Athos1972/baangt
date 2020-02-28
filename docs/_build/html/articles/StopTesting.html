@@ -1,0 +1,271 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Stop testing software… &mdash; baangt 2020.1.1.b11 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="baangt In Industries" href="BaangtIndustries.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> baangt
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Installation.html">   Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../OverviewUsage.html">   Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../simpleExample.html">   First Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Structure.html">   Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ParametersConfigFile.html">   Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../DataFile.html">   Data file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SimpleAPI.html">   First API Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../TestTypes.html">   Types of Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Developer.html">   For Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../HistoryAndReasons.html">   History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributors.html">   Contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">   Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PlannedFeatures.html">   Planned Features</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="Articles.html">:subheader: Articles</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ProductionSucks.html"> Production sucks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DataDoctor.html"> Test data rulez</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BaangtIndustries.html"> Industries 4 baangt</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"> Stop testing!</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#how-to-improve-the-situation">How to improve the situation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fk-the-gold-is-on-the-street">FK The gold is on the street</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">baangt</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="Articles.html">Not Exactly Documentation</a> &raquo;</li>
+        
+      <li>Stop testing software…</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/articles/StopTesting.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="stop-testing-software">
+<h1>Stop testing software…<a class="headerlink" href="#stop-testing-software" title="Permalink to this headline">¶</a></h1>
+<p>… only. Also and foremost test business functionality. In today’s semi-agile and agile environments we fortunately improved testing
+in all stages of the development process. Nobody would dream to deliver software without unit-tests, service tests and
+consumer driven contract testing is hip and most companies even have (more or less) End-2-End (E2E) tests. Nevertheless
+we still see loads of bugs once the software reaches production.</p>
+<p>These bugs slow us down. They cost millions of hours every day, that could be spent on more productive things. A bug,
+that is found in production is much more harmful to an organization than a bug found (ideally) in DEV-Environment or
+in QA/Final QA-Stages. I’m not talking about the reputation of the organization - that’s a different story alltogether. No,
+I’m talking about the fixing cost.</p>
+<p>Chances are, the bug was created longer than 3 months ago. Maybe the developer isn’t here anymore, even if he is, he won’t
+know the faulty code by heart, meaning he’ll have to spend some time figuring out, what’s wrong. These switching costs are
+one of the main effort drivers for bug fixing costs.</p>
+<p>Secondly - a production bug needs to be treated with priority. The assigned Developer will stash his current work, checkout
+production code, reconfigure Dev-Environment. Depending on the IDE and the overall complexity, this might take only
+a few minutes, but it adds to the overall costs.</p>
+<p>Another important factor, that can cost days, weeks or months of additional effort is when fixing the bug needs
+migrations for instance in already posted data. Separate functionalities need to be written to identify the effected
+records, determine the correct values, the wrong value and decide, how to cope with the delta between those two. Such
+situations can get messy and you wish you had chosen another career path, when in the middle of this.</p>
+<div class="section" id="how-to-improve-the-situation">
+<h2>How to improve the situation<a class="headerlink" href="#how-to-improve-the-situation" title="Permalink to this headline">¶</a></h2>
+<p>Even when you have simple and easy to solve bugs from production, they still cost you more than when you had found them
+in earlier stages. And there’s still this reputation thing with your users or customers.</p>
+<p>To improve the situation you’ll definitely want to use realistic test data, if possible cases from production for your
+regression tests and in most cases also for your progression tests. You’ll also move your focus from technichal aspects
+of testing to pure business functionality. You’ll create many realistic test data combinations and let them run.</p>
+<p>We once searched for quite some time for performance optimization possibilities until we found out, that the test case
+itself was flawed. It produced a demand situation for a specific material that would never happen in a productive
+system, because all the customer order tests were mainly ordering this one material number, when in reality the customer
+had 10.000s of materials. Don’t be like our past. Be better.</p>
+<p>Realistic testdata combinations might also mean, that you have to create multiple sets of realistic master data for your
+test cases. Sometimes that’s hard, because masterdata might be maintained on a remote master system and you might not
+have access to that. But it’s so worth the trouble in the long run.</p>
+</div>
+<div class="section" id="fk-the-gold-is-on-the-street">
+<h2>FK The gold is on the street<a class="headerlink" href="#fk-the-gold-is-on-the-street" title="Permalink to this headline">¶</a></h2>
+<p>Once you’re in production your bug tickets are an invaluable source of wisdom, on how to improve testing. Majority of the
+tickets will hopefully be about user errors, wrong passwords, unknown “Works as designed”-Situations, and things like that.</p>
+<p>The remaining tickets are the gold. Dig them up (usually we’d have a JIRA-Filter and a classification in the defects),
+look what came in since your last release and once fixed, analyse, how you can adjust your test set in order to avoid the
+current and similar error situations. Look deep into the root cause of why this defect or error wasn’t discovered before.
+Once you’re clear on the reasons (multiple reasons are very common, once you have a mature test set) add test data
+combinations, that will detect those problems upfront.</p>
+<p>If you follow this procedure I guarantee, that in 1-4 months you’ll see a sharp decline in production defects as
+day by day and week by week you’ll catch more problems in previous stages and your production will become rock-stable.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="BaangtIndustries.html" class="btn btn-neutral float-left" title="baangt In Industries" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Bernhard Buhl
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Why your production sucks and how to fix it" href="articles/ProductionSucks.html" />
+    <link rel="next" title="Not Exactly Documentation" href="articles/Articles.html" />
     <link rel="prev" title="Change log" href="changelog.html" /> 
 </head>
 
@@ -88,6 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Structure.html">   Structure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ParametersConfigFile.html">   Parameters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="DataFile.html">   Data file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SimpleAPI.html">   First API Test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="TestTypes.html">   Types of Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Developer.html">   For Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">   History</a></li>
@@ -99,9 +100,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#pro-features">PRO-Features</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="articles/ProductionSucks.html">      Production sucks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="articles/DataDoctor.html">      Test data rulez</a></li>
-<li class="toctree-l1"><a class="reference internal" href="articles/BaangtIndustries.html">      Industries 4 baangt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">:subheader: Articles</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
 </ul>
 
             
@@ -172,16 +172,21 @@
 <div class="section" id="short-medium-term-features">
 <h2>Short/Medium term features<a class="headerlink" href="#short-medium-term-features" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><p>Executables on Mac, Linux and Windows (Most probably 2020.02)</p></li>
-<li><p>Download browser Driver (if needed) (2020.02)</p></li>
 <li><p>Refactoring of Multiprocessing (2020.02)</p></li>
-<li><p>BaangtDB powered by Flask (2020.02)</p></li>
-<li><p>Stop the shame of having no unit tests (2020.02)</p></li>
-<li><p>Provide support for Plugins (2020.03)</p></li>
-<li><p>Nicer interactive UI-Starter (2020.03)</p></li>
+<li><p>Executables on Mac, Linux and Windows (2020.03)</p></li>
+<li><dl class="simple">
+<dt>Nicer interactive UI-Starter (2020.03)</dt><dd><ul>
+<li><p>Phase 1 done 2020.02</p></li>
+<li><p>Provide live statistics (2020.03)</p></li>
+</ul>
+</dd>
+</dl>
+</li>
 <li><p>Build-In Proxy-Server for Network traffic and timing logs (2020.03) (most probably not possible in Windows and MAC but should work in Linux)</p></li>
 <li><p>Double Opt-In Automation (2020.03)</p></li>
 <li><p>Support for Selenium Grid V4 (2020.03)</p></li>
+<li><p>Better support for multiple sources (e.g. multiple XLSX) of test data (2020.04)</p></li>
+<li><p>Katalon Importer/Converter as Webservice (2020.04)</p></li>
 </ul>
 </div>
 <div class="section" id="features-for-later">
@@ -204,7 +209,7 @@
 Future features might include:</p>
 <ul class="simple">
 <li><p>DB-Migration tools (to ease the pain of upgrading databases)</p></li>
-<li><p>Multi-User environment (who did when which activity)</p></li>
+<li><p>Multi-User environment (who did when which activity and who changed when which testobject)</p></li>
 <li><p>History of Testcases (what was changed when. If urgently needed we could come up with DB-Dump and GIT diff or so.)</p></li>
 <li><p>Test-Canons (deliberately stop test cases multiple times at certain test steps, wait for trigger, then resume. After first Testcase <em>finished</em> his first waiting period, start second round of Testcases (that’s how the name “Canon” came up). So far implemented in customer project, but needs to be polished up for public version)</p></li>
 <li><p>XML/PDF-Compare</p></li>
@@ -220,7 +225,7 @@ Future features might include:</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="articles/ProductionSucks.html" class="btn btn-neutral float-right" title="Why your production sucks and how to fix it" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="articles/Articles.html" class="btn btn-neutral float-right" title="Not Exactly Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="changelog.html" class="btn btn-neutral float-left" title="Change log" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

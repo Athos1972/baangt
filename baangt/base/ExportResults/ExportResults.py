@@ -4,7 +4,7 @@ import json
 import baangt.base.GlobalConstants as GC
 from baangt.base.Timing.Timing import Timing
 import sys
-from baangt.base.utils import utils
+from baangt.base.Utils import utils
 from pathlib import Path
 from typing import Optional
 from xlsxwriter.worksheet import (
@@ -13,8 +13,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from baangt.base.DataBaseORM import DATABASE_URL, TestrunLog
 from datetime import datetime
-
 from baangt import plugin_manager
+import csv
 
 logger = logging.getLogger("pyC")
 
@@ -25,30 +25,51 @@ class ExportResults:
         self.testRunInstance = kwargs.get(GC.KWARGS_TESTRUNINSTANCE)
         self.networkInfo = kwargs.get('networkInfo')
         self.testRunName = self.testRunInstance.testRunName
-        self.filename = self.__getOutputFileName()
-        logger.info("Export-Sheet for results: " + self.filename)
-        self.workbook = xlsxwriter.Workbook(self.filename)
-        self.summarySheet = self.workbook.add_worksheet("Summary")
-        self.worksheet = self.workbook.add_worksheet("Output")
-        self.timingsheet = self.workbook.add_worksheet("Timing")
-        self.networkSheet = self.workbook.add_worksheet("Network") if self.networkInfo else None
         self.dataRecords = self.testRunInstance.dataRecords
-        self.fieldListExport = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.EXPORT_FORMAT)["Fieldlist"]
-        self.cellFormatGreen = self.workbook.add_format()
-        self.cellFormatGreen.set_bg_color('green')
-        self.cellFormatRed = self.workbook.add_format()
-        self.cellFormatRed.set_bg_color('red')
-        self.cellFormatBold = self.workbook.add_format()
-        self.cellFormatBold.set_bold(bold=True)
-        self.summaryRow = 0
-        self.__setHeaderDetailSheet()
-        self.makeSummary()
-        self.exportResult()
-        self.exportNetWork = ExportNetWork(self.networkInfo, self.workbook, self.networkSheet) \
-            if self.networkInfo and self.networkSheet else None
-        self.exportTiming = ExportTiming(self.dataRecords, self.timingsheet)
-        self.closeExcel()
+
+        try:
+            self.exportFormat = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.EXPORT_FORMAT)[GC.EXPORT_FORMAT]
+        except KeyError:
+            self.exportFormat = GC.EXP_XLSX
+
+        self.fileName = self.__getOutputFileName()
+        logger.info("Export-Sheet for results: " + self.fileName)
+
+        if self.exportFormat == GC.EXP_XLSX:
+            self.fieldListExport = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.EXPORT_FORMAT)["Fieldlist"]
+            self.workbook = xlsxwriter.Workbook(self.fileName)
+            self.summarySheet = self.workbook.add_worksheet("Summary")
+            self.worksheet = self.workbook.add_worksheet("Output")
+            self.timingSheet = self.workbook.add_worksheet("Timing")
+
+            self.cellFormatGreen = self.workbook.add_format()
+            self.cellFormatGreen.set_bg_color('green')
+            self.cellFormatRed = self.workbook.add_format()
+            self.cellFormatRed.set_bg_color('red')
+            self.cellFormatBold = self.workbook.add_format()
+            self.cellFormatBold.set_bold(bold=True)
+            self.summaryRow = 0
+            self.__setHeaderDetailSheetExcel()
+            self.makeSummaryExcel()
+            self.exportResultExcel()
+            self.exportTiming = ExportTiming(self.dataRecords,
+                                            self.timingSheet)
+            self.closeExcel()
+        elif self.exportFormat == GC.EXP_CSV:
+            self.export2CSV()
         self.exportToDataBase()
+
+    def export2CSV(self):
+        """
+        Writes CSV-File of datarecords
+
+        """
+        f = open(self.fileName, 'w')
+        writer = csv.DictWriter(f, self.dataRecords[0].keys())
+        writer.writeheader()
+        for i in range(0, len(self.dataRecords)-1):
+            writer.writerow(self.dataRecords[i])
+        f.close()
 
     def exportToDataBase(self):
         engine = create_engine(f'sqlite:///{DATABASE_URL}')
@@ -82,7 +103,7 @@ class ExportResults:
         globalString += '}'
 
         # get documents
-        datafiles = self.filename
+        datafiles = self.fileName
 
         # create object
         log = TestrunLog(
@@ -100,10 +121,10 @@ class ExportResults:
         session.add(log)
         session.commit()
 
-    def exportResult(self, **kwargs):
+    def exportResultExcel(self, **kwargs):
         self._exportData()
 
-    def makeSummary(self):
+    def makeSummaryExcel(self):
 
         self.summarySheet.write(0,0, f"Testreport for {self.testRunName}", self.cellFormatBold)
         self.summarySheet.set_column(0, last_col=0, width=15)
@@ -174,7 +195,7 @@ class ExportResults:
     def __getOutputFileName(self):
         if self.testRunInstance.globalSettings[GC.PATH_ROOT]:
             basePath = Path(self.testRunInstance.globalSettings[GC.PATH_ROOT])
-        elif not "/" in self.testRunInstance.globalSettings[GC.DATABASE_EXPORTFILENAMEANDPATH][0:1]:
+        elif "/" not in self.testRunInstance.globalSettings[GC.DATABASE_EXPORTFILENAMEANDPATH][0:1]:
             basePath = Path(sys.modules['__main__'].__file__).parent
         else:
             basePath = ""
@@ -184,11 +205,20 @@ class ExportResults:
         if not Path(l_file).is_dir():
             logger.info(f"Create directory {l_file}")
             Path(l_file).mkdir(parents=True, exist_ok=True)
-        l_file = l_file.joinpath("baangt_" + self.testRunName + "_" + utils.datetime_return() + ".xlsx")
+
+        if self.exportFormat == GC.EXP_XLSX:
+            lExtension = '.xlsx'
+        elif self.exportFormat == GC.EXP_CSV:
+            lExtension = '.csv'
+        else:
+            logger.critical(f"wrong export file format: {self.exportFormat}, using 'xlsx' instead")
+            lExtension = '.xlsx'
+
+        l_file = l_file.joinpath("baangt_" + self.testRunName + "_" + utils.datetime_return() + lExtension)
         logger.debug(f"Filename for export: {str(l_file)}")
         return str(l_file)
 
-    def __setHeaderDetailSheet(self):
+    def __setHeaderDetailSheetExcel(self):
         i = 0
         self.__extendFieldList()  # Add fields with name "RESULT_*" to output fields.
         for column in self.fieldListExport:

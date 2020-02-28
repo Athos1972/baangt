@@ -29,11 +29,11 @@ less time for important improvements.).
 There needs to be a new activity "ADDRESS_CREATE" in SimpleFormat (``TestStepMaster.py``). Field ``value`` = optional list of 
 attributes (see below), ``value2`` = prefix for fieldnames (optional).
 
-When this activity is called, we shall call a singleton class "AddressGenerate" using the (optional) parameters from the
-Value-Field. This class is **not** in scope of the current specification. The method "returnAddress" provides a dict of 
+When this activity is called, we shall call a singleton class ``AddressCreate`` using the (optional) parameters from the
+Value-Field. This class is **not** in scope of the current specification. The method ``returnAddress`` provides a dict of 
 fields and values, which shall be stored in TestDataDict (with (optional) prefix taken from value2).
 
-After the fields were filled, they'll be used by the testcase to fill values for the UI or API.
+After the fields were filled, they'll be used by the test case to fill values for the UI or API.
 
 ### Fields
 The following fields are part of the return value of method ``returnAddress``:
@@ -49,7 +49,7 @@ The following fields are part of the return value of method ``returnAddress``:
 Values must be mapped into a ``Dict``.
 
 If a prefix was povided in field ``Value2``, the fieldnames shall be concatenated with this prefix, e.g. if 
-prefix = ``PremiumPayer_``, then the resulting fieldname for ``CountryCode`` in testDataDict would become 
+prefix = ``PremiumPayer_``, then the resulting field for ``CountryCode`` in testDataDict would become 
 ``PremiumPayer_CountryCode``.
 
 ## Scope / DOD
@@ -59,4 +59,4 @@ address data can be entered)
 * Enhance existing documentation in docs-Folder in RST-Format
     * in this case in simpleExample.rst and SimpleAPI.rst
 * Unit-Tests in tests-folder providing reasonable coverage of the provided functionality
-* git Commit to feature branch and PullRequest on Gogs created
+* git commit to feature branch and pull request on Gogs created
