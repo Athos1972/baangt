@@ -38,7 +38,7 @@
         </div>
         <!-- create button -->
         <div class="col-md-3">
-            <a class="btn btn-primary btn-right" href="/{{ type }}/new" role="button">
+            <a class="btn btn-primary {% if type == 'testrun' %} btn-right {% endif %}" href="/{{ type }}/new" role="button">
                 <strong>&plus; </strong>create {{ type|name_by_type(False) }}
             </a>
         </div>
@@ -91,13 +91,12 @@
     <!-- header -->
     <div class="row border-top border-bottom py-3">
         <div class="col-md-4"><strong>Name</strong></div>
+        <div class="col-md-5"><strong>Description</strong></div>
 
         <!-- Test Step fields -->
         {% if type == 'teststep' %}
-            <div class="col-md-5"><strong>Description</strong></div>
             <div class="col"><strong>Activity Type</strong></div>
         {% else %}
-            <div class="col-md-3"><strong>Created By</strong></div>
             <div class="col"><strong>Created</strong></div>
         {% endif %}
     </div>
@@ -110,21 +109,18 @@
                     {{ item.name }}
                 </a>
             </div>
-            {% if type == 'teststep' %}
-                <div class="filtered col-md-5 text-break text-break">{{ item.description }}</div>
+            <div class="filtered col-md-5 text-break text-break">{{ item.description }}</div>
+            {% if type == 'teststep' %}    
                 <div class="filtered col">{{ item.activity_type }}</div>
             {% else %}
-                <div class="filtered col-md-3">{{ item.creator.username }}</div>
                 <div class="col">{{ item.created|time }}</div>
             {% endif %}
 
             <div class="col-12 collapse mt-1" id="item{{ item.id }}">
                 <!-- created data -->
-                {% if type == 'teststep' %}
-                    <p><small>
-                        Created {{ item.created|time }} by {{ item.creator }}
-                    </small></p>
-                {% endif %}
+                <p><small>
+                    Created {{ item.created|time }} by {{ item.creator }}
+                </small></p>
                 <!-- edited data -->
                 {% if item.edited %}
                     <p><small>
