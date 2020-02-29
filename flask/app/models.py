@@ -206,7 +206,7 @@ class TestStepExecution(db.Model):
 	edited = db.Column(db.DateTime, nullable=True)
 	editor_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
 	activity_type_id = db.Column(db.Integer, db.ForeignKey('activity_types.id'), nullable=False)
-	locator_type_id = db.Column(db.Integer, db.ForeignKey('locator_types.id'), nullable=False)
+	locator_type_id = db.Column(db.Integer, db.ForeignKey('locator_types.id'), nullable=True)
 	teststep_sequence_id = db.Column(db.Integer, db.ForeignKey('teststep_sequences.id'), nullable=True)
 	creator = db.relationship('User', backref='created_teststeps', lazy='immediate', foreign_keys=[creator_id])
 	editor = db.relationship('User', backref='edited_teststeps', lazy='immediate', foreign_keys=[editor_id])

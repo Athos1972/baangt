@@ -53,6 +53,7 @@ activities = {
 	'GOTOURL': 'Go to an URL',
 	'SETTEXT': 'Set Text of an Element',
 	'CLICK': 'Click on an Element',
+	'COMMENT': 'A Simple Comment',
 }
 for key, value in activities.items():
 	activity = ActivityType(name=key, description=value)

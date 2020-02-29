@@ -1,6 +1,7 @@
 
 from flask import render_template, redirect, flash, request, url_for, send_from_directory
 from flask_login import login_required, current_user, login_user, logout_user
+from flask.logging import default_handler
 from app import app, db, models, forms, utils
 from datetime import datetime
 
@@ -34,6 +35,7 @@ def item_list(item_type):
 	elif item_type == 'teststep':
 		items = models.TestStepExecution.query.all()
 	else:
+		app.logger.warning(f'Item type "{item_type}" does not exist. Requested by "{current_user}".')
 		flash(f'Item type "{item_type}" does not exist.', 'warning')
 		return redirect(url_for('index'))
 
@@ -55,7 +57,9 @@ def get_item(item_type, item_id):
 	elif item_type == 'teststep':
 		item = models.TestStepExecution.query.get(item_id)
 	else:
-		return 'ERROR: Wrong Item'
+		app.logger.warning(f'Item type "{item_type}" does not exist. Requested by "{current_user}".')
+		flash(f'Item type "{item_type}" does not exist.', 'warning')
+		return redirect(url_for('index'))
 
 	return render_template('testrun/item.html', type=item_type, item=item)
 
@@ -79,14 +83,17 @@ def delete_item(item_type, item_id):
 		elif item_type == 'teststep':
 			item = models.TestStepExecution.query.get(item_id)
 		else:
-			return 'ERROR: Wrong Item'
+			app.logger.warning(f'Item type "{item_type}" does not exist. Requested by "{current_user}".')
+			flash(f'Item type "{item_type}" does not exist.', 'warning')
+			return redirect(url_for('index'))
 
 		db.session.delete(item)
 		db.session.commit()
+		app.logger.info(f'Deleted {item_type} id {item_id} by {current_user}.')
 		flash(f'Item "{item.name}" successfully deleted.', 'success')
 		return redirect(url_for('item_list', item_type=item_type))
 
-	return 'ERROR: Wring request method'
+	return 'ERROR: Wrong request method'
 
 
 @app.route('/<string:item_type>/<int:item_id>/edit', methods=['GET', 'POST'])
@@ -143,8 +150,9 @@ def edit_item(item_type, item_id):
 			form.comparision.data = utils.getComparisionId(item.comparision)
 
 	else:
-		flash('ERROR: Wrong Item Type', 'warning')
-		return None
+		app.logger.warning(f'Item type "{item_type}" does not exist. Requested by "{current_user}".')
+		flash(f'Item type "{item_type}" does not exist.', 'warning')
+		return redirect(url_for('index'))
 
 	if request.method == 'GET':
 		form.name.data = item.name
@@ -204,6 +212,7 @@ def edit_item(item_type, item_id):
 
 		# update item in db
 		db.session.commit()
+		app.logger.info(f'Edited {item_type} id {item_id} by {current_user}.')
 		flash(f'Item "{item.name}" successfully updated.', 'success')
 		return redirect(url_for('item_list', item_type=item_type))
 
@@ -233,8 +242,9 @@ def new_item(item_type):
 		form = forms.TestStepCreateForm.new()
 		chips = []
 	else:
-		flash('ERROR: Wrong Item Type', 'warning')
-		return None
+		app.logger.warning(f'Item type "{item_type}" does not exist. Requested by "{current_user}".')
+		flash(f'Item type "{item_type}" does not exist.', 'warning')
+		return redirect(url_for('index'))
 
 	if form.validate_on_submit():
 		# create new item
@@ -303,6 +313,7 @@ def new_item(item_type):
 		# save item to db
 		db.session.add(item)
 		db.session.commit()
+		app.logger.info(f'Created {item_type} id {item.id} by {current_user}.')
 		flash(f'Item "{item.name}" successfully created.', 'success')
 		return redirect(url_for('item_list', item_type=item_type))
 
@@ -322,6 +333,7 @@ def to_xlsx(item_id):
 
 	#flash(f'Testrun #{item_id} successfully exported to XLSX.', 'success')
 	#return redirect(url_for('item_list', item_type='testrun'))
+	app.logger.info(f'Imported Testrun id {item_id} by {current_user}. Target: static/{filename}')
 	return f'Success: <a href="{url}">{result}</a>' 
 
 @app.route('/testrun/import', methods=['POST'])
@@ -336,8 +348,10 @@ def import_testsun():
 
 	if form.validate_on_submit():
 		if utils.importXLSX(current_user, form.file.data) == 1:
+			app.logger.info(f'Testrun successfully imported from "{form.file.data.filename}" by {current_user}.')
 			flash(f'Testrun successfully imported from "{form.file.data.filename}"', 'success')
 		else:
+			app.logger.info(f'Fail to import Testrun from "{form.file.data.filename}" by {current_user}.')
 			flash(f'ERROR: Cannot imported from "{form.file.data.filename}"', 'danger')
 	else:
 		flash(f'File is required for import', 'warning')
