@@ -1,6 +1,19 @@
 Change log
 ==========
 
+2020.03
+^^^^^^^
+Summary: Release Candiate 1 is on the road!
+
+New features
+++++++++++++
+* Network logging during WEB-Sessions and export to Excel-Result in separate tab. Use ``TC.NetworkInfo`` with value ``True`` (Windows version works, MAC not yet)
+
+Bugfixes
+++++++++
+* Reporting: Duration sometimes off by Timezone shift hours
+* Minor fixes for increased stability with Chrome-based browsers
+
 2020.02
 ^^^^^^^
 Summary: Web- and API-Tests XLSX-SimpleFormat are almost completed. Shouldn't take much longer to have a production ready version.

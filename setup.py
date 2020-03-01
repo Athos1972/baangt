@@ -5,11 +5,11 @@ if __name__ == '__main__':
         long_description = fh.read()
 
     setuptools.setup(
-        name="baangt", # Replace with your own username
-        version="2020.2.0b4",
+        name="baangt",
+        version="2020.3.0rc1",
         author="Bernhard Buhl",
         author_email="buhl@buhl-consulting.com.cy",
-        description="Basic And Advanced NextGeneration Testing",
+        description="Open source Test Suite for Mac, Windows, Linux",
         long_description=long_description,
         long_description_content_type="text/markdown",
         url="https://baangt.org",
