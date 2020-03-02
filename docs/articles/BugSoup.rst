@@ -152,3 +152,10 @@ First it looks like it's an easy one, but it's not. A pure technical test would 
 away the spectrometer in the first place, it would also not show up. The only way to find that, would have been to
 test the output of the spectrometer with a reference material against the output after the update. But that's nothing,
 that can be automated.
+
+Summary
+-------
+
+Most of the severe bugs described here could have been found easily, others not so easy. In any case, every bug that
+was found on lower stages and never reaches production is much cheaper for the whole organization, so get ready to use
+``baangt`` to increase test coverage and subsequently overall quality!
