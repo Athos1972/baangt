@@ -1,8 +1,8 @@
-Bugs in Production - what are they?
-===================================
+Why On Earth Do We Have Bugs In Production?
+===========================================
 
 We all hate bugs in production. They're a pain for everybody. Devs, Management, Customers, Infrastructure. Given a
-big enough scale many departments are effected by a single bug. That costs dearly and can be avoided in most cases.
+big enough scale many departments can be heavily effected by a single bug. That costs dearly and can be avoided in most cases.
 
 In this article we'll look at real bugs, that managed to reach production and see, if proper testing could have avoided
 these bugs.
