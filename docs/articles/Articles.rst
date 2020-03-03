@@ -12,3 +12,4 @@ This section contains articles, that are not exactly documentation. Some are mor
     Industries 4 baangt </articles/BaangtIndustries.rst>
     Stop testing! </articles/StopTesting.rst>
     bAanGtILE </articles/AgileWorkflowIntegration.rst>
+    BugSoup </articles/BugSoup.rst>

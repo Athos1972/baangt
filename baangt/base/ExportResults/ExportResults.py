@@ -363,6 +363,9 @@ class ExportNetWork:
             self.sheet.write(0, index, value, style)
 
     def write_content(self, style=None):
+        if not self.networkInfo:
+            return
+
         for index, entry in enumerate(self.networkInfo['log']['entries']):
             browser_name = entry['pageref']
             status = entry['response']['status']
