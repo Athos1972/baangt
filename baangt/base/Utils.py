@@ -9,7 +9,6 @@ from pathlib import Path
 
 logger = logging.getLogger("pyC")
 
-
 class utils:
     def __init__(self):
         self.__perf_trace = {}
