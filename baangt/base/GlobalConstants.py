@@ -1,3 +1,5 @@
+import os
+
 KWARGS_DATA = "data"
 KWARGS_BROWSER = "Browser"
 KWARGS_API_SESSION = "api"
@@ -58,6 +60,7 @@ EXECUTION_PARALLEL = "ParallelRuns"
 SCREENSHOTS = "Screenshots"
 EXECUTION_DONTCLOSEBROWSER = "dontCloseBrowser"
 EXECUTION_SLOW = "slowExecution"
+EXECUTION_NETWORK_INFO = 'NetworkInfo'
 
 EXPORT_FORMAT = "Export Format"
 EXP_FIELDLIST = "Fieldlist"
@@ -87,9 +90,8 @@ OS_list = ["Linux-32", "Linux-64", "MacOS", "Windows-32", "Windows-64"]
 OS_list_chrome = ['linux32', 'linux64', 'mac64', 'win32']
 
 GECKO_URL = 'https://api.github.com/repos/mozilla/geckodriver/releases/latest'
-
-
 CHROME_URL = 'https://chromedriver.storage.googleapis.com/LATEST_RELEASE'
-NETWORK_INFO = 'NetworkInfo'
-PATH_BROWSER_PROXY = '../../browsermob-proxy/bin/browsermob-proxy'
+
+
+BROWSER_PROXY_PATH = os.getcwd() + '/browsermob-proxy/bin/browsermob-proxy'
 BROWSER_PROXY_URL = 'https://github.com/lightbody/browsermob-proxy/releases/download/browsermob-proxy/browsermob-proxy-bin.zip'

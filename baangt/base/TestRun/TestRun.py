@@ -43,7 +43,7 @@ class TestRun:
         self.testRunUtils = TestRunUtils()
         self._initTestRun()
         self.browserProxyAndServer = self.getBrowserProxyAndServer() \
-            if self.globalSettings.get('TC.' + GC.NETWORK_INFO) == 'True' else None
+            if self.globalSettings.get('TC.' + GC.EXECUTION_NETWORK_INFO) == 'True' else None
         self._loadJSONTestRunDefinitions()
         self._loadExcelTestRunDefinitions()
         self.executeTestRun()
@@ -131,7 +131,7 @@ class TestRun:
 
     def getBrowserProxyAndServer(self):
         from browsermobproxy import Server
-        server = Server(GC.PATH_BROWSER_PROXY)
+        server = Server(GC.BROWSER_PROXY_PATH)
         server.start()
         time.sleep(1)
         proxy = server.create_proxy()
