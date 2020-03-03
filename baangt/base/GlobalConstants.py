@@ -1,5 +1,3 @@
-import os
-
 KWARGS_DATA = "data"
 KWARGS_BROWSER = "Browser"
 KWARGS_API_SESSION = "api"
@@ -93,5 +91,5 @@ GECKO_URL = 'https://api.github.com/repos/mozilla/geckodriver/releases/latest'
 CHROME_URL = 'https://chromedriver.storage.googleapis.com/LATEST_RELEASE'
 
 
-BROWSER_PROXY_PATH = os.getcwd() + '/browsermob-proxy/bin/browsermob-proxy'
+BROWSER_PROXY_PATH = '/browsermob-proxy/bin/browsermob-proxy'
 BROWSER_PROXY_URL = 'https://github.com/lightbody/browsermob-proxy/releases/download/browsermob-proxy/browsermob-proxy-bin.zip'

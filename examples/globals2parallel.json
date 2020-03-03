@@ -3,5 +3,7 @@
     "TC.Lines": "",
     "TC.dontCloseBrowser": "True",
     "TC.slowExecution": "True",
-    "TC.ParallelRuns": "2"
+    "TC.ParallelRuns": "2",
+    "TX.DEBUG": "True",
+    "TC.NetworkInfo": "True"
 }

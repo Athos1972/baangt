@@ -11,6 +11,7 @@ from baangt.TestCaseSequence.TestCaseSequenceMaster import TestCaseSequenceMaste
 import logging
 from pathlib import Path
 import sys
+import os
 from baangt.base.Timing.Timing import Timing
 from baangt.base.TestRunUtils import TestRunUtils
 import time
@@ -131,7 +132,8 @@ class TestRun:
 
     def getBrowserProxyAndServer(self):
         from browsermobproxy import Server
-        server = Server(GC.BROWSER_PROXY_PATH)
+        server = Server(os.getcwd() + GC.BROWSER_PROXY_PATH)
+        logger.info("Starting browsermob proxy")
         server.start()
         time.sleep(1)
         proxy = server.create_proxy()

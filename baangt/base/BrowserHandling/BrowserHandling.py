@@ -181,6 +181,7 @@ class BrowserDriver:
 
         @param browserName: any of the GC.BROWSER*
         @param desiredCapabilities: Settings from TestRun or globals
+        @param browserProxy: Proxy-Server IP+Port
         @return: the proper BrowserOptions for the currently active browser.
         """
 
