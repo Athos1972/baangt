@@ -342,6 +342,10 @@ class BrowserDriver:
             try:
                 if len(self.element.text) > 0:
                     return self.element.text
+                elif self.element.tag_name == 'input':
+                    #  element is of type <input />
+                    return self.element.get_property('value')
+                
             except Exception as e:
                 logger.debug(f"Exception during findByAndWaitForValue, but continuing {str(e)}, "
                              f"Locator: {self.locatorType} = {self.locator}")
