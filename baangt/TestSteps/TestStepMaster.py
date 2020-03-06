@@ -5,6 +5,7 @@ from baangt.base.ApiHandling import ApiHandling
 import sys
 from pkg_resources import parse_version
 import logging
+from baangt.TestSteps.Exceptions import baangtTestStepException
 
 logger = logging.getLogger("pyC")
 
@@ -114,6 +115,12 @@ class TestStepMaster:
                 self.apiSession.setHeaders(setHeaderData=lValue)
             elif lActivity == 'SAVE':
                 self.doSaveData(lValue, lValue2)
+            elif lActivity == 'ASSERT':
+                value_found = self.browserSession.findByAndWaitForValue(xpath=xpath, css=css, id=id, optional=lOptional,
+                                                        timeout=lTimeout)
+                value_expected = lValue
+                if value_expected != value_found:
+                    raise baangtTestStepException(f"Expected Value: {value_expected}, Value found :{value_found} ")
             else:
                 raise BaseException(f"Unknown command in TestStep {lActivity}")
 
