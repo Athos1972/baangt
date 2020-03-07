@@ -347,12 +347,13 @@ def import_testsun():
 	form = forms.TestrunImportForm()
 
 	if form.validate_on_submit():
-		if utils.importXLSX(current_user, form.file.data) == 1:
+		try:
+			utils.importXLSX(current_user, form.file.data)
 			app.logger.info(f'Testrun successfully imported from "{form.file.data.filename}" by {current_user}.')
 			flash(f'Testrun successfully imported from "{form.file.data.filename}"', 'success')
-		else:
-			app.logger.info(f'Fail to import Testrun from "{form.file.data.filename}" by {current_user}.')
-			flash(f'ERROR: Cannot imported from "{form.file.data.filename}"', 'danger')
+		except Exception as error:
+			app.logger.error(f'Fail to import Testrun from "{form.file.data.filename}" by {current_user}. {error}.')
+			flash(f'ERROR: Cannot import Testrun from "{form.file.data.filename}". {error}.', 'danger')
 	else:
 		flash(f'File is required for import', 'warning')
 

@@ -123,8 +123,6 @@ def getTestCaseTypeByName(name):
 	return models.TestCaseType.query.filter_by(name=name).first()
 
 def getActivityTypeByName(name):
-	#print('*********** Activity Type')
-	#print(name)
 	return models.ActivityType.query.filter_by(name=name).first()
 
 def getLocatorTypeByName(name):
@@ -274,7 +272,7 @@ def importXLSX(user, xlsx_file):
 	try:
 		xl = xlrd.open_workbook(file_contents=xlsx_file.read())
 	except XLRDError:
-		return 0
+		raise Exception(f'File "{xlsx_file.filename}" could not be imporeted.')
 
 	# create Testrun object
 	file_name = os.path.basename(xlsx_file.filename)
@@ -296,16 +294,33 @@ def importXLSX(user, xlsx_file):
 		headers = {h[1]: h[0] for h in enumerate(testcase_sequence_sheet.row_values(0))}
 		# get TestCaseSequences
 		for row in range(1, testcase_sequence_sheet.nrows):
-			n = int(testcase_sequence_sheet.cell(row, headers['Number']).value)
+			if headers.get('Number') is None:
+				# default number is 1
+				n = 1
+			else:
+				# get the number from sheet
+				n = int(testcase_sequence_sheet.cell(row, headers['Number']).value)
 			# ClassName
+			if headers.get('SequenceClass') is None:
+				# default ClassName name
+				name = 'GC.CLASSES_TESTCASESEQUENCE'
+			else:
+				# get ClassName name from sheet
+				name = testcase_sequence_sheet.cell(row, headers['SequenceClass']).value
 			classname = models.ClassName(
-				name=testcase_sequence_sheet.cell(row, headers['SequenceClass']).value,
+				name=name,
 				description=f'Imported from "{file_name}"',
 			)
 			db.session.add(classname)
 			# DataFile
+			if headers.get('TestDataFileName') is None:
+				# default DataFile name
+				name = file_name
+			else:
+				# get DataFile name from sheet
+				name = testcase_sequence_sheet.cell(row, headers['TestDataFileName']).value
 			datafile  = models.DataFile(
-				filename=testcase_sequence_sheet.cell(row, headers['TestDataFileName']).value,
+				filename=name,
 				creator=user,
 			)
 			db.session.add(datafile)
@@ -364,24 +379,60 @@ def importXLSX(user, xlsx_file):
 		headers = {h[1]: h[0] for h in enumerate(testcase_sheet.row_values(0))}
 		# get TestCases
 		for row in range(1, testcase_sheet.nrows):
-			n = int(testcase_sheet.cell(row, headers['TestCaseNumber']).value)
+			if headers.get('TestCaseNumber') is None:
+				# default number is 1
+				n = 1
+			else:
+				# get the number from sheet
+				n = int(testcase_sheet.cell(row, headers['TestCaseNumber']).value)
 			# ClassName
+			if headers.get('TestCaseClass') is None:
+				# default ClassName name
+				name = 'GC.CLASSES_TESTCASE'
+			else:
+				# get ClassName name from sheet
+				name = testcase_sheet.cell(row, headers['TestCaseClass']).value
 			classname = models.ClassName(
-				name=testcase_sheet.cell(row, headers['TestCaseClass']).value,
+				name=name,
 				description=f'Imported from "{file_name}"',
 			)
 			db.session.add(classname)
 			db.session.commit()
 			app.logger.info(f'Created ClassName id {classname.id} by {user}.')
 			# TestCase
+			# Browser Type
+			if headers.get('Browser') is None:
+				raise Exception('Sheet "TestCase" does not contain "Browser" column.')
+			else:
+				name = testcase_sheet.cell(row, headers['Browser']).value
+				browser_type = getBrowserTypeByName(name)
+				if browser_type is None:
+					raise Exception(f'Unknown browser type "{name}": sheet "TestCase", row {row+1}.')
+			# TestCase Type
+			if headers.get('TestCaseType') is None:
+				raise Exception('Sheet "TestCase" does not contain "TestCaseType" column.')
+			else:
+				name = testcase_sheet.cell(row, headers['TestCaseType']).value
+				testcase_type=getTestCaseTypeByName(name)
+				if testcase_type is None:
+					raise Exception(f'Unknown testcase type "{name}": sheet "TestCase" row {row+1}.')
+
+			# get TestCase Sequence Number
+			if headers.get('TestCaseSequenceNumber') is None:
+				# default number is 1
+				testcase_sequence_n = 1
+			else:
+				# get the number from sheet
+				testcase_sequence_n = int(testcase_sheet.cell(row, headers['TestCaseSequenceNumber']).value)
+
 			testcases[n]  = models.TestCase(
 				name=f'{file_name}_{row}',
 				description=f'Imported from "{file_name}"',
 				creator=user,
 				classname=classname,
-				browser_type=getBrowserTypeByName(testcase_sheet.cell(row, headers['Browser']).value),
-				testcase_type=getTestCaseTypeByName(testcase_sheet.cell(row, headers['TestCaseType']).value),
-				testcase_sequence=[testcase_sequences[int(testcase_sheet.cell(row, headers['TestCaseSequenceNumber']).value)]]
+				browser_type=browser_type,
+				testcase_type=testcase_type,
+				testcase_sequence=[testcase_sequences[testcase_sequence_n]],
 			)
 			db.session.add(testcases[n])
 			db.session.commit()
@@ -419,22 +470,41 @@ def importXLSX(user, xlsx_file):
 		headers = {h[1]: h[0] for h in enumerate(teststep_sheet.row_values(0))}
 		# get TestSteps
 		for row in range(1, teststep_sheet.nrows):
-			n = int(teststep_sheet.cell(row, headers['TestStepNumber']).value)
+			if headers.get('TestStepNumber') is None:
+				# default number is 1
+				n = 1
+			else:
+				# get the number from sheet
+				n = int(teststep_sheet.cell(row, headers['TestStepNumber']).value)
 			# ClassName
+			if headers.get('TestStepClass') is None:
+				# default ClassName name
+				name = 'GC.CLASSES_TESTSTEPMASTER'
+			else:
+				# get ClassName name from sheet
+				name = teststep_sheet.cell(row, headers['TestStepClass']).value
 			classname = models.ClassName(
-				name=teststep_sheet.cell(row, headers['TestStepClass']).value,
+				name=name,
 				description=f'Imported from "{file_name}"',
 			)
 			db.session.add(classname)
 			db.session.commit()
 			app.logger.info(f'Created ClassName id {classname.id} by {user}.')
 			# TestCase
+			# get TestCase Sequence Number
+			if headers.get('TestCaseNumber') is None:
+				# default number is 1
+				testcase_n = 1
+			else:
+				# get the number from sheet
+				testcase_n = int(teststep_sheet.cell(row, headers['TestCaseNumber']).value)
+
 			teststeps[n]  = models.TestStepSequence(
 				name=f'{file_name}_{row}',
 				description=f'Imported from "{file_name}"',
 				creator=user,
 				classname=classname,
-				testcase=[testcases[int(teststep_sheet.cell(row, headers['TestCaseNumber']).value)]],
+				testcase=[testcases[testcase_n]],
 			)
 			db.session.add(teststeps[n])
 			db.session.commit()
@@ -469,32 +539,84 @@ def importXLSX(user, xlsx_file):
 		headers = {h[1]: h[0] for h in enumerate(teststep_execution_sheet.row_values(0))}
 		# get TestStepExecutions
 		for row in range(1, teststep_execution_sheet.nrows):
-			if headers.get('TestStepExecutionNumber'):
-				n = int(teststep_execution_sheet.cell(row, headers['TestStepExecutionNumber']).value)
-			else:
-				# simple format
+			# get TestStepExecutionNumber
+			if headers.get('TestStepExecutionNumber') is None:
+				# default number is 1
 				n = row
-			if headers.get('TestStepNumber'):
-				teststep_sequence=teststeps[int(teststep_execution_sheet.cell(row, headers['TestStepNumber']).value)]
 			else:
-				# simple format
-				teststep_sequence=teststeps[1]
+				# get the number from sheet
+				n = int(teststep_execution_sheet.cell(row, headers['TestStepExecutionNumber']).value)
+			# get TestStepNumber
+			if headers.get('TestStepNumber') is None:
+				# default number is 1
+				teststep_n = 1
+			else:
+				# get the number from sheet
+				teststep_n = int(teststep_execution_sheet.cell(row, headers['TestStepNumber']).value)
+			# Activity Type
+			if headers.get('Activity') is None:
+				raise Exception('Sheet "TestStepExecution" does not contain "Activity" column.')
+			else:
+				name = teststep_execution_sheet.cell(row, headers['Activity']).value
+				activity_type = getActivityTypeByName(name.upper())
+				if activity_type is None:
+					raise Exception(f'Unknown activity type "{name}": sheet "TestStepExecution", row {row+1}')
+			# Locator Type
+			if headers.get('LocatorType') is None:
+				raise Exception('Sheet "TestStepExecution" does not contain "LocatorType" column.')
+			else:
+				locator_type = getLocatorTypeByName(teststep_execution_sheet.cell(row, headers['LocatorType']).value)
+			# get Locator
+			if headers.get('Locator') is None:
+				locator = None
+			else:
+				locator = teststep_execution_sheet.cell(row, headers['Locator']).value or None
+			# get Value
+			if headers.get('Value') is None:
+				value = None
+			else:
+				value = teststep_execution_sheet.cell(row, headers['Value']).value or None
+			# get Value 2
+			if headers.get('Value2') is None:
+				value2 = None
+			else:
+				value2 = teststep_execution_sheet.cell(row, headers['Value2']).value or None
+			# get Comparison
+			if headers.get('Comparison') is None:
+				comparision = None
+			else:
+				comparision = teststep_execution_sheet.cell(row, headers['Comparison']).value or None
+			# get Timeout
+			if headers.get('Timeout') is None:
+				timeout = None
+			else:
+				timeout = teststep_execution_sheet.cell(row, headers['Timeout']).value or None
+			# get Optional
+			if headers.get('Optional') is None:
+				optional = False
+			else:
+				optional = getBooleanValue(teststep_execution_sheet.cell(row, headers['Optional']).value)
+			# get Release
+			if headers.get('Release') is None:
+				release = None
+			else:
+				release = teststep_execution_sheet.cell(row, headers['Release']).value or None
 
 			# TestStepExecution
 			teststepex  = models.TestStepExecution(
 				name=f'{file_name}_{row}',
 				description=f'Imported from "{file_name}"',
 				creator=user,
-				teststep_sequence=teststep_sequence,
-				activity_type=getActivityTypeByName(teststep_execution_sheet.cell(row, headers['Activity']).value),
-				locator_type=getLocatorTypeByName(teststep_execution_sheet.cell(row, headers['LocatorType']).value),
-				locator=teststep_execution_sheet.cell(row, headers['Locator']).value or None,
-				value=teststep_execution_sheet.cell(row, headers['Value']).value or None,
-				comparision=teststep_execution_sheet.cell(row, headers['Comparison']).value or None,
-				value2=teststep_execution_sheet.cell(row, headers['Value2']).value or None,
-				timeout=teststep_execution_sheet.cell(row, headers['Timeout']).value or None,
-				optional=getBooleanValue(teststep_execution_sheet.cell(row, headers['Optional']).value),
-				release=teststep_execution_sheet.cell(row, headers['Release']).value or None,
+				teststep_sequence=teststeps[teststep_n],
+				activity_type=activity_type,
+				locator_type=locator_type,
+				locator=locator,
+				value=value,
+				comparision=comparision,
+				value2=value2,
+				timeout=timeout,
+				optional=optional,
+				release=release,
 			)
 			db.session.add(teststepex)
 			db.session.commit()
