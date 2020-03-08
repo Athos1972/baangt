@@ -2,6 +2,17 @@ import os
 from app import models, db, app
 from datetime import datetime
 import xlsxwriter, xlrd, json
+from flask_login import current_user
+
+#
+# Default VALUES
+#
+CLASSNAME_TESTCASESEQUENCE = 'GC.CLASSES_TESTCASESEQUENCE'
+CLASSNAME_TESTCASE = 'GC.CLASSES_TESTCASE'
+CLASSNAME_TESTSTEP = 'GC.CLASSES_TESTSTEPMASTER'
+
+BROWSER_TYPE = 'GC.BROWSER_FIREFOX'
+TESTCASE_TYPE = 'Browser'
 
 #
 # item categories
@@ -17,6 +28,31 @@ def getItemCategories():
 	]
 
 	return categories
+
+#
+# get name of the item_type
+#
+def getItemType(item_type, plural=False):	
+	# main items 
+	if item_type == 'testrun':
+		name = 'Testrun'
+	elif item_type == 'testcase_sequence':
+		name = 'Test Case Sequence'
+	elif item_type == 'testcase':
+		name = 'Test Case'
+	elif item_type == 'teststep_sequence':
+		name = 'Test Step Sequence'
+	elif item_type == 'teststep':
+		name = 'Test Step'
+	else:
+		# wrong item_type
+		return ''
+
+	# check for plurals
+	if plural:
+		name += 's'
+
+	return name
 
 #
 # generate choices of items
@@ -109,6 +145,22 @@ def getComparisionId(option):
 # Get Items By Name
 #
 
+def getOrCreateClassNameByName(name, description):
+	# get ClassName from DB
+	classname = models.ClassName.query.filter_by(name=name).first()
+	if classname is None:
+		# create ClassName if it doesn't exist
+		classname = models.ClassName(
+			name=name,
+			description=description,
+		)
+		db.session.add(classname)
+		db.session.commit()
+		app.logger.info(f'Created ClassName ID #{classname.id} by {current_user}.')
+
+	return classname 
+
+
 def getBrowserTypeByName(name):
 	# browser mapper
 	bm = {
@@ -137,9 +189,79 @@ def getBooleanValue(value):
 	else:
 		return False
 
+#
+# Cascade Delete
+#
+
+def deleteCascade(item_type, item_id, ):
+	#
+	# implementation of cascade delete of items
+	#
+
+	# delete Testrun and its children
+	if item_type == 'testrun':
+		item = models.Testrun.query.get(item_id)
+		# delete children TestCaseSequences
+		for child in item.testcase_sequences:
+			deleteCascade('testcase_sequence', child.id)
+		# delete Testrun
+		db.session.delete(item)
+		db.session.commit()
+		app.logger.info(f'Deleted {item_type} id {item_id} by {current_user}.')
+
+	# delete TestCaseSequence and its children
+	elif item_type == 'testcase_sequence':
+		item = models.TestCaseSequence.query.get(item_id)
+		# check if item has not more then one parent
+		if len(item.testrun) <= 1:
+			# delete children TestCases
+			for child in item.testcases:
+				deleteCascade('testcase', child.id)
+			# delete TestCaseSequence
+			db.session.delete(item)
+			db.session.commit()
+			app.logger.info(f'Deleted {item_type} id {item_id} by {current_user}.')
+
+	# delete TestCase and its children
+	elif item_type == 'testcase':
+		item = models.TestCase.query.get(item_id)
+		# check if item has not more then one parent
+		if len(item.testcase_sequence) <= 1:
+			# delete children TestCaseSequences
+			for child in item.teststep_sequences:
+				deleteCascade('teststep_sequence', child.id)
+			# delete TestCase
+			db.session.delete(item)
+			db.session.commit()
+			app.logger.info(f'Deleted {item_type} id {item_id} by {current_user}.')
+
+	# delete TestCaseSequence and its children
+	elif item_type == 'teststep_sequence':
+		item = models.TestStepSequence.query.get(item_id)
+		# check if item has not more then one parent
+		if len(item.testcase) <= 1:
+			# delete children TestStepExecutions
+			for child in item.teststeps:
+				deleteCascade('teststep', child.id)
+			# delete TestCaseSequence
+			db.session.delete(item)
+			db.session.commit()
+			app.logger.info(f'Deleted {item_type} id {item_id} by {current_user}.')
+
+	# delete TestStepExecution
+	elif item_type == 'teststep':
+		item = models.TestStepExecution.query.get(item_id)
+		db.session.delete(item)
+		db.session.commit()
+		app.logger.info(f'Deleted {item_type} id {item_id} by {current_user}.')
+
+	# invalid type
+	else:
+		raise Exception(f'Item type {item_type} does not exists.')
+
 
 #
-# Testrun format convertions
+# Testrun export/import
 #
 
 def exportXLSX(testrun_id):
@@ -262,31 +384,52 @@ def exportXLSX(testrun_id):
 	return xlsx_file
 
 
-def importXLSX(user, xlsx_file):
+def importXLSX(xlsx_file, item_id=None):
 	#
 	# imports testrun from xlsx file
 	#
 
-	app.logger.info(f'Importing a Testrun from {xlsx_file.filename} by {user}.')
+	if item_id is None:
+		app.logger.info(f'Importing a Testrun from {xlsx_file.filename} by {current_user}.')
+	else:
+		# get item
+		testrun = models.Testrun.query.get(item_id)
+		if testrun is None: # item does not exist
+			raise Exception(f'Testrun ID #{item_id} does not exists.')
+		app.logger.info(f'Updating Testrun ID #{item_id} from {xlsx_file.filename} by {current_user}.')
+	
 	# open xlsx
 	try:
 		xl = xlrd.open_workbook(file_contents=xlsx_file.read())
-	except XLRDError:
+	except xlrd.XLRDError:
 		raise Exception(f'File "{xlsx_file.filename}" could not be imporeted.')
-
-	# create Testrun object
+	# get file name
 	file_name = os.path.basename(xlsx_file.filename)
-	testrun  = models.Testrun(
-		name=file_name,
-		description=f'Imported from "{file_name}"',
-		creator=user,
-	)
-	db.session.add(testrun)
-	db.session.commit()
-	app.logger.info(f'Created Testrun id {testrun.id} by {user}.')
 
-	# create TestCaseSequences
-	testcase_sequences = {}
+	# Testrun object
+	if item_id is None:
+		# create Testrun
+		testrun  = models.Testrun(
+			name=file_name,
+			description=f'Imported from "{file_name}".',
+			creator=current_user,
+		)
+		db.session.add(testrun)
+		db.session.commit()
+		app.logger.info(f'Created Testrun ID #{testrun.id} by {current_user}.')
+	else:
+		# update Testrun
+		testrun.description = f'Updated from "{file_name}".'
+		testrun.editor = current_user
+		testrun.edited = datetime.utcnow()
+		db.session.commit()
+		app.logger.info(f'Updated Testrun ID #{item_id} by {current_user}.')
+
+	# TestCaseSequence objects
+	if item_id is None:
+		testcase_sequences = {}
+	else:
+		testcase_sequences = {i+1: testrun.testcase_sequences[i] for i in range(len(testrun.testcase_sequences))}
 	if 'TestCaseSequence' in xl.sheet_names():
 		# get sheet
 		testcase_sequence_sheet = xl.sheet_by_name('TestCaseSequence')
@@ -300,18 +443,17 @@ def importXLSX(user, xlsx_file):
 			else:
 				# get the number from sheet
 				n = int(testcase_sequence_sheet.cell(row, headers['Number']).value)
+			
 			# ClassName
 			if headers.get('SequenceClass') is None:
 				# default ClassName name
-				name = 'GC.CLASSES_TESTCASESEQUENCE'
+				name = CLASSNAME_TESTCASESEQUENCE
 			else:
 				# get ClassName name from sheet
 				name = testcase_sequence_sheet.cell(row, headers['SequenceClass']).value
-			classname = models.ClassName(
-				name=name,
-				description=f'Imported from "{file_name}"',
-			)
-			db.session.add(classname)
+			# get ClassName from DB or create if it doesn't exist
+			classname = getOrCreateClassNameByName(name, f'Imported from "{file_name}".')
+						
 			# DataFile
 			if headers.get('TestDataFileName') is None:
 				# default DataFile name
@@ -319,59 +461,92 @@ def importXLSX(user, xlsx_file):
 			else:
 				# get DataFile name from sheet
 				name = testcase_sequence_sheet.cell(row, headers['TestDataFileName']).value
+			# get DataFile from DB
+			datafile = models.DataFile.query.filter_by(filename=name).first()
+			if datafile is None:
+				# create DataFile if it doesn't exist
+				datafile  = models.DataFile(
+					filename=name,
+					creator=current_user,
+				)
+				db.session.add(datafile)
+				db.session.commit()
+				app.logger.info(f'Created DataFile ID #{datafile.id} by {current_user}.')
+			
+			# TestCaseSequence
+			if n in testcase_sequences:
+				# update item
+				testcase_sequences[n].description = f'Updated from "{file_name}".'
+				testcase_sequences[n].editor = current_user
+				testcase_sequences[n].edited = datetime.utcnow()
+				testcase_sequences[n].classname = classname
+				testcase_sequences[n].datafiles = [datafile]
+				db.session.commit()
+				app.logger.info(f'Updated TestCaseSequence ID #{testcase_sequences[n].id} by {current_user}.')
+			else:
+				# create item
+				testcase_sequences[n] = models.TestCaseSequence(
+					name=f'{file_name}_{row}',
+					description=f'Imported from "{file_name}"',
+					creator=current_user,
+					classname=classname,
+					datafiles=[datafile],
+					testrun=[testrun],
+				)
+				db.session.add(testcase_sequences[n])
+				db.session.commit()
+				app.logger.info(f'Created TestCaseSequence ID #{testcase_sequences[n].id} by {current_user}.')
+			
+	else:
+		# create default TestCaseSequence
+		
+		# ClassName
+		# get ClassName from DB or create if it doesn't exist
+		classname = getOrCreateClassNameByName(CLASSNAME_TESTCASESEQUENCE, 'Default for TestCaseSequence.')
+		
+		# DataFile
+		# get DataFile from DB
+		datafile = models.DataFile.query.filter_by(filename=file_name).first()
+		if datafile is None:
+			# create DataFile if it doesn't exist
 			datafile  = models.DataFile(
-				filename=name,
-				creator=user,
+				filename=file_name,
+				creator=current_user,
 			)
 			db.session.add(datafile)
 			db.session.commit()
-			app.logger.info(f'Created ClassName id {classname.id} by {user}.')
-			app.logger.info(f'Created DataFile id {datafile.id} by {user}.')
-			# TestCaseSequence
-			testcase_sequences[n] = models.TestCaseSequence(
-				name=f'{file_name}_{row}',
-				description=f'Imported from "{file_name}"',
-				creator=user,
+			app.logger.info(f'Created DataFile ID #{datafile.id} by {current_user}.')
+
+		# TestCaseSequence
+		if 1 in testcase_sequences:
+			# update item
+			testcase_sequences[1].description = f'Updated to default.'
+			testcase_sequences[1].editor = current_user
+			testcase_sequences[1].edited = datetime.utcnow()
+			testcase_sequences[1].classname = classname
+			testcase_sequences[1].datafiles = [datafile]
+			db.session.commit()
+			app.logger.info(f'Updated TestCaseSequence ID #{testcase_sequences[1].id} by {current_user}.')
+		else:
+			# create item
+			testcase_sequences[1] = models.TestCaseSequence(
+				name=f'{file_name}',
+				description=f'Default for "{file_name}"',
+				creator=current_user,
 				classname=classname,
 				datafiles=[datafile],
 				testrun=[testrun],
 			)
-			db.session.add(testcase_sequences[n])
+			db.session.add(testcase_sequences[1])
 			db.session.commit()
-			app.logger.info(f'Created TestCaseSequence id {testcase_sequences[n].id} by {user}.')
-			
-	else:
-		# create default TestCaseSequence
-		# ClassName
-		classname = models.ClassName(
-			name='GC.CLASSES_TESTCASESEQUENCE',
-			description=f'Default for TestCaseSequence',
-		)
-		db.session.add(classname)
-		# DataFile
-		datafile  = models.DataFile(
-			filename=file_name,
-			creator=user,
-		)
-		db.session.add(datafile)
-		db.session.commit()
-		app.logger.info(f'Created ClassName id {classname.id} by {user}.')
-		app.logger.info(f'Created DataFile id {datafile.id} by {user}.')
-		# TestCaseSequence
-		testcase_sequences[1] = models.TestCaseSequence(
-			name=f'{file_name}_1',
-			description=f'Default for "{file_name}"',
-			creator=user,
-			classname=classname,
-			datafiles=[datafile],
-			testrun=[testrun],
-		)
-		db.session.add(testcase_sequences[1])
-		db.session.commit()
-		app.logger.info(f'Created TestCaseSequence id {testcase_sequences[1].id} by {user}.')
+			app.logger.info(f'Created TestCaseSequence ID #{testcase_sequences[1].id} by {current_user}.')
 
-	# create TestCases
-	testcases = {}
+	# TestCase objects
+	if item_id is None:
+		testcases = {i+1: {} for i in range(len(testcase_sequences))}
+	else:
+		testcases = {index: {j+1: item.testcases[j] for j in range(len(item.testcases))} for index, item in testcase_sequences.items()}
+
 	if 'TestCase' in xl.sheet_names():
 		# get sheet
 		testcase_sheet = xl.sheet_by_name('TestCase')
@@ -379,26 +554,32 @@ def importXLSX(user, xlsx_file):
 		headers = {h[1]: h[0] for h in enumerate(testcase_sheet.row_values(0))}
 		# get TestCases
 		for row in range(1, testcase_sheet.nrows):
+			# get TestCaseSequenceNumber
+			if headers.get('TestCaseSequenceNumber') is None:
+				# default number is 1
+				i = 1
+			else:
+				# get the number from sheet
+				i = int(testcase_sheet.cell(row, headers['TestCaseSequenceNumber']).value)
+
+			# get TestCaseNumber
 			if headers.get('TestCaseNumber') is None:
 				# default number is 1
 				n = 1
 			else:
 				# get the number from sheet
 				n = int(testcase_sheet.cell(row, headers['TestCaseNumber']).value)
+			
 			# ClassName
 			if headers.get('TestCaseClass') is None:
 				# default ClassName name
-				name = 'GC.CLASSES_TESTCASE'
+				name = CLASSNAME_TESTCASE
 			else:
 				# get ClassName name from sheet
 				name = testcase_sheet.cell(row, headers['TestCaseClass']).value
-			classname = models.ClassName(
-				name=name,
-				description=f'Imported from "{file_name}"',
-			)
-			db.session.add(classname)
-			db.session.commit()
-			app.logger.info(f'Created ClassName id {classname.id} by {user}.')
+			# get ClassName from DB or create if it doesn't exist
+			classname = getOrCreateClassNameByName(name, f'Imported from "{file_name}".')
+
 			# TestCase
 			# Browser Type
 			if headers.get('Browser') is None:
@@ -417,49 +598,63 @@ def importXLSX(user, xlsx_file):
 				if testcase_type is None:
 					raise Exception(f'Unknown testcase type "{name}": sheet "TestCase" row {row+1}.')
 
-			# get TestCase Sequence Number
-			if headers.get('TestCaseSequenceNumber') is None:
-				# default number is 1
-				testcase_sequence_n = 1
+			if n in testcases[i]:
+				# update item
+				testcases[i][n].description = f'Updated from "{file_name}".'
+				testcases[i][n].editor = current_user
+				testcases[i][n].edited = datetime.utcnow()
+				testcases[i][n].classname = classname
+				testcases[i][n].browser_type = browser_type
+				testcases[i][n].testcase_type = testcase_type
+				db.session.commit()
+				app.logger.info(f'Updated TestCase ID #{testcases[n].id} by {current_user}.')
 			else:
-				# get the number from sheet
-				testcase_sequence_n = int(testcase_sheet.cell(row, headers['TestCaseSequenceNumber']).value)
-
-			testcases[n]  = models.TestCase(
-				name=f'{file_name}_{row}',
-				description=f'Imported from "{file_name}"',
-				creator=user,
-				classname=classname,
-				browser_type=browser_type,
-				testcase_type=testcase_type,
-				testcase_sequence=[testcase_sequences[testcase_sequence_n]],
-			)
-			db.session.add(testcases[n])
-			db.session.commit()
-			app.logger.info(f'Created TestCase id {testcases[n].id} by {user}.')
+				# create item
+				testcases[i][n]  = models.TestCase(
+					name=f'{file_name}_{row}',
+					description=f'Imported from "{file_name}".',
+					creator=current_user,
+					classname=classname,
+					browser_type=browser_type,
+					testcase_type=testcase_type,
+					testcase_sequence=[testcase_sequences[i]],
+				)
+				db.session.add(testcases[i][n])
+				db.session.commit()
+				app.logger.info(f'Created TestCase ID #{testcases[i][n].id} by {current_user}.')
 	else:
 		# create default TestCase
+
 		# ClassName
-		classname = models.ClassName(
-			name='GC.CLASSES_TESTCASE',
-			description='Default for TestCase',
-		)
-		db.session.add(classname)
-		db.session.commit()
-		app.logger.info(f'Created ClassName id {classname.id} by {user}.')
+		# get ClassName from DB or create if it doesn't exist
+		classname = getOrCreateClassNameByName(CLASSNAME_TESTCASE, 'Default for TestCase.')
+
 		# TestCase
-		testcases[1]  = models.TestCase(
-			name=f'{file_name}_1',
-			description=f'Default for "{file_name}"',
-			creator=user,
-			classname=classname,
-			browser_type=getBrowserTypeByName('GC.BROWSER_FIREFOX'),
-			testcase_type=getTestCaseTypeByName('Browser'),
-			testcase_sequence=[testcase_sequences[1]]
-		)
-		db.session.add(testcases[1])
-		db.session.commit()
-		app.logger.info(f'Created TestCase id {testcases[1].id} by {user}.')
+		if 1 in testcases[1]:
+			# update item
+			testcases[1][1].description = f'Updated to default.'
+			testcases[1][1].editor = current_user
+			testcases[1][1].edited = datetime.utcnow()
+			testcases[1][1].classname = classname
+			testcases[1][1].browser_type = getBrowserTypeByName(BROWSER_TYPE)
+			testcases[1][1].testcase_type = getTestCaseTypeByName(TESTCASE_TYPE)
+			db.session.commit()
+			app.logger.info(f'Updated TestCase ID #{testcases[1][1].id} by {current_user}.')
+		else:
+			# create item
+			testcases[1][1]  = models.TestCase(
+				name=f'{file_name}',
+				description=f'Default for "{file_name}".',
+				creator=current_user,
+				classname=classname,
+				browser_type=getBrowserTypeByName(BROWSER_TYPE),
+				testcase_type=getTestCaseTypeByName(TESTCASE_TYPE),
+				testcase_sequence=[testcase_sequences[1]],
+			)
+			db.session.add(testcases[1][1])
+			db.session.commit()
+			app.logger.info(f'Created TestCase ID #{testcases[1][1].id} by {current_user}.')
+
 
 	# create TestSteps
 	teststeps = {}
@@ -470,66 +665,69 @@ def importXLSX(user, xlsx_file):
 		headers = {h[1]: h[0] for h in enumerate(teststep_sheet.row_values(0))}
 		# get TestSteps
 		for row in range(1, teststep_sheet.nrows):
+			# get TestStepNumber
 			if headers.get('TestStepNumber') is None:
 				# default number is 1
 				n = 1
 			else:
 				# get the number from sheet
 				n = int(teststep_sheet.cell(row, headers['TestStepNumber']).value)
+
+			# get TestCaseNumber
+			if headers.get('TestCaseNumber') is None:
+				# default number is 1
+				j = 1
+			else:
+				# get the number from sheet
+				j = int(teststep_sheet.cell(row, headers['TestCaseNumber']).value)
+
+			# get TestCaseSequenceNumber
+			if headers.get('TestCaseSequenceNumber') is None:
+				# default number is 1
+				i = 1
+			else:
+				# get the number from sheet
+				i = int(teststep_sheet.cell(row, headers['TestCaseSequenceNumber']).value)
+
 			# ClassName
 			if headers.get('TestStepClass') is None:
 				# default ClassName name
-				name = 'GC.CLASSES_TESTSTEPMASTER'
+				name = CLASSNAME_TESTSTEP
 			else:
 				# get ClassName name from sheet
 				name = teststep_sheet.cell(row, headers['TestStepClass']).value
-			classname = models.ClassName(
-				name=name,
-				description=f'Imported from "{file_name}"',
-			)
-			db.session.add(classname)
-			db.session.commit()
-			app.logger.info(f'Created ClassName id {classname.id} by {user}.')
+			# get ClassName from DB or create if it doesn't exist
+			classname = getOrCreateClassNameByName(name, f'Imported from "{file_name}".')
+			
 			# TestCase
-			# get TestCase Sequence Number
-			if headers.get('TestCaseNumber') is None:
-				# default number is 1
-				testcase_n = 1
-			else:
-				# get the number from sheet
-				testcase_n = int(teststep_sheet.cell(row, headers['TestCaseNumber']).value)
-
+			# ---------------------------------------------------------------> continue with update
 			teststeps[n]  = models.TestStepSequence(
 				name=f'{file_name}_{row}',
 				description=f'Imported from "{file_name}"',
-				creator=user,
+				creator=current_user,
 				classname=classname,
-				testcase=[testcases[testcase_n]],
+				testcase=[testcases[i][j]],
 			)
 			db.session.add(teststeps[n])
 			db.session.commit()
-			app.logger.info(f'Created TestStepSequence id {teststeps[n].id} by {user}.')
+			app.logger.info(f'Created TestStepSequence id {teststeps[n].id} by {current_user}.')
 	else:
 		# create default TestStep
 		# ClassName
-		classname = models.ClassName(
-			name='GC.CLASSES_TESTSTEPMASTER',
-			description='Default for TestStep',
-		)
-		db.session.add(classname)
-		db.session.commit()
-		app.logger.info(f'Created ClassName id {classname.id} by {user}.')
+		# get ClassName from DB or create if it doesn't exist
+		classname = getOrCreateClassNameByName(CLASSNAME_TESTSTEP, 'Default for TestStep')
+		
 		# TestStep
 		teststeps[1]  = models.TestStepSequence(
 			name=f'{file_name}_1',
 			description=f'Default for "{file_name}"',
-			creator=user,
+			creator=current_user,
 			classname=classname,
-			testcase=[testcases[1]]
+			testcase=[testcases[1][1]]
 		)
 		db.session.add(teststeps[1])
 		db.session.commit()
-		app.logger.info(f'Created TestStepSequence id {teststeps[1].id} by {user}.')
+		app.logger.info(f'Created TestStepSequence id {teststeps[1].id} by {current_user}.')
 
 	# create TestStepsExecutions
 	if 'TestStepExecution' in xl.sheet_names():
@@ -606,7 +804,7 @@ def importXLSX(user, xlsx_file):
 			teststepex  = models.TestStepExecution(
 				name=f'{file_name}_{row}',
 				description=f'Imported from "{file_name}"',
-				creator=user,
+				creator=current_user,
 				teststep_sequence=teststeps[teststep_n],
 				activity_type=activity_type,
 				locator_type=locator_type,
@@ -620,7 +818,7 @@ def importXLSX(user, xlsx_file):
 			)
 			db.session.add(teststepex)
 			db.session.commit()
-			app.logger.info(f'Created TestStepExecution id {teststepex.id} by {user}.')
+			app.logger.info(f'Created TestStepExecution id {teststepex.id} by {current_user}.')
 
 	return 1
 

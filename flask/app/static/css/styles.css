@@ -40,6 +40,11 @@ body {
   width: 10rem;
 }
 
+/* dialog */
+.dialog {
+  justify-content: center !important;
+}
+
 
 /* widths */
 .w-20 {

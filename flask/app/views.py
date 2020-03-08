@@ -64,13 +64,25 @@ def get_item(item_type, item_id):
 	return render_template('testrun/item.html', type=item_type, item=item)
 
 
-@app.route('/<string:item_type>/<int:item_id>/delete', methods=['POST'])
+@app.route('/<string:item_type>/<int:item_id>/delete', methods=['POST', 'DELETE'])
 @login_required
 def delete_item(item_type, item_id):
 	#
 	# delete item
 	#
+
+	# cascade delete
 	if request.method == 'POST':
+		try:
+			utils.deleteCascade(item_type, item_id)
+			flash(f'Item {utils.getItemType(item_type)} ID #{item_id} and its children have been successfully deleted.', 'success')
+			return 'Success', 200
+		except Exception as error:
+			flash(error, 'warning')
+			return 'Bad Request', 400
+
+	# delete single item
+	elif request.method == 'DELETE':
 		# get item by type and id
 		if item_type == 'testrun':
 			item = models.Testrun.query.get(item_id)
@@ -85,15 +97,17 @@ def delete_item(item_type, item_id):
 		else:
 			app.logger.warning(f'Item type "{item_type}" does not exist. Requested by "{current_user}".')
 			flash(f'Item type "{item_type}" does not exist.', 'warning')
-			return redirect(url_for('index'))
+			#return redirect(url_for('index'))
+			return 'Bad Request', 400
 
 		db.session.delete(item)
 		db.session.commit()
 		app.logger.info(f'Deleted {item_type} id {item_id} by {current_user}.')
-		flash(f'Item "{item.name}" successfully deleted.', 'success')
-		return redirect(url_for('item_list', item_type=item_type))
+		flash(f'Item "{item.name}" has been successfully deleted.', 'success')
+		#return redirect(url_for('item_list', item_type=item_type))
+		return 'Success', 200
 
-	return 'ERROR: Wrong request method'
+	return 'Method Not Allowed', 405
 
 
 @app.route('/<string:item_type>/<int:item_id>/edit', methods=['GET', 'POST'])
@@ -343,21 +357,52 @@ def import_testsun():
 	# imports testrun from file
 	#
 
-	# only import from XLSX is available now
+	# import only from XLSX is available now
 	form = forms.TestrunImportForm()
 
 	if form.validate_on_submit():
+		#utils.importXLSX(form.file.data)
 		try:
-			utils.importXLSX(current_user, form.file.data)
+			utils.importXLSX(form.file.data)
 			app.logger.info(f'Testrun successfully imported from "{form.file.data.filename}" by {current_user}.')
 			flash(f'Testrun successfully imported from "{form.file.data.filename}"', 'success')
 		except Exception as error:
-			app.logger.error(f'Fail to import Testrun from "{form.file.data.filename}" by {current_user}. {error}.')
+			app.logger.error(f'Failed to import Testrun from "{form.file.data.filename}" by {current_user}. {error}.')
 			flash(f'ERROR: Cannot import Testrun from "{form.file.data.filename}". {error}.', 'danger')
 	else:
 		flash(f'File is required for import', 'warning')
 
 	return redirect(url_for('item_list', item_type='testrun'))
+
+
+@app.route('/testrun/<int:item_id>/import', methods=['POST'])
+@login_required
+def update_testsun(item_id):
+	#
+	# imports testrun from file
+	#
+
+	# update only from XLSX is available now
+	form = forms.TestrunImportForm()
+
+	if form.validate_on_submit():
+		print('******** FORM:')
+		for field in form:
+			print(f'{field.name}:\t{field.data}')
+		# update items
+		#utils.importXLSX(form.file.data, item_id=item_id)
+		try:
+			utils.importXLSX(form.file.data, item_id=item_id)
+			app.logger.info(f'Testrun ID #{item_id} successfully updated from "{form.file.data.filename}" by {current_user}.')
+			flash(f'Testrun ID #{item_id} has been successfully updated from "{form.file.data.filename}"', 'success')
+		except Exception as error:
+			app.logger.error(f'Failed to update Testrun ID #{item_id} from "{form.file.data.filename}" by {current_user}. {error}.')
+			flash(f'ERROR: Cannot update Testrun ID #{item_id} from "{form.file.data.filename}". {error}.', 'danger')
+	else:
+		flash(f'File is required for import', 'warning')
+
+	return redirect(url_for('item_list', item_type='testrun'))
+	
 
 #
 # user authentication

@@ -52,16 +52,29 @@
     }
 
     // delete item
-    function delete_item(item_type, item_name, item_id) {
-        if (confirm(`You are about to delete '${item_name}'`)) {
-            const request = new XMLHttpRequest();
-            request.open('POST', `/${item_type}/${item_id}/delete`);
-            request.onload = () => {
-                const response = request.responseText;
-                document.write(response);
-            }
-            request.send();
-        };
+    function set_delete_item(type_name, type, item_id) {
+        /* set data in delete modal */
+        document.querySelector('#deleteLabel').innerHTML = `Delete ${type_name} ID #${item_id}`;
+        const btns = document.querySelector('#deleteButtons');
+        btns.setAttribute('data-type', type);
+        btns.setAttribute('data-id', item_id);
+    }
+
+    function delete_item(e, cascade) {
+        /* delete item */
+        const request = new XMLHttpRequest();
+        if (cascade) {
+            // cascade delete: POST request
+            request.open('POST', `/${e.dataset['type']}/${e.dataset['id']}/delete`);
+        } else {
+            // single item delete: DELETE request
+            request.open('DELETE', `/${e.dataset['type']}/${e.dataset['id']}/delete`);
+        }
+        
+        request.onload = () => {
+            window.location.reload(true); 
+        }
+        request.send();
     }
 
     // select multiple with chips
@@ -91,13 +104,6 @@
     function delete_chip(e, name) {
         var list = document.getElementById(`${name}Opt`);
         list.children[e.dataset['id']].disabled = false;
-        /*
-        for (var i = 1; i < list.childElementCount; i++) {
-            if (list.children[i].text == e.dataset['id']) {
-                list.children[i].disabled = false;
-            }
-        }
-        */
         e.parentElement.removeChild(e);
     }
 
@@ -176,4 +182,9 @@
             document.querySelector('#exportButton').style.display = 'none';
         };
         request.send();
+    }
+
+    function set_update_item(item_id) {
+        document.querySelector('#updateLabel').innerHTML = `Update Testrun ID #${item_id}`;
+        document.querySelector('#updateForm').setAttribute('action', `/testrun/${item_id}/import`);
     }

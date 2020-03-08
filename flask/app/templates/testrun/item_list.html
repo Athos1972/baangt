@@ -310,14 +310,18 @@
                 <!-- buttons -->
                 <p>
                     <a class="btn btn-primary px-5 my-3 mr-3" href="/{{ type }}/{{ item.id }}/edit" role="button">Edit</a>
-                    <!-- Testrun Export button -->
+                    <!-- Testrun buttons -->
                     {% if type == 'testrun' %}
-                        <!--a class="btn btn-success px-5 my-3 mr-3" href="/testrun/xlsx/{{ item.id }}" role="button">Export</a-->
+                        <!-- Update button -->
+                        <button type="button" class="btn btn-primary px-5 my-3 mr-3" data-toggle="modal" data-target="#updateModal" onmousedown="set_update_item('{{ item.id }}')">
+                            Update
+                        </button>
+                        <!-- Export button -->
                         <button type="button" class="btn btn-success px-5 my-3 mr-3" data-toggle="modal" data-target="#exportModal" onmousedown="set_export_id('{{ item.id }}')">
                             Export
                         </button>
                     {% endif %}
-                    <button class="btn btn-danger px-5 my-3" onclick="delete_item('{{ type }}', '{{ item.name}}', '{{ item.id }}')">
+                    <button class="btn btn-danger px-5 my-3" data-toggle="modal" data-target="#deleteModal" onmousedown="set_delete_item('{{ type|name_by_type }}','{{ type }}','{{ item.id }}')">
                         Delete
                     </button>
                 </p>
@@ -326,7 +330,36 @@
         </div>
     {% endfor %}
 
-    <!--Export  Modal -->
+    <!-- Update Modal -->
+    {% if type == 'testrun' %}
+        <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="updateLabel"></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form method="post" enctype="multipart/form-data" id="updateForm">
+                        {{ form.hidden_tag() }}
+                        <div class="modal-body">
+                            <div class="custom-file">
+                                {{ form.file(class="custom-file-input", accept=".xlsx", onchange="get_file(this)") }}
+                                <label class="custom-file-label" for="{{ form.file.name }}">Choose a file</label>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Export  Modal -->
     <div class="modal fade" id="exportModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exportLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -353,6 +386,31 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" id="exportButton" onclick="exportTestrun(this)">Export</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteLabel"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Delete all child elements?
+                </div>
+                <div class="modal-footer dialog" id="deleteButtons">
+                    <button type="button" class="btn btn-secondary btn-right" onclick="delete_item(this.parentElement, true)">
+                        Yes
+                    </button>
+                    <button type="button" class="btn btn-primary btn-right" onclick="delete_item(this.parentElement, false)">
+                        No
+                    </button>
                 </div>
             </div>
         </div>
