@@ -13,7 +13,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from baangt.base.DataBaseORM import DATABASE_URL, TestrunLog
 from datetime import datetime
+import time
 from baangt import plugin_manager
+import re
 import csv
 
 logger = logging.getLogger("pyC")
@@ -24,6 +26,8 @@ class ExportResults:
         self.testList = []
         self.testRunInstance = kwargs.get(GC.KWARGS_TESTRUNINSTANCE)
         self.networkInfo = kwargs.get('networkInfo')
+        self.testCasesEndDateTimes_1D = kwargs.get('testCasesEndDateTimes_1D')
+        self.testCasesEndDateTimes_2D = kwargs.get('testCasesEndDateTimes_2D')
         self.testRunName = self.testRunInstance.testRunName
         self.dataRecords = self.testRunInstance.dataRecords
 
@@ -55,6 +59,8 @@ class ExportResults:
             self.exportTiming = ExportTiming(self.dataRecords,
                                             self.timingSheet)
             self.exportNetWork = ExportNetWork(self.networkInfo,
+                                               self.testCasesEndDateTimes_1D,
+                                               self.testCasesEndDateTimes_2D,
                                                self.workbook,
                                                self.networkSheet)
             self.closeExcel()
@@ -324,18 +330,31 @@ class ExcelSheetHelperFunctions:
 
 class ExportNetWork:
 
-    headers = ['BrowserName', 'Status', 'Method', 'URL', 'ContentType', 'ContentSize', 'Headers',
+    headers = ['BrowserName', 'TestCaseNum', 'Status', 'Method', 'URL', 'ContentType', 'ContentSize', 'Headers',
                'Params', 'Response', 'startDateTime', 'Duration/ms']
 
-    def __init__(self, networkInfo:dict, workbook: xlsxwriter.Workbook, sheet:xlsxwriter.worksheet):
+    def __init__(self, networkInfo: dict, testCasesEndDateTimes_1D: list,
+                 testCasesEndDateTimes_2D: list, workbook: xlsxwriter.Workbook, sheet: xlsxwriter.worksheet):
+
         self.networkInfo = networkInfo
+        self.testCasesEndDateTimes_1D = testCasesEndDateTimes_1D
+        self.testCasesEndDateTimes_2D = testCasesEndDateTimes_2D
         self.workbook = workbook
         self.sheet = sheet
         header_style = self.get_header_style()
         self.write_header(style=header_style)
-        content_style = self.get_content_style()
-        self.write_content(style=content_style)
+        self.set_column_align()
+        self.write_content()
         self.set_column_width()
+
+    def set_column_align(self):
+        right_align_indexes = list()
+        right_align_indexes.append(ExportNetWork.headers.index('ContentSize'))
+        right_align_indexes.append(ExportNetWork.headers.index('Duration/ms'))
+        right_align_style = self.get_column_style(alignment='right')
+        left_align_style = self.get_column_style(alignment='left')
+        [self.sheet.set_column(i, i, cell_format=right_align_style) if i in right_align_indexes else
+         self.sheet.set_column(i, i, cell_format=left_align_style) for i in range(len(ExportNetWork.headers))]
 
     def set_column_width(self):
         [ExcelSheetHelperFunctions.set_column_autowidth(self.sheet, i) for i in range(len(ExportNetWork.headers))]
@@ -344,25 +363,44 @@ class ExportNetWork:
         header_style = self.workbook.add_format()
         header_style.set_bg_color("#00CCFF")
         header_style.set_color("#FFFFFF")
-        header_style.set_align('center')
-        header_style.set_align('venter')
         header_style.set_bold()
         header_style.set_border()
         return header_style
 
-    def get_content_style(self):
-        content_style = self.workbook.add_format()
-        content_style.set_color("black")
-        content_style.set_align('center')
-        content_style.set_align('venter')
-        content_style.set_border()
-        return content_style
+    def get_column_style(self, alignment=None):
+        column_style = self.workbook.add_format()
+        column_style.set_color("black")
+        column_style.set_align('right') if alignment == 'right'\
+            else column_style.set_align('left') if alignment == 'left' else None
+        column_style.set_border()
+        return column_style
 
     def write_header(self, style=None):
         for index, value in enumerate(ExportNetWork.headers):
             self.sheet.write(0, index, value, style)
 
-    def write_content(self, style=None):
+    def _get_test_case_num(self, start_date_time, browser_name):
+        d_t = datetime.strptime(start_date_time, "%Y-%m-%dT%H:%M:%S.%fZ")
+        if self.testCasesEndDateTimes_1D:
+            for index, dt_end in enumerate(self.testCasesEndDateTimes_1D):
+                if d_t < dt_end:
+                    return index
+                elif dt_end < d_t < self.testCasesEndDateTimes_1D[index + 1] \
+                        if index + 1 < len(self.testCasesEndDateTimes_1D) else dt_end < d_t:
+                    return index + 1
+        elif self.testCasesEndDateTimes_2D:
+            browser_num = re.findall(r"\d+\.?\d*", str(browser_name))[-1] \
+                if re.findall(r"\d+\.?\d*", str(browser_name)) else 0
+            dt_list_index = int(browser_num) - 1 if int(browser_num) > 0 else 0
+            for i, dt_end in enumerate(self.testCasesEndDateTimes_2D[dt_list_index]):
+                if d_t < dt_end:
+                    return i
+                elif dt_end < d_t < self.testCasesEndDateTimes_2D[dt_list_index][i + 1] \
+                        if i + 1 < len(self.testCasesEndDateTimes_2D[dt_list_index]) else dt_end < d_t:
+                    return i + 1
+        return 'unknown'
+
+    def write_content(self):
         if not self.networkInfo:
             return
 
@@ -378,12 +416,12 @@ class ExportNetWork:
             response = entry['response']['content']['text'] if 'text' in entry['response']['content'] else ''
             start_date_time = entry['startedDateTime']
             duration = entry['time']
+            test_case_num = self._get_test_case_num(start_date_time, browser_name)
 
-            data_list = [browser_name, status, method, url, content_type, content_size,
+            data_list = [browser_name, test_case_num, status, method, url, content_type, content_size,
                          headers, params, response, start_date_time, duration]
 
-            [self.sheet.write(index + 1, i, str(data_list[i]), style) if data_list[i] else
-             self.sheet.write(index + 1, i, 'null', style) for i in range(len(data_list))]
+            [self.sheet.write(index + 1, i, str(data_list[i]) or 'null') for i in range(len(data_list))]
 
 
 class ExportTiming:

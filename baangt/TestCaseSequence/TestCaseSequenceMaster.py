@@ -5,6 +5,8 @@ from baangt.base.Utils import utils
 import baangt.base.GlobalConstants as GC
 import multiprocessing
 from pathlib import Path
+import time
+from datetime import datetime
 import sys
 import logging
 
@@ -119,6 +121,7 @@ class TestCaseSequenceMaster:
                         str({k: self.kwargs[GC.KWARGS_DATA][k] for k in list(self.kwargs[GC.KWARGS_DATA])[0:5]}))
             self.testRunInstance.executeDictSequenceOfClasses(self.testCases, GC.STRUCTURE_TESTCASE,
                                                               **self.kwargs)
+            self.testRunInstance.append1DTestCaseEndDateTimes(datetime.fromtimestamp(time.time()))
             # Write Result back to TestRun for later saving in export format
             self.testRunInstance.setResult(key, value)
 
