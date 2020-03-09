@@ -43,12 +43,24 @@ class TestRun:
         self.timing.takeTime(GC.TIMING_TESTRUN)  # Initialize Testrun Duration
         self.testRunUtils = TestRunUtils()
         self._initTestRun()
+
         self.browserProxyAndServer = self.getBrowserProxyAndServer() \
             if self.globalSettings.get('TC.' + GC.EXECUTION_NETWORK_INFO) == 'True' else None
+        self.testCasesEndDateTimes_1D = []  # refer to single execution
+        self.testCasesEndDateTimes_2D = [[]]  # refer to parallel execution
         self._loadJSONTestRunDefinitions()
         self._loadExcelTestRunDefinitions()
         self.executeTestRun()
         self.tearDown()
+
+    def append1DTestCaseEndDateTimes(self, dt):
+        self.testCasesEndDateTimes_1D.append(dt)
+
+    def append2DTestCaseEndDateTimes(self, index, dt):
+        [self.testCasesEndDateTimes_2D.append([]) for i in range(
+            index + 1 - len(self.testCasesEndDateTimes_2D))] if index + 1 > len(
+                self.testCasesEndDateTimes_2D) else None
+        self.testCasesEndDateTimes_2D[index].append(dt)
 
     def tearDown(self):
         """
@@ -70,6 +82,12 @@ class TestRun:
             network_info = self.browserProxyAndServer[0].har
             self.browserProxyAndServer[1].stop()
             self.kwargs['networkInfo'] = network_info
+
+        if self.testCasesEndDateTimes_1D:
+            self.kwargs['testCasesEndDateTimes_1D'] = self.testCasesEndDateTimes_1D
+
+        if self.testCasesEndDateTimes_2D and self.testCasesEndDateTimes_2D[0]:
+            self.kwargs['testCasesEndDateTimes_2D'] = self.testCasesEndDateTimes_2D
 
         ExportResults(**self.kwargs)
         successful, error = self.getSuccessAndError()

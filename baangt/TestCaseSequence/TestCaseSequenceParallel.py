@@ -2,7 +2,8 @@ import multiprocessing
 import logging
 from baangt.TestSteps import Exceptions
 from baangt.base import GlobalConstants as GC
-
+from datetime import datetime
+import time
 logger = logging.getLogger("pyC")
 
 
@@ -32,6 +33,9 @@ class TestCaseSequenceParallel:
             self.kwargs[GC.KWARGS_TESTRUNINSTANCE].executeDictSequenceOfClasses(testcaseSequence,
                                                                                 GC.STRUCTURE_TESTCASE,
                                                                                 **self.kwargs)
+            self.kwargs[GC.KWARGS_TESTRUNINSTANCE].append2DTestCaseEndDateTimes(self.sequenceNumber,
+                                                                                datetime.fromtimestamp(time.time()))
+
         except Exceptions.baangtTestStepException as e:
             logger.critical(f"Unhandled Error happened in parallel run {parallelizationSequenceNumber}: " + str(e))
             dataRecord[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR

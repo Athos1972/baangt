@@ -104,7 +104,7 @@ class BrowserDriver:
                                                         executable_path=self.__findBrowserDriverPaths(GeckoExecutable),
                                                         firefox_profile=profile)
 
-                browserProxy.new_har("baangt-firefox-{}-{}".format(browserInstance, int(time.time())),
+                browserProxy.new_har("baangt-firefox-{}".format(browserInstance),
                                      options={'captureHeaders': True, 'captureContent': True}) \
                     if firefox_proxy else None
             elif browserName == GC.BROWSER_CHROME:
@@ -115,7 +115,7 @@ class BrowserDriver:
                                                                                             desiredCapabilities=desiredCapabilities,
                                                                                             browserProxy=browserProxy),
                                                         executable_path=self.__findBrowserDriverPaths(ChromeExecutable))
-                browserProxy.new_har("baangt-chrome-{}-{}".format(browserInstance, int(time.time())),
+                browserProxy.new_har("baangt-chrome-{}".format(browserInstance),
                                      options={'captureHeaders': True, 'captureContent': True}) if browserProxy else None
             elif browserName == GC.BROWSER_EDGE:
                 self.driver = browserNames[browserName](executable_path=self.__findBrowserDriverPaths("msedgedriver.exe"))
