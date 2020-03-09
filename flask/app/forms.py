@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms.fields import StringField, PasswordField, SelectMultipleField, SelectField, FloatField
+from wtforms.fields import StringField, PasswordField, SelectMultipleField, SelectField, FileField
 from wtforms.widgets import TextArea, ListWidget, CheckboxInput
 from wtforms.validators import ValidationError, DataRequired, EqualTo
 from app.models import User
@@ -35,6 +35,11 @@ class SingupForm(FlaskForm):
 #
 # testrun items forms
 #
+
+class TestrunImportForm(FlaskForm):
+	file = FileField('Source', validators=[DataRequired()])
+
+
 
 class TestrunCreateForm(FlaskForm):
 	name = StringField('Name', validators=[DataRequired()])
@@ -107,12 +112,13 @@ class TestStepCreateForm(FlaskForm):
 	locator_type = SelectField('Locator Type')
 	# model extension
 	locator = StringField('Locator')
-	optional = SelectField('Optional', choices=(('1', 'True'), ('2', 'False')))
-	timeout = FloatField('Timeout')
-	release = StringField('Release')
 	value = StringField('Value')
 	value2 = StringField('Value 2')
-	comparision = StringField('Comparision')
+	comparision = SelectField('Comparision')
+	optional = SelectField('Optional', choices=(('1', 'False'), ('2', 'True')))
+	timeout = StringField('Timeout')
+	release = StringField('Release')
+	
 
 	@classmethod
 	def new(cls):
@@ -120,5 +126,7 @@ class TestStepCreateForm(FlaskForm):
 		form = cls()
 		form.activity_type.choices = utils.getActivityTypes()
 		form.locator_type.choices = utils.getLocatorTypes()
+		form.comparision.choices = utils.getComparisionChoices()
 		return form
+
 	

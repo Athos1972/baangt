@@ -76,6 +76,11 @@ class Testrun(db.Model):
 	def __str__(self):
 		return self.name
 
+	def to_json(self):
+		return {
+			'TestCaseSequence' : [x.to_json() for x in self.testcase_sequences],
+		}
+
 class TestCaseSequence(db.Model):
 	__tablename__ = 'testcase_sequences'
 	id = db.Column(db.Integer, primary_key=True)
@@ -98,6 +103,17 @@ class TestCaseSequence(db.Model):
 
 	def __str__(self):
 		return self.name
+
+	def to_json(self):
+		if len(self.datafiles) > 0:
+			TestDataFileName = self.datafiles[0].filename
+		else:
+			TestDataFileName = ''
+		return {
+			'SequenceClass': self.classname.name,
+			'TestDataFileName': TestDataFileName,
+			'TestCase' : [x.to_json() for x in self.testcases],
+		}
 
 class DataFile(db.Model):
 	__tablename__ = 'datafiles'
@@ -143,6 +159,14 @@ class TestCase(db.Model):
 	def __str__(self):
 		return self.name
 
+	def to_json(self):
+		return {
+			'TestCaseClass': self.classname.name,
+			'TestCaseType': self.testcase_type.name,
+			'Browser': self.browser_type.name,
+			'TestStepSequences' : [x.to_json() for x in self.teststep_sequences],
+		}
+
 class TestStepSequence(db.Model):
 	__tablename__ = 'teststep_sequences'
 	id = db.Column(db.Integer, primary_key=True)
@@ -166,6 +190,12 @@ class TestStepSequence(db.Model):
 	def __str__(self):
 		return self.name
 
+	def to_json(self):
+		return {
+			'TestStepClass': self.classname.name,
+			'TestSteps' : [x.to_json() for x in self.teststeps],
+		}
+
 class TestStepExecution(db.Model):
 	__tablename__ = 'teststep_executions'
 	id = db.Column(db.Integer, primary_key=True)
@@ -176,16 +206,16 @@ class TestStepExecution(db.Model):
 	edited = db.Column(db.DateTime, nullable=True)
 	editor_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
 	activity_type_id = db.Column(db.Integer, db.ForeignKey('activity_types.id'), nullable=False)
-	locator_type_id = db.Column(db.Integer, db.ForeignKey('locator_types.id'), nullable=False)
+	locator_type_id = db.Column(db.Integer, db.ForeignKey('locator_types.id'), nullable=True)
 	teststep_sequence_id = db.Column(db.Integer, db.ForeignKey('teststep_sequences.id'), nullable=True)
 	creator = db.relationship('User', backref='created_teststeps', lazy='immediate', foreign_keys=[creator_id])
 	editor = db.relationship('User', backref='edited_teststeps', lazy='immediate', foreign_keys=[editor_id])
 	activity_type = db.relationship('ActivityType', backref='teststeps', lazy='immediate', foreign_keys=[activity_type_id])
 	locator_type = db.relationship('LocatorType', backref='teststeps', lazy='immediate', foreign_keys=[locator_type_id])
 	teststep_sequence = db.relationship('TestStepSequence', backref='teststeps', lazy='immediate', foreign_keys=[teststep_sequence_id])
-	# model extention
+	# model extension
 	locator = db.Column(db.String, nullable=True)
-	optional = db.Column(db.Boolean, nullable=True)
+	optional = db.Column(db.Boolean, nullable=False, default=False)
 	timeout = db.Column(db.Float(precision='5,2'), nullable=True)
 	release = db.Column(db.String, nullable=True)
 	value = db.Column(db.String, nullable=True)
@@ -194,6 +224,19 @@ class TestStepExecution(db.Model):
 
 	def __str__(self):
 		return self.name
+
+	def to_json(self):
+		return {
+			'Activity': self.activity_type.name,
+			'LocatorType': self.locator_type.name,
+			'Locator': self.locator,
+			'Value': self.value,
+			'Comparison': self.comparision,
+			'Value2': self.value2,
+			'Timeout': self.timeout,
+			'Optional': self.optional,
+			'Release': self.release,
+		}
 
 #
 # supporting entities

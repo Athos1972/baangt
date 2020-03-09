@@ -1,3 +1,8 @@
+body {
+  min-width: 420px;
+}
+
+/* chips */
 .chip {
   display: inline-block;
   padding: 0 10px;
@@ -17,10 +22,43 @@
   cursor: pointer;
 }
 
+/* input groups */
 .closebtn:hover {
   color: #000;
 }
 
 .fixed-label {
   width: 11rem;
+}
+
+.text-break {
+  word-wrap: break-word;
+}
+
+/* buttons */
+.btn-right {
+  width: 10rem;
+}
+
+/* dialog */
+.dialog {
+  justify-content: center !important;
+}
+
+
+/* widths */
+.w-20 {
+  width: 20%;
+}
+
+.w-40 {
+  width: 40%;
+}
+
+.w-60 {
+  width: 60%;
+}
+
+.w-80 {
+  width: 80%;
 }

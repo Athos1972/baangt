@@ -11,6 +11,9 @@
     <!-- Local Styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 
+    <!-- favicon -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='media/favicon.ico') }}">
+
     <title>
     	{% block title %}
     	{% endblock %}
@@ -19,7 +22,10 @@
   
   <body>
     <nav class="navbar navbar-expand navbar-dark bg-dark flex-md-nowrap p-1 shadow">
-        <a class="navbar-brand ml-3 py-2" href="/">Testruns Definition</a>
+        <a class="navbar-brand ml-3 py-2" href="/">
+            <img src="{{ url_for('static', filename='media/favicon.ico') }}" width="40" height="40" class="rounded" alt="">
+            Testruns Definition
+        </a>
         <ul class="navbar-nav ml-auto mr-3">            
             <li class="nav-item">
                 {% if current_user.is_authenticated %}

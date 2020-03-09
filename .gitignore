@@ -12,3 +12,4 @@ __pycache__
 *.pyc
 *.db
 venv
+application.sublime-workspace

@@ -44,7 +44,30 @@
             {% for error in field.errors %}
                 <p class="text-danger">{{ error }}</p>
             {% endfor %}
-            
+
+            {% if field.name == 'value' %}
+                <div class="input-group mt-3">
+                    <div class="input-group-prepend w-60 ml-0">
+                        {{ form.value.label(class="input-group-text w-80") }}
+                        {{ form.comparision.label(class="input-group-text w-40") }}
+                    </div>
+                    <div class="input-group-append w-40">
+                        {{ form.value2.label(class="input-group-text w-100") }}
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group w-40">
+                        {{ form.value(class="form-control w-50") }}
+                    </div>
+                    <div class="input-group w-20">
+                        {{ form.comparision(class="form-control") }}
+                    </div>
+                    <div class="input-group w-40">
+                        {{ form.value2(class="form-control") }}                    
+                    </div>
+                </div>
+
+            {% elif field.name != 'comparision' and field.name != 'value2' %}
             <div class="input-group my-3">
                 <div class="input-group-prepend">
                     {{ field.label(class="input-group-text fixed-label") }}
@@ -52,15 +75,15 @@
 
                 {% if field.name in chips %}
                 <!-- choices for chips -->
-                    <select class="form-control multyselect" id="{{ field.name }}" name="{{ field.name }}"
-                    onchange="add_chip(this, '{{ field.name }}')">
-                        <option value="0" select="">&lt; Select &gt;</option>
+                    <input type="text" class="form-control" list="{{ field.name }}Opt" data-name="{{ field.name }}"
+                        onkeyup="filter_options(this)" oninput="add_chip(this, '{{ field.name }}')">
+                    <datalist id="{{ field.name }}Opt">
                         {% for option in field.choices %}
-                            <option value="{{ option.0 }}">
+                            <option>
                                 {{ option.1 }}
                             </option>
                         {% endfor %}
-                    </select>
+                    </datalist>
                 
                 {% else %}
                 <!-- other fields -->
@@ -70,8 +93,19 @@
 
             <!-- chips area -->
             {% if field.name in chips %}
+                <!-- hidden multi-select -->
+                <select class="d-none" id="{{ field.name }}" name="{{ field.name }}" multiple>
+                    {% for option in field.choices %}
+                        <option value="{{ option.0 }}">
+                            {{ option.1 }}
+                        </option>
+                    {% endfor %}
+                </select>
+                
+                <!-- chips -->
                 <div id="chips_{{ field.name }}">
                 </div>
+            {% endif %}
             {% endif %}
             {% endif %}
 

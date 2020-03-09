@@ -1,8 +1,14 @@
 
-from flask import render_template, redirect, flash, request, url_for
+from flask import render_template, redirect, flash, request, url_for, send_from_directory
 from flask_login import login_required, current_user, login_user, logout_user
+from flask.logging import default_handler
 from app import app, db, models, forms, utils
 from datetime import datetime
+
+# handle favicon requests
+@app.route('/favicon.ico') 
+def favicon(): 
+    return send_from_directory('static/media', 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 @app.route('/')
 @login_required
@@ -12,9 +18,14 @@ def index():
 @app.route('/<string:item_type>')
 @login_required
 def item_list(item_type):
+	# placeholder for import form
+	form = None
 	# get item list by type
 	if item_type == 'testrun':
 		items = models.Testrun.query.all()
+		# build form for importing a testrun
+		form = forms.TestrunImportForm()
+		
 	elif item_type == 'testcase_sequence':
 		items = models.TestCaseSequence.query.all()
 	elif item_type == 'testcase':
@@ -24,28 +35,12 @@ def item_list(item_type):
 	elif item_type == 'teststep':
 		items = models.TestStepExecution.query.all()
 	else:
+		app.logger.warning(f'Item type "{item_type}" does not exist. Requested by "{current_user}".')
 		flash(f'Item type "{item_type}" does not exist.', 'warning')
 		return redirect(url_for('index'))
 
+	return render_template('testrun/item_list.html', type=item_type, items=items, form=form)
 
-	return render_template('testrun/item_list.html', type=item_type, items=items)
-
-
-'''
-@app.route('/index')
-@login_required
-def index_0():
-	# get the whole bunch of items
-	items = {}
-	items['testruns'] = models.Testrun.query.all()
-	items['testcase_sequances'] = models.TestCaseSequence.query.all()
-	#items['datafiles'] = models.DataFile.query.all()
-	items['testcases'] = models.TestCase.query.all()
-	items['teststep_sequences'] = models.TestStepSequence.query.all()
-	items['teststeps'] = models.TestStepExecution.query.all()
-
-	return render_template('testrun/index.html', items=items)
-'''
 
 @app.route('/<string:item_type>/<int:item_id>', methods=['GET', 'POST'])
 @login_required
@@ -62,21 +57,32 @@ def get_item(item_type, item_id):
 	elif item_type == 'teststep':
 		item = models.TestStepExecution.query.get(item_id)
 	else:
-		return 'ERROR: Wrong Item'
-
-	
-
+		app.logger.warning(f'Item type "{item_type}" does not exist. Requested by "{current_user}".')
+		flash(f'Item type "{item_type}" does not exist.', 'warning')
+		return redirect(url_for('index'))
 
 	return render_template('testrun/item.html', type=item_type, item=item)
 
 
-@app.route('/<string:item_type>/<int:item_id>/delete', methods=['POST'])
+@app.route('/<string:item_type>/<int:item_id>/delete', methods=['POST', 'DELETE'])
 @login_required
 def delete_item(item_type, item_id):
 	#
 	# delete item
 	#
+
+	# cascade delete
 	if request.method == 'POST':
+		try:
+			utils.deleteCascade(item_type, item_id)
+			flash(f'Item {utils.getItemType(item_type)} ID #{item_id} and its children have been successfully deleted.', 'success')
+			return 'Success', 200
+		except Exception as error:
+			flash(error, 'warning')
+			return 'Bad Request', 400
+
+	# delete single item
+	elif request.method == 'DELETE':
 		# get item by type and id
 		if item_type == 'testrun':
 			item = models.Testrun.query.get(item_id)
@@ -89,14 +95,19 @@ def delete_item(item_type, item_id):
 		elif item_type == 'teststep':
 			item = models.TestStepExecution.query.get(item_id)
 		else:
-			return 'ERROR: Wrong Item'
+			app.logger.warning(f'Item type "{item_type}" does not exist. Requested by "{current_user}".')
+			flash(f'Item type "{item_type}" does not exist.', 'warning')
+			#return redirect(url_for('index'))
+			return 'Bad Request', 400
 
 		db.session.delete(item)
 		db.session.commit()
-		flash(f'Item "{item.name}" successfully deleted.', 'success')
-		return redirect(url_for('item_list', item_type=item_type))
+		app.logger.info(f'Deleted {item_type} id {item_id} by {current_user}.')
+		flash(f'Item "{item.name}" has been successfully deleted.', 'success')
+		#return redirect(url_for('item_list', item_type=item_type))
+		return 'Success', 200
 
-	return 'ERROR: Wring request method'
+	return 'Method Not Allowed', 405
 
 
 @app.route('/<string:item_type>/<int:item_id>/edit', methods=['GET', 'POST'])
@@ -138,20 +149,24 @@ def edit_item(item_type, item_id):
 			form.activity_type.data = f'{item.activity_type.id}'
 			form.locator_type.data = f'{item.locator_type.id}'
 			# model extension
-			form.locator.data = item.locator
+			form.locator.data = item.locator or ''
 			if item.optional:
-				form.optional.data = '1'
-			else:
 				form.optional.data = '2'
-			form.timeout.data = item.timeout
-			form.release.data = item.release
-			form.value.data = item.value
-			form.value2.data = item.value2
-			form.comparision.data = item.comparision
+			else:
+				form.optional.data = '1'
+			if item.timeout:
+				form.timeout.data = f'{item.timeout}'
+			else:
+				form.timeout.data = ''
+			form.release.data = item.release or ''
+			form.value.data = item.value or ''
+			form.value2.data = item.value2 or ''
+			form.comparision.data = utils.getComparisionId(item.comparision)
 
 	else:
-		flash('ERROR: Wrong Item Type', 'warning')
-		return None
+		app.logger.warning(f'Item type "{item_type}" does not exist. Requested by "{current_user}".')
+		flash(f'Item type "{item_type}" does not exist.', 'warning')
+		return redirect(url_for('index'))
 
 	if request.method == 'GET':
 		form.name.data = item.name
@@ -194,25 +209,29 @@ def edit_item(item_type, item_id):
 			item.activity_type = models.ActivityType.query.get(int(form.activity_type.data))
 			item.locator_type = models.LocatorType.query.get(int(form.locator_type.data))
 			# model extension
-			item.locator=form.locator.data
-			item.optional=[None, True, False][int(form.optional.data)]
-			item.timeout=form.timeout.data
-			item.release=form.release.data
-			item.value=form.value.data
-			item.value2=form.value2.data
-			item.comparision=form.comparision.data
+			item.locator = form.locator.data
+			item.optional = [None, False, True][int(form.optional.data)]
+			try:
+				item.timeout = float(form.timeout.data)
+			except ValueError:
+				item.timeout = None
+			item.release = form.release.data or None
+			item.value = form.value.data or None
+			item.value2 = form.value2.data or None
+			if form.comparision.data == '0':
+				item.comparision = None
+			else:
+				item.comparision = utils.COMPARISIONS[int(form.comparision.data)-1]
 			
 
 		# update item in db
 		db.session.commit()
+		app.logger.info(f'Edited {item_type} id {item_id} by {current_user}.')
 		flash(f'Item "{item.name}" successfully updated.', 'success')
-		return redirect(url_for('index'))
+		return redirect(url_for('item_list', item_type=item_type))
 
 
 	return render_template('testrun/edit_item.html', type=item_type, item=item, form=form)
-
-
-
 
 
 @app.route('/<string:item_type>/new', methods=['GET', 'POST'])
@@ -237,8 +256,9 @@ def new_item(item_type):
 		form = forms.TestStepCreateForm.new()
 		chips = []
 	else:
-		flash('ERROR: Wrong Item Type', 'warning')
-		return None
+		app.logger.warning(f'Item type "{item_type}" does not exist. Requested by "{current_user}".')
+		flash(f'Item type "{item_type}" does not exist.', 'warning')
+		return redirect(url_for('index'))
 
 	if form.validate_on_submit():
 		# create new item
@@ -282,8 +302,6 @@ def new_item(item_type):
 			)
 		# test step
 		elif item_type == 'teststep':
-			print('*********** Timeout')
-			print(type(form.timeout.data))
 			item = models.TestStepExecution(
 				name=form.name.data,
 				description=form.description.data,
@@ -292,22 +310,99 @@ def new_item(item_type):
 				locator_type=models.LocatorType.query.get(int(form.locator_type.data)),
 				# model extension
 				locator=form.locator.data,
-				optional=[None, True, False][int(form.optional.data)],
-				timeout=form.timeout.data,
-				release=form.release.data,
-				value=form.value.data,
-				value2=form.value2.data,
-				comparision=form.comparision.data,
+				optional=[None, False, True][int(form.optional.data)],
 			)
+			try:
+				item.timeout = float(form.timeout.data)
+			except ValueError:
+				item.timeout = None
+			item.release = form.release.data or None
+			item.value = form.value.data or None
+			item.value2 = form.value2.data or None
+			if form.comparision.data == '0':
+				item.comparision = None
+			else:
+				item.comparision = utils.COMPARISIONS[int(form.comparision.data)-1]
 
 		# save item to db
 		db.session.add(item)
 		db.session.commit()
+		app.logger.info(f'Created {item_type} id {item.id} by {current_user}.')
 		flash(f'Item "{item.name}" successfully created.', 'success')
-		return redirect(url_for('index'))
+		return redirect(url_for('item_list', item_type=item_type))
 
 	return render_template('testrun/create_item.html', type=item_type, chips=chips, form=form)
 	#return render_template('testrun/edit_item.html', type=item_type, item=None, form=form)
+
+
+@app.route('/testrun/xlsx/<int:item_id>', methods=['GET', 'POST'])
+@login_required
+def to_xlsx(item_id):
+	#
+	# export Testrun object to XLSX
+	#
+
+	result = utils.exportXLSX(item_id)
+	url = url_for('static', filename=f'files/{result}')
+
+	#flash(f'Testrun #{item_id} successfully exported to XLSX.', 'success')
+	#return redirect(url_for('item_list', item_type='testrun'))
+	app.logger.info(f'Imported Testrun id {item_id} by {current_user}. Target: static/{filename}')
+	return f'Success: <a href="{url}">{result}</a>' 
+
+@app.route('/testrun/import', methods=['POST'])
+@login_required
+def import_testsun():
+	#
+	# imports testrun from file
+	#
+
+	# import only from XLSX is available now
+	form = forms.TestrunImportForm()
+
+	if form.validate_on_submit():
+		#utils.importXLSX(form.file.data)
+		try:
+			utils.importXLSX(form.file.data)
+			app.logger.info(f'Testrun successfully imported from "{form.file.data.filename}" by {current_user}.')
+			flash(f'Testrun successfully imported from "{form.file.data.filename}"', 'success')
+		except Exception as error:
+			app.logger.error(f'Failed to import Testrun from "{form.file.data.filename}" by {current_user}. {error}.')
+			flash(f'ERROR: Cannot import Testrun from "{form.file.data.filename}". {error}.', 'danger')
+	else:
+		flash(f'File is required for import', 'warning')
+
+	return redirect(url_for('item_list', item_type='testrun'))
+
+
+@app.route('/testrun/<int:item_id>/import', methods=['POST'])
+@login_required
+def update_testsun(item_id):
+	#
+	# imports testrun from file
+	#
+
+	# update only from XLSX is available now
+	form = forms.TestrunImportForm()
+
+	if form.validate_on_submit():
+		print('******** FORM:')
+		for field in form:
+			print(f'{field.name}:\t{field.data}')
+		# update items
+		#utils.importXLSX(form.file.data, item_id=item_id)
+		try:
+			utils.importXLSX(form.file.data, item_id=item_id)
+			app.logger.info(f'Testrun ID #{item_id} successfully updated from "{form.file.data.filename}" by {current_user}.')
+			flash(f'Testrun ID #{item_id} has been successfully updated from "{form.file.data.filename}"', 'success')
+		except Exception as error:
+			app.logger.error(f'Failed to update Testrun ID #{item_id} from "{form.file.data.filename}" by {current_user}. {error}.')
+			flash(f'ERROR: Cannot update Testrun ID #{item_id} from "{form.file.data.filename}". {error}.', 'danger')
+	else:
+		flash(f'File is required for import', 'warning')
+
+	return redirect(url_for('item_list', item_type='testrun'))
+	
 
 #
 # user authentication
