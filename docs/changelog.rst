@@ -8,6 +8,10 @@ Summary: Release Candiate 1 is on the road!
 New features
 ++++++++++++
 * Network logging during WEB-Sessions and export to Excel-Result in separate tab. Use ``TC.NetworkInfo`` with value ``True`` (Windows version works, MAC not yet)
+* baangtDB: Import and Export functionality for simpleFormat and complex XLSX-Testrun definitions.
+* baangtDB: cascaded delete: Delete a test run and all it's objects (unless used in other test runs)
+* baangtDB: Update testrun from XLSX (closed circuit between IT-Department and business department)
+
 
 Bugfixes
 ++++++++
