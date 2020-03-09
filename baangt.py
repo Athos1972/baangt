@@ -1,3 +1,6 @@
 from baangt.base.CliAndInteractive import run
+from multiprocessing import freeze_support
 
-run()
+if __name__ == '__main__':
+    freeze_support()
+    run()
