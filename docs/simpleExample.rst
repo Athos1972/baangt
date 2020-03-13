@@ -212,3 +212,33 @@ More details on Activities
 
        Another use of the If-Statement is with ``LocatorType`` and ``Locator`` and comparison. You'd use that, when you
        want conditional execution of a larger block of statements depending on an element present or not present.
+
+   * - assert
+     - Will retrieve value of element specified by ``locator`` and compare with reference value from ``value``.
+      
+       
+   * - address_create
+     - provide an easy and easily extendable way to generate address data for a test case
+       The following fields variable are stored in testcaseDataDict:
+
+       CountryCode
+       PostalCode
+       CityName
+       StreetName
+       HouseNumber
+       AdditionalData1
+       AdditionalData2
+       
+       `value`  optional
+         Default field-value: {'HouseNumber': '6', 'AdditionalData1': 'Near MahavirChowk', 'AdditionalData2': 'Opposite St. Marish Church', 'StreetName': 'GoreGaon', 'CityName': 'Ambala', 'PostalCode': '160055', 'CountryCode': 'India'} 
+
+       These fields can be used as filter criteria in field value.
+       Example value= `{CountryCode:CY, PostlCode: 7}`. 
+
+
+       Resulted field-value :{'HouseNumber': '6', 'AdditionalData1': 'Near MahavirChowk', 'AdditionalData2': 'Opposite St. Marish Church', 'StreetName': 'GoreGaon', 'CityName': 'Ambala', 'PostalCode': '7', 'CountryCode': 'CY'}
+
+       `value2` optional
+       If a prefix was povided in field Value2, the fieldnames will be concatenated with this prefix,
+       e.g.if value2=`PremiumPayer_`, then the resulting field for CountryCode in testDataDict would become PremiumPayer_CountryCode.
+

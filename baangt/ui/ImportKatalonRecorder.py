@@ -261,6 +261,9 @@ click | //div[@id='main']/div[2]/div/div[2]/div/div[5]/button/div[2] |
         # loop through line and process if 'Value' column there
         for line in lines:
             # Check for GOTOURL activity
+            # skip if lines == NONE
+            if not line:
+                continue
             if line['Activity'] == "GOTOURL":
                 # we should make variable for url
                 line['Value'] = ImportKatalonRecorder.prepareKeyValue(outputData, 'url', line['Value'])
