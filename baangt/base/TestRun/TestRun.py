@@ -60,9 +60,9 @@ class TestRun:
         [self.testCasesEndDateTimes_2D.append([]) for i in range(
             index + 1 - len(self.testCasesEndDateTimes_2D))] if index + 1 > len(
                 self.testCasesEndDateTimes_2D) else None
-        logging.info('before append index: {}, dt: {},  testCasesEndDateTimes_2D:{}'.format(index, dt, self.testCasesEndDateTimes_2D))
+        logger.info('before append index: {}, dt: {},  testCasesEndDateTimes_2D:{}'.format(index, dt, self.testCasesEndDateTimes_2D))
         self.testCasesEndDateTimes_2D[index].append(dt)
-        logging.info('after append index: {}, dt: {},  testCasesEndDateTimes_2D:{}'.format(index, dt, self.testCasesEndDateTimes_2D))
+        logger.info('after append index: {}, dt: {},  testCasesEndDateTimes_2D:{}'.format(index, dt, self.testCasesEndDateTimes_2D))
 
     def tearDown(self):
         """
@@ -88,10 +88,10 @@ class TestRun:
         if self.testCasesEndDateTimes_1D:
             self.kwargs['testCasesEndDateTimes_1D'] = self.testCasesEndDateTimes_1D
 
-        logging.info('before prepared testCasesEndDateTimes_2D: {}'.format(self.testCasesEndDateTimes_2D))
+        logger.info('before prepared testCasesEndDateTimes_2D: {}'.format(self.testCasesEndDateTimes_2D))
         if self.testCasesEndDateTimes_2D and self.testCasesEndDateTimes_2D[0]:
             self.kwargs['testCasesEndDateTimes_2D'] = self.testCasesEndDateTimes_2D
-        logging.info('after prepared testCasesEndDateTimes_2D: {}'.format(self.testCasesEndDateTimes_2D))
+        logger.info('after prepared testCasesEndDateTimes_2D: {}'.format(self.testCasesEndDateTimes_2D))
         ExportResults(**self.kwargs)
         successful, error = self.getSuccessAndError()
         logger.info(f"Finished execution of Testrun {self.testRunName}. "
