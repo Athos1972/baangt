@@ -5,6 +5,7 @@ from baangt.base.ApiHandling import ApiHandling
 import sys
 from pkg_resources import parse_version
 import logging
+from baangt.TestSteps.AddressCreation import AddressCreate
 
 logger = logging.getLogger("pyC")
 
@@ -114,6 +115,12 @@ class TestStepMaster:
                 self.apiSession.setHeaders(setHeaderData=lValue)
             elif lActivity == 'SAVE':
                 self.doSaveData(lValue, lValue2)
+            elif lActivity == "ADDRESS_CREATE":
+                # Create Address with option lValue and lValue2
+                AddressCreate(lValue,lValue2)
+                # Update testcaseDataDict with addressDict returned from
+                AddressCreate.returnAddress()
+                self.testcaseDataDict.update(AddressCreate.returnAddress())
             else:
                 raise BaseException(f"Unknown command in TestStep {lActivity}")
 
