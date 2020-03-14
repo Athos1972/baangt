@@ -383,6 +383,8 @@ class ExportNetWork:
     def _get_test_case_num(self, start_date_time, browser_name):
         d_t = parse(start_date_time)
         d_t = d_t.replace(tzinfo=None)
+        logger.info('get in to _get_test_case_num, testCasesEndDateTimes_1D: {}, testCasesEndDateTimes_2D: {}'
+              .format(self.testCasesEndDateTimes_1D, self.testCasesEndDateTimes_2D))
         if self.testCasesEndDateTimes_1D:
             for index, dt_end in enumerate(self.testCasesEndDateTimes_1D):
                 if d_t < dt_end:
@@ -393,12 +395,17 @@ class ExportNetWork:
         elif self.testCasesEndDateTimes_2D:
             browser_num = re.findall(r"\d+\.?\d*", str(browser_name))[-1] \
                 if re.findall(r"\d+\.?\d*", str(browser_name)) else 0
+            logger.info('get browser_num: {}'.format(browser_num))
             dt_list_index = int(browser_num) - 1 if int(browser_num) > 0 else 0
+            logger.info('get dt_list_index: {}'.format(dt_list_index))
             for i, dt_end in enumerate(self.testCasesEndDateTimes_2D[dt_list_index]):
+                logger.info('i: {}, dt_end: {}'.format(i, dt_end))
                 if d_t < dt_end:
+                    logger.info('get into d_t < dt_end')
                     return i
                 elif dt_end < d_t < self.testCasesEndDateTimes_2D[dt_list_index][i + 1] \
                         if i + 1 < len(self.testCasesEndDateTimes_2D[dt_list_index]) else dt_end < d_t:
+                    logger.info('get into else')
                     return i + 1
         return 'unknown'
 
