@@ -5,6 +5,7 @@ from baangt.base.ApiHandling import ApiHandling
 import sys
 from pkg_resources import parse_version
 import logging
+from baangt.TestSteps.Exceptions import baangtTestStepException
 from baangt.TestSteps.AddressCreation import AddressCreate
 
 logger = logging.getLogger("pyC")
@@ -121,6 +122,12 @@ class TestStepMaster:
                 # Update testcaseDataDict with addressDict returned from
                 AddressCreate.returnAddress()
                 self.testcaseDataDict.update(AddressCreate.returnAddress())
+            elif lActivity == 'ASSERT':
+                value_found = self.browserSession.findByAndWaitForValue(xpath=xpath, css=css, id=id, optional=lOptional,
+                                                        timeout=lTimeout)
+                value_expected = lValue
+                if value_expected != value_found:
+                    raise baangtTestStepException(f"Expected Value: {value_expected}, Value found :{value_found} ")
             else:
                 raise BaseException(f"Unknown command in TestStep {lActivity}")
 
