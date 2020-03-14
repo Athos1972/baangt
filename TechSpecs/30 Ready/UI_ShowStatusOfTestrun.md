@@ -1,6 +1,6 @@
 # Situation
 
-Right now when you start ``baangt`` interactive start, choose a testrun and globals file and execute the testrun there's
+Right now when you start ``baangt`` interactive starter, choose a testrun and globals file and execute the testrun there's
 a log either in the console or in your IDE (depending from where you start it), but directly in the UI you don't see
 anything except an hourglass.
 
