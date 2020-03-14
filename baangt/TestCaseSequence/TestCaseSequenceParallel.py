@@ -33,8 +33,12 @@ class TestCaseSequenceParallel:
             self.kwargs[GC.KWARGS_TESTRUNINSTANCE].executeDictSequenceOfClasses(testcaseSequence,
                                                                                 GC.STRUCTURE_TESTCASE,
                                                                                 **self.kwargs)
+
+            d_t = datetime.fromtimestamp(time.time())
             self.kwargs[GC.KWARGS_TESTRUNINSTANCE].append2DTestCaseEndDateTimes(self.sequenceNumber,
-                                                                                datetime.fromtimestamp(time.time()))
+                                                                                d_t)
+
+            logger.info("execute append2DTestCaseEndDateTimes, params are {}, {}".format(self.sequenceNumber, d_t))
 
         except Exceptions.baangtTestStepException as e:
             logger.critical(f"Unhandled Error happened in parallel run {parallelizationSequenceNumber}: " + str(e))
