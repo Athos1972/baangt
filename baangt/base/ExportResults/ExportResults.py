@@ -28,6 +28,8 @@ class ExportResults:
         self.testRunInstance = kwargs.get(GC.KWARGS_TESTRUNINSTANCE)
         self.networkInfo = kwargs.get('networkInfo')
         self.testCasesEndDateTimes_1D = kwargs.get('testCasesEndDateTimes_1D')
+
+        logger.info('init ExportResults, testCasesEndDateTimes_2D: {}'.format(kwargs.get('testCasesEndDateTimes_2D')))
         self.testCasesEndDateTimes_2D = kwargs.get('testCasesEndDateTimes_2D')
         self.testRunName = self.testRunInstance.testRunName
         self.dataRecords = self.testRunInstance.dataRecords
@@ -339,6 +341,7 @@ class ExportNetWork:
 
         self.networkInfo = networkInfo
         self.testCasesEndDateTimes_1D = testCasesEndDateTimes_1D
+        logger.info('init ExportNetWork, testCasesEndDateTimes_2D: {}'.format(testCasesEndDateTimes_2D))
         self.testCasesEndDateTimes_2D = testCasesEndDateTimes_2D
         self.workbook = workbook
         self.sheet = sheet
