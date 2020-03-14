@@ -121,7 +121,9 @@ class TestCaseSequenceMaster:
                         str({k: self.kwargs[GC.KWARGS_DATA][k] for k in list(self.kwargs[GC.KWARGS_DATA])[0:5]}))
             self.testRunInstance.executeDictSequenceOfClasses(self.testCases, GC.STRUCTURE_TESTCASE,
                                                               **self.kwargs)
-            self.testRunInstance.append1DTestCaseEndDateTimes(datetime.fromtimestamp(time.time()))
+            d_t = datetime.fromtimestamp(time.time())
+            self.testRunInstance.append1DTestCaseEndDateTimes(d_t)
+            logger.info("execute append1DTestCaseEndDateTimes, param is {}".format(d_t))
             # Write Result back to TestRun for later saving in export format
             self.testRunInstance.setResult(key, value)
 
