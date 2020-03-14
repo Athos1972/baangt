@@ -60,7 +60,9 @@ class TestRun:
         [self.testCasesEndDateTimes_2D.append([]) for i in range(
             index + 1 - len(self.testCasesEndDateTimes_2D))] if index + 1 > len(
                 self.testCasesEndDateTimes_2D) else None
+        logging.info('before append index: {}, dt: {},  testCasesEndDateTimes_2D:{}'.format(index, dt, self.testCasesEndDateTimes_2D))
         self.testCasesEndDateTimes_2D[index].append(dt)
+        logging.info('after append index: {}, dt: {},  testCasesEndDateTimes_2D:{}'.format(index, dt, self.testCasesEndDateTimes_2D))
 
     def tearDown(self):
         """
