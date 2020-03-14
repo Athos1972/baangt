@@ -17,6 +17,7 @@ import time
 from baangt import plugin_manager
 import re
 import csv
+from dateutil.parser import parse
 
 logger = logging.getLogger("pyC")
 
@@ -380,7 +381,8 @@ class ExportNetWork:
             self.sheet.write(0, index, value, style)
 
     def _get_test_case_num(self, start_date_time, browser_name):
-        d_t = datetime.strptime(start_date_time, "%Y-%m-%dT%H:%M:%S.%fZ")
+        d_t = parse(start_date_time)
+        d_t = d_t.replace(tzinfo=None)
         if self.testCasesEndDateTimes_1D:
             for index, dt_end in enumerate(self.testCasesEndDateTimes_1D):
                 if d_t < dt_end:
