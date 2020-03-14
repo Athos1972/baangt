@@ -91,7 +91,7 @@ class TestRun:
         logging.info('before prepared testCasesEndDateTimes_2D: {}'.format(self.testCasesEndDateTimes_2D))
         if self.testCasesEndDateTimes_2D and self.testCasesEndDateTimes_2D[0]:
             self.kwargs['testCasesEndDateTimes_2D'] = self.testCasesEndDateTimes_2D
-        logging.info('after prepared testCasesEndDateTimes_2D: {}'.format(self.kwargs['testCasesEndDateTimes_2D']))
+        logging.info('after prepared testCasesEndDateTimes_2D: {}'.format(self.testCasesEndDateTimes_2D))
         ExportResults(**self.kwargs)
         successful, error = self.getSuccessAndError()
         logger.info(f"Finished execution of Testrun {self.testRunName}. "
