@@ -244,10 +244,13 @@ class ExportResults:
 
         @return:
         """
-        for key in self.dataRecords[0].keys():
-            if "RESULT_" in key:
-                if not key in self.fieldListExport:
-                    self.fieldListExport.append(key)
+        try:
+            for key in self.dataRecords[0].keys():
+                if "RESULT_" in key:
+                    if not key in self.fieldListExport:
+                        self.fieldListExport.append(key)
+        except Exception as e:
+            logger.critical(f'looks like we have no data in records: {self.dataRecords}, len of dataRecords: {len(self.dataRecords)}')
 
     def _exportData(self):
         for key, value in self.dataRecords.items():
@@ -416,7 +419,7 @@ class ExportNetWork:
         if not self.networkInfo:
             return
 
-        logger.info(f'networkInfo length: {len(networkInfo)}')
+        logger.info(f'networkInfo length: {len(self.networkInfo)}')
 
         partition_index = 0
 
