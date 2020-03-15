@@ -402,7 +402,7 @@ class ExportNetWork:
             browser_num = re.findall(r"\d+\.?\d*", str(browser_name))[-1] \
                 if re.findall(r"\d+\.?\d*", str(browser_name)) else 0
             logger.info('get browser_num: {}'.format(browser_num))
-            dt_list_index = int(browser_num) - 1 if int(browser_num) > 0 else 0
+            dt_list_index = int(browser_num) if int(browser_num) > 0 else 0
             logger.info('get dt_list_index: {}'.format(dt_list_index))
             for i, dt_end in enumerate(self.testCasesEndDateTimes_2D[dt_list_index]):
                 logger.info('i: {}, dt_end: {}'.format(i, dt_end))
