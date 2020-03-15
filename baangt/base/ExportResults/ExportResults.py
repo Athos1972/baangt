@@ -244,10 +244,13 @@ class ExportResults:
 
         @return:
         """
-        for key in self.dataRecords[0].keys():
-            if "RESULT_" in key:
-                if not key in self.fieldListExport:
-                    self.fieldListExport.append(key)
+        try:
+            for key in self.dataRecords[0].keys():
+                if "RESULT_" in key:
+                    if not key in self.fieldListExport:
+                        self.fieldListExport.append(key)
+        except Exception as e:
+            logger.critical(f'looks like we have no data in records: {self.dataRecords}, len of dataRecords: {len(self.dataRecords)}')
 
     def _exportData(self):
         for key, value in self.dataRecords.items():
@@ -391,49 +394,51 @@ class ExportNetWork:
         if self.testCasesEndDateTimes_1D:
             for index, dt_end in enumerate(self.testCasesEndDateTimes_1D):
                 if d_t < dt_end:
-                    return index
-                elif dt_end < d_t < self.testCasesEndDateTimes_1D[index + 1] \
-                        if index + 1 < len(self.testCasesEndDateTimes_1D) else dt_end < d_t:
                     return index + 1
         elif self.testCasesEndDateTimes_2D:
             browser_num = re.findall(r"\d+\.?\d*", str(browser_name))[-1] \
                 if re.findall(r"\d+\.?\d*", str(browser_name)) else 0
             logger.info('get browser_num: {}'.format(browser_num))
-            dt_list_index = int(browser_num) - 1 if int(browser_num) > 0 else 0
+            dt_list_index = int(browser_num) if int(browser_num) > 0 else 0
             logger.info('get dt_list_index: {}'.format(dt_list_index))
-            for i, dt_end in enumerate(self.testCasesEndDateTimes_2D[dt_list_index]):
-                logger.info('i: {}, dt_end: {}'.format(i, dt_end))
-                if d_t < dt_end:
+            for i, tcAndDtEnd in enumerate(self.testCasesEndDateTimes_2D[dt_list_index]):
+                logger.info('i: {}, tc: {}, dt_end: {}'.format(i, tcAndDtEnd[0], tcAndDtEnd[1]))
+                if d_t < tcAndDtEnd[1]:
                     logger.info('get into d_t < dt_end')
-                    return i
-                elif dt_end < d_t < self.testCasesEndDateTimes_2D[dt_list_index][i + 1] \
-                        if i + 1 < len(self.testCasesEndDateTimes_2D[dt_list_index]) else dt_end < d_t:
-                    logger.info('get into else')
-                    return i + 1
+                    return tcAndDtEnd[0] + 1
         return 'unknown'
 
     def write_content(self):
         if not self.networkInfo:
             return
 
-        for index, entry in enumerate(self.networkInfo['log']['entries']):
-            browser_name = entry['pageref']
-            status = entry['response']['status']
-            method = entry['request']['method']
-            url = entry['request']['url']
-            content_type = entry['response']['content']['mimeType']
-            content_size = entry['response']['content']['size']
-            headers = entry['response']['headers']
-            params = entry['request']['queryString']
-            response = entry['response']['content']['text'] if 'text' in entry['response']['content'] else ''
-            start_date_time = entry['startedDateTime']
-            duration = entry['time']
-            test_case_num = self._get_test_case_num(start_date_time, browser_name)
+        logger.info(f'networkInfo length: {len(self.networkInfo)}')
 
-            data_list = [browser_name, test_case_num, status, method, url, content_type, content_size,
-                         headers, params, response, start_date_time, duration]
+        partition_index = 0
 
-            [self.sheet.write(index + 1, i, str(data_list[i]) or 'null') for i in range(len(data_list))]
+        for info in self.networkInfo:
+            for index, entry in enumerate(info['log']['entries']):
+                browser_name = entry['pageref']
+                status = entry['response']['status']
+                method = entry['request']['method']
+                url = entry['request']['url']
+                content_type = entry['response']['content']['mimeType']
+                content_size = entry['response']['content']['size']
+                headers = entry['response']['headers']
+                params = entry['request']['queryString']
+                response = entry['response']['content']['text'] if 'text' in entry['response']['content'] else ''
+                start_date_time = entry['startedDateTime']
+                duration = entry['time']
+                test_case_num = self._get_test_case_num(start_date_time, browser_name)
+
+                data_list = [browser_name, test_case_num, status, method, url, content_type, content_size,
+                             headers, params, response, start_date_time, duration]
+
+                [self.sheet.write(index + partition_index + 1, i, str(data_list[i]) or 'null')
+                 for i in range(len(data_list))]
+
+            partition_index += len(info['log']['entries'])
+
 
 
 class ExportTiming:

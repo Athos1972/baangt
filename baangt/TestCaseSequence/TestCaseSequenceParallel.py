@@ -34,12 +34,6 @@ class TestCaseSequenceParallel:
                                                                                 GC.STRUCTURE_TESTCASE,
                                                                                 **self.kwargs)
 
-            d_t = datetime.fromtimestamp(time.time())
-            self.kwargs[GC.KWARGS_TESTRUNINSTANCE].append2DTestCaseEndDateTimes(self.sequenceNumber,
-                                                                                d_t)
-
-            logger.info("execute append2DTestCaseEndDateTimes, testrun id is {} , params are {}, {}".
-                        format(id(self.kwargs[GC.KWARGS_TESTRUNINSTANCE]), self.sequenceNumber, d_t))
 
         except Exceptions.baangtTestStepException as e:
             logger.critical(f"Unhandled Error happened in parallel run {parallelizationSequenceNumber}: " + str(e))
@@ -48,5 +42,6 @@ class TestCaseSequenceParallel:
             # the result must be pushed into the queue:
             logger.debug(
                 f"Starting to Put value in Queue {currentRecordNumber}. Len of datarecord: {len(str(dataRecord))}")
-            resultQueue.put({self.tcNumber: dataRecord})
+            d_t = datetime.fromtimestamp(time.time())
+            resultQueue.put([{self.tcNumber: dataRecord}, {self.sequenceNumber:  [self.tcNumber, d_t]}])
             logger.debug(f"Finished putting Value i Queue for TC {currentRecordNumber}")

@@ -3,6 +3,5 @@
     "TC.Lines": "",
     "TC.dontCloseBrowser": "True",
     "TC.slowExecution": "True",
-    "TC.NetworkInfo": "True",
-    "TX.DEBUG": "True"
+    "TC.NetworkInfo": "True"
 }

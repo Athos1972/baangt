@@ -44,8 +44,10 @@ class TestRun:
         self.testRunUtils = TestRunUtils()
         self._initTestRun()
 
-        self.browserProxyAndServer = self.getBrowserProxyAndServer() \
+        self.browserServer = self.getBrowserServer() \
             if self.globalSettings.get('TC.' + GC.EXECUTION_NETWORK_INFO) == 'True' else None
+        self.browsersProxies = {}
+
         self.testCasesEndDateTimes_1D = []  # refer to single execution
         self.testCasesEndDateTimes_2D = [[]]  # refer to parallel execution
         self._loadJSONTestRunDefinitions()
@@ -56,12 +58,14 @@ class TestRun:
     def append1DTestCaseEndDateTimes(self, dt):
         self.testCasesEndDateTimes_1D.append(dt)
 
-    def append2DTestCaseEndDateTimes(self, index, dt):
+    def append2DTestCaseEndDateTimes(self, index, tcAndDt):
+        tc = tcAndDt[0]
+        dt = tcAndDt[1]
         [self.testCasesEndDateTimes_2D.append([]) for i in range(
             index + 1 - len(self.testCasesEndDateTimes_2D))] if index + 1 > len(
                 self.testCasesEndDateTimes_2D) else None
         logger.info('before append index: {}, dt: {},  testCasesEndDateTimes_2D:{}'.format(index, dt, self.testCasesEndDateTimes_2D))
-        self.testCasesEndDateTimes_2D[index].append(dt)
+        self.testCasesEndDateTimes_2D[index].append([tc, dt])
         logger.info('after append index: {}, dt: {},  testCasesEndDateTimes_2D:{}'.format(index, dt, self.testCasesEndDateTimes_2D))
 
     def tearDown(self):
@@ -80,9 +84,10 @@ class TestRun:
         if self.apiInstance:
             self.apiInstance.tearDown()
 
-        if self.browserProxyAndServer:
-            network_info = self.browserProxyAndServer[0].har
-            self.browserProxyAndServer[1].stop()
+        if self.browserServer:
+            logger.info(f'self.browsersProxies {self.browsersProxies}')
+            network_info = [info.har if info else {} for info in self.browsersProxies.values()]
+            self.browserServer.stop()
             self.kwargs['networkInfo'] = network_info
 
         if self.testCasesEndDateTimes_1D:
@@ -116,7 +121,7 @@ class TestRun:
     def getAllTestRunAttributes(self):
         return self.testRunUtils.getCompleteTestRunAttributes(self.testRunName)
 
-    def getBrowser(self, browserInstance=1, browserName=None, browserAttributes=None):
+    def getBrowser(self, browserInstance=0, browserName=None, browserAttributes=None):
         """
         This method is called whenever a browser instance (existing or new) is needed. If called without
         parameters it will create one instance of Firefox (geckodriver).
@@ -133,11 +138,13 @@ class TestRun:
         if browserInstance not in self.browser.keys():
             logger.info(f"opening new instance {browserInstance} of browser {browserName}")
             self._getBrowserInstance(browserInstance=browserInstance)
-            browser_proxy = self.browserProxyAndServer[0] if self.browserProxyAndServer else None
+            self.setBrowserProxy(browserInstance=browserInstance)
+            browser_proxy = self.browsersProxies[browserInstance]
             self.browser[browserInstance].createNewBrowser(browserName=browserName,
                                                            desiredCapabilities=browserAttributes,
                                                            browserProxy=browser_proxy,
                                                            browserInstance=browserInstance)
+
             if self.globalSettings.get("TC." + GC.EXECUTION_SLOW):
                 self.browser[browserInstance].slowExecutionToggle()
         else:
@@ -151,15 +158,25 @@ class TestRun:
     def downloadBrowserProxy(self):
         pass
 
-    def getBrowserProxyAndServer(self):
+    def getBrowserServer(self):
         from browsermobproxy import Server
         server = Server(os.getcwd() + GC.BROWSER_PROXY_PATH)
         logger.info("Starting browsermob proxy")
         server.start()
+        return server
+
+    def setBrowserProxy(self, browserInstance):
+
         time.sleep(1)
-        proxy = server.create_proxy()
+
+        proxy = self.browserServer.create_proxy() if self.browserServer else None
+
+        if not proxy:
+            return
+
         time.sleep(1)
-        return proxy, server
+
+        self.browsersProxies[browserInstance] = proxy
 
     def getAPI(self):
         if not self.apiInstance:
