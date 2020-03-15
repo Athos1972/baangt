@@ -394,7 +394,7 @@ class ExportNetWork:
         if self.testCasesEndDateTimes_1D:
             for index, dt_end in enumerate(self.testCasesEndDateTimes_1D):
                 if d_t < dt_end:
-                    return index
+                    return index + 1
         elif self.testCasesEndDateTimes_2D:
             browser_num = re.findall(r"\d+\.?\d*", str(browser_name))[-1] \
                 if re.findall(r"\d+\.?\d*", str(browser_name)) else 0
@@ -405,7 +405,7 @@ class ExportNetWork:
                 logger.info('i: {}, tc: {}, dt_end: {}'.format(i, tcAndDtEnd[0], tcAndDtEnd[1]))
                 if d_t < tcAndDtEnd[1]:
                     logger.info('get into d_t < dt_end')
-                    return tcAndDtEnd[0]
+                    return tcAndDtEnd[0] + 1
         return 'unknown'
 
     def write_content(self):
