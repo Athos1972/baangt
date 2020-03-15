@@ -44,8 +44,10 @@ class TestRun:
         self.testRunUtils = TestRunUtils()
         self._initTestRun()
 
-        self.browserProxyAndServer = self.getBrowserProxyAndServer() \
+        self.browserServer = self.getBrowserServer() \
             if self.globalSettings.get('TC.' + GC.EXECUTION_NETWORK_INFO) == 'True' else None
+        self.browsersProxies = []
+
         self.testCasesEndDateTimes_1D = []  # refer to single execution
         self.testCasesEndDateTimes_2D = [[]]  # refer to parallel execution
         self._loadJSONTestRunDefinitions()
@@ -80,9 +82,10 @@ class TestRun:
         if self.apiInstance:
             self.apiInstance.tearDown()
 
-        if self.browserProxyAndServer:
-            network_info = self.browserProxyAndServer[0].har
-            self.browserProxyAndServer[1].stop()
+        if self.browserServer:
+            print(f'self.browsersProxies {self.browsersProxies}')
+            network_info = [info.har if info else {} for info in self.browsersProxies]
+            self.browserServer.stop()
             self.kwargs['networkInfo'] = network_info
 
         if self.testCasesEndDateTimes_1D:
@@ -133,11 +136,13 @@ class TestRun:
         if browserInstance not in self.browser.keys():
             logger.info(f"opening new instance {browserInstance} of browser {browserName}")
             self._getBrowserInstance(browserInstance=browserInstance)
-            browser_proxy = self.browserProxyAndServer[0] if self.browserProxyAndServer else None
+            self.setBrowserProxy(browserInstance=browserInstance - 1)
+            browser_proxy = self.browsersProxies[browserInstance - 1]
             self.browser[browserInstance].createNewBrowser(browserName=browserName,
                                                            desiredCapabilities=browserAttributes,
                                                            browserProxy=browser_proxy,
                                                            browserInstance=browserInstance)
+
             if self.globalSettings.get("TC." + GC.EXECUTION_SLOW):
                 self.browser[browserInstance].slowExecutionToggle()
         else:
@@ -151,15 +156,24 @@ class TestRun:
     def downloadBrowserProxy(self):
         pass
 
-    def getBrowserProxyAndServer(self):
+    def getBrowserServer(self):
         from browsermobproxy import Server
         server = Server(os.getcwd() + GC.BROWSER_PROXY_PATH)
         logger.info("Starting browsermob proxy")
         server.start()
+        return server
+
+    def setBrowserProxy(self, browserInstance):
+
         time.sleep(1)
-        proxy = server.create_proxy()
+        proxy = self.browserServer.create_proxy()
         time.sleep(1)
-        return proxy, server
+
+        [self.browsersProxies.append(None) for i in range(
+            browserInstance + 1 - len(self.browsersProxies))] if browserInstance + 1 > len(
+                self.browsersProxies) else None
+
+        self.browsersProxies[browserInstance] = proxy
 
     def getAPI(self):
         if not self.apiInstance:

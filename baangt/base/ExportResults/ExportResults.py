@@ -416,24 +416,32 @@ class ExportNetWork:
         if not self.networkInfo:
             return
 
-        for index, entry in enumerate(self.networkInfo['log']['entries']):
-            browser_name = entry['pageref']
-            status = entry['response']['status']
-            method = entry['request']['method']
-            url = entry['request']['url']
-            content_type = entry['response']['content']['mimeType']
-            content_size = entry['response']['content']['size']
-            headers = entry['response']['headers']
-            params = entry['request']['queryString']
-            response = entry['response']['content']['text'] if 'text' in entry['response']['content'] else ''
-            start_date_time = entry['startedDateTime']
-            duration = entry['time']
-            test_case_num = self._get_test_case_num(start_date_time, browser_name)
+        for info in self.networkInfo:
 
-            data_list = [browser_name, test_case_num, status, method, url, content_type, content_size,
-                         headers, params, response, start_date_time, duration]
+            partition_index = 0
 
-            [self.sheet.write(index + 1, i, str(data_list[i]) or 'null') for i in range(len(data_list))]
+            for index, entry in enumerate(info['log']['entries']):
+                browser_name = entry['pageref']
+                status = entry['response']['status']
+                method = entry['request']['method']
+                url = entry['request']['url']
+                content_type = entry['response']['content']['mimeType']
+                content_size = entry['response']['content']['size']
+                headers = entry['response']['headers']
+                params = entry['request']['queryString']
+                response = entry['response']['content']['text'] if 'text' in entry['response']['content'] else ''
+                start_date_time = entry['startedDateTime']
+                duration = entry['time']
+                test_case_num = self._get_test_case_num(start_date_time, browser_name)
+
+                data_list = [browser_name, test_case_num, status, method, url, content_type, content_size,
+                             headers, params, response, start_date_time, duration]
+
+                [self.sheet.write(index + partition_index + 1, i, str(data_list[i]) or 'null')
+                 for i in range(len(data_list))]
+
+            partition_index += len(info['log']['entries'])
+
 
 
 class ExportTiming:
