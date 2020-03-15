@@ -42,7 +42,7 @@ What is a test Canon? They are basically the same concept as a canon in music
     From Wikipedia_:
 
     In music, a canon is a contrapuntal (counterpoint-based) compositional technique that employs a melody with **one or**
-    **more imitations** of the melody played after a given duration (e.g., quarter rest, one measure, etc.). from Wikipedia_
+    **more imitations** of the melody played after a given duration (e.g., quarter rest, one measure, etc.).
 
 .. _Wikipedia: https://en.wikipedia.org/wiki/Canon_(music)
 .. _Youtube: https://www.youtube.com/watch?v=S9MN2WeqFY8
