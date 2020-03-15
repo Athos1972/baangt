@@ -106,9 +106,11 @@ class TestCaseSequenceMaster:
                 if processExecutions.get(x):
                     # Queue should be filled by now - take entries into Testrun-instance:
                     while not resultQueue.empty():
-                        resultDict = resultQueue.get()
-                        for recordNumber, dataRecordAfterExecution in resultDict.items():
+                        resultDictList = resultQueue.get()
+                        for recordNumber, dataRecordAfterExecution in resultDictList[0].items():
                             self.testRunInstance.setResult(recordNumber, dataRecordAfterExecution)
+                        for sequenceNumber, endDateTime in resultDictList[1].items():
+                            self.testRunInstance.append2DTestCaseEndDateTimes(sequenceNumber, endDateTime)
                     # Quit the running parallel process:
                     logger.info(f"Stopping parallel instance {x}")
                     processExecutions[x].join()
