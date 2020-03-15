@@ -28,7 +28,7 @@ class TestRun:
         @param testRunName: The name of the TestRun to be executed.
         @param globalSettingsFileNameAndPath: from where to read the <globals>.json
         """
-
+        logger.info('init Testrun, id is {}'.format(id(self)))
         self.browser = {}
         self.apiInstance = None
         self.testType = None
@@ -208,6 +208,7 @@ class TestRun:
             kwargs[GC.KWARGS_TESTRUNATTRIBUTES] = self.getAllTestRunAttributes()
         if not kwargs.get(GC.KWARGS_TESTRUNINSTANCE):
             kwargs[GC.KWARGS_TESTRUNINSTANCE] = self
+            logger.info('get into not kwargs.getGC.KWARGS_TESTRUNINSTANCE, id is {}'.format(id(self)))
         if not kwargs.get(GC.KWARGS_TIMING):
             kwargs[GC.KWARGS_TIMING] = self.timing
         for key, value in dictSequenceOfClasses.items():
