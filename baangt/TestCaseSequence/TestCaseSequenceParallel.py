@@ -43,5 +43,5 @@ class TestCaseSequenceParallel:
             logger.debug(
                 f"Starting to Put value in Queue {currentRecordNumber}. Len of datarecord: {len(str(dataRecord))}")
             d_t = datetime.fromtimestamp(time.time())
-            resultQueue.put([{self.tcNumber: dataRecord}, {self.sequenceNumber: d_t}])
+            resultQueue.put([{self.tcNumber: dataRecord}, {self.sequenceNumber:  [self.tcNumber, d_t]}])
             logger.debug(f"Finished putting Value i Queue for TC {currentRecordNumber}")

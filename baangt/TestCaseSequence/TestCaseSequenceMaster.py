@@ -109,8 +109,9 @@ class TestCaseSequenceMaster:
                         resultDictList = resultQueue.get()
                         for recordNumber, dataRecordAfterExecution in resultDictList[0].items():
                             self.testRunInstance.setResult(recordNumber, dataRecordAfterExecution)
-                        for sequenceNumber, endDateTime in resultDictList[1].items():
-                            self.testRunInstance.append2DTestCaseEndDateTimes(sequenceNumber, endDateTime)
+                        for sequenceNumber, tcNumberAndTestEnd in resultDictList[1].items():
+                            self.testRunInstance.append2DTestCaseEndDateTimes(sequenceNumber, tcNumberAndTestEnd)
+
                     # Quit the running parallel process:
                     logger.info(f"Stopping parallel instance {x}")
                     processExecutions[x].join()

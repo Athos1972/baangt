@@ -58,12 +58,14 @@ class TestRun:
     def append1DTestCaseEndDateTimes(self, dt):
         self.testCasesEndDateTimes_1D.append(dt)
 
-    def append2DTestCaseEndDateTimes(self, index, dt):
+    def append2DTestCaseEndDateTimes(self, index, tcAndDt):
+        tc = tcAndDt[0]
+        dt = tcAndDt[1]
         [self.testCasesEndDateTimes_2D.append([]) for i in range(
             index + 1 - len(self.testCasesEndDateTimes_2D))] if index + 1 > len(
                 self.testCasesEndDateTimes_2D) else None
         logger.info('before append index: {}, dt: {},  testCasesEndDateTimes_2D:{}'.format(index, dt, self.testCasesEndDateTimes_2D))
-        self.testCasesEndDateTimes_2D[index].append(dt)
+        self.testCasesEndDateTimes_2D[index].append([tc, dt])
         logger.info('after append index: {}, dt: {},  testCasesEndDateTimes_2D:{}'.format(index, dt, self.testCasesEndDateTimes_2D))
 
     def tearDown(self):

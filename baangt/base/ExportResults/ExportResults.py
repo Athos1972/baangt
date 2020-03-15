@@ -392,24 +392,17 @@ class ExportNetWork:
             for index, dt_end in enumerate(self.testCasesEndDateTimes_1D):
                 if d_t < dt_end:
                     return index
-                elif dt_end < d_t < self.testCasesEndDateTimes_1D[index + 1] \
-                        if index + 1 < len(self.testCasesEndDateTimes_1D) else dt_end < d_t:
-                    return index + 1
         elif self.testCasesEndDateTimes_2D:
             browser_num = re.findall(r"\d+\.?\d*", str(browser_name))[-1] \
                 if re.findall(r"\d+\.?\d*", str(browser_name)) else 0
             logger.info('get browser_num: {}'.format(browser_num))
             dt_list_index = int(browser_num) if int(browser_num) > 0 else 0
             logger.info('get dt_list_index: {}'.format(dt_list_index))
-            for i, dt_end in enumerate(self.testCasesEndDateTimes_2D[dt_list_index]):
-                logger.info('i: {}, dt_end: {}'.format(i, dt_end))
-                if d_t < dt_end:
+            for i, tcAndDtEnd in enumerate(self.testCasesEndDateTimes_2D[dt_list_index]):
+                logger.info('i: {}, tc: {}, dt_end: {}'.format(i, tcAndDtEnd[0], tcAndDtEnd[1]))
+                if d_t < tcAndDtEnd[1]:
                     logger.info('get into d_t < dt_end')
-                    return i
-                elif dt_end < d_t < self.testCasesEndDateTimes_2D[dt_list_index][i + 1] \
-                        if i + 1 < len(self.testCasesEndDateTimes_2D[dt_list_index]) else dt_end < d_t:
-                    logger.info('get into else')
-                    return i + 1
+                    return tcAndDtEnd[0]
         return 'unknown'
 
     def write_content(self):
