@@ -13,3 +13,4 @@ This section contains articles, that are not exactly documentation. Some are mor
     Stop testing! </articles/StopTesting.rst>
     bAanGtILE </articles/AgileWorkflowIntegration.rst>
     BugSoup </articles/BugSoup.rst>
+    Canons, that are not DSLR nor music </articles/AsynchronousAndCanonTests.rst>
