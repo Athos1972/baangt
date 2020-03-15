@@ -46,7 +46,7 @@ class TestRun:
 
         self.browserServer = self.getBrowserServer() \
             if self.globalSettings.get('TC.' + GC.EXECUTION_NETWORK_INFO) == 'True' else None
-        self.browsersProxies = []
+        self.browsersProxies = {}
 
         self.testCasesEndDateTimes_1D = []  # refer to single execution
         self.testCasesEndDateTimes_2D = [[]]  # refer to parallel execution
@@ -84,7 +84,7 @@ class TestRun:
 
         if self.browserServer:
             print(f'self.browsersProxies {self.browsersProxies}')
-            network_info = [info.har if info else {} for info in self.browsersProxies]
+            network_info = [info.har if info else {} for info in self.browsersProxies.values()]
             self.browserServer.stop()
             self.kwargs['networkInfo'] = network_info
 
@@ -166,12 +166,13 @@ class TestRun:
     def setBrowserProxy(self, browserInstance):
 
         time.sleep(1)
-        proxy = self.browserServer.create_proxy()
-        time.sleep(1)
 
-        [self.browsersProxies.append(None) for i in range(
-            browserInstance + 1 - len(self.browsersProxies))] if browserInstance + 1 > len(
-                self.browsersProxies) else None
+        proxy = self.browserServer.create_proxy() if self.browserServer else None
+
+        if not proxy:
+            return
+
+        time.sleep(1)
 
         self.browsersProxies[browserInstance] = proxy
 
