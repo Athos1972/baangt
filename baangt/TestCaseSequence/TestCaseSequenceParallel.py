@@ -38,7 +38,8 @@ class TestCaseSequenceParallel:
             self.kwargs[GC.KWARGS_TESTRUNINSTANCE].append2DTestCaseEndDateTimes(self.sequenceNumber,
                                                                                 d_t)
 
-            logger.info("execute append2DTestCaseEndDateTimes, params are {}, {}".format(self.sequenceNumber, d_t))
+            logger.info("execute append2DTestCaseEndDateTimes, testrun id is {} , params are {}, {}".
+                        format(id(self.kwargs[GC.KWARGS_TESTRUNINSTANCE]), self.sequenceNumber, d_t))
 
         except Exceptions.baangtTestStepException as e:
             logger.critical(f"Unhandled Error happened in parallel run {parallelizationSequenceNumber}: " + str(e))

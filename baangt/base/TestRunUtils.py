@@ -11,6 +11,7 @@ class TestRunUtils():
         self.testRunAttributes[testRunName] = testRunAttributes
 
     def getCompleteTestRunAttributes(self, testRunName):
+        logger.info('get into getCompleteTestRunAttributes, testRunName is {}'.format(testRunName))
         return self.testRunAttributes[testRunName][GC.KWARGS_TESTRUNATTRIBUTES]
 
     def getSequenceByNumber(self, sequence, testRunName):
