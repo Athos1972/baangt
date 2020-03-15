@@ -416,10 +416,11 @@ class ExportNetWork:
         if not self.networkInfo:
             return
 
+        logger.info(f'networkInfo length: {len(networkInfo)}')
+
+        partition_index = 0
+
         for info in self.networkInfo:
-
-            partition_index = 0
-
             for index, entry in enumerate(info['log']['entries']):
                 browser_name = entry['pageref']
                 status = entry['response']['status']

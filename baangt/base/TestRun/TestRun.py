@@ -83,7 +83,7 @@ class TestRun:
             self.apiInstance.tearDown()
 
         if self.browserServer:
-            print(f'self.browsersProxies {self.browsersProxies}')
+            logger.info(f'self.browsersProxies {self.browsersProxies}')
             network_info = [info.har if info else {} for info in self.browsersProxies.values()]
             self.browserServer.stop()
             self.kwargs['networkInfo'] = network_info
