@@ -103,7 +103,6 @@ class BrowserDriver:
                                                                                             desiredCapabilities=desiredCapabilities),
                                                         executable_path=self.__findBrowserDriverPaths(GeckoExecutable),
                                                         firefox_profile=profile)
-                logger.info('create a new firefox: {}'.format(browserInstance))
                 browserProxy.new_har("baangt-firefox-{}".format(browserInstance),
                                      options={'captureHeaders': True, 'captureContent': True}) \
                     if firefox_proxy else None

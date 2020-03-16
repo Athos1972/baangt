@@ -64,9 +64,7 @@ class TestRun:
         [self.testCasesEndDateTimes_2D.append([]) for i in range(
             index + 1 - len(self.testCasesEndDateTimes_2D))] if index + 1 > len(
                 self.testCasesEndDateTimes_2D) else None
-        logger.info('before append index: {}, dt: {},  testCasesEndDateTimes_2D:{}'.format(index, dt, self.testCasesEndDateTimes_2D))
         self.testCasesEndDateTimes_2D[index].append([tc, dt])
-        logger.info('after append index: {}, dt: {},  testCasesEndDateTimes_2D:{}'.format(index, dt, self.testCasesEndDateTimes_2D))
 
     def tearDown(self):
         """
@@ -85,7 +83,6 @@ class TestRun:
             self.apiInstance.tearDown()
 
         if self.browserServer:
-            logger.info(f'self.browsersProxies {self.browsersProxies}')
             network_info = [info.har if info else {} for info in self.browsersProxies.values()]
             self.browserServer.stop()
             self.kwargs['networkInfo'] = network_info
@@ -93,10 +90,8 @@ class TestRun:
         if self.testCasesEndDateTimes_1D:
             self.kwargs['testCasesEndDateTimes_1D'] = self.testCasesEndDateTimes_1D
 
-        logger.info('before prepared testCasesEndDateTimes_2D: {}'.format(self.testCasesEndDateTimes_2D))
         if self.testCasesEndDateTimes_2D and self.testCasesEndDateTimes_2D[0]:
             self.kwargs['testCasesEndDateTimes_2D'] = self.testCasesEndDateTimes_2D
-        logger.info('after prepared testCasesEndDateTimes_2D: {}'.format(self.testCasesEndDateTimes_2D))
         ExportResults(**self.kwargs)
         successful, error = self.getSuccessAndError()
         logger.info(f"Finished execution of Testrun {self.testRunName}. "
