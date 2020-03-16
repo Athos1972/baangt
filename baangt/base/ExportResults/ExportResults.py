@@ -28,8 +28,6 @@ class ExportResults:
         self.testRunInstance = kwargs.get(GC.KWARGS_TESTRUNINSTANCE)
         self.networkInfo = kwargs.get('networkInfo')
         self.testCasesEndDateTimes_1D = kwargs.get('testCasesEndDateTimes_1D')
-
-        logger.info('init ExportResults, testCasesEndDateTimes_2D: {}'.format(kwargs.get('testCasesEndDateTimes_2D')))
         self.testCasesEndDateTimes_2D = kwargs.get('testCasesEndDateTimes_2D')
         self.testRunName = self.testRunInstance.testRunName
         self.dataRecords = self.testRunInstance.dataRecords
@@ -344,7 +342,6 @@ class ExportNetWork:
 
         self.networkInfo = networkInfo
         self.testCasesEndDateTimes_1D = testCasesEndDateTimes_1D
-        logger.info('init ExportNetWork, testCasesEndDateTimes_2D: {}'.format(testCasesEndDateTimes_2D))
         self.testCasesEndDateTimes_2D = testCasesEndDateTimes_2D
         self.workbook = workbook
         self.sheet = sheet
@@ -389,8 +386,6 @@ class ExportNetWork:
     def _get_test_case_num(self, start_date_time, browser_name):
         d_t = parse(start_date_time)
         d_t = d_t.replace(tzinfo=None)
-        logger.info('get in to _get_test_case_num, testCasesEndDateTimes_1D: {}, testCasesEndDateTimes_2D: {}'
-              .format(self.testCasesEndDateTimes_1D, self.testCasesEndDateTimes_2D))
         if self.testCasesEndDateTimes_1D:
             for index, dt_end in enumerate(self.testCasesEndDateTimes_1D):
                 if d_t < dt_end:
@@ -398,13 +393,9 @@ class ExportNetWork:
         elif self.testCasesEndDateTimes_2D:
             browser_num = re.findall(r"\d+\.?\d*", str(browser_name))[-1] \
                 if re.findall(r"\d+\.?\d*", str(browser_name)) else 0
-            logger.info('get browser_num: {}'.format(browser_num))
             dt_list_index = int(browser_num) if int(browser_num) > 0 else 0
-            logger.info('get dt_list_index: {}'.format(dt_list_index))
             for i, tcAndDtEnd in enumerate(self.testCasesEndDateTimes_2D[dt_list_index]):
-                logger.info('i: {}, tc: {}, dt_end: {}'.format(i, tcAndDtEnd[0], tcAndDtEnd[1]))
                 if d_t < tcAndDtEnd[1]:
-                    logger.info('get into d_t < dt_end')
                     return tcAndDtEnd[0] + 1
         return 'unknown'
 
@@ -412,7 +403,6 @@ class ExportNetWork:
         if not self.networkInfo:
             return
 
-        logger.info(f'networkInfo length: {len(self.networkInfo)}')
 
         partition_index = 0
 
