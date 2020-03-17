@@ -134,7 +134,8 @@ class TestRun:
             logger.info(f"opening new instance {browserInstance} of browser {browserName}")
             self._getBrowserInstance(browserInstance=browserInstance)
             self.setBrowserProxy(browserInstance=browserInstance)
-            browser_proxy = self.browsersProxies[browserInstance]
+            if self.browsersProxies:
+                browser_proxy = self.browsersProxies[browserInstance]
             self.browser[browserInstance].createNewBrowser(browserName=browserName,
                                                            desiredCapabilities=browserAttributes,
                                                            browserProxy=browser_proxy,
