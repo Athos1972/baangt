@@ -136,6 +136,8 @@ class TestRun:
             self.setBrowserProxy(browserInstance=browserInstance)
             if self.browsersProxies:
                 browser_proxy = self.browsersProxies[browserInstance]
+            else:
+                browser_proxy = None
             self.browser[browserInstance].createNewBrowser(browserName=browserName,
                                                            desiredCapabilities=browserAttributes,
                                                            browserProxy=browser_proxy,
