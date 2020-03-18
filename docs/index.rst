@@ -32,6 +32,7 @@ and well documented master functionality.
       Contributions <contributors.rst>
       Changelog <changelog.rst>
       Planned Features <PlannedFeatures.rst>
+      Browser Drivers <BrowserDrivers.rst>
    :subheader: Articles </articles/Articles.rst>
       Web <http://www.baangt.org>
 
