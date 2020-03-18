@@ -13,7 +13,6 @@ class IBAN:
         """
         self.bankLeitZahl = bankLeitZahl
         self.bankLand = bankLand
-
         pass
 
     def getRandomIBAN(self):

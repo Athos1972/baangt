@@ -26,8 +26,8 @@ class TestCaseMaster:
             else:
                 self.browserType = self.testCaseSettings[1][GC.KWARGS_BROWSER]
                 self.browserSettings = self.testCaseSettings[1][GC.BROWSER_ATTRIBUTES]
-                self.browser = self.testRunInstance.getBrowser(browserName=self.browserType,
-                                                               browserAttributes=self.browserSettings)
+                self.mobileType = self.testCaseSettings[1][GC.KWARGS_MOBILE]
+                self.browser = self.testRunInstance.getBrowser(browserName=self.browserType, browserAttributes=self.browserSettings, mobileType=self.mobileType)
                 self.kwargs[GC.KWARGS_BROWSER] = self.browser
         elif self.testCaseType == GC.KWARGS_API_SESSION:
             # FIXME: For now we're using session_number always = 1. We need to be able to run e.g. 10 sessions with

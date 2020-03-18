@@ -116,7 +116,7 @@ class TestRun:
     def getAllTestRunAttributes(self):
         return self.testRunUtils.getCompleteTestRunAttributes(self.testRunName)
 
-    def getBrowser(self, browserInstance=1, browserName=None, browserAttributes=None):
+    def getBrowser(self, browserInstance=1, browserName=None, browserAttributes=None, mobileType=None):
         """
         This method is called whenever a browser instance (existing or new) is needed. If called without
         parameters it will create one instance of Firefox (geckodriver).
@@ -130,19 +130,33 @@ class TestRun:
         @return: the browser instance of base class BrowserDriver
 
         """
-        if browserInstance not in self.browser.keys():
-            logger.info(f"opening new instance {browserInstance} of browser {browserName}")
+        if mobileType == 'True' :
+            logger.info(f"opening new Appium instance {browserInstance} of Appium browser {browserName}")
             self._getBrowserInstance(browserInstance=browserInstance)
             browser_proxy = self.browserProxyAndServer[0] if self.browserProxyAndServer else None
-            self.browser[browserInstance].createNewBrowser(browserName=browserName,
+            self.browser[browserInstance].createNewBrowser(mobileType=mobileType,
+                                                           browserName=browserName,
                                                            desiredCapabilities=browserAttributes,
                                                            browserProxy=browser_proxy,
                                                            browserInstance=browserInstance)
             if self.globalSettings.get("TC." + GC.EXECUTION_SLOW):
                 self.browser[browserInstance].slowExecutionToggle()
+            return self.browser[browserInstance]
         else:
-            logger.debug(f"Using existing instance of browser {browserInstance}")
-        return self.browser[browserInstance]
+            if browserInstance not in self.browser.keys():
+                logger.info(f"opening new instance {browserInstance} of browser {browserName}")
+                self._getBrowserInstance(browserInstance=browserInstance)
+                browser_proxy = self.browserProxyAndServer[0] if self.browserProxyAndServer else None
+                self.browser[browserInstance].createNewBrowser(mobileType=mobileType,
+                                                               browserName=browserName,
+                                                               desiredCapabilities=browserAttributes,
+                                                               browserProxy=browser_proxy,
+                                                               browserInstance=browserInstance)
+                if self.globalSettings.get("TC." + GC.EXECUTION_SLOW):
+                    self.browser[browserInstance].slowExecutionToggle()
+            else:
+                logger.debug(f"Using existing instance of browser {browserInstance}")
+            return self.browser[browserInstance]
 
     def _getBrowserInstance(self, browserInstance):
         self.browser[browserInstance] = BrowserDriver(timing=self.timing,
@@ -233,6 +247,7 @@ class TestRun:
             l_class(**kwargs)  # Executes the class __init__
         self.kwargs = kwargs
 
+
     def _initTestRun(self):
         self.loadJSONGlobals()
         if not self.globalSettings.get(GC.PATH_SCREENSHOTS,None):
@@ -265,7 +280,7 @@ class TestRun:
         if ".XLSX" in self.testRunFileName.upper():
             logger.info(f"Reading Definition from {self.testRunFileName}")
             lExcelImport = TestRunExcelImporter(FileNameAndPath=self.testRunFileName, testRunUtils=self.testRunUtils)
-            lExcelImport.importConfig()
+            lExcelImport.importConfig(self.globalSettings)
 
     @staticmethod
     def __dynamicImportClasses(fullQualifiedImportName):
