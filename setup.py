@@ -14,7 +14,7 @@ if __name__ == '__main__':
         long_description_content_type="text/markdown",
         url="https://baangt.org",
         packages=setuptools.find_packages(),
-        data_files=[('baangt', ["baangt/ressources/baangtLogo.png"])],
+        data_files=[('baangt', ["baangt/ressources/baangtLogo.png", "baangt/ressources/baangtLogo2020Small.png"])],
         package_data={"baangt.ressources": ['*.png',]},
         install_requires=["pandas", "numpy", "pySimpleGui", "beautifulsoup4", "schwifty","pytest","requests","xlsxwriter","sqlalchemy","xlrd","selenium","pyperclip"],
         classifiers=[
