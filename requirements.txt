@@ -1,4 +1,5 @@
 pytest
+pydispatch
 alabaster==0.7.12
 Babel==2.8.0
 beautifulsoup4==4.8.2
