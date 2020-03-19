@@ -25,19 +25,20 @@ Polling vs. Events
 
 **Polling** means to have your currently active test case poll repeatedly for an event in a more or less fixed timely
 interval. That's nice for smaller waiting periods and smaller installations. When you run with 500 parallel sessions and
-you query a service every 500 ms for a specific answer you could create unrealistic load to that service. You're also
-consuming resources of your test environment, which are then not available for other tasks. For ``baangt`` we recommend
+you query a service every 500 ms for a specific answer you may create a unrealistic load to that service. You also
+consume resources of your test environment, which are then not available for other tasks. For ``baangt`` we recommend
 to use polling for expected short waiting times (several seconds up to minutes) - but that's not a hard rule. YMMV.
 
 **Events** (aka Callbacks) are the opposite. Your test case pauses and doesn't do anything until an external trigger
 appears. Of course callbacks are more difficult to implement as you not only need to query a service repeatedly, but first
-implement a callback service as well as the call to the callback service (even when it's done via Kafka or Redis). It's
-another component, that needs to be written, tested and maintained.
+implement a callback service as well as the call to the callback service (even when it's done via Kafka or Redis).
+
+It's another component, that needs to be written, tested and maintained.
 
 Deep dive on test Canons
 ------------------------
 
-What is a test Canon? They are basically the same concept as a canon in music
+What is a test Canon? It is basically the same concept as a canon in music
 
     From Wikipedia_:
 
@@ -64,7 +65,7 @@ Imagine the following (simplified) test case sequence (in combination with a mai
 #. Create outgoing payment. Validate: Open item closed
 
 In this example there are 4 batch processes, that we need to wait for before we can tell, whether the whole E2E-Scenario
-works. Without any measures this means to wait for 5 days until we have a test result. Real use cases are not that simple and would
+works or not. Without any measures this means to wait for 5 days until we have a test result. Real use cases are not that simple and would
 take longer. Back in the days when there was a month of User acceptance test (UAT) this was fine. Now with always shorter
 release cycles you can't survive without new approaches.
 
