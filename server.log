@@ -4,11 +4,10 @@ WARNING: Illegal reflective access by com.google.inject.internal.cglib.core.$Ref
 WARNING: Please consider reporting this to the maintainers of com.google.inject.internal.cglib.core.$ReflectUtils$2
 WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
 WARNING: All illegal access operations will be denied in a future release
-[INFO  2020-03-21T00:10:38,351 net.lightbody.bmp.proxy.Main] (main) Starting BrowserMob Proxy version 2.1.4 
-[INFO  2020-03-21T00:10:38,378 org.eclipse.jetty.util.log] (main) jetty-7.x.y-SNAPSHOT 
-[INFO  2020-03-21T00:10:38,514 org.eclipse.jetty.util.log] (main) started o.e.j.s.ServletContextHandler{/,null} 
-[INFO  2020-03-21T00:10:38,577 org.eclipse.jetty.util.log] (main) Started SelectChannelConnector@0.0.0.0:8080 
-[INFO  2020-03-21T00:10:40,404 org.littleshoot.proxy.impl.DefaultHttpProxyServer] (qtp896134613-21) Starting proxy at address: 0.0.0.0/0.0.0.0:8081 
-[INFO  2020-03-21T00:10:40,426 org.littleshoot.proxy.impl.DefaultHttpProxyServer] (qtp896134613-21) Proxy listening with TCP transport 
-[INFO  2020-03-21T00:10:40,671 org.littleshoot.proxy.impl.DefaultHttpProxyServer] (qtp896134613-21) Proxy started at address: /0:0:0:0:0:0:0:0:8081 
-^C
+[INFO  2020-03-21T00:16:49,006 net.lightbody.bmp.proxy.Main] (main) Starting BrowserMob Proxy version 2.1.4 
+[INFO  2020-03-21T00:16:49,033 org.eclipse.jetty.util.log] (main) jetty-7.x.y-SNAPSHOT 
+[INFO  2020-03-21T00:16:49,170 org.eclipse.jetty.util.log] (main) started o.e.j.s.ServletContextHandler{/,null} 
+[INFO  2020-03-21T00:16:49,243 org.eclipse.jetty.util.log] (main) Started SelectChannelConnector@0.0.0.0:8080 
+[INFO  2020-03-21T00:16:50,995 org.littleshoot.proxy.impl.DefaultHttpProxyServer] (qtp896134613-20) Starting proxy at address: 0.0.0.0/0.0.0.0:8081 
+[INFO  2020-03-21T00:16:51,016 org.littleshoot.proxy.impl.DefaultHttpProxyServer] (qtp896134613-20) Proxy listening with TCP transport 
+[INFO  2020-03-21T00:16:51,258 org.littleshoot.proxy.impl.DefaultHttpProxyServer] (qtp896134613-20) Proxy started at address: /0:0:0:0:0:0:0:0:8081 

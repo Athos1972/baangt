@@ -148,9 +148,6 @@ class BrowserDriver:
                 if mobileType == 'True':
                     if not (os.path.isfile(str(lCurPath))):
                         self.downloadDriver(browserName)
-                    print('--------asfsdfasdf------------')
-                    print(desired_app)
-                    print('------------asdfsadfsadf------')
                     if desired_app[GC.KWARGS_PLATFORM_NAME] == "Android":
                         desired_cap = desired_app
                         # desired_cap['app'] = '/Users/admin/Downloads/calculator.apk'
@@ -752,7 +749,6 @@ class BrowserDriver:
             raise Exceptions.baangtTestStepException(f"Action not possible after {timeout} s, Locator: {self.locatorType}: {self.locator}")
 
     def goToUrl(self, url):
-        print('---------------I am here2------------------')
         self._log(logging.INFO, f'GoToUrl:{url}')
         try:
             self.driver.get(url)

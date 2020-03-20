@@ -1,0 +1,17 @@
+{
+    "exportFilesBasePath": "",
+    "TC.Lines": "",
+    "TC.slowExecution": "True",
+    "TC.NetworkInfo": "True",
+    "TC.dontCloseBrowser": "True",
+    "TC.Browser": "CHROME",
+    "TC.Mobile": "True",
+    "TC.MobileApp": "True",
+    "TC.platformName": "Android",
+    "TC.deviceName": "emulator-5554",
+    "TC.platformVersion": "9",
+    "RootPath": "F:/Real_Task/baangt-master/baangt/examples",
+    "ScreenshotPath": "F:\\Real_Task\\baangt-master\\baangt\\examples\\Screenshots",
+    "ExportPath": "F:\\Real_Task\\baangt-master\\baangt\\examples\\1testoutput",
+    "ImportPath": "F:\\Real_Task\\baangt-master\\baangt\\examples\\0testdateninput"
+}
