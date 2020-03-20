@@ -77,7 +77,6 @@ class TestStepMaster:
             if not TestStepMaster.ifQualifyForExecution(self.globalRelease, lRelease):
                 logger.debug(f"we skipped this line due to {lRelease} disqualifies according to {self.globalRelease} ")
                 continue  # We ignored the steps as it doesn't qualify
-
             if lActivity == "GOTOURL":
                 self.browserSession.goToUrl(lValue)
             elif lActivity == "SETTEXT":

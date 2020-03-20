@@ -116,7 +116,7 @@ class TestRun:
     def getAllTestRunAttributes(self):
         return self.testRunUtils.getCompleteTestRunAttributes(self.testRunName)
 
-    def getBrowser(self, browserInstance=1, browserName=None, browserAttributes=None, mobileType=None, mobileApp=None, desired_app=None):
+    def getBrowser(self, browserInstance=1, browserName=None, browserAttributes=None, mobileType=None, mobileApp=None, desired_app=None ,mobile_app_setting=None):
         """
         This method is called whenever a browser instance (existing or new) is needed. If called without
         parameters it will create one instance of Firefox (geckodriver).
@@ -137,6 +137,7 @@ class TestRun:
             self.browser[browserInstance].createNewBrowser(mobileType=mobileType,
                                                            mobileApp=mobileApp,
                                                            desired_app=desired_app,
+                                                           mobile_app_setting = mobile_app_setting,
                                                            browserName=browserName,
                                                            desiredCapabilities=browserAttributes,
                                                            browserProxy=browser_proxy,
@@ -152,6 +153,7 @@ class TestRun:
                 self.browser[browserInstance].createNewBrowser(mobileType=mobileType,
                                                                mobileApp=mobileApp,
                                                                desired_app=desired_app,
+                                                               mobile_app_setting = mobile_app_setting,
                                                                browserName=browserName,
                                                                desiredCapabilities=browserAttributes,
                                                                browserProxy=browser_proxy,

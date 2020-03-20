@@ -115,7 +115,11 @@ class TestRunExcelImporter:
                                          GC.KWARGS_MOBILE_APP: "",
                                          GC.KWARGS_PLATFORM_NAME: "",
                                          GC.KWARGS_DEVICE_NAME: "",
-                                         GC.KWARGS_PLATFORM_VERSION: ""}}
+                                         GC.KWARGS_PLATFORM_VERSION: "",
+                                         GC.KWARGS_APP_URL: "",
+                                         GC.KWARGS_APP_PACKAGE : "",
+                                         GC.KWARGS_APP_ACTIVITY : ""}}
+
                 else:
                     lTestCaseDict = {1: {"TestCaseSequenceNumber": 1,
                                      "TestCaseNumber": 1,
@@ -135,7 +139,10 @@ class TestRunExcelImporter:
                  GC.KWARGS_MOBILE_APP: testCase.get('MobileApp'),
                  GC.KWARGS_PLATFORM_NAME: testCase.get('PlatformName'),
                  GC.KWARGS_DEVICE_NAME: testCase.get('DeviceName'),
-                 GC.KWARGS_PLATFORM_VERSION: testCase.get('PlatformVersion')
+                 GC.KWARGS_PLATFORM_VERSION: testCase.get('PlatformVersion'),
+                 GC.KWARGS_APP_URL: testCase.get('app'),
+                 GC.KWARGS_APP_PACKAGE: testCase.get('appPackage'),
+                 GC.KWARGS_APP_ACTIVITY: testCase.get('appActivity')
                  })
 
         xlsTab = self._getTab("TestStep")
