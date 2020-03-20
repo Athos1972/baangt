@@ -99,6 +99,7 @@ class BrowserDriver:
 
             if browserName == GC.BROWSER_FIREFOX:
                 lCurPath = lCurPath.joinpath(GeckoExecutable)
+
                 if mobileType == 'True':
                     if not (os.path.isfile(str(lCurPath))):
                         self.downloadDriver(browserName)
@@ -130,6 +131,23 @@ class BrowserDriver:
                     browserProxy.new_har("baangt-firefox-{}".format(browserInstance),
                                          options={'captureHeaders': True, 'captureContent': True}) \
                         if firefox_proxy else None
+
+                if not(os.path.isfile(str(lCurPath))):
+                    self.downloadDriver(browserName)
+
+                profile = None
+                firefox_proxy = browserProxy.selenium_proxy() if browserProxy else None
+                if firefox_proxy:
+                    profile = webdriver.FirefoxProfile()
+                    profile.set_proxy(firefox_proxy)
+                self.driver = browserNames[browserName](options=self.__createBrowserOptions(browserName=browserName,
+                                                                                            desiredCapabilities=desiredCapabilities),
+                                                        executable_path=self.__findBrowserDriverPaths(GeckoExecutable),
+                                                        firefox_profile=profile)
+                browserProxy.new_har("baangt-firefox-{}".format(browserInstance),
+                                     options={'captureHeaders': True, 'captureContent': True}) \
+                    if firefox_proxy else None
+
             elif browserName == GC.BROWSER_CHROME:
                 lCurPath = lCurPath.joinpath(ChromeExecutable)
                 if mobileType == 'True':

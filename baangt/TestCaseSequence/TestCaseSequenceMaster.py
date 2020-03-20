@@ -23,7 +23,6 @@ class TestCaseSequenceMaster:
         self.testRunInstance = kwargs.get(GC.KWARGS_TESTRUNINSTANCE)
         self.testRunName = self.testRunInstance.testRunName
         self.dataRecords = {}
-        self.recordCounter = 0
         # Extract relevant data for this TestSequence:
         self.testSequenceData = self.testrunAttributes[GC.STRUCTURE_TESTCASESEQUENCE].get(
             kwargs.get(GC.STRUCTURE_TESTCASESEQUENCE))[1]
@@ -44,7 +43,7 @@ class TestCaseSequenceMaster:
             self.testSequenceData.pop(GC.DATABASE_TO_LINE)
         self.__getDatabase()
         recordPointer = 0
-        # Read all Testrecords into l_testRecords:
+        # Read all Testrecords into self.dataRecords:
         while True:
             self.dataRecords[recordPointer] = self.getNextRecord()
             if not self.dataRecords[recordPointer]:
@@ -106,9 +105,12 @@ class TestCaseSequenceMaster:
                 if processExecutions.get(x):
                     # Queue should be filled by now - take entries into Testrun-instance:
                     while not resultQueue.empty():
-                        resultDict = resultQueue.get()
-                        for recordNumber, dataRecordAfterExecution in resultDict.items():
+                        resultDictList = resultQueue.get()
+                        for recordNumber, dataRecordAfterExecution in resultDictList[0].items():
                             self.testRunInstance.setResult(recordNumber, dataRecordAfterExecution)
+                        for sequenceNumber, tcNumberAndTestEnd in resultDictList[1].items():
+                            self.testRunInstance.append2DTestCaseEndDateTimes(sequenceNumber, tcNumberAndTestEnd)
+
                     # Quit the running parallel process:
                     logger.info(f"Stopping parallel instance {x}")
                     processExecutions[x].join()
@@ -128,7 +130,6 @@ class TestCaseSequenceMaster:
             self.testRunInstance.setResult(key, value)
 
     def getNextRecord(self):
-        self.recordCounter += 1
 
         if not self.testdataDataBase:
             self.__getDatabase()

@@ -53,11 +53,14 @@ class HandleDatabase:
             # No selection - means all records
             return [[0,9999]]
         else:
-            # Format: 4;6-99;17-200;203
+            # Format: 4;6-99;17-200;203 or
+            # Format: 4,6-100,800-1000
             if ";" in rangeFromConfigFile:
                 for kombination in rangeFromConfigFile.split(";"):
                     lRange.append(HandleDatabase.__buildRangeOfRecordsOneEntry(kombination))
-                    pass
+            elif "," in rangeFromConfigFile:
+                for kombination in rangeFromConfigFile.split(","):
+                    lRange.append(HandleDatabase.__buildRangeOfRecordsOneEntry(kombination))
             else:
                 lRange.append(HandleDatabase.__buildRangeOfRecordsOneEntry(rangeFromConfigFile))
 

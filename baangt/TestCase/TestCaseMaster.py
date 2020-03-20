@@ -2,6 +2,7 @@ from baangt.base import GlobalConstants as GC
 from baangt.base.Timing.Timing import Timing
 from baangt.TestSteps.Exceptions import *
 
+
 class TestCaseMaster:
     def __init__(self, **kwargs):
         self.name = None
@@ -24,7 +25,7 @@ class TestCaseMaster:
             if self.kwargs.get(GC.KWARGS_BROWSER):
                 self.browser = self.kwargs[GC.KWARGS_BROWSER] # Browser already set - most probably from parallel run
             else:
-                self.browserType = self.testCaseSettings[1][GC.KWARGS_BROWSER]
+                self.browserType = self.testCaseSettings[1][GC.KWARGS_BROWSER].upper()
                 self.browserSettings = self.testCaseSettings[1][GC.BROWSER_ATTRIBUTES]
                 self.mobileType = self.testCaseSettings[1][GC.KWARGS_MOBILE]
                 self.mobileApp = self.testCaseSettings[1][GC.KWARGS_MOBILE_APP]
