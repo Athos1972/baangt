@@ -7,7 +7,7 @@
     "TC.Browser": "CHROME",
     "TC.Mobile": "True",
     "TC.MobileApp": "True",
-    "TC.PlatformName": "Android",
-    "TC.DeviceName": "emulator-5554",
-    "TC.PlatformVersion": "9"
+    "TC.platformName": "Android",
+    "TC.deviceName": "emulator-5554",
+    "TC.platformVersion": "9"
 }

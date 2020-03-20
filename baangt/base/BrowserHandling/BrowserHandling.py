@@ -69,11 +69,6 @@ class BrowserDriver:
         @param desiredCapabilities: DICT of desiredCapabilities for this browser
         @param kwargs: Currently (Jan2020) not used
         """
-        print('----------------------mobileType-----------------------')
-        print(mobileType)
-        print('----------------------mobileApp-----------------------')
-        print(mobileApp)
-        print('----------------------mobileType-----------------------')
         self.takeTime("Browser Start")
         browserNames = {
             GC.BROWSER_FIREFOX: webdriver.Firefox,
@@ -153,6 +148,9 @@ class BrowserDriver:
                 if mobileType == 'True':
                     if not (os.path.isfile(str(lCurPath))):
                         self.downloadDriver(browserName)
+                    print('--------asfsdfasdf------------')
+                    print(desired_app)
+                    print('------------asdfsadfsadf------')
                     if desired_app[GC.KWARGS_PLATFORM_NAME] == "Android":
                         desired_cap = desired_app
                         # desired_cap['app'] = '/Users/admin/Downloads/calculator.apk'
