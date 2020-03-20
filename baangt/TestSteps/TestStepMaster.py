@@ -46,7 +46,6 @@ class TestStepMaster:
             # reach Endif
             if not self.ifIsTrue and command["Activity"] != "ENDIF":
                 continue
-
             lActivity = command["Activity"].upper()
             if lActivity == "COMMENT":
                 continue     # Comment's are ignored
@@ -80,10 +79,6 @@ class TestStepMaster:
                 continue  # We ignored the steps as it doesn't qualify
 
             if lActivity == "GOTOURL":
-                print('-----------------this is the url--------------------')
-                print(self.browserSession)
-                print('----------------------this is the url--------------------------')
-                lValue ='https://drops.earthsquad.global'
                 self.browserSession.goToUrl(lValue)
             elif lActivity == "SETTEXT":
                 self.browserSession.findByAndSetText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout)

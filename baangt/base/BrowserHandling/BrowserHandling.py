@@ -61,7 +61,7 @@ class BrowserDriver:
         else:
             self.screenshotPath = os.getcwd()
 
-    def createNewBrowser(self, mobileType=None, browserName=GC.BROWSER_FIREFOX, desiredCapabilities={}, **kwargs):
+    def createNewBrowser(self, mobileType=None, mobileApp = None,   desired_app = None, browserName=GC.BROWSER_FIREFOX, desiredCapabilities={}, **kwargs):
         """
         Will find the specified executables of the desired browser and start it with the given capabilities.
 
@@ -69,6 +69,11 @@ class BrowserDriver:
         @param desiredCapabilities: DICT of desiredCapabilities for this browser
         @param kwargs: Currently (Jan2020) not used
         """
+        print('----------------------mobileType-----------------------')
+        print(mobileType)
+        print('----------------------mobileApp-----------------------')
+        print(mobileApp)
+        print('----------------------mobileType-----------------------')
         self.takeTime("Browser Start")
         browserNames = {
             GC.BROWSER_FIREFOX: webdriver.Firefox,
@@ -97,13 +102,19 @@ class BrowserDriver:
                 if mobileType == 'True':
                     if not (os.path.isfile(str(lCurPath))):
                         self.downloadDriver(browserName)
-                    desired_cap = {}
-                    desired_cap['platformName'] = "Android"
-                    desired_cap['deviceName'] = "emulator-5554"
-                    desired_cap['browserName'] = browserName
-                    desired_cap['chromedriverExecutable'] = self.__findBrowserDriverPaths(ChromeExecutable)
-                    desired_cap['noReset'] = False
-                    self.driver = Appiumwebdriver.Remote("http://localhost:4723/wd/hub", desired_cap)
+                    if desired_app[GC.KWARGS_PLATFORM_NAME] == "Android":
+                        desired_cap = desired_app
+                        # desired_cap['app'] = '/Users/admin/Downloads/calculator.apk'
+                        # desired_cap['appPackage'] = 'com.google.android.calculator'
+                        # desired_cap['appActivity'] = 'com.android.calculator2.Calculator'
+                        desired_cap['browserName'] = browserName
+                        desired_cap['chromedriverExecutable'] = self.__findBrowserDriverPaths(GeckoExecutable)
+                        desired_cap['noReset'] = False
+                        self.driver = Appiumwebdriver.Remote("http://localhost:4723/wd/hub", desired_cap)
+                    elif desired_app[GC.KWARGS_PLATFORM_NAME] == "iOS":
+                        desired_cap = desired_app
+                        desired_cap['browserName'] = 'safari'
+                        self.driver = Appiumwebdriver.Remote("http://localhost:4723/wd/hub", desired_cap)
                 else:
                     if not(os.path.isfile(str(lCurPath))):
                         self.downloadDriver(browserName)
@@ -124,13 +135,20 @@ class BrowserDriver:
                 if mobileType == 'True':
                     if not (os.path.isfile(str(lCurPath))):
                         self.downloadDriver(browserName)
-                    desired_cap = {}
-                    desired_cap['platformName'] = "Android"
-                    desired_cap['deviceName'] = "emulator-5554"
-                    desired_cap['browserName'] = browserName
-                    desired_cap['chromedriverExecutable'] = self.__findBrowserDriverPaths(ChromeExecutable)
-                    desired_cap['noReset'] = False
-                    self.driver = Appiumwebdriver.Remote("http://localhost:4723/wd/hub", desired_cap)
+                    if desired_app[GC.KWARGS_PLATFORM_NAME] == "Android":
+                        desired_cap = desired_app
+                        # desired_cap['app'] = '/Users/admin/Downloads/calculator.apk'
+                        # desired_cap['appPackage'] = 'com.google.android.calculator'
+                        # desired_cap['appActivity'] = 'com.android.calculator2.Calculator'
+                        desired_cap['browserName'] = browserName
+                        desired_cap['chromedriverExecutable'] = self.__findBrowserDriverPaths(ChromeExecutable)
+                        desired_cap['noReset'] = False
+                        self.driver = Appiumwebdriver.Remote("http://localhost:4723/wd/hub", desired_cap)
+                    elif desired_app[GC.KWARGS_PLATFORM_NAME] == "iOS":
+                        desired_cap = desired_app
+                        desired_cap['browserName'] = 'safari'
+                        self.driver = Appiumwebdriver.Remote("http://localhost:4723/wd/hub", desired_cap)
+
                 else:
                     if not (os.path.isfile(str(lCurPath))):
                         self.downloadDriver(browserName)
@@ -141,52 +159,19 @@ class BrowserDriver:
                     browserProxy.new_har("baangt-chrome-{}".format(browserInstance),
                                          options={'captureHeaders': True, 'captureContent': True}) if browserProxy else None
             elif browserName == GC.BROWSER_EDGE:
-                if mobileType == 'True':
-                    if not (os.path.isfile(str(lCurPath))):
-                        self.downloadDriver(browserName)
-                    desired_cap = {}
-                    desired_cap['platformName'] = "Android"
-                    desired_cap['deviceName'] = "emulator-5554"
-                    desired_cap['browserName'] = browserName
-                    desired_cap['chromedriverExecutable'] = self.__findBrowserDriverPaths(ChromeExecutable)
-                    desired_cap['noReset'] = False
-                    self.driver = Appiumwebdriver.Remote("http://localhost:4723/wd/hub", desired_cap)
-                else:
-                    self.driver = browserNames[browserName](executable_path=self.__findBrowserDriverPaths("msedgedriver.exe"))
+                 self.driver = browserNames[browserName](executable_path=self.__findBrowserDriverPaths("msedgedriver.exe"))
             elif browserName == GC.BROWSER_SAFARI:
                 # SAFARI doesn't provide any options, but desired_capabilities.
                 # Executable_path = the standard safaridriver path.
-                if mobileType == 'True':
-                    if not (os.path.isfile(str(lCurPath))):
-                        self.downloadDriver(browserName)
-                    desired_cap = {}
-                    desired_cap['platformName'] = "Android"
-                    desired_cap['deviceName'] = "emulator-5554"
-                    desired_cap['browserName'] = browserName
-                    desired_cap['chromedriverExecutable'] = self.__findBrowserDriverPaths(ChromeExecutable)
-                    desired_cap['noReset'] = False
-                    self.driver = Appiumwebdriver.Remote("http://localhost:4723/wd/hub", desired_cap)
-                else:
-                    if len(desiredCapabilities) == 0:
-                        desiredCapabilities = {}
-                    self.driver = browserNames[browserName](desired_capabilities=desiredCapabilities)
+                if len(desiredCapabilities) == 0:
+                    desiredCapabilities = {}
+                self.driver = browserNames[browserName](desired_capabilities=desiredCapabilities)
 
             elif browserName == GC.BROWSER_REMOTE:
-                if mobileType == 'True':
-                    if not (os.path.isfile(str(lCurPath))):
-                        self.downloadDriver(browserName)
-                    desired_cap = {}
-                    desired_cap['platformName'] = "Android"
-                    desired_cap['deviceName'] = "emulator-5554"
-                    desired_cap['browserName'] = browserName
-                    desired_cap['chromedriverExecutable'] = self.__findBrowserDriverPaths(ChromeExecutable)
-                    desired_cap['noReset'] = False
-                    self.driver = Appiumwebdriver.Remote("http://localhost:4723/wd/hub", desired_cap)
-                else:
-                    self.driver = browserNames[browserName](options=self.__createBrowserOptions(browserName=browserName,
-                                                                                            desiredCapabilities=desiredCapabilities),
-                                                        command_executor='http://localhost:4444/wd/hub',
-                                                        desired_capabilities=desiredCapabilities)
+                self.driver = browserNames[browserName](options=self.__createBrowserOptions(browserName=browserName,
+                                                                                        desiredCapabilities=desiredCapabilities),
+                                                    command_executor='http://localhost:4444/wd/hub',
+                                                    desired_capabilities=desiredCapabilities)
         else:
             raise SystemExit("Browsername unknown")
 
@@ -751,6 +736,7 @@ class BrowserDriver:
             raise Exceptions.baangtTestStepException(f"Action not possible after {timeout} s, Locator: {self.locatorType}: {self.locator}")
 
     def goToUrl(self, url):
+        print('---------------I am here2------------------')
         self._log(logging.INFO, f'GoToUrl:{url}')
         try:
             self.driver.get(url)

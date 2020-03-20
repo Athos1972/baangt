@@ -27,7 +27,15 @@ class TestCaseMaster:
                 self.browserType = self.testCaseSettings[1][GC.KWARGS_BROWSER]
                 self.browserSettings = self.testCaseSettings[1][GC.BROWSER_ATTRIBUTES]
                 self.mobileType = self.testCaseSettings[1][GC.KWARGS_MOBILE]
-                self.browser = self.testRunInstance.getBrowser(browserName=self.browserType, browserAttributes=self.browserSettings, mobileType=self.mobileType)
+                self.mobileApp = self.testCaseSettings[1][GC.KWARGS_MOBILE_APP]
+                self.mobile_desired_app = {}
+                self.mobile_desired_app['platformName'] = self.testCaseSettings[1][GC.KWARGS_PLATFORM_NAME]
+                self.mobile_desired_app['deviceName'] = self.testCaseSettings[1][GC.KWARGS_DEVICE_NAME]
+                self.mobile_desired_app['platformVersion'] = self.testCaseSettings[1][GC.KWARGS_PLATFORM_VERSION]
+                print('---------------asdfsad-fasdfsdf------------------')
+                print(self.mobile_desired_app)
+                print('---------------asdfsad-fasdfsdf------------------')
+                self.browser = self.testRunInstance.getBrowser(browserName=self.browserType, browserAttributes=self.browserSettings, mobileType=self.mobileType, mobileApp= self.mobileApp, desired_app = self.mobile_desired_app)
                 self.kwargs[GC.KWARGS_BROWSER] = self.browser
         elif self.testCaseType == GC.KWARGS_API_SESSION:
             # FIXME: For now we're using session_number always = 1. We need to be able to run e.g. 10 sessions with

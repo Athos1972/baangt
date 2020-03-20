@@ -111,7 +111,11 @@ class TestRunExcelImporter:
                                          "TestCaseClass": GC.CLASSES_TESTCASE,
                                          GC.KWARGS_BROWSER: GC.BROWSER_FIREFOX,
                                          GC.BROWSER_ATTRIBUTES: "",
-                                         GC.KWARGS_MOBILE: ""}}
+                                         GC.KWARGS_MOBILE: "",
+                                         GC.KWARGS_MOBILE_APP: "",
+                                         GC.KWARGS_PLATFORM_NAME: "",
+                                         GC.KWARGS_DEVICE_NAME: "",
+                                         GC.KWARGS_PLATFORM_VERSION: ""}}
                 else:
                     lTestCaseDict = {1: {"TestCaseSequenceNumber": 1,
                                      "TestCaseNumber": 1,
@@ -127,7 +131,11 @@ class TestRunExcelImporter:
                 {"TestCaseType": testCase["TestCaseType"],
                  GC.KWARGS_BROWSER: testCase.get("Browser"),
                  GC.BROWSER_ATTRIBUTES: testCase.get("BrowserAttributes"),
-                 GC.KWARGS_MOBILE: testCase.get("Mobile")
+                 GC.KWARGS_MOBILE: testCase.get("Mobile"),
+                 GC.KWARGS_MOBILE_APP: testCase.get('MobileApp'),
+                 GC.KWARGS_PLATFORM_NAME: testCase.get('PlatformName'),
+                 GC.KWARGS_DEVICE_NAME: testCase.get('DeviceName'),
+                 GC.KWARGS_PLATFORM_VERSION: testCase.get('PlatformVersion')
                  })
 
         xlsTab = self._getTab("TestStep")

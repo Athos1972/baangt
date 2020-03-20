@@ -116,7 +116,7 @@ class TestRun:
     def getAllTestRunAttributes(self):
         return self.testRunUtils.getCompleteTestRunAttributes(self.testRunName)
 
-    def getBrowser(self, browserInstance=1, browserName=None, browserAttributes=None, mobileType=None):
+    def getBrowser(self, browserInstance=1, browserName=None, browserAttributes=None, mobileType=None, mobileApp=None, desired_app=None):
         """
         This method is called whenever a browser instance (existing or new) is needed. If called without
         parameters it will create one instance of Firefox (geckodriver).
@@ -135,6 +135,8 @@ class TestRun:
             self._getBrowserInstance(browserInstance=browserInstance)
             browser_proxy = self.browserProxyAndServer[0] if self.browserProxyAndServer else None
             self.browser[browserInstance].createNewBrowser(mobileType=mobileType,
+                                                           mobileApp=mobileApp,
+                                                           desired_app=desired_app,
                                                            browserName=browserName,
                                                            desiredCapabilities=browserAttributes,
                                                            browserProxy=browser_proxy,
@@ -148,6 +150,8 @@ class TestRun:
                 self._getBrowserInstance(browserInstance=browserInstance)
                 browser_proxy = self.browserProxyAndServer[0] if self.browserProxyAndServer else None
                 self.browser[browserInstance].createNewBrowser(mobileType=mobileType,
+                                                               mobileApp=mobileApp,
+                                                               desired_app=desired_app,
                                                                browserName=browserName,
                                                                desiredCapabilities=browserAttributes,
                                                                browserProxy=browser_proxy,

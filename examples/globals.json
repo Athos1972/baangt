@@ -4,5 +4,10 @@
     "TC.slowExecution": "True",
     "TC.NetworkInfo": "True",
     "TC.dontCloseBrowser": "True",
-    "TC.Browser": "CHROME"
+    "TC.Browser": "CHROME",
+    "TC.Mobile": "True",
+    "TC.MobileApp": "True",
+    "TC.PlatformName": "Android",
+    "TC.DeviceName": "emulator-5554",
+    "TC.PlatformVersion": "9"
 }
