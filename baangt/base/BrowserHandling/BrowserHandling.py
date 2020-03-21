@@ -98,22 +98,22 @@ class BrowserDriver:
                 if mobileType == 'True':
                     if not (os.path.isfile(str(lCurPath))):
                         self.downloadDriver(browserName)
-                    if desired_app[GC.KWARGS_PLATFORM_NAME] == "Android":
+                    if desired_app[GC.MOBILE_PLATFORM_NAME] == "Android":
                         desired_cap = desired_app
                         if mobileApp == 'True':
-                            desired_cap['app'] = mobile_app_setting[GC.KWARGS_APP_URL]
-                            desired_cap['appPackage'] = mobile_app_setting[GC.KWARGS_APP_PACKAGE]
-                            desired_cap['appActivity'] = mobile_app_setting[GC.KWARGS_APP_ACTIVITY]
+                            desired_cap['app'] = mobile_app_setting[GC.MOBILE_APP_URL]
+                            desired_cap['appPackage'] = mobile_app_setting[GC.MOBILE_APP_PACKAGE]
+                            desired_cap['appActivity'] = mobile_app_setting[GC.MOBILE_APP_ACTIVITY]
                         else:
                             desired_cap['browserName'] = browserName
                             desired_cap['chromedriverExecutable'] = self.__findBrowserDriverPaths(GeckoExecutable)
                             desired_cap['noReset'] = False
                         self.driver = Appiumwebdriver.Remote("http://localhost:4723/wd/hub", desired_cap)
-                    elif desired_app[GC.KWARGS_PLATFORM_NAME] == "iOS":
+                    elif desired_app[GC.MOBILE_PLATFORM_NAME] == "iOS":
                         desired_cap = desired_app
                         if mobileApp == 'True':
                             desired_cap['automationName'] ='XCUITest'
-                            desired_cap['app'] = mobile_app_setting[GC.KWARGS_APP_URL]
+                            desired_cap['app'] = mobile_app_setting[GC.MOBILE_APP_URL]
                         else:
                             desired_cap['browserName'] = 'safari'
                         self.driver = Appiumwebdriver.Remote("http://localhost:4723/wd/hub", desired_cap)
@@ -154,22 +154,22 @@ class BrowserDriver:
                 if mobileType == 'True':
                     if not (os.path.isfile(str(lCurPath))):
                         self.downloadDriver(browserName)
-                    if desired_app[GC.KWARGS_PLATFORM_NAME] == "Android":
+                    if desired_app[GC.MOBILE_PLATFORM_NAME] == "Android":
                         desired_cap = desired_app
                         if mobileApp == 'True':
-                            desired_cap['app'] = mobile_app_setting[GC.KWARGS_APP_URL]
-                            desired_cap['appPackage'] = mobile_app_setting[GC.KWARGS_APP_PACKAGE]
-                            desired_cap['appActivity'] = mobile_app_setting[GC.KWARGS_APP_ACTIVITY]
+                            desired_cap['app'] = mobile_app_setting[GC.MOBILE_APP_URL]
+                            desired_cap['appPackage'] = mobile_app_setting[GC.MOBILE_APP_PACKAGE]
+                            desired_cap['appActivity'] = mobile_app_setting[GC.MOBILE_APP_ACTIVITY]
                         else:
                             desired_cap['browserName'] = browserName
                             desired_cap['chromedriverExecutable'] = self.__findBrowserDriverPaths(ChromeExecutable)
                             desired_cap['noReset'] = False
                         self.driver = Appiumwebdriver.Remote("http://localhost:4723/wd/hub", desired_cap)
-                    elif desired_app[GC.KWARGS_PLATFORM_NAME] == "iOS":
+                    elif desired_app[GC.MOBILE_PLATFORM_NAME] == "iOS":
                         desired_cap = desired_app
                         if mobileApp == 'True':
                             desired_cap['automationName'] ='XCUITest'
-                            desired_cap['app'] = mobile_app_setting[GC.KWARGS_APP_URL]
+                            desired_cap['app'] = mobile_app_setting[GC.MOBILE_APP_URL]
                         else:
                             desired_cap['browserName'] = 'safari'
                         self.driver = Appiumwebdriver.Remote("http://localhost:4723/wd/hub", desired_cap)

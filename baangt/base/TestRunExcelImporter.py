@@ -113,12 +113,12 @@ class TestRunExcelImporter:
                                          GC.BROWSER_ATTRIBUTES: "",
                                          GC.KWARGS_MOBILE: "",
                                          GC.KWARGS_MOBILE_APP: "",
-                                         GC.KWARGS_PLATFORM_NAME: "",
-                                         GC.KWARGS_DEVICE_NAME: "",
-                                         GC.KWARGS_PLATFORM_VERSION: "",
-                                         GC.KWARGS_APP_URL: "",
-                                         GC.KWARGS_APP_PACKAGE : "",
-                                         GC.KWARGS_APP_ACTIVITY : ""}}
+                                         GC.MOBILE_PLATFORM_NAME: "",
+                                         GC.MOBILE_DEVICE_NAME: "",
+                                         GC.MOBILE_PLATFORM_VERSION: "",
+                                         GC.MOBILE_APP_URL: "",
+                                         GC.MOBILE_APP_PACKAGE : "",
+                                         GC.MOBILE_APP_ACTIVITY : ""}}
 
                 else:
                     lTestCaseDict = {1: {"TestCaseSequenceNumber": 1,
@@ -137,12 +137,12 @@ class TestRunExcelImporter:
                  GC.BROWSER_ATTRIBUTES: testCase.get("BrowserAttributes"),
                  GC.KWARGS_MOBILE: testCase.get("Mobile"),
                  GC.KWARGS_MOBILE_APP: testCase.get('MobileApp'),
-                 GC.KWARGS_PLATFORM_NAME: testCase.get('PlatformName'),
-                 GC.KWARGS_DEVICE_NAME: testCase.get('DeviceName'),
-                 GC.KWARGS_PLATFORM_VERSION: testCase.get('PlatformVersion'),
-                 GC.KWARGS_APP_URL: testCase.get('app'),
-                 GC.KWARGS_APP_PACKAGE: testCase.get('appPackage'),
-                 GC.KWARGS_APP_ACTIVITY: testCase.get('appActivity')
+                 GC.MOBILE_PLATFORM_NAME: testCase.get('PlatformName'),
+                 GC.MOBILE_DEVICE_NAME: testCase.get('DeviceName'),
+                 GC.MOBILE_PLATFORM_VERSION: testCase.get('PlatformVersion'),
+                 GC.MOBILE_APP_URL: testCase.get('app'),
+                 GC.MOBILE_APP_PACKAGE: testCase.get('appPackage'),
+                 GC.MOBILE_APP_ACTIVITY: testCase.get('appActivity')
                  })
 
         xlsTab = self._getTab("TestStep")

@@ -30,13 +30,13 @@ class TestCaseMaster:
                 self.mobileType = self.testCaseSettings[1][GC.KWARGS_MOBILE]
                 self.mobileApp = self.testCaseSettings[1][GC.KWARGS_MOBILE_APP]
                 self.mobile_desired_app = {}
-                self.mobile_desired_app[GC.KWARGS_PLATFORM_NAME] = self.testCaseSettings[1][GC.KWARGS_PLATFORM_NAME]
-                self.mobile_desired_app[GC.KWARGS_DEVICE_NAME] = self.testCaseSettings[1][GC.KWARGS_DEVICE_NAME]
-                self.mobile_desired_app[GC.KWARGS_PLATFORM_VERSION] = self.testCaseSettings[1][GC.KWARGS_PLATFORM_VERSION]
+                self.mobile_desired_app[GC.MOBILE_PLATFORM_NAME] = self.testCaseSettings[1][GC.MOBILE_PLATFORM_NAME]
+                self.mobile_desired_app[GC.MOBILE_DEVICE_NAME] = self.testCaseSettings[1][GC.MOBILE_DEVICE_NAME]
+                self.mobile_desired_app[GC.MOBILE_PLATFORM_VERSION] = self.testCaseSettings[1][GC.MOBILE_PLATFORM_VERSION]
                 self.mobile_app_setting = {}
-                self.mobile_app_setting[GC.KWARGS_APP_URL]= self.testCaseSettings[1][GC.KWARGS_APP_URL]
-                self.mobile_app_setting[GC.KWARGS_APP_PACKAGE] = self.testCaseSettings[1][GC.KWARGS_APP_PACKAGE]
-                self.mobile_app_setting[GC.KWARGS_APP_ACTIVITY] = self.testCaseSettings[1][GC.KWARGS_APP_ACTIVITY]
+                self.mobile_app_setting[GC.MOBILE_APP_URL]= self.testCaseSettings[1][GC.MOBILE_APP_URL]
+                self.mobile_app_setting[GC.MOBILE_APP_PACKAGE] = self.testCaseSettings[1][GC.MOBILE_APP_PACKAGE]
+                self.mobile_app_setting[GC.MOBILE_APP_ACTIVITY] = self.testCaseSettings[1][GC.MOBILE_APP_ACTIVITY]
                 self.browser = self.testRunInstance.getBrowser(browserName=self.browserType, browserAttributes=self.browserSettings,
                                                                mobileType=self.mobileType, mobileApp= self.mobileApp,
                                                                desired_app = self.mobile_desired_app, mobile_app_setting = self.mobile_app_setting)

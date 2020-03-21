@@ -2,12 +2,6 @@ KWARGS_DATA = "data"
 KWARGS_MOBILE = "Mobile"
 KWARGS_MOBILE_APP = "MobileApp"
 KWARGS_BROWSER = "Browser"
-KWARGS_PLATFORM_NAME = "platformName"
-KWARGS_DEVICE_NAME = "deviceName"
-KWARGS_PLATFORM_VERSION = "platformVersion"
-KWARGS_APP_URL = 'app'
-KWARGS_APP_PACKAGE = 'appPackage'
-KWARGS_APP_ACTIVITY = 'appActivity'
 KWARGS_API_SESSION = "api"
 KWARGS_APPIUM = 'Appium'
 KWARGS_TESTCASETYPE = "TestCaseType"
@@ -87,6 +81,13 @@ ADDRESS_STREETNAME = "StreetName"
 ADDRESS_HOUSENUMBER = "HouseNumber"
 ADDRESS_ADDITION1 = "Addition1"
 ADDRESS_ADDITION2 = "Addition2"
+
+MOBILE_PLATFORM_NAME = "platformName"
+MOBILE_DEVICE_NAME = "deviceName"
+MOBILE_PLATFORM_VERSION = "platformVersion"
+MOBILE_APP_URL = 'app'
+MOBILE_APP_PACKAGE = 'appPackage'
+MOBILE_APP_ACTIVITY = 'appActivity'
 
 WIN_PLATFORM = 'windows'
 LINUX_PLATFORM = 'linux'
