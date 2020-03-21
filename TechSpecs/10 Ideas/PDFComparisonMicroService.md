@@ -48,15 +48,16 @@ This needs to work on all platforms and drivers (FF, Chrome, Safari), also when 
 (integration currently under development) or Appium (branch "Appium" in GIT - should be finished by next week).
 
 # DoD:
-* Microservice created and pushed to new repository (not part of baangt repository)
-    * Creation of new items with upload of PDF, return of UUID, insert criteria to ignore differences, description text (unlimited length).
-    * Viewing of created items (show UUID and provide PDF for download)
-    * Update of reference PDFs (replace existing PDF with a new upload)
-    * Update of criteria to ignore differences and description text
-    * Search for UUID and fulltext in description text
-* baangt changes (deal with PDF-Downloads, new method "PDF-compare") committed to a new branch and tested
-    * test examples documented in /examples
-* Technical documentation up2date (classes have Docstrings, Methods where needed)
-* Documentation of Microservice and updated documentation of baangt parameters in /docs-Folder
-* Unit-Tests with at least 80% code coverage written and successful
-* no critical linter errors or warnings (PEP-8 conformity of the code)
+* Microservice created and pushed to new repository (not part of baangt repository) (sum: 9,5 hours)
+    * Creation of new items with upload of PDF, return of UUID, insert criteria to ignore differences, 
+    description text (unlimited length). --> 6 hours
+    * Viewing of created items (show UUID and provide PDF for download) --> 0,5 hour
+    * Update of reference PDFs (replace existing PDF with a new upload) --> 1 hour
+    * Update of criteria to ignore differences and description text --> 1 hour
+    * Search for UUID and fulltext in description text --> 1 hour
+* baangt changes (deal with PDF-Downloads, new method "PDF-compare") committed to a new branch and tested (2 hours)
+    * test examples documented in /examples (1 hour)
+* Technical documentation up2date (classes have Docstrings, Methods where needed) (no additional effort)
+* Documentation of Microservice and updated documentation of baangt parameters in /docs-Folder (2 hours)
+* Unit-Tests with at least 80% code coverage written and successful (3 hours)
+* no critical linter errors or warnings (PEP-8 conformity of the code) (no additional effort)
