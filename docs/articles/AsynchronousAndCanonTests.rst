@@ -18,7 +18,8 @@ Isn't everything asynchronous?
 By nature basically every test is asynchronous, because we always wait for a reaction of the System under test. In most
 cases, we're talking about Microseconds up to a few seconds. You'll not do anything special with waiting times up to
 a few seconds. As you run anyway 50 or 500 parallel sessions, it doesn't really matter. But what if we need to wait
-for e.g. 10 Minutes, 30 Minutes, 8 hours?
+for e.g. 10 Minutes, 30 Minutes, 8 hours? We shouldn't waste resources (like CPU-Time and blocked processes) to wait for
+extended times.
 
 Polling vs. Events
 ^^^^^^^^^^^^^^^^^^
@@ -33,12 +34,13 @@ to use polling for expected short waiting times (several seconds up to minutes) 
 appears. Of course callbacks are more difficult to implement as you not only need to query a service repeatedly, but first
 implement a callback service as well as the call to the callback service (even when it's done via Kafka or Redis).
 
-It's another component, that needs to be written, tested and maintained.
+These callbacks are additional components of your system landscape, that need to be developed, tested and maintained.
 
 Deep dive on test Canons
 ------------------------
 
-What is a test Canon? It is basically the same concept as a canon in music
+What is a test Canon? It is basically the same concept as a canon in music for a combination of asynchronously executed
+test steps over and over again in order to have one test result for each test step at any given time slice.
 
     From Wikipedia_:
 
