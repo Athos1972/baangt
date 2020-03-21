@@ -3,6 +3,5 @@
     "TC.Lines": "",
     "TC.slowExecution": "True",
     "TC.NetworkInfo": "True",
-    "TC.dontCloseBrowser": "True",
-    "TC.Browser": "CHROME"
+    "TC.dontCloseBrowser": "True"
 }
