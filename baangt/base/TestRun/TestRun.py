@@ -286,6 +286,7 @@ class TestRun:
         if ".XLSX" in self.testRunFileName.upper():
             logger.info(f"Reading Definition from {self.testRunFileName}")
             lExcelImport = TestRunExcelImporter(FileNameAndPath=self.testRunFileName, testRunUtils=self.testRunUtils)
+            self.globalSettings['TC.Mobile'] = "False"
             lExcelImport.importConfig(self.globalSettings)
 
     @staticmethod
