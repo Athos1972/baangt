@@ -11,5 +11,6 @@ baangt.ini
 __pycache__
 *.pyc
 *.db
+*.log
 venv
 application.sublime-workspace
