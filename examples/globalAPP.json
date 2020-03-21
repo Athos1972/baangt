@@ -1,0 +1,16 @@
+{
+    "exportFilesBasePath": "",
+    "TC.Lines": "",
+    "TC.slowExecution": "True",
+    "TC.NetworkInfo": "True",
+    "TC.dontCloseBrowser": "True",
+    "TC.Browser": "CHROME",
+    "TC.Mobile": "True",
+    "TC.MobileApp": "True",
+    "TC.platformName": "Android",
+    "TC.deviceName": "emulator-5554",
+    "TC.platformVersion": "9",
+    "TC.app": "E:\\downloads\\calculator.apk",
+    "TC.appPackage": "com.google.android.calculator",
+    "TC.appWaitActivity": "com.android.calculator2.Calculator"
+}
