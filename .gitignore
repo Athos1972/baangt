@@ -1,5 +1,5 @@
 .idea
-/logs
+/logs/
 /build
 /dist
 /baangt/logs
@@ -12,5 +12,5 @@ __pycache__
 *.pyc
 *.db
 *.log
-venv
+venv/
 application.sublime-workspace
