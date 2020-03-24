@@ -21,11 +21,12 @@ baangt.TestCaseSequenceParallel.py when parameter ``ParallelRuns`` has a value g
 baangt documentation is on https://baangt.readthedocs.io
 Repository is on https://gogs.earthsquad.global/athos/baangt
 
-# DoD:
+# DoD (including effort indication):
 * Usage of `threading` and `Queue` instead of `multiprocessing` library to start parallel browsers and execute testcases
-in parallel.
-* After execution of Testcase latest data from Testcase (`TestdataDict`) is updated in `TestRun.py` (=same behaviour as 
-  in the current implementation)
+in parallel. (1h)
+    * After execution of Testcase latest data from Testcase (`TestdataDict`) is updated in `TestRun.py` (=same behaviour as 
+        in the current implementation) (no effort)
 * Functionality was tested locally on either Linux and/or Windows and/or Mac and results documented (e.g. Log-File 
-showing successful execution)
-* Pull request was created
+showing successful execution) (2h)
+* Unit test cases in /tests for all touched methods created and successful (3h)
+* Pull request was created (no effort)
