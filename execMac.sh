@@ -6,5 +6,5 @@ pyinstaller --clean --onedir \
 	--specpath exec_mac \
 	--name baangt \
 	--add-data '../baangt/ressources/baangtLogo2020Small.png:ressources' \
-	--add-data '../browserDrivers/geckodriver:geckodriver' \
+	--add-data '../browserDrivers/geckodriver:.' \
 	baangtExec.py
