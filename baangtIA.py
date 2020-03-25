@@ -1,3 +1,5 @@
+from gevent import monkey
+monkey.patch_all()
 from baangt.base.CliAndInteractive import run
 from multiprocessing import freeze_support
 
