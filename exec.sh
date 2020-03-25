@@ -1,6 +1,6 @@
 #!/bin/sh
 
-pyinstaller --clean --onedir \
+pyinstaller --clean --onedir --noconfirm \
 	--distpath ubuntu/ \
 	--workpath ubuntu/build \
 	--specpath ubuntu \

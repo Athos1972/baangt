@@ -41,7 +41,7 @@
  [],
  False,
  False,
- 1584815809,
+ 1585145921,
  [('run',
    '/home/aguryev/freelancer/baangt/venv/lib/python3.6/site-packages/PyInstaller/bootloader/Linux-64bit/run',
    'EXECUTABLE')])
