@@ -13,4 +13,4 @@ To run selenium grid 4
 $ java -jar /baangt/browserDrivers/selenium-server-4.0.0-alpha-5.jar standalone
 ```
 
-To check http://localhost:4444/status
+Check http://localhost:4444/status
