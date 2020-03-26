@@ -7,6 +7,6 @@
     "ImportPath": "/home/aaa/baangt/0testdateninput",
     "TC.dontCloseBrowser": "",
     "TC.slowExecution": "",
-    "TC.BrowserAttributes": "{'browserName': 'chrome', 'seleniumGridIp': 'localhost', 'seleniumGridPort': '4444'}",
+    "TC.BrowserAttributes": "{'browserName': 'firefox', 'seleniumGridIp': 'localhost', 'seleniumGridPort': '4444'}",
     "TC.Browser": "REMOTE_V4"
 }
