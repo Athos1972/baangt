@@ -172,6 +172,7 @@ More details on Activities
        * goBack
        * If
        * EndIf
+       * Pause
 
 .. list-table:: Details of activities
    :widths: 25 75
@@ -217,7 +218,9 @@ More details on Activities
    * - assert
      - Will retrieve value of element specified by ``locator`` and compare with reference value from ``value``.
       
-       
+
+   * - pause
+     - Will pause for the number of secons in ``value``. Valid numbers are float, e.g. 2, 0.2, 0.1, 25
    * - address_create
      - provide an easy and easily extendable way to generate address data for a test case
        The following fields variable are stored in testcaseDataDict:
