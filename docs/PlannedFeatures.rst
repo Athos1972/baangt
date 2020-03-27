@@ -13,6 +13,7 @@ Short/Medium term features
 * Double Opt-In Automation (2020.03) --> will move to 2020.04 RC6
 * Support for Selenium Grid V4 (2020.04)
 * Better support for multiple sources (e.g. multiple XLSX) of test data (2020.04)
+* Better support to store test data output to database and export files (2020.04)
 * Support for Appium integration (2020.04)
 * Katalon Importer/Converter as Webservice (2020.04)
 
@@ -24,7 +25,8 @@ Features for later
 * Integration with Atlassian Confluence (for Testcase and Testrun definitions)
 * Integration with Atlassian Confluence (to publish results of testruns)
 * Integration with MS Teams to publish results of Testruns
-* Grafana Board for Flask-Version
+* Integration with Telegram to publish results of Testruns
+* Grafana Board for baangtDB
 * Better support for oData V4.0 (similar to SOAP)
 * Support for GraphQL via Graphene
 
