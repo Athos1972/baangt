@@ -61,7 +61,7 @@ EXECUTION_DONTCLOSEBROWSER = "dontCloseBrowser"
 EXECUTION_SLOW = "slowExecution"
 EXECUTION_NETWORK_INFO = 'NetworkInfo'
 
-EXPORT_FORMAT = "Export Format"
+EXPORT_FORMAT = "ExportFormat"
 EXP_FIELDLIST = "Fieldlist"
 EXP_XLSX = "XLSX"
 EXP_CSV = "CSV"
