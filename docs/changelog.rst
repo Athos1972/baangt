@@ -16,6 +16,7 @@ New features
 * SimpleFormat: ``pause`` command added
 * SimpleFormat: ``address_creation`` command added to create a random address. Customizable.
   Multiple calls will create multiple random addresses.
+* CLI: New parameter ``--reloadDrivers=True`` downloads latest version of webdrivers for Chrome and Firefox.
 
 Bugfixes
 ++++++++
