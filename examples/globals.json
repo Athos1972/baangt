@@ -3,5 +3,5 @@
     "TC.Lines": "",
     "TC.dontCloseBrowser": "True",
     "TC.slowExecution": "True",
-    "TC.NetworkInfo": "True"
+    "TC.NetworkInfo": ""
 }
