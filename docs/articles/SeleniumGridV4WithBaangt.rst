@@ -27,4 +27,4 @@ Step by step instructions on video
 If you prefer to see a video with details on how to run and test ``baangt`` with Selenium Grid, head over to our youtube
 channel: https://youtu.be/hpY9E-t55q4
 
-.. image:: ../tumbnailYoutube.png
+.. image:: ../thumbnailYoutube.png
