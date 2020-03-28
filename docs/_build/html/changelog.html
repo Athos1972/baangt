@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Change log &mdash; baangt 2020.1.1.b11 documentation</title>
+  <title>Change log &mdash; baangt 2020.3.0.rc4 documentation</title>
   
 
   
@@ -94,11 +94,17 @@
 <li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">   History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">   Changelog</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id1">2020.02</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id2">2020.01</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">2020.03</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#new-features">New features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bugfixes">Bugfixes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">2020.02</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">2020.01</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BrowserDrivers.html">   Browser Drivers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">:subheader: Articles</a></li>
 <li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
 </ul>
@@ -168,7 +174,35 @@
   <div class="section" id="change-log">
 <h1>Change log<a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
-<h2>2020.02<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>2020.03<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>Summary: Release Candiate 3 is on the road!</p>
+<div class="section" id="new-features">
+<h3>New features<a class="headerlink" href="#new-features" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Network logging during WEB-Sessions and export to Excel-Result in separate tab. Use <code class="docutils literal notranslate"><span class="pre">TC.NetworkInfo</span></code> with value <code class="docutils literal notranslate"><span class="pre">True</span></code> (tested on Mac and Windows, most probably works on Linux too).</p></li>
+<li><p>baangtDB: Import and Export functionality for simpleFormat and complex XLSX-Testrun definitions.</p></li>
+<li><p>baangtDB: Export also to JSON-Format</p></li>
+<li><p>baangtDB: cascaded delete: Delete a test run and all it’s objects (unless used in other test runs)</p></li>
+<li><p>baangtDB: Update testrun from XLSX (closed circuit between IT-Department and business department)</p></li>
+<li><p>Docs updated with latest parameters</p></li>
+<li><p>SimpleFormat: <code class="docutils literal notranslate"><span class="pre">pause</span></code> command added</p></li>
+<li><p>SimpleFormat: <code class="docutils literal notranslate"><span class="pre">address_creation</span></code> command added to create a random address. Customizable.
+Multiple calls will create multiple random addresses.</p></li>
+<li><p>CLI: New parameter <code class="docutils literal notranslate"><span class="pre">--reloadDrivers=True</span></code> downloads latest version of webdrivers for Chrome and Firefox.</p></li>
+</ul>
+</div>
+<div class="section" id="bugfixes">
+<h3>Bugfixes<a class="headerlink" href="#bugfixes" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Reporting: Duration sometimes off by Timezone shift hours</p></li>
+<li><p>Minor fixes for increased stability with Chrome-based browsers</p></li>
+<li><p>Parallel executions on Windows work now, rewrote parallelism (local, without Selenium/Zalenium) completely to run with
+less resources. 10 parallel Firefox sessions on a single MacBook with 16 GB RAM works.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>2020.02<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <p>Summary: Web- and API-Tests XLSX-SimpleFormat are almost completed. Shouldn’t take much longer to have a production ready version.</p>
 <ul class="simple">
 <li><p>Pypi-Version 2020.02.* deployed</p></li>
@@ -183,8 +217,8 @@
 <li><p>Apart from exporting to XLSX it’s now also possible to export testrun results to CSV. In simpleFormat you can set parameter <code class="docutils literal notranslate"><span class="pre">TC.Export</span> <span class="pre">Format</span></code> to the value <code class="docutils literal notranslate"><span class="pre">CSV</span></code>. In baangtDB and full Excel format you can use Testrun property <code class="docutils literal notranslate"><span class="pre">Export</span> <span class="pre">format</span></code></p></li>
 </ul>
 </div>
-<div class="section" id="id2">
-<h2>2020.01<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id3">
+<h2>2020.01<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p>Very first public beta version. Not at all ready for production.</p>
 <ul class="simple">
 <li><p>First version on Pypi (<a class="reference external" href="https://pypi.org/project/baangt/">https://pypi.org/project/baangt/</a>), Docker (<a class="reference external" href="https://gogs.earthsquad.global/athos/baangt-Docker">https://gogs.earthsquad.global/athos/baangt-Docker</a>) and GIT Repository (<a class="reference external" href="https://gogs.earthsquad.global/athos/baangt">https://gogs.earthsquad.global/athos/baangt</a>)</p></li>

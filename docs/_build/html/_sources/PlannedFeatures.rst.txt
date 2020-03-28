@@ -4,15 +4,17 @@ We implement all features for 3 operating Systems (Mac, Windows, Debian Linux an
 
 Short/Medium term features
 ---------------------------
-* Refactoring of Multiprocessing (2020.02)
-* Executables on Mac, Linux and Windows (2020.03)
+* Refactoring of parallel processing on a single computer (2020.03) --> Done
+* Executables on Mac, Linux and Windows (2020.03) --> Done
 * Nicer interactive UI-Starter (2020.03)
     * Phase 1 done 2020.02
-    * Provide live statistics (2020.03)
-* Build-In Proxy-Server for Network traffic and timing logs (2020.03) (most probably not possible in Windows and MAC but should work in Linux)
-* Double Opt-In Automation (2020.03)
-* Support for Selenium Grid V4 (2020.03)
+    * Phase 2 (UI-elements) (2020.03) --> will move to 2020.04 RC5
+    * Provide live statistics (2020.04)
+* Double Opt-In Automation (2020.03) --> will move to 2020.04 RC6
+* Support for Selenium Grid V4 (2020.04)
 * Better support for multiple sources (e.g. multiple XLSX) of test data (2020.04)
+* Better support to store test data output to database and export files (2020.04)
+* Support for Appium integration (2020.04)
 * Katalon Importer/Converter as Webservice (2020.04)
 
 Features for later
@@ -23,7 +25,8 @@ Features for later
 * Integration with Atlassian Confluence (for Testcase and Testrun definitions)
 * Integration with Atlassian Confluence (to publish results of testruns)
 * Integration with MS Teams to publish results of Testruns
-* Grafana Board for Flask-Version
+* Integration with Telegram to publish results of Testruns
+* Grafana Board for baangtDB
 * Better support for oData V4.0 (similar to SOAP)
 * Support for GraphQL via Graphene
 
@@ -33,8 +36,10 @@ There's no time plan yet, when a pro version will be released. So far whatever w
 Future features might include:
 
 * DB-Migration tools (to ease the pain of upgrading databases)
-* Multi-User environment (who did when which activity and who changed when which testobject)
+* Multi-User environment (who did when which activity and who changed when which test object)
 * History of Testcases (what was changed when. If urgently needed we could come up with DB-Dump and GIT diff or so.)
 * Test-Canons (deliberately stop test cases multiple times at certain test steps, wait for trigger, then resume. After first Testcase *finished* his first waiting period, start second round of Testcases (that's how the name "Canon" came up). So far implemented in customer project, but needs to be polished up for public version)
 * XML/PDF-Compare
+* Consulting
+* Priority support
 
