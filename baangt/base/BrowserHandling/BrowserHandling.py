@@ -601,7 +601,7 @@ class BrowserDriver:
                 elif xpath:
                     # visibility of element sometimes not true, but still clickable. If we tried already
                     # 2 times with visibility, let's give it one more try with Presence of element
-                    if lLoopCount > 2:
+                    if lLoopCount > 1:
                         self._log(logging.INFO, "Tried 2 times to find visible element, now trying presence "
                                                 f"of element instead, XPATH = {xpath}")
                         self.element = driverWait.until(ec.presence_of_element_located((By.XPATH, xpath)))
