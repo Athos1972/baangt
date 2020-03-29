@@ -5,6 +5,7 @@
 /baangt/logs
 geckodriver.log
 /Screenshots/*.png
+/browserDrivers
 baangt.ini
 /Screenshots
 /docs/logs
