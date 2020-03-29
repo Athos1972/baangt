@@ -2,7 +2,7 @@
 
 block_cipher = None
 
-a = Analysis(['..\\baangt.py'],
+a = Analysis(['..\\baangtIA.py'],
              pathex=['windows'],
              binaries=[],
              datas=[('../baangt/ressources/baangtLogo2020Small.png', 'ressources'),

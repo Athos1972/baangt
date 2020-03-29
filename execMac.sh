@@ -9,7 +9,7 @@ pyinstaller --clean --onedir \
 	--add-data '../examples/:examples/.' \
 	--add-data '../browsermob-proxy:browsermob-proxy/.' \
 	--noconfirm \
-	baangt.py
+	baangtIA.py
 
 # Remove Screenshots and Logs
 rm -r exec_mac/baangt/examples/Screenshots

@@ -753,6 +753,7 @@ class BrowserDriver:
 
     def downloadDriver(self, browserName):
         path = Path(os.getcwd())
+        path.joinpath("browserDrivers").mkdir(parents=True, exist_ok=True)
         path = path.joinpath("browserDrivers")
         tar_url = ''
         url = ''

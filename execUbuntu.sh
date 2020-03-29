@@ -8,8 +8,7 @@ pyinstaller --clean --onedir --noconfirm \
 	--add-data '../baangt/ressources/baangtLogo2020Small.png:ressources' \
 	--add-data '../examples/:examples/.' \
 	--add-data '../browsermob-proxy:browsermob-proxy/.' \
-	--noconfirm \
-	baangt.py
+	baangtIA.py
 
 # Remove Screenshots and Logs
 rm -r ubuntu/baangt/examples/Screenshots
