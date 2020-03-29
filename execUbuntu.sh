@@ -1,9 +1,9 @@
 #!/bin/sh
 
-pyinstaller --clean --onedir \
-	--distpath exec_mac/ \
-	--workpath exec_mac/build \
-	--specpath exec_mac \
+pyinstaller --clean --onedir --noconfirm \
+	--distpath ubuntu/ \
+	--workpath ubuntu/build \
+	--specpath ubuntu \
 	--name baangt \
 	--add-data '../baangt/ressources/baangtLogo2020Small.png:ressources' \
 	--add-data '../examples/:examples/.' \
@@ -17,5 +17,5 @@ rm -r exec_mac/baangt/examples/Logs
 
 # Create ZIP-file
 mkdir executables
-rm executables/baangt_mac_executable.zip
-zip -r -X executables/baangt_mac_executable.zip exec_mac/baangt/
+rm executables/baangt_ubuntu_executable.tar.gz
+tar -zcvf executables/baangt_ubuntu_executable.tar.gz ubuntu/baangt/
