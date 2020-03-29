@@ -19,3 +19,6 @@ rm -r exec_mac/baangt/examples/Logs
 mkdir executables
 rm executables/baangt_mac_executable.zip
 zip -r -X executables/baangt_mac_executable.zip exec_mac/baangt/
+
+# Remove Build-Folder
+rm -r exec_mac

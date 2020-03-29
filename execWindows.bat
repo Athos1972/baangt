@@ -11,8 +11,8 @@ pyinstaller --clean --onedir --noconfirm ^
 	baangt.py
 
 rem Remove Screenshots and Logs
-rm -r exec_mac/baangt/examples/Screenshots
-rm -r exec_mac/baangt/examples/Logs
+rm -r windows/baangt/examples/Screenshots
+rm -r windows/baangt/examples/Logs
 
 rem Create ZIP-file
 mkdir executables
