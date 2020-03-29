@@ -11,6 +11,16 @@ As you work with ``baangt`` for a longer time your browsers might be updated. If
 version of browser driver, you can simply delete the existing driver in ``baangt/BrowserDrivers/`` and on the next start
 ``baangt`` will automatically download the latest version.
 
+Alternative version:
+^^^^^^^^^^^^^^^^^^^^
+
+If you start baangt with the following syntax from the command line, it will download the latest drivers (Chrome and
+Firefox) automatically:
+
+```python3 baangt.py --reloadDrivers=True```
+
+It will overwrite existing versions.
+
 Older releases of browser drivers
 ---------------------------------
 

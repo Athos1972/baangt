@@ -85,6 +85,8 @@ class TestStepMaster:
                 self.browserSession.handleIframe(lLocator)
             elif lActivity == "CLICK":
                 self.browserSession.findByAndClick(xpath=xpath, css=css, id=id, timeout=lTimeout)
+            elif lActivity == "PAUSE":
+                self.browserSession.sleep(sleepTimeinSeconds=lValue)
             elif lActivity == "IF":
                 if self.ifActive:
                     raise BaseException("No nested IFs at this point, sorry...")

@@ -63,6 +63,36 @@ Activities for API-Tests:
        ``value2`` is the source (e.g. ``$(ANSWER_CONTENT.imdbRating)`` would retrieve the value "imdbRating" of the
        answer of your API-Call.
 
+   * - ``ASSERT``
+     - This  will retrieve value of element specified by `locator`
+       And compare with expected_value specified in `value`
+      
+       if expected_value not matches with output_value it will raise TestStepExecution and result in FAILED.
+
+   * - ``ADDRESS_CREATE``
+     - Create  Address Data for various test cases  and save in testDataDict
+       The following field variable can be used via $(field_name).
+       
+       ['HouseNumber', 'AdditionalData1', 'AdditionalData2', 'StreetName', 'CityName', 'PostalCode', 'CountryCode']
+    
+       Example:
+        Default Data: (value=<blank> and value2=<blank>)
+        'HouseNumber': '6', 'AdditionalData1': 'Near MahavirChowk', 'AdditionalData2': 'Opposite St. Marish Church', 'StreetName': 'GoreGaon', 'CityName': 'Ambala', 'PostalCode': '160055', 'CountryCode': 'India'
+
+       `value` optional
+        if provided : (value= {"CountryCode":"US","CityName":"Athens"} value2=<blank>)
+         FieldValue updated to:
+         {'HouseNumber': '6', 'AdditionalData1': 'Near MahavirChowk',
+         'AdditionalData2': 'Opposite St. Marish Church',
+         'StreetName': 'GoreGaon', 'CityName': 'Athens',
+         'PostalCode': '160055', 'CountryCode': 'US'}
+ 
+
+       `value2` optional
+
+        Field will be prefixed with "office_<field_name>". Ex. "office_CountryCode"
+
+
 Special data fields in API-Tests:
 ---------------------------------
 

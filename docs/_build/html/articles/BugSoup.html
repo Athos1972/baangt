@@ -1,0 +1,415 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Why On Earth Do We Have Bugs In Production? &mdash; baangt 2020.3.0.rc4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Asynchronous vs. Canon tests" href="AsynchronousAndCanonTests.html" />
+    <link rel="prev" title="Agile: Where does baangt fit in?" href="AgileWorkflowIntegration.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> baangt
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Installation.html">   Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../OverviewUsage.html">   Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../simpleExample.html">   First Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Structure.html">   Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ParametersConfigFile.html">   Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../DataFile.html">   Data file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SimpleAPI.html">   First API Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../TestTypes.html">   Types of Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Developer.html">   For Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../HistoryAndReasons.html">   History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributors.html">   Contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">   Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PlannedFeatures.html">   Planned Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BrowserDrivers.html">   Browser Drivers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="Articles.html">:subheader: Articles</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ProductionSucks.html"> Production sucks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DataDoctor.html"> Test data rulez</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BaangtIndustries.html"> Industries 4 baangt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="StopTesting.html"> Stop testing!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="AgileWorkflowIntegration.html"> bAanGtILE</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"> BugSoup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#a-lot-of-wrong-shoes-in-wrong-places">#1 a lot of wrong shoes in wrong places</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#task">Task:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#the-result">The result:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#what-happened">What happened:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-this-could-have-been-prevented">How this could have been prevented:</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#a-sudden-wealth">#2 A sudden wealth</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Task:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">The result:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">What happened:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-could-this-have-been-prevented">How could this have been prevented:</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#you-don-t-pay-we-tow-your-car">#3 You don’t pay - we tow your car!</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id4">Task:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">The result:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">What happened:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">How could this have been prevented:</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#material-master-records-what-are-they-for-anyway">#4 Material master records - what are they for anyway?</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id8">Task:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#the-outcome">The outcome:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9">What happened:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id10">How could this have been prevented:</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#what-are-these-chemical-elements-anyway"># What are these chemical elements anyway?</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id11">Task:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id12">The outcome:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id13">What happened:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id14">How could this have been prevented:</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#summary">Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="AsynchronousAndCanonTests.html"> Canons, that are not DSLR nor music</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">baangt</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="Articles.html">Not Exactly Documentation</a> &raquo;</li>
+        
+      <li>Why On Earth Do We Have Bugs In Production?</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/articles/BugSoup.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="why-on-earth-do-we-have-bugs-in-production">
+<h1>Why On Earth Do We Have Bugs In Production?<a class="headerlink" href="#why-on-earth-do-we-have-bugs-in-production" title="Permalink to this headline">¶</a></h1>
+<p>We all hate bugs in production. They’re a pain for everybody. Devs, Management, Customers, Infrastructure. Given a
+big enough scale many departments can be heavily effected by a single bug. That costs dearly and can be avoided in most cases.</p>
+<p>In this article we’ll look at real bugs, that managed to reach production and see, if proper testing could have avoided
+these bugs.</p>
+<div class="section" id="a-lot-of-wrong-shoes-in-wrong-places">
+<h2>#1 a lot of wrong shoes in wrong places<a class="headerlink" href="#a-lot-of-wrong-shoes-in-wrong-places" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="task">
+<h3>Task:<a class="headerlink" href="#task" title="Permalink to this headline">¶</a></h3>
+<p>A new algorithm for a large shoe producer was built. The aim was to predict how many of which shoes will be sold in which
+areas, deliver from the central warehouse to regional distribution centers, optimize loading of trucks to dispatch pallets
+to local stores (e.g. load pallets for the last shop on the tour first into the truck).</p>
+</div>
+<div class="section" id="the-result">
+<h3>The result:<a class="headerlink" href="#the-result" title="Permalink to this headline">¶</a></h3>
+<p>Let’s put it like this: Chaos. Not like “Chaos! We’ve a record in the database missing”. No, more like “Chaos: Trucks all
+over the place are carrying wrong shoes to the wrong stores. It will take months to sort this out”. Chaos. Alone the cost
+for the truck loads being brought back, repacked, reshipped would have paid 10 more testers, let alone missed sales.</p>
+</div>
+<div class="section" id="what-happened">
+<h3>What happened:<a class="headerlink" href="#what-happened" title="Permalink to this headline">¶</a></h3>
+<p>The algorithm was developed based on old/incomplete data and old data structure. The testers worked on a small region
+and only with one model of shoes, as creating all the test data manually was time consuming and given the short time, they tested, how it would work in 1 shop.
+It worked well. In the algorithm itself only one <code class="docutils literal notranslate"><span class="pre">clear</span></code> was missing.</p>
+</div>
+<div class="section" id="how-this-could-have-been-prevented">
+<h3>How this could have been prevented:<a class="headerlink" href="#how-this-could-have-been-prevented" title="Permalink to this headline">¶</a></h3>
+<p>With intelligent test automation testers could have created more sample data in less time (e.g. record 1 shoe model,
+then alter the parameters of the test case and automatically create a reasonable number of shoe models).</p>
+</div>
+</div>
+<div class="section" id="a-sudden-wealth">
+<h2>#2 A sudden wealth<a class="headerlink" href="#a-sudden-wealth" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id1">
+<h3>Task:<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>Company A buys company B. A quick win to reduce costs and merge applications is to let invoicing and cash flows run on
+Company A. 60k contracts. Monthly invoicing. What could go wrong?</p>
+</div>
+<div class="section" id="id2">
+<h3>The result:<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>First, there were more bounced direct debits as in other months. Well, X-Mas time, people overspent for presents. All good, right?
+Well, no. A few days in after the “successful” first step of the merger, first level support showed an increased number of
+calls, mostly furious people, who were charged 10 to 100 times their usual monthly fee - often via direct debit and that
+during X-Mas time. If that’s not a SUPER-GAU, then what is? News papers got tips and printed accordingly about the scandal,
+when a multinational corporation robs from working class people who now don’t have any means to by presents for their kids. Great!
+“What could go wrong?” –&gt; That!</p>
+</div>
+<div class="section" id="id3">
+<h3>What happened:<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>One date field mapped wrongly in the interface between the invoicing application and the contract application. <code class="docutils literal notranslate"><span class="pre">BEGINNDATE</span></code>
+vs <code class="docutils literal notranslate"><span class="pre">LASTPAYDATE</span></code>. The error was in there since the first test on final quality system. It was found and fixed in 10 minutes.</p>
+<p>Test data was complex to be created and proper data from production couldn’t be copied (lots of reasons, GDPR was not one of them).
+Testers created contracts by themselves and created max backdated to beginning of the year. Then, in order to save the hussle of having to create too many new contracts manually,
+they started invoicing on a monthly basis, different than the batch job setting in production, which would take all open
+items and collect using the appropriate payment method.</p>
+</div>
+<div class="section" id="how-could-this-have-been-prevented">
+<h3>How could this have been prevented:<a class="headerlink" href="#how-could-this-have-been-prevented" title="Permalink to this headline">¶</a></h3>
+<p>Test data was too complex to be created. Unrealistic manually created test data is the worst. It gives you false security when in reality you’re totally blind.</p>
+</div>
+</div>
+<div class="section" id="you-don-t-pay-we-tow-your-car">
+<h2>#3 You don’t pay - we tow your car!<a class="headerlink" href="#you-don-t-pay-we-tow-your-car" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id4">
+<h3>Task:<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<p>In many million records of business partners find duplicates, move contracts from the duplicates to a main account,
+flag duplicates for deletion.</p>
+<blockquote>
+<div><p>Simple, clean. In and out in 60 minutes.</p>
+</div></blockquote>
+</div>
+<div class="section" id="id5">
+<h3>The result:<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p>Cars were towed and unregistered. Collection agents doing their jobs but at people who actually paid their bills.</p>
+</div>
+<div class="section" id="id6">
+<h3>What happened:<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<p>All went well, the task was completed in record time, tested all combinations of possible partner data, all good. Wonderful!
+But. The task and the tests were done on the system, that deals with business partners. With every duplicate found in the
+partner system the contract system was informed about the new partner number, which replaces the old number on a specific
+contract. In collection system the payment went to the new partner number. Unfortunately the unsettled amounts were also
+cleared with the new number and the unsettled amount on the old partner number remained open forever. Thanks to the automatic
+dunning process including escalation cars were towed - as according to the system - these folks didn’t pay their bills.</p>
+</div>
+<div class="section" id="id7">
+<h3>How could this have been prevented:<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<p>Honestly, that’s a tough one, even if you have great test coverage and full scope E2E-Tests in place. Which normal company
+would go to the length of creating bank payment interface to see, that the unsettled amount wasn’t cleared? Of course, a
+senior solution architect could have foreseen this outcome.</p>
+</div>
+</div>
+<div class="section" id="material-master-records-what-are-they-for-anyway">
+<h2>#4 Material master records - what are they for anyway?<a class="headerlink" href="#material-master-records-what-are-they-for-anyway" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id8">
+<h3>Task:<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<p>A table on Oracle SQL exploded because customer added too many fields into the table. Whatever. Other tables had also
+reached similar sizes, so transform those fields into key/value-pairs and store in a separate table with reference to the
+other tables. 10 tables, a few million records, easy going. 4 hours tops. A little testing on FQA, then run over the weekend
+in production.</p>
+</div>
+<div class="section" id="the-outcome">
+<h3>The outcome:<a class="headerlink" href="#the-outcome" title="Permalink to this headline">¶</a></h3>
+<p>Material master records are pretty important for a production company. Not as important as customers, but pretty important.
+After this job, they didn’t have any (while 1000s of interface records from suppliers and customers were coming in). The fix
+was provided within a few hours from a coincidentally setup parallel system, but this could have gone very bad.</p>
+</div>
+<div class="section" id="id9">
+<h3>What happened:<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<p>Functionality was tested. Functionality worked fine (new table was filled with data and displayed and linked properly). Clearing
+of the data fields also worked perfectly, but was a bit overmotivated. Everything except the key field was cleared. One
+code line changed and it worked. There were practically no tests - because “What could go wrong on such a quick fix?”.</p>
+</div>
+<div class="section" id="id10">
+<h3>How could this have been prevented:<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<p>Even the simplest functional test would have immediately thrown an error. All Unit-Tests were OK and for this customer
+there are (were) no functional tests.</p>
+</div>
+</div>
+<div class="section" id="what-are-these-chemical-elements-anyway">
+<h2># What are these chemical elements anyway?<a class="headerlink" href="#what-are-these-chemical-elements-anyway" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id11">
+<h3>Task:<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<p>Upgrade a mass spectrometer to latest firmware. Come ooon, that’s a job for a junior!</p>
+</div>
+<div class="section" id="id12">
+<h3>The outcome:<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<p>Just a few 100k bugs of wrongly melted raw material. Nobody harmed, no outside consequences (by chance only!).</p>
+</div>
+<div class="section" id="id13">
+<h3>What happened:<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
+<p>Before the update, the spectrometer had fixed decimal places in a number. After the update, decimal places were floating.
+The interface with the material robot, who’d add missing raw material into a boiling soup of metal based on the chemical analysis, was used to fixed decimal
+places and thus went wild on adding different components to compensate for each result of the mass spectrometer. Luckily
+after 30 hours of boiling the shift supervisor understood that something is wrong</p>
+</div>
+<div class="section" id="id14">
+<h3>How could this have been prevented:<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+<p>First it looks like it’s an easy one, but it’s not. A pure technical test would have not found that problem. If one would mock
+away the spectrometer in the first place, it would also not show up. The only way to find that, would have been to
+test the output of the spectrometer with a reference material against the output after the update. But that’s nothing,
+that can be automated.</p>
+</div>
+</div>
+<div class="section" id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
+<p>Most of the severe bugs described here could have been found easily, others not so easy. In any case, every bug that
+was found on lower stages and never reaches production is much cheaper for the whole organization, so get ready to use
+<code class="docutils literal notranslate"><span class="pre">baangt</span></code> to increase test coverage and subsequently overall quality!</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="AsynchronousAndCanonTests.html" class="btn btn-neutral float-right" title="Asynchronous vs. Canon tests" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="AgileWorkflowIntegration.html" class="btn btn-neutral float-left" title="Agile: Where does baangt fit in?" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Bernhard Buhl
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

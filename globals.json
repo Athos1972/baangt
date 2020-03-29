@@ -1,0 +1,12 @@
+{
+    "exportFilesBasePath": "",
+    "TC.Lines": "",
+    "RootPath": "/home/aaa/baangt",
+    "ScreenshotPath": "/home/aaa/baangt/Screenshots",
+    "ExportPath": "/home/aaa/baangt/1testoutput",
+    "ImportPath": "/home/aaa/baangt/0testdateninput",
+    "TC.dontCloseBrowser": "",
+    "TC.slowExecution": "",
+    "TC.BrowserAttributes": "{'browserName': 'firefox', 'seleniumGridIp': 'localhost', 'seleniumGridPort': '4444'}",
+    "TC.Browser": "REMOTE_V4"
+}

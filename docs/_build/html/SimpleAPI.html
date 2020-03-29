@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>How to create a simple API Test &mdash; baangt 2020.1.1.b11 documentation</title>
+  <title>How to create a simple API Test &mdash; baangt 2020.3.0.rc4 documentation</title>
   
 
   
@@ -103,6 +103,7 @@
 <li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">   Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BrowserDrivers.html">   Browser Drivers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">:subheader: Articles</a></li>
 <li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
 </ul>
@@ -239,6 +240,36 @@ it’s easy to take a result from one API-Request and use it (or parts of it) as
 your only chance to get fields added into the result sheet.
 <code class="docutils literal notranslate"><span class="pre">value2</span></code> is the source (e.g. <code class="docutils literal notranslate"><span class="pre">$(ANSWER_CONTENT.imdbRating)</span></code> would retrieve the value “imdbRating” of the
 answer of your API-Call.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ASSERT</span></code></p></td>
+<td><p>This  will retrieve value of element specified by <cite>locator</cite>
+And compare with expected_value specified in <cite>value</cite></p>
+<p>if expected_value not matches with output_value it will raise TestStepExecution and result in FAILED.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ADDRESS_CREATE</span></code></p></td>
+<td><p>Create  Address Data for various test cases  and save in testDataDict
+The following field variable can be used via $(field_name).</p>
+<p>[‘HouseNumber’, ‘AdditionalData1’, ‘AdditionalData2’, ‘StreetName’, ‘CityName’, ‘PostalCode’, ‘CountryCode’]</p>
+<dl class="simple">
+<dt>Example:</dt><dd><p>Default Data: (value=&lt;blank&gt; and value2=&lt;blank&gt;)
+‘HouseNumber’: ‘6’, ‘AdditionalData1’: ‘Near MahavirChowk’, ‘AdditionalData2’: ‘Opposite St. Marish Church’, ‘StreetName’: ‘GoreGaon’, ‘CityName’: ‘Ambala’, ‘PostalCode’: ‘160055’, ‘CountryCode’: ‘India’</p>
+</dd>
+<dt><cite>value</cite> optional</dt><dd><dl class="simple">
+<dt>if provided<span class="classifier">(value= {“CountryCode”:”US”,”CityName”:”Athens”} value2=&lt;blank&gt;)</span></dt><dd><p>FieldValue updated to:
+{‘HouseNumber’: ‘6’, ‘AdditionalData1’: ‘Near MahavirChowk’,
+‘AdditionalData2’: ‘Opposite St. Marish Church’,
+‘StreetName’: ‘GoreGaon’, ‘CityName’: ‘Athens’,
+‘PostalCode’: ‘160055’, ‘CountryCode’: ‘US’}</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><cite>value2</cite> optional</p>
+<blockquote>
+<div><p>Field will be prefixed with “office_&lt;field_name&gt;”. Ex. “office_CountryCode”</p>
+</div></blockquote>
+</td>
 </tr>
 </tbody>
 </table>

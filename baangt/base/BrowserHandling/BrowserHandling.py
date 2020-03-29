@@ -39,6 +39,7 @@ class BrowserDriver:
     - javaScript: to pass JS directly to the browser
     - takeScreenshot: yes, that.
     """
+
     def __init__(self, timing=None, screenshotPath=None):
         self.driver = None
         self.iFrame = None
@@ -90,7 +91,6 @@ class BrowserDriver:
 
             browserProxy = kwargs.get('browserProxy')
             browserInstance = kwargs.get('browserInstance', 'unknown')
-
 
             if browserName == GC.BROWSER_FIREFOX:
                 lCurPath = lCurPath.joinpath(GeckoExecutable)
@@ -151,6 +151,15 @@ class BrowserDriver:
 
             elif browserName == GC.BROWSER_CHROME:
                 lCurPath = lCurPath.joinpath(ChromeExecutable)
+                if not (os.path.isfile(str(lCurPath))):
+                    self.downloadDriver(browserName)
+                self.driver = browserNames[browserName](
+                    chrome_options=self.__createBrowserOptions(browserName=browserName,
+                                                               desiredCapabilities=desiredCapabilities,
+                                                               browserProxy=browserProxy),
+                    executable_path=self.__findBrowserDriverPaths(ChromeExecutable))
+                browserProxy.new_har("baangt-chrome-{}".format(browserInstance),
+                                     options={'captureHeaders': True, 'captureContent': True}) if browserProxy else None
                 if mobileType == 'True':
                     if not (os.path.isfile(str(lCurPath))):
                         self.downloadDriver(browserName)
@@ -183,7 +192,8 @@ class BrowserDriver:
                     browserProxy.new_har("baangt-chrome-{}".format(browserInstance),
                                          options={'captureHeaders': True, 'captureContent': True}) if browserProxy else None
             elif browserName == GC.BROWSER_EDGE:
-                 self.driver = browserNames[browserName](executable_path=self.__findBrowserDriverPaths("msedgedriver.exe"))
+                self.driver = browserNames[browserName](
+                    executable_path=self.__findBrowserDriverPaths("msedgedriver.exe"))
             elif browserName == GC.BROWSER_SAFARI:
                 # SAFARI doesn't provide any options, but desired_capabilities.
                 # Executable_path = the standard safaridriver path.
@@ -193,6 +203,38 @@ class BrowserDriver:
 
             elif browserName == GC.BROWSER_REMOTE:
                 self.driver = browserNames[browserName](options=self.__createBrowserOptions(browserName=browserName,
+                                                                                            desiredCapabilities=desiredCapabilities),
+                                                        command_executor='http://localhost:4444/wd/hub',
+                                                        desired_capabilities=desiredCapabilities)
+        elif browserName == GC.BROWSER_REMOTE_V4:
+            desired_capabilities = eval(desiredCapabilities)
+            if 'seleniumGridIp' in desired_capabilities.keys():
+                seleniumGridIp = desired_capabilities['seleniumGridIp']
+                del desired_capabilities['seleniumGridIp']
+            else:
+                seleniumGridIp = '127.0.0.1'
+
+            if 'seleniumGridPort' in desired_capabilities.keys():
+                seleniumGridPort = desired_capabilities['seleniumGridPort']
+                del desired_capabilities['seleniumGridPort']
+            else:
+                seleniumGridPort = '4444'
+
+            if not 'browserName' in desired_capabilities.keys():
+                desired_capabilities['browserName'] = 'firefox'
+
+            if desired_capabilities['browserName'] == 'firefox':
+                lCurPath = lCurPath.joinpath(GeckoExecutable)
+                if not (os.path.isfile(str(lCurPath))):
+                    self.downloadDriver(GC.BROWSER_FIREFOX)
+            elif desired_capabilities['browserName'] == 'chrome':
+                lCurPath = lCurPath.joinpath(ChromeExecutable)
+                if not (os.path.isfile(str(lCurPath))):
+                    self.downloadDriver(GC.BROWSER_CHROME)
+
+            serverUrl = 'http://' + seleniumGridIp + ':' + seleniumGridPort
+
+            self.driver = webdriver.Remote(command_executor=serverUrl, desired_capabilities=desired_capabilities)
                                                                                         desiredCapabilities=desiredCapabilities),
                                                     command_executor='http://localhost:4444/wd/hub',
                                                     desired_capabilities=desiredCapabilities)
@@ -219,7 +261,7 @@ class BrowserDriver:
         logger.debug(f"Path for BrowserDrivers: {lCurPath}")
         return str(lCurPath)
 
-    def slowExecutionToggle(self, newSlowExecutionWaitTimeInSeconds = None):
+    def slowExecutionToggle(self, newSlowExecutionWaitTimeInSeconds=None):
         """
         SlowExecution can be set in globals or by the teststep. It's intended use is debugging or showcasing a testcases
         functionality.
@@ -237,7 +279,6 @@ class BrowserDriver:
             self.slowExecutionTimeoutInSeconds = newSlowExecutionWaitTimeInSeconds
 
         return self.slowExecution
-
 
     def __createBrowserOptions(self, browserName, desiredCapabilities, browserProxy=None):
         """
@@ -409,7 +450,7 @@ class BrowserDriver:
                 elif self.element.tag_name == 'input':
                     #  element is of type <input />
                     return self.element.get_property('value')
-                
+
             except Exception as e:
                 logger.debug(f"Exception during findByAndWaitForValue, but continuing {str(e)}, "
                              f"Locator: {self.locatorType} = {self.locator}")
@@ -456,14 +497,14 @@ class BrowserDriver:
         return self.findByAndSetText(id=id, css=css, xpath=xpath, class_name=class_name, value=value, iframe=iframe,
                                      timeout=timeout)
 
-    def findByAndSetTextValidated(self,id = None,
-                       css = None,
-                       xpath = None,
-                       class_name = None,
-                       value = None,
-                       iframe = None,
-                       timeout = 60,
-                       retries = 5):
+    def findByAndSetTextValidated(self, id=None,
+                                  css=None,
+                                  xpath=None,
+                                  class_name=None,
+                                  value=None,
+                                  iframe=None,
+                                  timeout=60,
+                                  retries=5):
         """
         This is a method not recommended to be used regularly. Sometimes (especially with Angular Frontends) it gets
         pretty hard to set a value into a field. Chrome, but also FF will show the value, but the DOM will not have it.
@@ -476,7 +517,6 @@ class BrowserDriver:
         self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
 
         while self.element.text != value and self.element.get_property("value") != value and tries < retries:
-
             self._log(logging.DEBUG, f"Verified trying of SetText - iteration {tries} of {retries}")
 
             self.findByAndForceText(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe,
@@ -493,7 +533,7 @@ class BrowserDriver:
         """
         self.element.submit()
 
-    def findByAndClick(self, id = None, css=None, xpath=None, class_name=None, iframe=None, timeout=20, optional=False):
+    def findByAndClick(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=20, optional=False):
         """
         Execute a Click on an element identified by it's locator.
         @return wasSuccessful says, whether the element was found.
@@ -635,7 +675,7 @@ class BrowserDriver:
                 elif xpath:
                     # visibility of element sometimes not true, but still clickable. If we tried already
                     # 2 times with visibility, let's give it one more try with Presence of element
-                    if lLoopCount > 2:
+                    if lLoopCount > 1:
                         self._log(logging.INFO, "Tried 2 times to find visible element, now trying presence "
                                                 f"of element instead, XPATH = {xpath}")
                         self.element = driverWait.until(ec.presence_of_element_located((By.XPATH, xpath)))
@@ -671,13 +711,13 @@ class BrowserDriver:
 
         return wasSuccessful
 
-    def findWaitNotVisible(self, css=None, xpath=None, id=None, timeout = 90, optional = False):
+    def findWaitNotVisible(self, css=None, xpath=None, id=None, timeout=90, optional=False):
         """
         You'd use this method when you wait for an element to disappear, for instance Angular Spinner or a popup
         to disapear before you continue with your script in the main screen.
 
         """
-        self._log(logging.DEBUG, "Waiting for Element to disappear", **{"xpath":xpath, "timeout":timeout})
+        self._log(logging.DEBUG, "Waiting for Element to disappear", **{"xpath": xpath, "timeout": timeout})
         time.sleep(0.5)
 
         stillHere = True
@@ -700,7 +740,8 @@ class BrowserDriver:
                 self._log(logging.DEBUG, f"Element was gone after {format(elapsed, '.2f')} seconds")
                 return
 
-        raise Exceptions.baangtTestStepException(f"Element still here after {timeout} seconds. Locator: xpath={xpath}, id={id}")
+        raise Exceptions.baangtTestStepException(
+            f"Element still here after {timeout} seconds. Locator: xpath={xpath}, id={id}")
 
     @staticmethod
     def sleep(sleepTimeinSeconds):
@@ -752,12 +793,14 @@ class BrowserDriver:
                 raise Exceptions.baangtTestStepException(e)
             except NoSuchWindowException as e:
                 raise Exceptions.baangtTestStepException(e)
-            elapsed = time.time()-begin
+            elapsed = time.time() - begin
 
         if optional:
-            logger.debug(f"Action not possible after {timeout} s, Locator: {self.locatorType}: {self.locator}, but flag 'optional' is set")
+            logger.debug(
+                f"Action not possible after {timeout} s, Locator: {self.locatorType}: {self.locator}, but flag 'optional' is set")
         else:
-            raise Exceptions.baangtTestStepException(f"Action not possible after {timeout} s, Locator: {self.locatorType}: {self.locator}")
+            raise Exceptions.baangtTestStepException(
+                f"Action not possible after {timeout} s, Locator: {self.locatorType}: {self.locator}")
 
 
     def goToUrl(self, url):
@@ -779,12 +822,11 @@ class BrowserDriver:
         except Exception as e:
             self._log(logging.WARNING, f"Tried to go back in history, didn't work with error {e}")
 
-
     def javaScript(self, jsText):
         """Execute a given JavaScript in the current Session"""
         self.driver.execute_script(jsText)
 
-    def downloadDriver(self,browserName):
+    def downloadDriver(self, browserName):
         path = Path(os.getcwd())
         path = path.joinpath("browserDrivers")
         tar_url = ''
@@ -816,7 +858,7 @@ class BrowserDriver:
 
             if tar_url != '':
                 path_zip = path.joinpath(GC.GECKO_DRIVER.replace('exe', 'tar.gz'))
-                filename, headers = urlretrieve(tar_url,path_zip)
+                filename, headers = urlretrieve(tar_url, path_zip)
                 tar = tarfile.open(filename, "r:gz")
                 tar.extractall(path)
                 tar.close()

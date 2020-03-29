@@ -9,7 +9,7 @@ Example:
 * Names of business partners
 * Random text
 
-We want to provide an easily accessable feature for users of ```baangt``` to deal with this requirement without needing
+We want to provide an easily accessible feature for users of ```baangt``` to deal with this requirement without needing
 to develop code.
 
 ## Implementation
@@ -47,10 +47,10 @@ In Activity "Random" we need to store the resulting value in the field given in 
 ## Example File
 An example File with explanations can be found in folder ``Examples``, filename ``Random.xlsx``
 
-## Scope / DOD
-* Implementation provided (in line with coding standards and PEP-8 conformity)
-* Functional test executed and passed (theoretically if values from ``Random.xlsx`` work, this should be enough)
-* Enhance existing documentation in docs-Folder in RST-Format
+## Scope / DOD (including effort estimation)
+* Implementation provided (in line with coding standards and PEP-8 conformity) (2 hours)
+* Functional test executed and passed (theoretically if values from ``Random.xlsx`` work, this should be enough) (1 hour)
+* Enhance existing documentation in docs-Folder in RST-Format (0,5 hours)
     * in this case in simpleExample.rst and SimpleAPI.rst
-* Unit-Tests in tests-folder providing reasonable coverage of the provided functionality
-* git commit to feature branch and pull request on Gogs created
+* Unit-Tests in tests-folder providing reasonable coverage (e.g. 80%) of the provided functionality (1 hour)
+* git commit to feature branch and pull request on Gogs created (no additional effort)

@@ -1,0 +1,741 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Asynchronous vs. Canon tests &mdash; baangt 2020.3.0.rc4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Why On Earth Do We Have Bugs In Production?" href="BugSoup.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> baangt
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Installation.html">   Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../OverviewUsage.html">   Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../simpleExample.html">   First Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Structure.html">   Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ParametersConfigFile.html">   Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../DataFile.html">   Data file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SimpleAPI.html">   First API Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../TestTypes.html">   Types of Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Developer.html">   For Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../HistoryAndReasons.html">   History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributors.html">   Contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">   Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PlannedFeatures.html">   Planned Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BrowserDrivers.html">   Browser Drivers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="Articles.html">:subheader: Articles</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ProductionSucks.html"> Production sucks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DataDoctor.html"> Test data rulez</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BaangtIndustries.html"> Industries 4 baangt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="StopTesting.html"> Stop testing!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="AgileWorkflowIntegration.html"> bAanGtILE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BugSoup.html"> BugSoup</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"> Canons, that are not DSLR nor music</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#abstract">Abstract</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#isn-t-everything-asynchronous">Isn’t everything asynchronous?</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#polling-vs-events">Polling vs. Events</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#deep-dive-on-test-canons">Deep dive on test Canons</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#how-does-it-apply-to-testing-processes">How does it apply to testing processes?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-the-test-canon-works">How the test Canon works</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#how-it-fits-all-together">How it fits all together</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#prerequisites-to-run-test-canons-in-baangt">Prerequisites to run test canons in <code class="docutils literal notranslate"><span class="pre">baangt</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">baangt</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="Articles.html">Not Exactly Documentation</a> &raquo;</li>
+        
+      <li>Asynchronous vs. Canon tests</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/articles/AsynchronousAndCanonTests.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="asynchronous-vs-canon-tests">
+<h1>Asynchronous vs. Canon tests<a class="headerlink" href="#asynchronous-vs-canon-tests" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="abstract">
+<h2>Abstract<a class="headerlink" href="#abstract" title="Permalink to this headline">¶</a></h2>
+<p>Whenever you can’t grab the verification of your test assumption right away, you’re in an <strong>asynchronous</strong> scenario. When
+you have an End2End-Scenario where this happens in more than one steps, you could consider setting up a test Canon.
+Borrowed from music, a test canon will start with one test case until the halt condition is reached. Once the case can
+continue (e.g. because a trigger arrived), the canon will not only continue to run the first test case in it’s second
+step but also start a new initial sequence of the same test case.</p>
+</div>
+<hr class="docutils" />
+<div class="section" id="isn-t-everything-asynchronous">
+<h2>Isn’t everything asynchronous?<a class="headerlink" href="#isn-t-everything-asynchronous" title="Permalink to this headline">¶</a></h2>
+<p>By nature basically every test is asynchronous, because we always wait for a reaction of the System under test. In most
+cases, we’re talking about Microseconds up to a few seconds. You’ll not do anything special with waiting times up to
+a few seconds. As you run anyway 50 or 500 parallel sessions, it doesn’t really matter. But what if we need to wait
+for e.g. 10 Minutes, 30 Minutes, 8 hours? We shouldn’t waste resources (like CPU-Time and blocked processes) to wait for
+extended times.</p>
+<div class="section" id="polling-vs-events">
+<h3>Polling vs. Events<a class="headerlink" href="#polling-vs-events" title="Permalink to this headline">¶</a></h3>
+<p><strong>Polling</strong> means to have your currently active test case poll repeatedly for an event in a more or less fixed timely
+interval. That’s nice for smaller waiting periods and smaller installations. When you run with 500 parallel sessions and
+you query a service every 500 ms for a specific answer you may create a unrealistic load to that service. You also
+consume resources of your test environment, which are then not available for other tasks. For <code class="docutils literal notranslate"><span class="pre">baangt</span></code> we recommend
+to use polling for expected short waiting times (several seconds up to minutes) - but that’s not a hard rule. YMMV.</p>
+<p><strong>Events</strong> (aka Callbacks) are the opposite. Your test case pauses and doesn’t do anything until an external trigger
+appears. Of course callbacks are more difficult to implement as you not only need to query a service repeatedly, but first
+implement a callback service as well as the call to the callback service (even when it’s done via Kafka or Redis).</p>
+<p>These callbacks are additional components of your system landscape, that need to be developed, tested and maintained.</p>
+</div>
+</div>
+<div class="section" id="deep-dive-on-test-canons">
+<h2>Deep dive on test Canons<a class="headerlink" href="#deep-dive-on-test-canons" title="Permalink to this headline">¶</a></h2>
+<p>What is a test Canon? It is basically the same concept as a canon in music for a combination of asynchronously executed
+test steps over and over again in order to have one test result for each test step at any given time slice.</p>
+<blockquote>
+<div><p>From <a class="reference external" href="https://en.wikipedia.org/wiki/Canon_(music)">Wikipedia</a>:</p>
+<p>In music, a canon is a contrapuntal (counterpoint-based) compositional technique that employs a melody with <strong>one or</strong>
+<strong>more imitations</strong> of the melody played after a given duration (e.g., quarter rest, one measure, etc.).</p>
+</div></blockquote>
+<p>See the music canon in action on <a class="reference external" href="https://www.youtube.com/watch?v=S9MN2WeqFY8">Youtube</a></p>
+<div class="section" id="how-does-it-apply-to-testing-processes">
+<h3>How does it apply to testing processes?<a class="headerlink" href="#how-does-it-apply-to-testing-processes" title="Permalink to this headline">¶</a></h3>
+<p>Imagine the following (simplified) test case sequence (in combination with a mainframe or SAP-System):</p>
+<ol class="arabic simple">
+<li><p>Create material master data in Backend. Validate: Material available in online shop (asynchronous)</p></li>
+<li><p>Create sales order. Validate: Increased demand in material resource planning (batch)</p></li>
+<li><p>Create delivery and shipping. Validate: Reduced stock of materials (asynchronous)</p></li>
+<li><p>Create invoice. Validate: Invoice amount posted to A/R (batch)</p></li>
+<li><p>Create payment. Validate: Open item closed (batch)</p></li>
+<li><p>Create goods return. Validate: Special quality stock increased (asynchronous)</p></li>
+<li><p>Create credit note. Validate: Amount of credit note in A/P (batch)</p></li>
+<li><p>Create outgoing payment. Validate: Open item closed</p></li>
+</ol>
+<p>In this example there are 4 batch processes, that we need to wait for before we can tell, whether the whole E2E-Scenario
+works or not. Without any measures this means to wait for 5 days until we have a test result. Real use cases are not that simple and would
+take longer. Back in the days when there was a month of User acceptance test (UAT) this was fine. Now with always shorter
+release cycles you can’t survive without new approaches.</p>
+</div>
+<div class="section" id="how-the-test-canon-works">
+<h3>How the test Canon works<a class="headerlink" href="#how-the-test-canon-works" title="Permalink to this headline">¶</a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 73%" />
+<col style="width: 3%" />
+<col style="width: 3%" />
+<col style="width: 3%" />
+<col style="width: 3%" />
+<col style="width: 3%" />
+<col style="width: 3%" />
+<col style="width: 3%" />
+<col style="width: 3%" />
+<col style="width: 3%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Canons and</p></th>
+<th class="head"><p>D</p></th>
+<th class="head"><p>A</p></th>
+<th class="head"><p>Y</p></th>
+<th class="head"><p>S</p></th>
+<th class="head"><p>/</p></th>
+<th class="head"><p>E</p></th>
+<th class="head"><p>X</p></th>
+<th class="head"><p>E</p></th>
+<th class="head"><p>C</p></th>
+</tr>
+<tr class="row-even"><th class="head"><p>Teststeps</p></th>
+<th class="head"><p>1</p></th>
+<th class="head"><p>2</p></th>
+<th class="head"><p>3</p></th>
+<th class="head"><p>4</p></th>
+<th class="head"><p>5</p></th>
+<th class="head"><p>6</p></th>
+<th class="head"><p>7</p></th>
+<th class="head"><p>8</p></th>
+<th class="head"><p>9</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-odd"><td><p>Canon 1 - Teststep 1 + 2</p></td>
+<td><p>X</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Canon 1 - Teststep 3 + 4</p></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Canon 2 - Teststep 1 + 2</p></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Canon 1 - Teststep 5</p></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Canon 2 - Teststep 3 + 4</p></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Canon 3 - Teststep 1 + 2</p></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Canon 1 - Teststep 6 + 7</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Canon 2 - Teststep 5</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Canon 3 - Teststep 3 + 4</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Canon 4 - Teststep 1 + 2</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Canon 1 - Teststep 8</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Canon 2 - Teststep 6 + 7</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Canon 3 - Teststep 5</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Canon 4 - Teststep 3 + 4</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Canon 5 - Teststep 1 + 2</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Canon 2 - Teststep 8</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Canon 3 - Teststep 6 + 7</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Canon 4 - Teststep 5</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Canon 5 - Teststep 3 + 4</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Canon 6 - Teststep 1 + 2</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Canon 3 - Teststep 8</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Canon 4 - Teststep 6 + 7</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Canon 5 - Teststep 5</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Canon 6 - Teststep 3 + 4</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Canon 7 - Teststep 1 + 2</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Canon 4 - Teststep 8</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Canon 5 - Teststep 6 + 7</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Canon 6 - Teststep 5</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Canon 7 - Teststep 3 + 4</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Canon 8 - Teststep 1 + 2</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Canon 5 - Teststep 8</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+</tr>
+<tr class="row-even"><td><p>Canon 6 - Teststep 6 + 7</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+</tr>
+<tr class="row-odd"><td><p>Canon 7 - Teststep 5</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+</tr>
+<tr class="row-even"><td><p>Canon 8 - Teststep 3 + 4</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+</tr>
+<tr class="row-odd"><td><p>Canon 9 - Teststep 1 + 2</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="how-it-fits-all-together">
+<h2>How it fits all together<a class="headerlink" href="#how-it-fits-all-together" title="Permalink to this headline">¶</a></h2>
+<p>In <code class="docutils literal notranslate"><span class="pre">baangt</span></code> we have test case status <code class="docutils literal notranslate"><span class="pre">paused</span></code> for conditions of longer asynchronous waiting times. Each test case has
+a unique identifier, that enables external callbacks or triggers to resume a certain test case after it was paused and
+the precondition for continuation was met.</p>
+<div class="section" id="prerequisites-to-run-test-canons-in-baangt">
+<h3>Prerequisites to run test canons in <code class="docutils literal notranslate"><span class="pre">baangt</span></code><a class="headerlink" href="#prerequisites-to-run-test-canons-in-baangt" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>implement the triggers which will call <code class="docutils literal notranslate"><span class="pre">baangt</span></code> service “resumeTestCase” with the unique ID of a test case</p></li>
+<li><p>baangtDB (onsite, in the cloud or serverless)</p></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="BugSoup.html" class="btn btn-neutral float-left" title="Why On Earth Do We Have Bugs In Production?" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Bernhard Buhl
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
