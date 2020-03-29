@@ -77,17 +77,18 @@ class BrowserDriver:
             GC.BROWSER_SAFARI: webdriver.Safari,
             GC.BROWSER_EDGE: webdriver.Edge,
             GC.BROWSER_REMOTE: webdriver.Remote}
+
+        GeckoExecutable = "geckodriver"
+        ChromeExecutable = "chromedriver"
+
+        if 'NT' in os.name.upper():
+            GeckoExecutable = GeckoExecutable + ".exe"
+            ChromeExecutable = ChromeExecutable + ".exe"
+
+        lCurPath = Path(os.getcwd())
+        lCurPath = lCurPath.joinpath("browserDrivers")
+
         if browserName in browserNames:
-            GeckoExecutable = "geckodriver"
-            ChromeExecutable = "chromedriver"
-
-            if 'NT' in os.name.upper():
-                GeckoExecutable = GeckoExecutable + ".exe"
-                ChromeExecutable = ChromeExecutable + ".exe"
-
-
-            lCurPath = Path(os.getcwd())
-            lCurPath = lCurPath.joinpath("browserDrivers")
 
             browserProxy = kwargs.get('browserProxy')
             browserInstance = kwargs.get('browserInstance', 'unknown')
@@ -234,10 +235,8 @@ class BrowserDriver:
 
             serverUrl = 'http://' + seleniumGridIp + ':' + seleniumGridPort
 
-            self.driver = webdriver.Remote(command_executor=serverUrl, desired_capabilities=desired_capabilities)
-                                                                                        desiredCapabilities=desiredCapabilities),
-                                                    command_executor='http://localhost:4444/wd/hub',
-                                                    desired_capabilities=desiredCapabilities)
+            self.driver = webdriver.Remote(command_executor=serverUrl,
+                                           desired_capabilities=desiredCapabilities)
         else:
             raise SystemExit("Browsername unknown")
 
@@ -828,6 +827,7 @@ class BrowserDriver:
 
     def downloadDriver(self, browserName):
         path = Path(os.getcwd())
+        path.joinpath("browserDrivers").mkdir(exist_ok=True,parents=True)
         path = path.joinpath("browserDrivers")
         tar_url = ''
         url = ''
