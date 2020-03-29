@@ -510,7 +510,6 @@ class ExportTiming:
 
         Update 29.3.2020: Format changed to "since last call: 00:xx:xx,", rest looks identical.
         """
-        # Todo: Double-check for VIG, why it works there in the old format while for baangtIA it shows new format!
         lExport = {}
         lLines = lTimeLog.split("\n")
         for line in lLines:
