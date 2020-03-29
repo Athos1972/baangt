@@ -37,6 +37,8 @@ class TestStepMaster:
             # in the TestExecutionSteps
             self.executeDirect(lTestStep[1][GC.STRUCTURE_TESTSTEPEXECUTION])
 
+        self.teardown()
+
     def executeDirect(self, executionCommands):
         """
         This will execute single Operations directly
@@ -254,7 +256,7 @@ class TestStepMaster:
             raise BaseException(f"Comparison Operator not supported/unknown {lComparison}")
 
     def execute(self):
-        """Method is overwritten in all children"""
+        """Method is overwritten in all children/subclasses"""
         pass
 
     def teardown(self):
@@ -268,7 +270,8 @@ class TestStepMaster:
                 self.testcaseDataDict = GC.TESTCASESTATUS_ERROR
             else:
                 sys.exit("No idea, what happened here. Unknown condition appeared")
-        self.timing.takeTime(self.timingName)   # Why does this not work?
+
+        self.timing.takeTime(self.timingName)
 
     def replaceVariables(self, expression):
         """
