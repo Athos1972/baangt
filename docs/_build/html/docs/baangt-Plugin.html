@@ -1,0 +1,288 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>What is a baangt-plugin &mdash; baangt 2020.3.0.rc4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> baangt
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Installation.html">   Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../OverviewUsage.html">   Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../simpleExample.html">   First Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Structure.html">   Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ParametersConfigFile.html">   Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../DataFile.html">   Data file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SimpleAPI.html">   First API Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../TestTypes.html">   Types of Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Developer.html">   For Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../HistoryAndReasons.html">   History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributors.html">   Contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">   Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PlannedFeatures.html">   Planned Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BrowserDrivers.html">   Browser Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../articles/Articles.html">:subheader: Articles</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">baangt</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>What is a baangt-plugin</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/docs/baangt-Plugin.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="what-is-a-baangt-plugin">
+<h1>What is a baangt-plugin<a class="headerlink" href="#what-is-a-baangt-plugin" title="Permalink to this headline">¶</a></h1>
+<p>Simply speaking, one baangt-plugin correspond to one class, and the
+methods in the class correspond to the implements in the plugin.</p>
+</div>
+<div class="section" id="how-to-make-a-baangt-plugin">
+<h1>how to make a baangt-plugin<a class="headerlink" href="#how-to-make-a-baangt-plugin" title="Permalink to this headline">¶</a></h1>
+<p>first of all , we need to create a implement class, like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">baangt</span>
+
+<span class="kn">from</span> <span class="nn">baangt.base.Timing.Timing</span> <span class="kn">import</span> <span class="n">Timing</span>
+
+<span class="k">class</span> <span class="nc">TimingHookImpl</span><span class="p">:</span>
+
+    <span class="nd">@baangt</span><span class="o">.</span><span class="n">hook_impl</span>
+    <span class="k">def</span> <span class="nf">timing_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Timing</span><span class="p">()</span>
+
+    <span class="nd">@baangt</span><span class="o">.</span><span class="n">hook_impl</span>
+    <span class="k">def</span> <span class="nf">timing_takeTime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timingObject</span><span class="p">,</span> <span class="n">timingName</span><span class="p">,</span> <span class="n">forceNew</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">timingObject</span><span class="o">.</span><span class="n">takeTime</span><span class="p">(</span><span class="n">timingName</span><span class="p">,</span> <span class="n">forceNew</span><span class="p">)</span>
+
+    <span class="nd">@baangt</span><span class="o">.</span><span class="n">hook_impl</span>
+    <span class="k">def</span> <span class="nf">timing_addAttribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timingObject</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">timingSection</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">timingObject</span><span class="o">.</span><span class="n">addAttribute</span><span class="p">(</span><span class="n">attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">timingSection</span><span class="p">)</span>
+
+    <span class="nd">@baangt</span><span class="o">.</span><span class="n">hook_impl</span>
+    <span class="k">def</span> <span class="nf">timing_takeTimeSumOutput</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timingObject</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">timingObject</span><span class="o">.</span><span class="n">takeTimeSumOutput</span><span class="p">()</span>
+
+    <span class="nd">@baangt</span><span class="o">.</span><span class="n">hook_impl</span>
+    <span class="k">def</span> <span class="nf">timing_returnTime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timingObject</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">timingObject</span><span class="o">.</span><span class="n">returnTime</span><span class="p">()</span>
+
+    <span class="nd">@baangt</span><span class="o">.</span><span class="n">hook_impl</span>
+    <span class="k">def</span> <span class="nf">timing_returnTimeSegment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timingObject</span><span class="p">,</span> <span class="n">segment</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">timingObject</span><span class="o">.</span><span class="n">returnTimeSegment</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span>
+
+    <span class="nd">@baangt</span><span class="o">.</span><span class="n">hook_impl</span>
+    <span class="k">def</span> <span class="nf">timing_resetTime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timingObject</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">timingObject</span><span class="o">.</span><span class="n">resetTime</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>and then register this implement class in /baangt/_*init_*.py:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">baangt.base.Timing.hookImpls</span> <span class="kn">import</span> <span class="n">TimingHookImpl</span>
+
+<span class="n">plugin_manager</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">plugin</span><span class="o">=</span><span class="n">TimingHookImpl</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="how-the-baangt-plugin-work">
+<h1>how the baangt-plugin work<a class="headerlink" href="#how-the-baangt-plugin-work" title="Permalink to this headline">¶</a></h1>
+<p>for example, after transfer TestRun to a plugin, we can replace the
+code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">xxx</span> <span class="kn">import</span> <span class="n">TestRun</span>
+<span class="n">TestRun</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>by</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">xxx</span> <span class="kn">import</span> <span class="n">plugin_manager</span>
+<span class="n">plugin_manager</span><span class="o">.</span><span class="n">hook</span><span class="o">.</span><span class="n">testRun_init</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>this replacement does not change anything of the result of programme’s
+execution.</p>
+</div>
+<div class="section" id="how-to-replace-the-existing-plugin-by-your-own-one">
+<h1>how to replace the existing plugin by your own one<a class="headerlink" href="#how-to-replace-the-existing-plugin-by-your-own-one" title="Permalink to this headline">¶</a></h1>
+<p>for example, if you want to replace the default TestRun plugin,</p>
+<p>you can easily change the implement of TestRun by just unregister the
+default plugin and register your own one:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plugin_manager</span><span class="o">.</span><span class="n">unregister</span><span class="p">(</span><span class="n">plugin</span><span class="o">=</span><span class="n">default_plugin</span><span class="p">)</span>
+<span class="n">plugin_manager</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">plugin</span><span class="o">=</span><span class="n">my_plugin</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>notice that if you don’t unregister the old one, two same implements
+(with same function name) in two plugins may both execute if you call
+the function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plugin_manager</span><span class="o">.</span><span class="n">hook</span><span class="o">.</span><span class="n">i_got_two_implements</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>the order of the execution follows the FILO (first-in-last-out) rule.</p>
+<p>Author: Yuyi Shao</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Bernhard Buhl
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

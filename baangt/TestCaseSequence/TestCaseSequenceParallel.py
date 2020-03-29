@@ -4,24 +4,24 @@ from baangt.TestSteps import Exceptions
 from baangt.base import GlobalConstants as GC
 from datetime import datetime
 import time
+import gevent.queue
 logger = logging.getLogger("pyC")
 
 
 class TestCaseSequenceParallel:
-    def __init__(self, sequenceNumber, tcNumber, testcaseSequence=None, **kwargs):
-        self.manager = multiprocessing.Manager()
-        self.process_list = self.manager.list()
+    def __init__(self, sequenceNumber: int, tcNumber: int, testcaseSequence=None, **kwargs):
         self.sequenceNumber = sequenceNumber
         self.dataRecord = kwargs.get(GC.KWARGS_DATA)
         self.tcNumber = tcNumber
         self.testcaseSequence = testcaseSequence
         self.kwargs = kwargs
 
-    def one_sequence(self, resultQueue: multiprocessing.Queue):
+    def one_sequence(self, results: gevent.queue.Queue):
         dataRecord = self.dataRecord
         currentRecordNumber = self.tcNumber
         testcaseSequence = self.testcaseSequence
         parallelizationSequenceNumber = self.sequenceNumber
+        
         logger.info(f"Starting one_sequence with SequenceNumber = {parallelizationSequenceNumber}, "
                     f"CurrentRecordNumber is {currentRecordNumber}")
 
@@ -34,14 +34,9 @@ class TestCaseSequenceParallel:
                                                                                 GC.STRUCTURE_TESTCASE,
                                                                                 **self.kwargs)
 
-
         except Exceptions.baangtTestStepException as e:
             logger.critical(f"Unhandled Error happened in parallel run {parallelizationSequenceNumber}: " + str(e))
             dataRecord[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
         finally:
-            # the result must be pushed into the queue:
-            logger.debug(
-                f"Starting to Put value in Queue {currentRecordNumber}. Len of datarecord: {len(str(dataRecord))}")
             d_t = datetime.fromtimestamp(time.time())
-            resultQueue.put([{self.tcNumber: dataRecord}, {self.sequenceNumber:  [self.tcNumber, d_t]}])
-            logger.debug(f"Finished putting Value i Queue for TC {currentRecordNumber}")
+            results.put([{self.tcNumber: dataRecord}, {self.sequenceNumber:  [self.tcNumber, d_t]}])

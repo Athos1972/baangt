@@ -14,3 +14,4 @@ This section contains articles, that are not exactly documentation. Some are mor
     bAanGtILE </articles/AgileWorkflowIntegration.rst>
     BugSoup </articles/BugSoup.rst>
     Canons, that are not DSLR nor music </articles/AsynchronousAndCanonTests.rst>
+    SeleniumGridV4 </articles/SeleniumGridV4WithBaangt.rst>

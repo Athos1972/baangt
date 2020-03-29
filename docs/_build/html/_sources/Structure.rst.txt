@@ -1,7 +1,7 @@
 Structure of baangt
 ===============================================
 
-If you never used any test automation software before these terms can be intimidating, but in reality it's all very simple.
+If you never used any test automation software before, these terms can be intimidating, but in reality it's all very simple.
 
 We'll start from the bottom to the top.
 
@@ -28,7 +28,7 @@ A Testcase is a Sequence of TestStepSequences. You might wonder, why this additi
 simply write the TestSteps directly into the TestCase.
 
 First of all: you don't need the TestStepSequence. In the simple XLSX-Format this grouping area doesn't exist.
-Second: Imagine you've a login-page, a product bucket, product return functionality and invoice reprint functionality in
+Second: Imagine you have a login-page, a product bucket, product return functionality and invoice reprint functionality in
 your SPA and you want to test all of them. Obviously you'll have at least 3 Testcases, but in all of them you'll have to
 do a login. You can use the TestStepSequence to extract this repeated Sequence.
 
@@ -46,7 +46,7 @@ for instance group together the execution of a WEB-Page TestCase and subsequentl
 results from another system. This scenario is of course mostly for corporate system landscapes, where the frontend (Web) communicates
 more or less asynchronous with backend components like Hosts, CRM-Systems, SAP-Backends and so on.
 
-By all means - if you don't need it - don't use it. But in case you need it, it's good to know it's there.
+By all means if you don't need it: don't use it. But in case you need it, it's good to know it's there.
 
 TestRun
 -------

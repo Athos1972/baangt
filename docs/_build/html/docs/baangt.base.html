@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>baangt.base package &mdash; baangt 2020.1.1.b11 documentation</title>
+  <title>baangt.base package &mdash; baangt 2020.3.0.rc4 documentation</title>
   
 
   
@@ -93,6 +93,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../contributors.html">   Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">   Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PlannedFeatures.html">   Planned Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BrowserDrivers.html">   Browser Drivers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../articles/Articles.html">:subheader: Articles</a></li>
 <li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
 </ul>
@@ -489,8 +490,56 @@ XLSX and JSON Config files.</p>
 <div class="section" id="module-baangt.base.Timing">
 <span id="baangt-base-timing-module"></span><h2>baangt.base.Timing module<a class="headerlink" href="#module-baangt.base.Timing" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="baangt-base-utils-module">
-<h2>baangt.base.utils module<a class="headerlink" href="#baangt-base-utils-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-baangt.base.Utils">
+<span id="baangt-base-utils-module"></span><h2>baangt.base.Utils module<a class="headerlink" href="#module-baangt.base.Utils" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="baangt.base.Utils.utils">
+<em class="property">class </em><code class="sig-prename descclassname">baangt.base.Utils.</code><code class="sig-name descname">utils</code><a class="headerlink" href="#baangt.base.Utils.utils" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="baangt.base.Utils.utils.datetime_return">
+<em class="property">static </em><code class="sig-name descname">datetime_return</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.Utils.utils.datetime_return" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="baangt.base.Utils.utils.extractFileNameFromFullPath">
+<em class="property">static </em><code class="sig-name descname">extractFileNameFromFullPath</code><span class="sig-paren">(</span><em class="sig-param">fileAndPathName</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.Utils.utils.extractFileNameFromFullPath" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="baangt.base.Utils.utils.findFileAndPathFromPath">
+<em class="property">static </em><code class="sig-name descname">findFileAndPathFromPath</code><span class="sig-paren">(</span><em class="sig-param">fileNameAndPath</em>, <em class="sig-param">basePath=None</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.Utils.utils.findFileAndPathFromPath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tries different approaches to locate a file
+lBasePath = the Path where the script is run</p>
+<p>&#64;param fileNameAndPath: Filename and potentially relative path
+&#64;param basePath (optional): Optional basePath to look at
+&#64;return:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="baangt.base.Utils.utils.openJson">
+<em class="property">static </em><code class="sig-name descname">openJson</code><span class="sig-paren">(</span><em class="sig-param">fileNameAndPath</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.Utils.utils.openJson" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="baangt.base.Utils.utils.replaceAllGlobalConstantsInDict">
+<em class="property">static </em><code class="sig-name descname">replaceAllGlobalConstantsInDict</code><span class="sig-paren">(</span><em class="sig-param">lDict: dict</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.Utils.utils.replaceAllGlobalConstantsInDict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="baangt.base.Utils.utils.replaceFieldValueWithValueOfConstant">
+<em class="property">static </em><code class="sig-name descname">replaceFieldValueWithValueOfConstant</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.Utils.utils.replaceFieldValueWithValueOfConstant" title="Permalink to this definition">¶</a></dt>
+<dd><p>If a String reference to global Constant (e.g. GC.BROWSER_FF) is
+given, this function will replace it with the actual value (e.g. FIREFOX)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="baangt.base.Utils.utils.sanitizeFileName">
+<em class="property">static </em><code class="sig-name descname">sanitizeFileName</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.Utils.utils.sanitizeFileName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-baangt.base">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-baangt.base" title="Permalink to this headline">¶</a></h2>

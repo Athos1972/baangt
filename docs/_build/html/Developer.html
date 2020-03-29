@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Developer guidelines for custom enhancements &mdash; baangt 2020.1.1.b11 documentation</title>
+  <title>Developer guidelines for custom enhancements &mdash; baangt 2020.3.0.rc4 documentation</title>
   
 
   
@@ -94,12 +94,14 @@
 <li class="toctree-l2"><a class="reference internal" href="#subclassing">Subclassing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#debugging">Debugging</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#network-trace">Network trace</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">   History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">   Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BrowserDrivers.html">   Browser Drivers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">:subheader: Articles</a></li>
 <li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
 </ul>
@@ -212,6 +214,14 @@ breakpoints and expect the program to halt on the breakpoint. You’ve two chanc
 <h2>Plugins<a class="headerlink" href="#plugins" title="Permalink to this headline">¶</a></h2>
 <p>Please make yourself familiar with <a class="reference external" href="https://pluggy.readthedocs.io/en/latest/">https://pluggy.readthedocs.io/en/latest/</a> in order to implement Plugins.
 If you’re stuck let me know.</p>
+</div>
+<div class="section" id="network-trace">
+<h2>Network trace<a class="headerlink" href="#network-trace" title="Permalink to this headline">¶</a></h2>
+<p>Sometimes it’s useful (especially for frontend debugging and in performance measurments) to have more detailed log about
+the calls that the browser exchanges with the backend. If you need this, use <code class="docutils literal notranslate"><span class="pre">TC.NetworkInfo</span></code> with value = <code class="docutils literal notranslate"><span class="pre">True</span></code>.
+In the output file you’ll see a new tab “Network” that shows all calls, headers, payload and timing information for each
+call.</p>
+<p>Use with care, as the file can get pretty big.</p>
 </div>
 </div>
 

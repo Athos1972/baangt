@@ -2,12 +2,14 @@ import sys, getopt
 from baangt.base.Utils import utils
 from baangt.ui.ui import UI
 from baangt import plugin_manager
+import baangt.base.GlobalConstants as GC
 
 def print_args():
     print("""
 Call: python baangt.py --parameters 
        --run=<Existing, predefined Name of a TestRun (XLSX or .JSON-File incl. Path)>
        --globals=<path to JSON-File containing global Settings. If omitted, will look for globals.json in the current directory>
+       --reloadDrivers=<anyValue> : This command will replace existing browser drivers (Chrome/Firefox) with latest versions
 
  Suggested for standard use:
    python baangt.py --run="Franzi4711.xlsx": Will run a Testrun Franzi4711.xlsx
@@ -23,7 +25,8 @@ def args_read(l_search_parameter):
 
     try:
         opts, args = getopt.getopt(l_args, "", ["run=",
-                                                "globals="
+                                                "globals=",
+                                                "reloadDrivers="
                                                 ])
     except getopt.GetoptError as err_det:
         print("Error in reading parameters:" + str(err_det))
@@ -54,9 +57,6 @@ def callTestrun(testRunFile):
     else:
         sys.exit(f"Unknown Filetype - should be XLSX or JSON: {testRunFile}")
 
-
-
-
 def run():
 
     print_args()
@@ -65,6 +65,12 @@ def run():
     if testRunFile:
         print(f"Starting Testrun: {testRunFile}")
         callTestrun(testRunFile)
+    elif args_read("reloadDrivers"):
+        from baangt.base.BrowserHandling.BrowserHandling import BrowserDriver
+        lDriver = BrowserDriver()
+        lDriver.downloadDriver(GC.BROWSER_FIREFOX)
+        lDriver.downloadDriver(GC.BROWSER_CHROME)
+        print("Latest versions of drivers for Firefox and Chrome were downloaded")
     else:
         UI()
 

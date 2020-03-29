@@ -80,5 +80,8 @@ class TestCaseMaster:
                 self.kwargs[GC.KWARGS_DATA][GC.SCREENSHOTS] = self.kwargs[GC.KWARGS_DATA][GC.SCREENSHOTS] + '\n' +\
                                                               self.browser.takeScreenshot()
 
+        if not self.kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS]:
+            self.kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS] = GC.TESTCASESTATUS_SUCCESS
+
         self._checkAndSetTestcaseStatusIfFailExpected()
 

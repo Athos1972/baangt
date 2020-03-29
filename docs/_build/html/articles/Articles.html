@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Not Exactly Documentation &mdash; baangt 2020.1.1.b11 documentation</title>
+  <title>Not Exactly Documentation &mdash; baangt 2020.3.0.rc4 documentation</title>
   
 
   
@@ -36,7 +36,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Why your production sucks and how to fix it" href="ProductionSucks.html" />
-    <link rel="prev" title="Future Features" href="../PlannedFeatures.html" /> 
+    <link rel="prev" title="Handling of Browser Drivers" href="../BrowserDrivers.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -95,12 +95,16 @@
 <li class="toctree-l1"><a class="reference internal" href="../contributors.html">   Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">   Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PlannedFeatures.html">   Planned Features</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">:subheader: Articles</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../BrowserDrivers.html">   Browser Drivers</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">   :subheader: Articles</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="ProductionSucks.html"> Production sucks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DataDoctor.html"> Test data rulez</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BaangtIndustries.html"> Industries 4 baangt</a></li>
 <li class="toctree-l2"><a class="reference internal" href="StopTesting.html"> Stop testing!</a></li>
 <li class="toctree-l2"><a class="reference internal" href="AgileWorkflowIntegration.html"> bAanGtILE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BugSoup.html"> BugSoup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="AsynchronousAndCanonTests.html"> Canons, that are not DSLR nor music</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SeleniumGridV4WithBaangt.html"> SeleniumGridV4</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
@@ -190,11 +194,32 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="StopTesting.html"> Stop testing!</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="StopTesting.html#how-to-improve-the-situation">How to improve the situation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="StopTesting.html#fk-the-gold-is-on-the-street">FK The gold is on the street</a></li>
+<li class="toctree-l2"><a class="reference internal" href="StopTesting.html#it-s-raining-soup-with-bugs">It’s raining soup - with bugs</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="AgileWorkflowIntegration.html"> bAanGtILE</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="AgileWorkflowIntegration.html#we-can-do-that-with-every-software-what-s-so-special-about-baangt">We can do that with every software, what’s so special about baangt?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="BugSoup.html"> BugSoup</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BugSoup.html#a-lot-of-wrong-shoes-in-wrong-places">#1 a lot of wrong shoes in wrong places</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BugSoup.html#a-sudden-wealth">#2 A sudden wealth</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BugSoup.html#you-don-t-pay-we-tow-your-car">#3 You don’t pay - we tow your car!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BugSoup.html#material-master-records-what-are-they-for-anyway">#4 Material master records - what are they for anyway?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BugSoup.html#what-are-these-chemical-elements-anyway"># What are these chemical elements anyway?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BugSoup.html#summary">Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="AsynchronousAndCanonTests.html"> Canons, that are not DSLR nor music</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="AsynchronousAndCanonTests.html#abstract">Abstract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="AsynchronousAndCanonTests.html#isn-t-everything-asynchronous">Isn’t everything asynchronous?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="AsynchronousAndCanonTests.html#deep-dive-on-test-canons">Deep dive on test Canons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="AsynchronousAndCanonTests.html#how-it-fits-all-together">How it fits all together</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="SeleniumGridV4WithBaangt.html"> SeleniumGridV4</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="SeleniumGridV4WithBaangt.html#ready-for-your-own-tests">Ready for your own tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SeleniumGridV4WithBaangt.html#step-by-step-instructions-on-video">Step by step instructions on video</a></li>
 </ul>
 </li>
 </ul>
@@ -212,7 +237,7 @@
         <a href="ProductionSucks.html" class="btn btn-neutral float-right" title="Why your production sucks and how to fix it" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="../PlannedFeatures.html" class="btn btn-neutral float-left" title="Future Features" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="../BrowserDrivers.html" class="btn btn-neutral float-left" title="Handling of Browser Drivers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -49,3 +49,13 @@ Plugins
 
 Please make yourself familiar with https://pluggy.readthedocs.io/en/latest/ in order to implement Plugins.
 If you're stuck let me know.
+
+Network trace
+-------------
+
+Sometimes it's useful (especially for frontend debugging and in performance measurments) to have more detailed log about
+the calls that the browser exchanges with the backend. If you need this, use ``TC.NetworkInfo`` with value = ``True``.
+In the output file you'll see a new tab "Network" that shows all calls, headers, payload and timing information for each
+call.
+
+Use with care, as the file can get pretty big.

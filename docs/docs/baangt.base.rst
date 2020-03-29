@@ -108,10 +108,10 @@ baangt.base.Timing module
    :undoc-members:
    :show-inheritance:
 
-baangt.base.utils module
+baangt.base.Utils module
 ------------------------
 
-.. automodule:: baangt.base.utils
+.. automodule:: baangt.base.Utils
    :members:
    :undoc-members:
    :show-inheritance:
