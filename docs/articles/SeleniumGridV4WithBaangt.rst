@@ -5,7 +5,7 @@ Integration with Selenium Grid V4
 
 Following the same logic as with integration of `Zalenium <https://github.com/zalando/zalenium>`_ and current
 version of `Selenium Grid <https://www.guru99.com/introduction-to-selenium-grid.html>`_ you can define your test cases
-and test data definitions in Microsoft Excel using simpleFormat, full Format or subclassed TestStepMaster.
+and test data definitions in Microsoft Excel using simpleFormat, full Excel format, baangtDB or subclassed TestStepMaster.
 
 The only difference is setting the Browser to ``REMOTE_V4``. Of course you'll need to provide address and port of the
 service in ``BrowserAttributes``.
