@@ -12,6 +12,7 @@ __pycache__
 *.pyc
 *.db
 *.log
+*.pyo
 venv
 application.sublime-workspace
 /.project
