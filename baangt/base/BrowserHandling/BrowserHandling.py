@@ -753,6 +753,7 @@ class BrowserDriver:
 
     def downloadDriver(self, browserName):
         path = Path(os.getcwd())
+        logger.debug(f"Trying to download browserDriver for {browserName} into {path.joinpath('browserDrivers')}")
         path.joinpath("browserDrivers").mkdir(parents=True, exist_ok=True)
         path = path.joinpath("browserDrivers")
         tar_url = ''
@@ -785,18 +786,18 @@ class BrowserDriver:
             if tar_url != '':
                 path_zip = path.joinpath(GC.GECKO_DRIVER.replace('exe', 'tar.gz'))
                 filename, headers = urlretrieve(tar_url, path_zip)
+                logger.debug(f"Tarfile with browser expected here: {filename} ")
                 tar = tarfile.open(filename, "r:gz")
                 tar.extractall(path)
                 tar.close()
 
-
             else:
                 file = requests.get(url)
                 path_zip = path.joinpath(GC.GECKO_DRIVER.replace('exe', 'zip'))
+                logger.debug(f"Zipfile with browser expected here: {path_zip} ")
                 open(path_zip, 'wb').write(file.content)
                 with zipfile.ZipFile(path_zip, 'r') as zip_ref:
                     zip_ref.extractall(path)
-
 
         else:
             response = requests.get(GC.CHROME_URL)
