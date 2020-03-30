@@ -799,7 +799,7 @@ class BrowserDriver:
                 with zipfile.ZipFile(path_zip, 'r') as zip_ref:
                     zip_ref.extractall(path)
 
-        else:
+        elif browserName == GC.BROWSER_CHROME:
             response = requests.get(GC.CHROME_URL)
             chromeversion = response.text
             chromedriver_url_dict = []
@@ -822,13 +822,19 @@ class BrowserDriver:
                 url = chromeDriversDict[GC.OS_list[2]]
             file = requests.get(url)
             path_zip = path.joinpath(GC.CHROME_DRIVER.replace('exe', 'zip'))
+            logger.debug(f"Writing Chrome file into {path_zip}")
             open(path_zip, 'wb').write(file.content)
             with zipfile.ZipFile(path_zip, 'r') as zip_ref:
                 zip_ref.extractall(path)
-
+                logger.debug(f"Extracting Chrome driver into {path}")
                 # permissions
 
             if platform.system().lower() != GC.WIN_PLATFORM:
                 file_path = path.joinpath(GC.CHROME_DRIVER.replace('.exe', ''))
                 os.chmod(file_path, 0o777)
-        os.remove(path_zip)
+
+            os.remove(path_zip)
+
+        else:
+
+            logging.critical(f"Please download driver for {browserName} manually into folder /browserDrivers")
