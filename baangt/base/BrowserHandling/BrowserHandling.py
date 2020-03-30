@@ -169,19 +169,10 @@ class BrowserDriver:
         self.takeTime("Browser Start")
 
     def __findBrowserDriverPaths(self, filename):
-        if hasattr(sys, 'frozen') and hasattr(sys, '_MEIPASS'):
-            # We're in pyinstaller. Chromedriver and Geckodriver are in the executable-directory
-            # in the subdirectory /chromedriver/ or /geckodriver for Linux und MAC,
-            # directly in the exeuctable directory for the windows.exe
-            if platform.system().lower() == 'windows':
-                lCurPath = Path(sys.executable).parent.joinpath(filename)
-            else:
-                lCurPath = Path(sys.executable).parent.joinpath(filename).joinpath(filename)
 
-        else:
-            lCurPath = Path(os.getcwd())
-            lCurPath = lCurPath.joinpath("browserDrivers")
-            lCurPath = lCurPath.joinpath(filename)
+        lCurPath = Path(os.getcwd())
+        lCurPath = lCurPath.joinpath("browserDrivers")
+        lCurPath = lCurPath.joinpath(filename)
 
         logger.debug(f"Path for BrowserDrivers: {lCurPath}")
         return str(lCurPath)
