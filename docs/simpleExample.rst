@@ -6,7 +6,7 @@ You can try baangt right away and see how it works. It'll take less than 5 minut
 Prerequisits
 ^^^^^^^^^^^^^
 
-* Firefox installed
+* Chrome installed
 * Python3 installed
 * ``baangt`` installed (either via PIP or from the GIT-Repository at https://gogs.earthsquad.global/athos/baangt)
 
@@ -173,6 +173,8 @@ More details on Activities
        * If
        * EndIf
        * Pause
+       * Assert
+       * address_create
 
 .. list-table:: Details of activities
    :widths: 25 75
