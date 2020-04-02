@@ -60,7 +60,7 @@ class BrowserDriver:
         else:
             self.screenshotPath = os.getcwd()
 
-    def createNewBrowser(self, browserName=GC.BROWSER_FIREFOX, desiredCapabilities={}, **kwargs):
+    def createNewBrowser(self, browserName=GC.BROWSER_CHROME, desiredCapabilities={}, **kwargs):
         """
         Will find the specified executables of the desired browser and start it with the given capabilities.
 
