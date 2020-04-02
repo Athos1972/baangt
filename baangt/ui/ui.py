@@ -354,8 +354,12 @@ class UI:
 
             self.readContentsOfGlobals()
         except Exception as e:
-            self.directory = os.getcwd()
-            pass
+            # if baangt.ini is not there. Default the directory to /examples.
+            self.directory = Path(os.getcwd()).joinpath("examples")
+            self.testRunFile = 'simpleAutomationpractice.xlsx'
+            self.configFile = 'globals.json'
+            self.mainWindowPosition = (20,30)
+            self.readContentsOfGlobals()
 
     @staticmethod
     def __convert_configPosition2Tuple(inString):
