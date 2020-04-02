@@ -1,6 +1,19 @@
 Change log
 ==========
 
+2020.04
+^^^^^^^
+
+Summary:
+
+New features
+++++++++++++
+
+Changes
++++++++
+* Chrome now as default browser as many people don't have Firefox
+* Improved browserDriver Download for executables (didn't work in some cases)
+
 2020.03
 ^^^^^^^
 Summary: Release Candiate 3 is on the road!
