@@ -77,9 +77,11 @@ Building Executables
 
 * Checkout ``https://github.com/Athos1972/baangt-executables``
 * On a Windows computer: ``execWindow.bat``
-* copy ``/executables/baangt_windows_executable.zip`` to checked out ``baangt-executables``
-* Repeat accordingly on Mac
-* Repeat accordingly on Ubuntu
+* Move ``/executables/baangt_windows_executable.zip`` to checked out ``baangt-executables`` ideally with this line:
+
+    ``mv executables/baangt_mac_executable.zip ../baangt-executables``
+* Repeat accordingly on Mac (``execMac.sh``)
+* Repeat accordingly on Ubuntu (``execUbuntu.sh``)
 * ``git add .`` in the folder ``baangt-executables``
 * ``git commit -m <version>``
 * ``git push``
