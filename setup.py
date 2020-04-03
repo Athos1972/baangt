@@ -6,7 +6,7 @@ if __name__ == '__main__':
 
     setuptools.setup(
         name="baangt",
-        version="2020.3.0rc3",
+        version="2020.4.0rc4",
         author="Bernhard Buhl",
         author_email="buhl@buhl-consulting.com.cy",
         description="Open source Test Suite for Mac, Windows, Linux",
