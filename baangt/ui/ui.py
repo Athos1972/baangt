@@ -356,10 +356,11 @@ class UI:
         except Exception as e:
             # if baangt.ini is not there. Default the directory to /examples.
             self.directory = Path(os.getcwd()).joinpath("examples")
-            self.testRunFile = 'simpleAutomationpractice.xlsx'
-            self.configFile = 'globals.json'
-            self.mainWindowPosition = (20,30)
-            self.readContentsOfGlobals()
+            if Path(self.directory).exists():
+                self.testRunFile = 'simpleAutomationpractice.xlsx'
+                self.configFile = 'globals.json'
+                self.mainWindowPosition = (20,30)
+                self.readContentsOfGlobals()
 
     @staticmethod
     def __convert_configPosition2Tuple(inString):
