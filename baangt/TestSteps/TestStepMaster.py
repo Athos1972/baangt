@@ -132,8 +132,21 @@ class TestStepMaster:
                 value_expected = lValue
                 if value_expected != value_found:
                     raise baangtTestStepException(f"Expected Value: {value_expected}, Value found :{value_found} ")
+            elif lActivity == 'IBAN':
+                # Create Random IBAN. Value1 = Input-Parameter for IBAN-Function. Value2=Fieldname
+                self.__getIBAN(lValue, lValue2)
             else:
                 raise BaseException(f"Unknown command in TestStep {lActivity}")
+
+    def __getIBAN(self, lValue, lValue2):
+        from baangt.base.IBAN import IBAN
+        if not lValue2:
+            logger.critical("IBAN-Method called without destination field name in column 'Value 2'")
+            return
+
+        lIBAN = IBAN()
+        self.testcaseDataDict[lValue2] = lIBAN.getRandomIBAN()
+        pass
 
     @staticmethod
     def _sanitizeXField(inField):

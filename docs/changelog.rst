@@ -8,6 +8,7 @@ Summary:
 
 New features
 ++++++++++++
+* SimpleFormat: New short command ``iban`` will create a random IBAN. Powered by Schwifty library.
 
 Changes
 +++++++
