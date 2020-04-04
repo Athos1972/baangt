@@ -37,6 +37,8 @@ class TestStepMaster:
             # in the TestExecutionSteps
             self.executeDirect(lTestStep[1][GC.STRUCTURE_TESTSTEPEXECUTION])
 
+        self.teardown()
+
     def executeDirect(self, executionCommands):
         """
         This will execute single Operations directly
@@ -87,6 +89,8 @@ class TestStepMaster:
                 self.browserSession.handleIframe(lLocator)
             elif lActivity == "CLICK":
                 self.browserSession.findByAndClick(xpath=xpath, css=css, id=id, timeout=lTimeout)
+            elif lActivity == "PAUSE":
+                self.browserSession.sleep(sleepTimeinSeconds=lValue)
             elif lActivity == "IF":
                 if self.ifActive:
                     raise BaseException("No nested IFs at this point, sorry...")
@@ -128,8 +132,21 @@ class TestStepMaster:
                 value_expected = lValue
                 if value_expected != value_found:
                     raise baangtTestStepException(f"Expected Value: {value_expected}, Value found :{value_found} ")
+            elif lActivity == 'IBAN':
+                # Create Random IBAN. Value1 = Input-Parameter for IBAN-Function. Value2=Fieldname
+                self.__getIBAN(lValue, lValue2)
             else:
                 raise BaseException(f"Unknown command in TestStep {lActivity}")
+
+    def __getIBAN(self, lValue, lValue2):
+        from baangt.base.IBAN import IBAN
+        if not lValue2:
+            logger.critical("IBAN-Method called without destination field name in column 'Value 2'")
+            return
+
+        lIBAN = IBAN()
+        self.testcaseDataDict[lValue2] = lIBAN.getRandomIBAN()
+        pass
 
     @staticmethod
     def _sanitizeXField(inField):
@@ -252,7 +269,7 @@ class TestStepMaster:
             raise BaseException(f"Comparison Operator not supported/unknown {lComparison}")
 
     def execute(self):
-        """Method is overwritten in all children"""
+        """Method is overwritten in all children/subclasses"""
         pass
 
     def teardown(self):
@@ -266,7 +283,8 @@ class TestStepMaster:
                 self.testcaseDataDict = GC.TESTCASESTATUS_ERROR
             else:
                 sys.exit("No idea, what happened here. Unknown condition appeared")
-        self.timing.takeTime(self.timingName)   # Why does this not work?
+
+        self.timing.takeTime(self.timingName)
 
     def replaceVariables(self, expression):
         """

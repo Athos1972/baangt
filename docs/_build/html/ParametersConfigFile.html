@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Parameters in Configuration files (globals) &mdash; baangt 2020.1.1.b11 documentation</title>
+  <title>Parameters in Configuration files (globals) &mdash; baangt 2020.3.0.rc4 documentation</title>
   
 
   
@@ -95,7 +95,8 @@
 <li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">   Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">:subheader: Articles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BrowserDrivers.html">   Browser Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">   :subheader: Articles</a></li>
 <li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
 </ul>
 
@@ -163,7 +164,7 @@
             
   <div class="section" id="parameters-in-configuration-files-globals">
 <h1>Parameters in Configuration files (<code class="docutils literal notranslate"><span class="pre">globals</span></code>)<a class="headerlink" href="#parameters-in-configuration-files-globals" title="Permalink to this headline">¶</a></h1>
-<p>Generally it’s not needed to change parameters in the config files during manual or automated execution as the parameters
+<p>Generally it’s not needed to change parameters in the config files during manual or automated execution, as the parameters
 have default values or are anyway defined in the Testrun definition. Still sometimes it’s very handy to change them on the fly,
 for instance to slowly retest a single testrecord or to not close the browser after an error.</p>
 <table class="colwidths-given docutils align-default" id="id1">
@@ -179,11 +180,11 @@ for instance to slowly retest a single testrecord or to not close the browser af
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Release</span></code></p></td>
-<td><p>As you move your maturing software through the system landscape you might still need regression test results based
+<td><p>As you move your maturing software through the system landscape, you might still need regression test results based
 on “old” release functionality, while on lower stages you might want to (regression)-test already newer versions
 or newer functionality. In <code class="docutils literal notranslate"><span class="pre">baangt</span></code> there is no need to copy test cases in those situations. You simply update
-your test case definition with the apropriate version number (e.g. &gt;= 2020-10) and set the proper <code class="docutils literal notranslate"><span class="pre">Release</span></code> in
-the config file, for instance “2020-09” when you want to run on final quality and the changes from verison “2020-10”
+your test case definition with the appropriate version number (e.g. &gt;= 2020-10) and set the proper <code class="docutils literal notranslate"><span class="pre">Release</span></code> in
+the config file. For instance “2020-09” when you want to run on final quality and the changes from version “2020-10”
 are not there yet.</p>
 <blockquote>
 <div><p>Note for developers:</p>
@@ -193,12 +194,12 @@ simply subclass TestStepMaster and overwrite only the method <code class="docuti
 </td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">TC.slowExecution</span></code></p></td>
-<td><p>When set to <code class="docutils literal notranslate"><span class="pre">true</span></code> the browser will stop for a short time after each command, so that you can also visually see what the browser is doing</p></td>
+<td><p>When set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, the browser will stop for a short time after each command, so that you can also visually see what the browser is doing</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">dontCloseBrowser</span></code></p></td>
-<td><p>When the browser or script finds an error usually it takes a screenshot and moves on to the next testcase. With this setting to <code class="docutils literal notranslate"><span class="pre">True</span></code> the Browsersession will stop right at the error</p></td>
+<td><p>When the browser or script finds an error, it usually takes a screenshot and moves on to the next testcase. With this setting to <code class="docutils literal notranslate"><span class="pre">True</span></code> the browser session will stop right at the error.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">TC.BrowserOptions</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">TC.BrowserAttributes</span></code></p></td>
 <td><p>Set the value to <code class="docutils literal notranslate"><span class="pre">{'HEADLESS':</span> <span class="pre">'True'}</span></code> to run Chrome/Firefox in headless mode.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">TC.Lines</span></code></p></td>
@@ -214,7 +215,10 @@ simply subclass TestStepMaster and overwrite only the method <code class="docuti
 <td><p>If the testcase is WEB-Testing, then you can overwrite the browser, which is defined inside the testrun definition. If the testcase is not a Web-Testcase this setting doesn’t have any effect. Valid values are <code class="docutils literal notranslate"><span class="pre">Chrome</span></code>, <code class="docutils literal notranslate"><span class="pre">FF</span></code> and <code class="docutils literal notranslate"><span class="pre">Safari</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">TC.ParallelRuns</span></code></p></td>
-<td><p>Number of parallel sessions to be executing. Values depend largely on your hardware and internet connection. Debugging works only in a single session.</p></td>
+<td><p>Number of parallel sessions to be executed. Values depend largely on your hardware and internet connection. Debugging works only in a single session.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">TC.NetworkInfo</span></code></p></td>
+<td><p>Creates a very detailed trace of network activity of the browser(s). In the output file you’ll find another Tab “Network”, that holds all API-Calls from the frontend (including header, payload and answer).</p></td>
 </tr>
 </tbody>
 </table>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Future Features &mdash; baangt 2020.1.1.b11 documentation</title>
+  <title>Future Features &mdash; baangt 2020.3.0.rc4 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Not Exactly Documentation" href="articles/Articles.html" />
+    <link rel="next" title="Handling of Browser Drivers" href="BrowserDrivers.html" />
     <link rel="prev" title="Change log" href="changelog.html" /> 
 </head>
 
@@ -100,7 +100,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#pro-features">PRO-Features</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">:subheader: Articles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BrowserDrivers.html">   Browser Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">   :subheader: Articles</a></li>
 <li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
 </ul>
 
@@ -172,33 +173,33 @@
 <div class="section" id="short-medium-term-features">
 <h2>Short/Medium term features<a class="headerlink" href="#short-medium-term-features" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><p>Refactoring of Multiprocessing (2020.02)</p></li>
-<li><p>Executables on Mac, Linux and Windows (2020.03)</p></li>
 <li><dl class="simple">
 <dt>Nicer interactive UI-Starter (2020.03)</dt><dd><ul>
 <li><p>Phase 1 done 2020.02</p></li>
-<li><p>Provide live statistics (2020.03)</p></li>
+<li><p>Phase 2 (UI-elements) (2020.03) –&gt; will move to 2020.04 RC5</p></li>
+<li><p>Provide live statistics (2020.04)</p></li>
 </ul>
 </dd>
 </dl>
 </li>
-<li><p>Build-In Proxy-Server for Network traffic and timing logs (2020.03) (most probably not possible in Windows and MAC but should work in Linux)</p></li>
-<li><p>Double Opt-In Automation (2020.03)</p></li>
-<li><p>Support for Selenium Grid V4 (2020.03)</p></li>
-<li><p>Better support for multiple sources (e.g. multiple XLSX) of test data (2020.04)</p></li>
+<li><p>Double Opt-In Automation (2020.03) –&gt; will move to 2020.04 RC6</p></li>
+<li><p>Better support to store test data output to database and export files (2020.04)</p></li>
+<li><p>Support for Appium integration (2020.04)</p></li>
 <li><p>Katalon Importer/Converter as Webservice (2020.04)</p></li>
 </ul>
 </div>
 <div class="section" id="features-for-later">
 <h2>Features for later<a class="headerlink" href="#features-for-later" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
+<li><p>Better support for multiple sources (e.g. multiple XLSX)</p></li>
 <li><p>Proof of concept with PyWinAuto</p></li>
 <li><p>Integration with SAP Gui Scripting via VBS and PyWinAuto</p></li>
 <li><p>Better support for Mass testing APIs</p></li>
 <li><p>Integration with Atlassian Confluence (for Testcase and Testrun definitions)</p></li>
 <li><p>Integration with Atlassian Confluence (to publish results of testruns)</p></li>
 <li><p>Integration with MS Teams to publish results of Testruns</p></li>
-<li><p>Grafana Board for Flask-Version</p></li>
+<li><p>Integration with Telegram to publish results of Testruns</p></li>
+<li><p>Grafana Board for baangtDB</p></li>
 <li><p>Better support for oData V4.0 (similar to SOAP)</p></li>
 <li><p>Support for GraphQL via Graphene</p></li>
 </ul>
@@ -209,10 +210,14 @@
 Future features might include:</p>
 <ul class="simple">
 <li><p>DB-Migration tools (to ease the pain of upgrading databases)</p></li>
-<li><p>Multi-User environment (who did when which activity and who changed when which testobject)</p></li>
+<li><p>Multi-User environment (who did when which activity and who changed when which test object)</p></li>
 <li><p>History of Testcases (what was changed when. If urgently needed we could come up with DB-Dump and GIT diff or so.)</p></li>
 <li><p>Test-Canons (deliberately stop test cases multiple times at certain test steps, wait for trigger, then resume. After first Testcase <em>finished</em> his first waiting period, start second round of Testcases (that’s how the name “Canon” came up). So far implemented in customer project, but needs to be polished up for public version)</p></li>
 <li><p>XML/PDF-Compare</p></li>
+<li><p>Consulting</p></li>
+<li><p>Priority support</p></li>
+<li><p>Testcase creation as a Service</p></li>
+<li><p>Testing as a service</p></li>
 </ul>
 </div>
 </div>
@@ -225,7 +230,7 @@ Future features might include:</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="articles/Articles.html" class="btn btn-neutral float-right" title="Not Exactly Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="BrowserDrivers.html" class="btn btn-neutral float-right" title="Handling of Browser Drivers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="changelog.html" class="btn btn-neutral float-left" title="Change log" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

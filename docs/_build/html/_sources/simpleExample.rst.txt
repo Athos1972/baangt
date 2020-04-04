@@ -1,17 +1,18 @@
 Jump-start into worry free production deployments
 =================================================
 
-You can try baangt right away and see, how it works. It'll take less then 5 minutes.
+You can try baangt right away and see how it works. It'll take less than 5 minutes.
 
 Prerequisits
 ^^^^^^^^^^^^^
 
-* Firefox installed
+* Chrome installed
 * Python3 installed
 * ``baangt`` installed (either via PIP or from the GIT-Repository at https://gogs.earthsquad.global/athos/baangt)
 
-If you prefer running ``baangt`` inside Docker use the Dockerfile from https://gogs.earthsquad.global/athos/baangt-Docker.
-After downloading the repository enter ``make build`` and then ``make run`` in the command line. Once Docker is up, use SVN://localhost:5902 to connect. All features are exactly as you'd install everything on your local machine.
+If you prefer running ``baangt`` inside Docker, use the Dockerfile from https://gogs.earthsquad.global/athos/baangt-Docker.
+After downloading the repository, enter ``make build`` and then ``make run`` in the command line.
+Once Docker is up, use SVN://localhost:5902 to connect. All features are exactly like you'd install everything on your local machine.
 
 Let's dive right into it
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -47,19 +48,19 @@ Follow these steps to modify the behaviour of the test script:
 
 .. hint::
 
-    If you want to be able to watch your browser executing each step we recommend you set the parameter ``slowExecution`` with value ``True`` in Globals and re-run the test
+    If you want to be able to watch your browser executing each step, we recommend you set the parameter ``slowExecution`` with value ``True`` in Globals and re-run the test
 
 .. hint ::
-    If you want the browser window to stay open on errors and/or after execution you can use parameter ``dontCloseBrowser`` with value ``True``
+    If you want the browser window to stay open on errors and/or after execution, you can use parameter ``dontCloseBrowser`` with value ``True``
     in global settings and run the test again. The browser will stop on errors or when the test run execution stopped.
 
 A bit further
 -------------
 
-Go ahead and try it out with your personal real-world example of a webpage, web-app or SPA, which you would like to have
+Go ahead and try it out with your personal real-world example of a web-page, web-app or SPA, which you would like to have
 reproducable regression tests for.
 
-Of course you could basically follow the steps above, but depending on the length and complexity of the execution you'll
+Of course you could basically follow the steps above, but depending on the length and complexity of the execution, you'll
 definitely enjoy having more tools in your toolbox:
 
 Recording a test case with Katalon Recorder
@@ -82,24 +83,24 @@ Katalon Recorder is a free browser Add-on for Chrome and Firefox. Installation i
 
   .. hint::
 
-     You might want to execute the test case from within Katalon Recorder so make sure everything was recorded proplery.
+     You might want to execute the test case from within Katalon Recorder to make sure everything was recorded properly.
 
 * Hit the export-Button of the recorder, chose format ``other``
 * Click "Export to Clipboard"
 * Switch over to ``baangt`` and press the button "Import KatalonRecorder"
-    * The contents from the clipboard should be imported already and translation to ``baangt`` should be completed. If not click on the button "Import Clipboard" and please drop a ticket stating your Operating System incl. Version and which Browser you used for Recording.
-* Press "Save" and choose where you want to store the resulting XLSX-File to
+    * The contents from the clipboard should be imported already and translation to ``baangt`` should be completed. If the clipboard was not inserted automatically, click on the button "Import Clipboard" and please drop a ticket stating your operating system incl. version and which browser you used for recording in Katalon recorder.
+* Press "Save" and choose where you want to store the resulting XLSX-File
 
 **That's it. You just created you first regression test case including all parameters for it.**
 
-If you're wondering, which parameters these are and how you can influence them, fear not! Open the Testcase-XLSX from
+If you're wondering which parameters these are, and how you can influence them, fear not! Open the Testcase-XLSX from
 the last step above, click on the "data"-Tab and start to enter values and lines as you please.
 
 You can always re-run Baangt after saving your Testrun-XLSX and see your progress.
 
 .. hint::
 
-    If you want to be able to watch your browser executing each step we recommend you set the parameter ``slowExecution`` with value ``True`` in Globals and re-run the test
+    If you want to be able to watch your browser executing each step, set the parameter ``slowExecution`` with value ``True`` in Globals and re-run the test
 
 Tweaking the result
 ^^^^^^^^^^^^^^^^^^^
@@ -113,15 +114,15 @@ You managed to have a working recording. Congratulations! Let's learn a bit more
    * - Column Name
      - Description
    * - ``Activtity``
-     - Set's the activity of this TestStep. Activities are desribed in more details in next chapter
+     - Sets the activity of this TestStep. Activities are described in more details in next chapter
    * - ``LocatorType``
-     - Most of the activities need a locator. We're big fans of XPATH as locatorType, due to speed and ease of use. Sooner
+     - Most of the activities need a locator. We are big fans of XPATH as locatorType, due to speed and ease of use. Sooner
        or later you'll anyway end up needing XPATH, so why not use it always when there's no downside? If you prefer
-       writing CSS-Paths then use value ``CSS`` for the locator. And if you're luck enough to have unique IDs in your
+       writing CSS-Paths then use value ``CSS`` for the locator. And if you are lucky enough to have unique IDs in your
        page simply use ``ID``.
    * - ``Locator``
-     - The locator is the specification, on which element ``Activity`` should happen. As in the value fields you may
-       use variable replacement here too in order to replace Locators with values from the data file, for instance the
+     - The locator is the specification on which element ``Activity`` should happen. As in the value fields, you may
+       use variable replacement here too, in order to replace Locators with values from the data file. For instance the
        following would work fine:
        ``//*[@id($(CUSTOMERNUMBER))]`` - this would create an XPATH-Statement where $(CUSTOMERNUMBER) is replaced by the
        actual value of the current test record.
@@ -135,10 +136,10 @@ You managed to have a working recording. Congratulations! Let's learn a bit more
        second field or value to compare to. Values for ``comparison`` are ``eq`` and ``=``. The field ``value2``
        follows the same logic as ``value``.
    * - ``Timeout``
-     - Sometimes you'll want to overwrite the default timeout settings of ``baangt``. Here's your chance. Values in seconds,
+     - Sometimes you might to overwrite the default timeout settings of ``baangt``. Here's your chance. Values in seconds,
        decimals are OK (``0.5`` is a valid value, so is ``90``).
    * - ``Optional``
-     - Usually, when ``baangt`` tries to execute an activity and can't (after timeout), it will throw an exception,
+     - Usually when ``baangt`` tries to execute an activity and can't (after timeout), it will throw an exception,
        report in the Logs and stop the current test case. If you set ``optional`` to ``True`` or ``X``, ``baangt``
        will continue execution of the test case, even if the activity wasn't possible.
    * - ``Release``
@@ -146,8 +147,8 @@ You managed to have a working recording. Congratulations! Let's learn a bit more
        Migration, Pre-Production, etc.) and the software version on each stage is different. A test case, that works on
        Pre-Production will not pass on Dev-System as Dev is already further developed. If you change the test case to work
        on Dev-System and you need to test a Hotfix deployment on Pre-Production, what will you do? In other test solutions
-       you would "simply" copy your test case, have one version for DEV, one for Pre-Production. Do that with 100s of
-       different test cases and watch yourselve drown in chaos. OR you could use ``baangt`` where this problem is solved.
+       you would "simply" copy your test case, have one version for DEV, one for Pre-Production. Do that with hundreds of
+       different test cases and watch yourself drown in chaos. OR you could use ``baangt`` where this problem is solved.
        Software moves through the stages of your system landscape as it evolves. Use this field to conditionally execute
        different "branches" of your test cases, depending on the version on the current stage. ``Release`` can be any
        string value. You can add "> " "< " and "= " as the first 2 characters to signal to ``baangt`` to only execute
@@ -157,7 +158,7 @@ You managed to have a working recording. Congratulations! Let's learn a bit more
 
          > 2019.05
 
-       will run the line onlf, if the Version is ``2019.05a`` or ``2019.06``. We are aware, that your version numbers might
+       will run the line only, if the Version is ``2019.05a`` or ``2019.06``. We are aware, that your version numbers might
        follow different nomenclature, so we made it very easy to subclass the corresponding logic.
 
 More details on Activities
@@ -171,6 +172,9 @@ More details on Activities
        * goBack
        * If
        * EndIf
+       * Pause
+       * Assert
+       * address_create
 
 .. list-table:: Details of activities
    :widths: 25 75
@@ -179,8 +183,8 @@ More details on Activities
    * - Activity
      - Description
    * - GoToURL
-     - Navigate to the given URL. Column ``Value`` must provide the URL. You may want to use variables in your URL-String,
-       for instance your URL might look like ``https://$(STAGE).earthsquad.global/``. ``$(STAGE)`` will be replaced
+     - Navigate to the given URL. Column ``Value`` must provide the URL. You might want to use variables in your URL-String,
+       for instance your URL might look like this ``https://$(STAGE).earthsquad.global/``. It will be replaced
        during runtime of the test data with the value of ``STAGE`` from either Global settings or settings in the
        ``testCaseSequence``.
    * - click
@@ -188,8 +192,8 @@ More details on Activities
    * - clickIF
      - Will click on the object specified by the locator IF the field in testDataDict, that you enter in Column ``value``
        has a value. This small and simple extension can save you hours and hours of work in maintenance of testcases.
-       Imagine you've 10 checkboxes, that in various combinations provide different test results and you have to test
-       all possible combinations. Using 1 column in your datafile for each checkbox and the ``clickif`` you can create
+       Imagine you have 10 checkboxes, that in various combinations provide different test results, and you have to test
+       all possible combinations. Using one column in your datafile for each checkbox and the ``clickif``, you can create
        your testCases in minutes instead of hours or days. Imagine 50 checkboxes - with ``baangt`` your effort is still
        just minutes.
    * - setText
@@ -203,12 +207,49 @@ More details on Activities
    * - goBack
      - Trigger the "back"-Button of the browser.
    * - If/Endif
-     - The block between IF and ENDIF is only executed, when the condition evaluated by ``value|comparator|value2`` is
-       is true, for instance:
+     - The block between IF and ENDIF is only executed when the condition evaluated by ``value|comparator|value2`` is
+       true, for instance:
 
             $(POSTCODE) = 7040
 
             $(YEAR2DATE) > $(YEARTOMONTH)
 
-       Another use of the If-Statement is with ``LocatorType`` and ``Locator`` and comparison. You'd use that, when you
+       Another use of the If-Statement is with ``LocatorType`` and ``Locator`` and comparison. This can be used when you
        want conditional execution of a larger block of statements depending on an element present or not present.
+
+   * - assert
+     - Will retrieve value of element specified by ``locator`` and compare with reference value from ``value``.
+      
+
+   * - pause
+     - Will pause for the number of secons in ``value``. Valid numbers are float, e.g. 2, 0.2, 0.1, 25
+   * - iban
+     - Will create a random IBAN account number. ``value 2`` is the destination field of the test case structure. If you
+       don't provide a field name (not necessarily one that exists in the input file. Can be any field name!) nothing will
+       happen. If you provide input parameters in column ``value`` (``SWIFT`` and/or ``COUNTRY``) the IBAN will be created for that bank-code
+       and/or country.
+   * - address_create
+     - provide an easy and easily extendable way to generate address data for a test case
+       The following fields variable are stored in testcaseDataDict:
+
+       CountryCode
+       PostalCode
+       CityName
+       StreetName
+       HouseNumber
+       AdditionalData1
+       AdditionalData2
+       
+       `value`  optional
+         Default field-value: {'HouseNumber': '6', 'AdditionalData1': 'Near MahavirChowk', 'AdditionalData2': 'Opposite St. Marish Church', 'StreetName': 'GoreGaon', 'CityName': 'Ambala', 'PostalCode': '160055', 'CountryCode': 'India'} 
+
+       These fields can be used as filter criteria in field value.
+       Example value= `{CountryCode:CY, PostlCode: 7}`. 
+
+
+       Resulted field-value :{'HouseNumber': '6', 'AdditionalData1': 'Near MahavirChowk', 'AdditionalData2': 'Opposite St. Marish Church', 'StreetName': 'GoreGaon', 'CityName': 'Ambala', 'PostalCode': '7', 'CountryCode': 'CY'}
+
+       `value2` optional
+       If a prefix was povided in field Value2, the fieldnames will be concatenated with this prefix,
+       e.g.if value2=`PremiumPayer_`, then the resulting field for CountryCode in testDataDict would become PremiumPayer_CountryCode.
+

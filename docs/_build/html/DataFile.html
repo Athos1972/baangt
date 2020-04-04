@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Special functions in datafiles &mdash; baangt 2020.1.1.b11 documentation</title>
+  <title>Special functions in datafiles &mdash; baangt 2020.3.0.rc4 documentation</title>
   
 
   
@@ -95,6 +95,7 @@
 <li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">   Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BrowserDrivers.html">   Browser Drivers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">:subheader: Articles</a></li>
 <li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
 </ul>
@@ -165,8 +166,8 @@
 <h1>Special functions in datafiles<a class="headerlink" href="#special-functions-in-datafiles" title="Permalink to this headline">¶</a></h1>
 <p>Datafiles (or in Excel Simple format simply a tab “data”) generally hold the data for one or more testcases.</p>
 <p>The first line of the datafile holds the header line. Each cell in the header must have a unique value and acts as variablename,
-that you can use for either checking, for IF-Statements or as values to write into fields or comapare with assertions.</p>
-<p>Additionally there are some reserved names, that deliver the following functionality:</p>
+which you can use for checking, for IF-Statements or as values to write into fields or compare with assertions.</p>
+<p>Additionally there are some reserved names that deliver the following functionality:</p>
 <table class="colwidths-given docutils align-default" id="id1">
 <caption><span class="caption-text">Field names in Datafiles and their function</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
 <colgroup>
@@ -179,7 +180,7 @@ that you can use for either checking, for IF-Statements or as values to write in
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">TC</span> <span class="pre">Expected</span> <span class="pre">Error</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">TC</span> <span class="pre">Expected</span> <span class="pre">Error</span></code> (!sic)</p></td>
 <td><p>When set to value <code class="docutils literal notranslate"><span class="pre">X</span></code>, the Test case is supposed to fail. If it fails (as expected) the status of the testcase is set to OK.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">JSON</span></code></p></td>

@@ -9,6 +9,9 @@ import time
 from datetime import datetime
 import sys
 import logging
+import gevent
+import gevent.queue
+import gevent.pool
 
 logger = logging.getLogger("pyC")
 
@@ -58,62 +61,58 @@ class TestCaseSequenceMaster:
         # In this case we need to request them, because the Testcases will run in their own
         # Processes
         parallelInstances = int(parallelInstances)
-        browserInstances = {}
-        for n in range(0, int(parallelInstances)):
+
+        # Browser instances
+        browsers = []
+        results = gevent.queue.Queue()
+        records = gevent.queue.Queue()
+
+        for n, record in self.dataRecords.items():
+            records.put((n, record))
+
+        def single_thread(sequenceNumber):
             # fixme: Browser should come from Testcase definition - not hardcoded. It's not that easy, as we might have many
             # fixme: Testcases, some Browser, some API and we might even have different browsers. For now we'll only
             # fixme: take Browser from globals-file
+            # create browser
+
             lBrowserName = self.testRunInstance.globalSettings.get("TC.Browser", GC.BROWSER_FIREFOX)
             lBrowserAttributes = self.testRunInstance.globalSettings.get("TC." + GC.BROWSER_ATTRIBUTES, None)
-            browserInstances[n] = self.testRunInstance.getBrowser(browserInstance=n,
-                                                                  browserName=lBrowserName,
-                                                                  browserAttributes=lBrowserAttributes)
+            browser = self.testRunInstance.getBrowser(browserInstance=sequenceNumber,
+                                            browserName=lBrowserName,
+                                            browserAttributes=lBrowserAttributes)
+                                            
+            # Consume records
+            while not records.empty():
+                n, record = records.get()
+                kwargs = {
+                    GC.KWARGS_DATA: record,
+                    GC.KWARGS_BROWSER: browser,
+                    **self.kwargs
+                }
 
-        processes = {}
-        processExecutions = {}
-        resultQueue = multiprocessing.Queue()
+                logger.info(f"Starting parallel execution with TestRecord {n}, Details: " +
+                    str({k: kwargs[GC.KWARGS_DATA][k] for k in list(kwargs[GC.KWARGS_DATA])[0:5]}))
 
-        numberOfRecords = len(self.dataRecords)
-        for n in range(0, numberOfRecords, parallelInstances):
-            for x in range(0, parallelInstances):
-                if self.dataRecords.get(n + x):
-                    logger.debug(f"starting Process and Executions {x}. Value of n+x is {n + x}, "
-                                 f"Record = {str(self.dataRecords[n + x])[0:50]}")
-                    self.kwargs[GC.KWARGS_DATA] = self.dataRecords[n+x]
-                    # Prints the first 5 fields of the data record into the log:
-                    logger.info(f"Starting parallel execution with TestRecord {n+x}, Details: " +
-                        str({k: self.kwargs[GC.KWARGS_DATA][k] for k in list(self.kwargs[GC.KWARGS_DATA])[0:5]}))
-                    self.kwargs[GC.KWARGS_BROWSER] = browserInstances[x]
-                    processes[x] = TestCaseSequenceParallel(sequenceNumber=x,
-                                                            tcNumber=n + x,
-                                                            testcaseSequence=self.testCases,
-                                                            **self.kwargs)
-                    processExecutions[x] = multiprocessing.Process(target=processes[x].one_sequence,
-                                                                   args=(resultQueue,))
-                else:
-                    # This is the case when we have e.g. 4 parallel runs and 5 testcases,
-                    # First iteration: all 4 are used. Second iteration: only 1 used, 3 are empty.
-                    if processExecutions.get(x):
-                        processExecutions.pop(x)
+                process = TestCaseSequenceParallel(tcNumber=n,
+                                                    sequenceNumber=sequenceNumber,
+                                                    testcaseSequence=self.testCases,
+                                                    **kwargs)
+                process.one_sequence(results)
 
-            for x in range(0, parallelInstances):
-                logger.info(f"starting execution of parallel instance {x}")
-                if processExecutions.get(x):
-                    processExecutions[x].start()
 
-            for x in range(0, parallelInstances):
-                if processExecutions.get(x):
-                    # Queue should be filled by now - take entries into Testrun-instance:
-                    while not resultQueue.empty():
-                        resultDictList = resultQueue.get()
-                        for recordNumber, dataRecordAfterExecution in resultDictList[0].items():
-                            self.testRunInstance.setResult(recordNumber, dataRecordAfterExecution)
-                        for sequenceNumber, tcNumberAndTestEnd in resultDictList[1].items():
-                            self.testRunInstance.append2DTestCaseEndDateTimes(sequenceNumber, tcNumberAndTestEnd)
+        # Create and runconcurrent threads
+        threads = gevent.joinall([
+            gevent.spawn(single_thread, num) for num in range(parallelInstances)
+        ])
 
-                    # Quit the running parallel process:
-                    logger.info(f"Stopping parallel instance {x}")
-                    processExecutions[x].join()
+        # after joining all threads
+        while not results.empty():
+            result = results.get()
+            for recordNumber, dataRecordAfterExecution in result[0].items():
+                self.testRunInstance.setResult(recordNumber, dataRecordAfterExecution)
+            for sequenceNumber, tcNumberAndTestEnd in result[1].items():
+                self.testRunInstance.append2DTestCaseEndDateTimes(sequenceNumber, tcNumberAndTestEnd)
 
     def execute(self):
         # Execute all Testcases:

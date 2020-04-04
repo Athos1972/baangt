@@ -1,7 +1,7 @@
 Agile: Where does ``baangt`` fit in?
 ====================================
 
-``baangt`` supports all you ever dreamed of - you can start right away with TDD, where you create Test-Cases before you
+``baangt`` supports all your agile mindset ever dreamed of - you can start right away with TDD, where you create Test-Cases before you
 even write code (Just don't forget to set the test case version number to a future version).
 
 Increment testing is the next logical consequence, where you'll use your test cases defined in the previous step to verify

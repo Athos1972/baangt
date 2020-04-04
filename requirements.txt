@@ -1,9 +1,10 @@
+openpyxl==2.3.5
 pytest
 pydispatch
 alabaster==0.7.12
 Babel==2.8.0
 beautifulsoup4==4.8.2
-bleach==3.1.1
+bleach==3.1.4
 browsermob-proxy==0.8.0
 certifi==2019.11.28
 chardet==3.0.4
@@ -54,3 +55,4 @@ xlrd==1.2.0
 XlsxWriter==1.2.7
 zipp==0.6.0
 coverage==5.0.4
+gevent==1.4.0

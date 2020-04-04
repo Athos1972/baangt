@@ -46,7 +46,6 @@ class ExportResults:
             self.summarySheet = self.workbook.add_worksheet("Summary")
             self.worksheet = self.workbook.add_worksheet("Output")
             self.timingSheet = self.workbook.add_worksheet("Timing")
-            self.networkSheet = self.workbook.add_worksheet("Network")
             self.cellFormatGreen = self.workbook.add_format()
             self.cellFormatGreen.set_bg_color('green')
             self.cellFormatRed = self.workbook.add_format()
@@ -59,11 +58,13 @@ class ExportResults:
             self.exportResultExcel()
             self.exportTiming = ExportTiming(self.dataRecords,
                                             self.timingSheet)
-            self.exportNetWork = ExportNetWork(self.networkInfo,
-                                               self.testCasesEndDateTimes_1D,
-                                               self.testCasesEndDateTimes_2D,
-                                               self.workbook,
-                                               self.networkSheet)
+            if self.networkInfo:
+                self.networkSheet = self.workbook.add_worksheet("Network")
+                self.exportNetWork = ExportNetWork(self.networkInfo,
+                                                   self.testCasesEndDateTimes_1D,
+                                                   self.testCasesEndDateTimes_2D,
+                                                   self.workbook,
+                                                   self.networkSheet)
             self.closeExcel()
         elif self.exportFormat == GC.EXP_CSV:
             self.export2CSV()
@@ -460,7 +461,7 @@ class ExportTiming:
                 for column, key in enumerate(self.sections.keys(),1):
                     if key == section:
                         self.wc(tcNumber, column,
-                                ExportTiming.shortenTimingValue(timingValue[GC.TIMING_DURATION]))
+                                timingValue[GC.TIMING_DURATION])
                         continue
 
     @staticmethod
@@ -505,7 +506,10 @@ class ExportTiming:
         Warten auf Senden an Bestand Button: , since last call: 1.3927149772644043
         Senden an Bestand: , since last call: 9.60469913482666, ZIDs:[66b12fa4869cf8a0, ad1f3d47c4694e26], TS:2020-01-20 21:58:49.472288
 
-        where the first part before ":" is the section, "since last call:" is the duration, TS: is the timestamp"""
+        where the first part before ":" is the section, "since last call:" is the duration, TS: is the timestamp
+
+        Update 29.3.2020: Format changed to "since last call: 00:xx:xx,", rest looks identical.
+        """
         lExport = {}
         lLines = lTimeLog.split("\n")
         for line in lLines:
@@ -517,7 +521,7 @@ class ExportTiming:
                 continue
             else:
                 lSection = parts[0].replace(":","").strip()
-                lDuration = parts[1].split(":")[1]
+                lDuration = parts[1].split("since last call: ")[1]
                 lExport[lSection] = {GC.TIMING_DURATION: lDuration}
         return lExport
 

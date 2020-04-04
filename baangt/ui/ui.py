@@ -34,6 +34,10 @@ class UI:
         self.mainWindowPosition = (None, None)
 
         self.readConfig()
+
+        if not self.directory:
+            self.directory = os.getcwd()
+
         self.getConfigFilesInDirectory()
 
         self.startWindow()
@@ -354,8 +358,13 @@ class UI:
 
             self.readContentsOfGlobals()
         except Exception as e:
-            self.directory = os.getcwd()
-            pass
+            # if baangt.ini is not there. Default the directory to /examples.
+            if Path(os.getcwd()).joinpath("examples").exists():
+                self.directory = Path(os.getcwd()).joinpath("examples")
+                self.testRunFile = 'simpleAutomationpractice.xlsx'
+                self.configFile = 'globals.json'
+                self.mainWindowPosition = (20,30)
+                self.readContentsOfGlobals()
 
     @staticmethod
     def __convert_configPosition2Tuple(inString):

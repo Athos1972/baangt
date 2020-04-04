@@ -1,0 +1,251 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Integration with Selenium Grid V4 &mdash; baangt 2020.3.0.rc4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Asynchronous vs. Canon tests" href="AsynchronousAndCanonTests.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> baangt
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Installation.html">   Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../OverviewUsage.html">   Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../simpleExample.html">   First Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Structure.html">   Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ParametersConfigFile.html">   Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../DataFile.html">   Data file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SimpleAPI.html">   First API Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../TestTypes.html">   Types of Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Developer.html">   For Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../HistoryAndReasons.html">   History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributors.html">   Contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">   Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PlannedFeatures.html">   Planned Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BrowserDrivers.html">   Browser Drivers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="Articles.html">   :subheader: Articles</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ProductionSucks.html"> Production sucks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DataDoctor.html"> Test data rulez</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BaangtIndustries.html"> Industries 4 baangt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="StopTesting.html"> Stop testing!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="AgileWorkflowIntegration.html"> bAanGtILE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BugSoup.html"> BugSoup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="AsynchronousAndCanonTests.html"> Canons, that are not DSLR nor music</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"> SeleniumGridV4</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ready-for-your-own-tests">Ready for your own tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-by-step-instructions-on-video">Step by step instructions on video</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">baangt</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="Articles.html">Not Exactly Documentation</a> &raquo;</li>
+        
+      <li>Integration with Selenium Grid V4</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/articles/SeleniumGridV4WithBaangt.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="integration-with-selenium-grid-v4">
+<h1>Integration with Selenium Grid V4<a class="headerlink" href="#integration-with-selenium-grid-v4" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="https://baangt.org">baangt</a> has now integration with <a class="reference external" href="https://github.com/SeleniumHQ/selenium/wiki/Selenium-Grid-4">Selenium Grid V4</a>.</p>
+<p>Following the same logic as with integration of <a class="reference external" href="https://github.com/zalando/zalenium">Zalenium</a> and current
+version of <a class="reference external" href="https://www.guru99.com/introduction-to-selenium-grid.html">Selenium Grid</a> you can define your test cases
+and test data definitions in Microsoft Excel using simpleFormat, full Excel format, baangtDB or subclassed TestStepMaster.</p>
+<p>The only difference is setting the Browser to <code class="docutils literal notranslate"><span class="pre">REMOTE_V4</span></code>. Of course you’ll need to provide address and port of the
+service in <code class="docutils literal notranslate"><span class="pre">BrowserAttributes</span></code>.</p>
+<div class="section" id="ready-for-your-own-tests">
+<h2>Ready for your own tests<a class="headerlink" href="#ready-for-your-own-tests" title="Permalink to this headline">¶</a></h2>
+<p>Even if you don’t have a shiny Selenium Grid V4 Cluster on your own, you can simulate it using our Docker image. Just
+download the <a class="reference external" href="https://gogs.earthsquad.global/athos/baangt-Docker-SeleniumGrid4">repository</a>, e.g. by using <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span></code>.
+Once it’s downloaded use <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">build</span></code> and <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">run</span></code> to build and run the container. <code class="docutils literal notranslate"><span class="pre">vnc://localhost:5902</span></code> will
+grant access to the Desktop inside the container.</p>
+<a class="reference external image-reference" href="https://gogs.earthsquad.global/athos/baangt-Docker-SeleniumGrid4"><img alt="../_images/vncDesktopSeleniumGridDocker.png" src="../_images/vncDesktopSeleniumGridDocker.png" /></a>
+</div>
+<div class="section" id="step-by-step-instructions-on-video">
+<h2>Step by step instructions on video<a class="headerlink" href="#step-by-step-instructions-on-video" title="Permalink to this headline">¶</a></h2>
+<p>If you prefer to see a video with details on how to run and test <code class="docutils literal notranslate"><span class="pre">baangt</span></code> with Selenium Grid, head over to our youtube
+channel: <a class="reference external" href="https://youtu.be/hpY9E-t55q4">https://youtu.be/hpY9E-t55q4</a></p>
+<img alt="../_images/thumbnailYoutube.png" src="../_images/thumbnailYoutube.png" />
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="AsynchronousAndCanonTests.html" class="btn btn-neutral float-left" title="Asynchronous vs. Canon tests" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Bernhard Buhl
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

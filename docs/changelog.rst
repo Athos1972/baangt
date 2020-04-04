@@ -1,22 +1,45 @@
 Change log
 ==========
 
-2020.03
+2020.04
 ^^^^^^^
-Summary: Release Candiate 1 is on the road!
+
+Summary:
 
 New features
 ++++++++++++
-* Network logging during WEB-Sessions and export to Excel-Result in separate tab. Use ``TC.NetworkInfo`` with value ``True`` (Windows version works, MAC not yet)
+* SimpleFormat: New short command ``iban`` will create a random IBAN. Powered by Schwifty library.
+
+Changes
++++++++
+* Chrome now as default browser as many people don't have Firefox
+* Improved browserDriver Download for executables (didn't work in some cases)
+
+2020.03
+^^^^^^^
+Summary: Release Candiate 3 is on the road!
+
+New features
+++++++++++++
+* Executable files and ZIP-Archives for Mac, Windows and Ubuntu - no more GIT CLONE needed! Simply download, unzip and run.
+* Network logging during WEB-Sessions and export to Excel-Result in separate tab. Use ``TC.NetworkInfo`` with value ``True`` (tested on Mac and Windows, most probably works on Linux too).
 * baangtDB: Import and Export functionality for simpleFormat and complex XLSX-Testrun definitions.
+* baangtDB: Export also to JSON-Format
 * baangtDB: cascaded delete: Delete a test run and all it's objects (unless used in other test runs)
 * baangtDB: Update testrun from XLSX (closed circuit between IT-Department and business department)
-
+* Docs updated with latest parameters
+* SimpleFormat: ``pause`` command added
+* SimpleFormat: ``address_creation`` command added to create a random address. Customizable.
+  Multiple calls will create multiple random addresses.
+* CLI: New parameter ``--reloadDrivers=True`` downloads latest version of webdrivers for Chrome and Firefox.
+* Integration with Selenium Grid V4.0 and baangt. See docs for further details. Separate Repository for the Dockerfile
 
 Bugfixes
 ++++++++
 * Reporting: Duration sometimes off by Timezone shift hours
 * Minor fixes for increased stability with Chrome-based browsers
+* Parallel executions on Windows work now, rewrote parallelism (local, without Selenium/Zalenium) completely to run with
+  less resources. 10 parallel Firefox sessions on a single MacBook with 16 GB RAM works.
 
 2020.02
 ^^^^^^^

@@ -43,8 +43,8 @@ Realistic testdata combinations might also mean, that you have to create multipl
 test cases. Sometimes that's hard, because masterdata might be maintained on a remote master system and you might not
 have access to that. But it's so worth the trouble in the long run.
 
-FK The gold is on the street
-----------------------------
+It's raining soup - with bugs
+-----------------------------
 
 Once you're in production your bug tickets are an invaluable source of wisdom, on how to improve testing. Majority of the
 tickets will hopefully be about user errors, wrong passwords, unknown "Works as designed"-Situations, and things like that.

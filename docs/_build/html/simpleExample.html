@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Jump-start into worry free production deployments &mdash; baangt 2020.1.1.b11 documentation</title>
+  <title>Jump-start into worry free production deployments &mdash; baangt 2020.3.0.rc4 documentation</title>
   
 
   
@@ -108,7 +108,8 @@
 <li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">   Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">:subheader: Articles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BrowserDrivers.html">   Browser Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">   :subheader: Articles</a></li>
 <li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
 </ul>
 
@@ -176,16 +177,17 @@
             
   <div class="section" id="jump-start-into-worry-free-production-deployments">
 <h1>Jump-start into worry free production deployments<a class="headerlink" href="#jump-start-into-worry-free-production-deployments" title="Permalink to this headline">¶</a></h1>
-<p>You can try baangt right away and see, how it works. It’ll take less then 5 minutes.</p>
+<p>You can try baangt right away and see how it works. It’ll take less than 5 minutes.</p>
 <div class="section" id="prerequisits">
 <h2>Prerequisits<a class="headerlink" href="#prerequisits" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><p>Firefox installed</p></li>
+<li><p>Chrome installed</p></li>
 <li><p>Python3 installed</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">baangt</span></code> installed (either via PIP or from the GIT-Repository at <a class="reference external" href="https://gogs.earthsquad.global/athos/baangt">https://gogs.earthsquad.global/athos/baangt</a>)</p></li>
 </ul>
-<p>If you prefer running <code class="docutils literal notranslate"><span class="pre">baangt</span></code> inside Docker use the Dockerfile from <a class="reference external" href="https://gogs.earthsquad.global/athos/baangt-Docker">https://gogs.earthsquad.global/athos/baangt-Docker</a>.
-After downloading the repository enter <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">build</span></code> and then <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">run</span></code> in the command line. Once Docker is up, use SVN://localhost:5902 to connect. All features are exactly as you’d install everything on your local machine.</p>
+<p>If you prefer running <code class="docutils literal notranslate"><span class="pre">baangt</span></code> inside Docker, use the Dockerfile from <a class="reference external" href="https://gogs.earthsquad.global/athos/baangt-Docker">https://gogs.earthsquad.global/athos/baangt-Docker</a>.
+After downloading the repository, enter <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">build</span></code> and then <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">run</span></code> in the command line.
+Once Docker is up, use SVN://localhost:5902 to connect. All features are exactly like you’d install everything on your local machine.</p>
 </div>
 <div class="section" id="let-s-dive-right-into-it">
 <h2>Let’s dive right into it<a class="headerlink" href="#let-s-dive-right-into-it" title="Permalink to this headline">¶</a></h2>
@@ -228,19 +230,19 @@ After downloading the repository enter <code class="docutils literal notranslate
 </ul>
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
-<p>If you want to be able to watch your browser executing each step we recommend you set the parameter <code class="docutils literal notranslate"><span class="pre">slowExecution</span></code> with value <code class="docutils literal notranslate"><span class="pre">True</span></code> in Globals and re-run the test</p>
+<p>If you want to be able to watch your browser executing each step, we recommend you set the parameter <code class="docutils literal notranslate"><span class="pre">slowExecution</span></code> with value <code class="docutils literal notranslate"><span class="pre">True</span></code> in Globals and re-run the test</p>
 </div>
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
-<p>If you want the browser window to stay open on errors and/or after execution you can use parameter <code class="docutils literal notranslate"><span class="pre">dontCloseBrowser</span></code> with value <code class="docutils literal notranslate"><span class="pre">True</span></code>
+<p>If you want the browser window to stay open on errors and/or after execution, you can use parameter <code class="docutils literal notranslate"><span class="pre">dontCloseBrowser</span></code> with value <code class="docutils literal notranslate"><span class="pre">True</span></code>
 in global settings and run the test again. The browser will stop on errors or when the test run execution stopped.</p>
 </div>
 </div>
 <div class="section" id="a-bit-further">
 <h3>A bit further<a class="headerlink" href="#a-bit-further" title="Permalink to this headline">¶</a></h3>
-<p>Go ahead and try it out with your personal real-world example of a webpage, web-app or SPA, which you would like to have
+<p>Go ahead and try it out with your personal real-world example of a web-page, web-app or SPA, which you would like to have
 reproducable regression tests for.</p>
-<p>Of course you could basically follow the steps above, but depending on the length and complexity of the execution you’ll
+<p>Of course you could basically follow the steps above, but depending on the length and complexity of the execution, you’ll
 definitely enjoy having more tools in your toolbox:</p>
 </div>
 <div class="section" id="recording-a-test-case-with-katalon-recorder">
@@ -265,27 +267,27 @@ definitely enjoy having more tools in your toolbox:</p>
 <li><p>Stop recording</p>
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
-<p>You might want to execute the test case from within Katalon Recorder so make sure everything was recorded proplery.</p>
+<p>You might want to execute the test case from within Katalon Recorder to make sure everything was recorded properly.</p>
 </div>
 </li>
 <li><p>Hit the export-Button of the recorder, chose format <code class="docutils literal notranslate"><span class="pre">other</span></code></p></li>
 <li><p>Click “Export to Clipboard”</p></li>
 <li><dl class="simple">
 <dt>Switch over to <code class="docutils literal notranslate"><span class="pre">baangt</span></code> and press the button “Import KatalonRecorder”</dt><dd><ul class="simple">
-<li><p>The contents from the clipboard should be imported already and translation to <code class="docutils literal notranslate"><span class="pre">baangt</span></code> should be completed. If not click on the button “Import Clipboard” and please drop a ticket stating your Operating System incl. Version and which Browser you used for Recording.</p></li>
+<li><p>The contents from the clipboard should be imported already and translation to <code class="docutils literal notranslate"><span class="pre">baangt</span></code> should be completed. If the clipboard was not inserted automatically, click on the button “Import Clipboard” and please drop a ticket stating your operating system incl. version and which browser you used for recording in Katalon recorder.</p></li>
 </ul>
 </dd>
 </dl>
 </li>
-<li><p>Press “Save” and choose where you want to store the resulting XLSX-File to</p></li>
+<li><p>Press “Save” and choose where you want to store the resulting XLSX-File</p></li>
 </ul>
 <p><strong>That’s it. You just created you first regression test case including all parameters for it.</strong></p>
-<p>If you’re wondering, which parameters these are and how you can influence them, fear not! Open the Testcase-XLSX from
+<p>If you’re wondering which parameters these are, and how you can influence them, fear not! Open the Testcase-XLSX from
 the last step above, click on the “data”-Tab and start to enter values and lines as you please.</p>
 <p>You can always re-run Baangt after saving your Testrun-XLSX and see your progress.</p>
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
-<p>If you want to be able to watch your browser executing each step we recommend you set the parameter <code class="docutils literal notranslate"><span class="pre">slowExecution</span></code> with value <code class="docutils literal notranslate"><span class="pre">True</span></code> in Globals and re-run the test</p>
+<p>If you want to be able to watch your browser executing each step, set the parameter <code class="docutils literal notranslate"><span class="pre">slowExecution</span></code> with value <code class="docutils literal notranslate"><span class="pre">True</span></code> in Globals and re-run the test</p>
 </div>
 </div>
 </div>
@@ -305,17 +307,17 @@ the last step above, click on the “data”-Tab and start to enter values and l
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Activtity</span></code></p></td>
-<td><p>Set’s the activity of this TestStep. Activities are desribed in more details in next chapter</p></td>
+<td><p>Sets the activity of this TestStep. Activities are described in more details in next chapter</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">LocatorType</span></code></p></td>
-<td><p>Most of the activities need a locator. We’re big fans of XPATH as locatorType, due to speed and ease of use. Sooner
+<td><p>Most of the activities need a locator. We are big fans of XPATH as locatorType, due to speed and ease of use. Sooner
 or later you’ll anyway end up needing XPATH, so why not use it always when there’s no downside? If you prefer
-writing CSS-Paths then use value <code class="docutils literal notranslate"><span class="pre">CSS</span></code> for the locator. And if you’re luck enough to have unique IDs in your
+writing CSS-Paths then use value <code class="docutils literal notranslate"><span class="pre">CSS</span></code> for the locator. And if you are lucky enough to have unique IDs in your
 page simply use <code class="docutils literal notranslate"><span class="pre">ID</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Locator</span></code></p></td>
-<td><p>The locator is the specification, on which element <code class="docutils literal notranslate"><span class="pre">Activity</span></code> should happen. As in the value fields you may
-use variable replacement here too in order to replace Locators with values from the data file, for instance the
+<td><p>The locator is the specification on which element <code class="docutils literal notranslate"><span class="pre">Activity</span></code> should happen. As in the value fields, you may
+use variable replacement here too, in order to replace Locators with values from the data file. For instance the
 following would work fine:
 <code class="docutils literal notranslate"><span class="pre">//*[&#64;id($(CUSTOMERNUMBER))]</span></code> - this would create an XPATH-Statement where $(CUSTOMERNUMBER) is replaced by the
 actual value of the current test record.</p></td>
@@ -332,11 +334,11 @@ second field or value to compare to. Values for <code class="docutils literal no
 follows the same logic as <code class="docutils literal notranslate"><span class="pre">value</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Timeout</span></code></p></td>
-<td><p>Sometimes you’ll want to overwrite the default timeout settings of <code class="docutils literal notranslate"><span class="pre">baangt</span></code>. Here’s your chance. Values in seconds,
+<td><p>Sometimes you might to overwrite the default timeout settings of <code class="docutils literal notranslate"><span class="pre">baangt</span></code>. Here’s your chance. Values in seconds,
 decimals are OK (<code class="docutils literal notranslate"><span class="pre">0.5</span></code> is a valid value, so is <code class="docutils literal notranslate"><span class="pre">90</span></code>).</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Optional</span></code></p></td>
-<td><p>Usually, when <code class="docutils literal notranslate"><span class="pre">baangt</span></code> tries to execute an activity and can’t (after timeout), it will throw an exception,
+<td><p>Usually when <code class="docutils literal notranslate"><span class="pre">baangt</span></code> tries to execute an activity and can’t (after timeout), it will throw an exception,
 report in the Logs and stop the current test case. If you set <code class="docutils literal notranslate"><span class="pre">optional</span></code> to <code class="docutils literal notranslate"><span class="pre">True</span></code> or <code class="docutils literal notranslate"><span class="pre">X</span></code>, <code class="docutils literal notranslate"><span class="pre">baangt</span></code>
 will continue execution of the test case, even if the activity wasn’t possible.</p></td>
 </tr>
@@ -345,8 +347,8 @@ will continue execution of the test case, even if the activity wasn’t possible
 Migration, Pre-Production, etc.) and the software version on each stage is different. A test case, that works on
 Pre-Production will not pass on Dev-System as Dev is already further developed. If you change the test case to work
 on Dev-System and you need to test a Hotfix deployment on Pre-Production, what will you do? In other test solutions
-you would “simply” copy your test case, have one version for DEV, one for Pre-Production. Do that with 100s of
-different test cases and watch yourselve drown in chaos. OR you could use <code class="docutils literal notranslate"><span class="pre">baangt</span></code> where this problem is solved.
+you would “simply” copy your test case, have one version for DEV, one for Pre-Production. Do that with hundreds of
+different test cases and watch yourself drown in chaos. OR you could use <code class="docutils literal notranslate"><span class="pre">baangt</span></code> where this problem is solved.
 Software moves through the stages of your system landscape as it evolves. Use this field to conditionally execute
 different “branches” of your test cases, depending on the version on the current stage. <code class="docutils literal notranslate"><span class="pre">Release</span></code> can be any
 string value. You can add “&gt; ” “&lt; ” and “= ” as the first 2 characters to signal to <code class="docutils literal notranslate"><span class="pre">baangt</span></code> to only execute
@@ -354,7 +356,7 @@ the step when current release is greater than, lower than or exactly equal to th
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="mf">2019.05</span>
 </pre></div>
 </div>
-<p>will run the line onlf, if the Version is <code class="docutils literal notranslate"><span class="pre">2019.05a</span></code> or <code class="docutils literal notranslate"><span class="pre">2019.06</span></code>. We are aware, that your version numbers might
+<p>will run the line only, if the Version is <code class="docutils literal notranslate"><span class="pre">2019.05a</span></code> or <code class="docutils literal notranslate"><span class="pre">2019.06</span></code>. We are aware, that your version numbers might
 follow different nomenclature, so we made it very easy to subclass the corresponding logic.</p>
 </td>
 </tr>
@@ -372,6 +374,9 @@ follow different nomenclature, so we made it very easy to subclass the correspon
 <li><p>goBack</p></li>
 <li><p>If</p></li>
 <li><p>EndIf</p></li>
+<li><p>Pause</p></li>
+<li><p>Assert</p></li>
+<li><p>address_create</p></li>
 </ul>
 </div></blockquote>
 <table class="colwidths-given docutils align-default" id="id2">
@@ -387,8 +392,8 @@ follow different nomenclature, so we made it very easy to subclass the correspon
 </thead>
 <tbody>
 <tr class="row-even"><td><p>GoToURL</p></td>
-<td><p>Navigate to the given URL. Column <code class="docutils literal notranslate"><span class="pre">Value</span></code> must provide the URL. You may want to use variables in your URL-String,
-for instance your URL might look like <code class="docutils literal notranslate"><span class="pre">https://$(STAGE).earthsquad.global/</span></code>. <code class="docutils literal notranslate"><span class="pre">$(STAGE)</span></code> will be replaced
+<td><p>Navigate to the given URL. Column <code class="docutils literal notranslate"><span class="pre">Value</span></code> must provide the URL. You might want to use variables in your URL-String,
+for instance your URL might look like this <code class="docutils literal notranslate"><span class="pre">https://$(STAGE).earthsquad.global/</span></code>. It will be replaced
 during runtime of the test data with the value of <code class="docutils literal notranslate"><span class="pre">STAGE</span></code> from either Global settings or settings in the
 <code class="docutils literal notranslate"><span class="pre">testCaseSequence</span></code>.</p></td>
 </tr>
@@ -398,8 +403,8 @@ during runtime of the test data with the value of <code class="docutils literal 
 <tr class="row-even"><td><p>clickIF</p></td>
 <td><p>Will click on the object specified by the locator IF the field in testDataDict, that you enter in Column <code class="docutils literal notranslate"><span class="pre">value</span></code>
 has a value. This small and simple extension can save you hours and hours of work in maintenance of testcases.
-Imagine you’ve 10 checkboxes, that in various combinations provide different test results and you have to test
-all possible combinations. Using 1 column in your datafile for each checkbox and the <code class="docutils literal notranslate"><span class="pre">clickif</span></code> you can create
+Imagine you have 10 checkboxes, that in various combinations provide different test results, and you have to test
+all possible combinations. Using one column in your datafile for each checkbox and the <code class="docutils literal notranslate"><span class="pre">clickif</span></code>, you can create
 your testCases in minutes instead of hours or days. Imagine 50 checkboxes - with <code class="docutils literal notranslate"><span class="pre">baangt</span></code> your effort is still
 just minutes.</p></td>
 </tr>
@@ -417,14 +422,48 @@ bulletproof test cases.</p></td>
 <td><p>Trigger the “back”-Button of the browser.</p></td>
 </tr>
 <tr class="row-even"><td><p>If/Endif</p></td>
-<td><p>The block between IF and ENDIF is only executed, when the condition evaluated by <code class="docutils literal notranslate"><span class="pre">value|comparator|value2</span></code> is
-is true, for instance:</p>
+<td><p>The block between IF and ENDIF is only executed when the condition evaluated by <code class="docutils literal notranslate"><span class="pre">value|comparator|value2</span></code> is
+true, for instance:</p>
 <blockquote>
 <div><p>$(POSTCODE) = 7040</p>
 <p>$(YEAR2DATE) &gt; $(YEARTOMONTH)</p>
 </div></blockquote>
-<p>Another use of the If-Statement is with <code class="docutils literal notranslate"><span class="pre">LocatorType</span></code> and <code class="docutils literal notranslate"><span class="pre">Locator</span></code> and comparison. You’d use that, when you
+<p>Another use of the If-Statement is with <code class="docutils literal notranslate"><span class="pre">LocatorType</span></code> and <code class="docutils literal notranslate"><span class="pre">Locator</span></code> and comparison. This can be used when you
 want conditional execution of a larger block of statements depending on an element present or not present.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>assert</p></td>
+<td><p>Will retrieve value of element specified by <code class="docutils literal notranslate"><span class="pre">locator</span></code> and compare with reference value from <code class="docutils literal notranslate"><span class="pre">value</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p>pause</p></td>
+<td><p>Will pause for the number of secons in <code class="docutils literal notranslate"><span class="pre">value</span></code>. Valid numbers are float, e.g. 2, 0.2, 0.1, 25</p></td>
+</tr>
+<tr class="row-odd"><td><p>iban</p></td>
+<td><p>Will create a random IBAN account number. <code class="docutils literal notranslate"><span class="pre">value</span> <span class="pre">2</span></code> is the destination field of the test case structure. If you
+don’t provide a field name (not necessarily one that exists in the input file. Can be any field name!) nothing will
+happen. If you provide input parameters in column <code class="docutils literal notranslate"><span class="pre">value</span></code> (<code class="docutils literal notranslate"><span class="pre">SWIFT</span></code> and/or <code class="docutils literal notranslate"><span class="pre">COUNTRY</span></code>) the IBAN will be created for that bank-code
+and/or country.</p></td>
+</tr>
+<tr class="row-even"><td><p>address_create</p></td>
+<td><p>provide an easy and easily extendable way to generate address data for a test case
+The following fields variable are stored in testcaseDataDict:</p>
+<p>CountryCode
+PostalCode
+CityName
+StreetName
+HouseNumber
+AdditionalData1
+AdditionalData2</p>
+<dl class="simple">
+<dt><cite>value</cite>  optional</dt><dd><p>Default field-value: {‘HouseNumber’: ‘6’, ‘AdditionalData1’: ‘Near MahavirChowk’, ‘AdditionalData2’: ‘Opposite St. Marish Church’, ‘StreetName’: ‘GoreGaon’, ‘CityName’: ‘Ambala’, ‘PostalCode’: ‘160055’, ‘CountryCode’: ‘India’}</p>
+</dd>
+</dl>
+<p>These fields can be used as filter criteria in field value.
+Example value= <cite>{CountryCode:CY, PostlCode: 7}</cite>.</p>
+<p>Resulted field-value :{‘HouseNumber’: ‘6’, ‘AdditionalData1’: ‘Near MahavirChowk’, ‘AdditionalData2’: ‘Opposite St. Marish Church’, ‘StreetName’: ‘GoreGaon’, ‘CityName’: ‘Ambala’, ‘PostalCode’: ‘7’, ‘CountryCode’: ‘CY’}</p>
+<p><cite>value2</cite> optional
+If a prefix was povided in field Value2, the fieldnames will be concatenated with this prefix,
+e.g.if value2=`PremiumPayer_`, then the resulting field for CountryCode in testDataDict would become PremiumPayer_CountryCode.</p>
 </td>
 </tr>
 </tbody>

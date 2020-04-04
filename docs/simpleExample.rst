@@ -6,7 +6,7 @@ You can try baangt right away and see how it works. It'll take less than 5 minut
 Prerequisits
 ^^^^^^^^^^^^^
 
-* Firefox installed
+* Chrome installed
 * Python3 installed
 * ``baangt`` installed (either via PIP or from the GIT-Repository at https://gogs.earthsquad.global/athos/baangt)
 
@@ -172,6 +172,9 @@ More details on Activities
        * goBack
        * If
        * EndIf
+       * Pause
+       * Assert
+       * address_create
 
 .. list-table:: Details of activities
    :widths: 25 75
@@ -217,7 +220,14 @@ More details on Activities
    * - assert
      - Will retrieve value of element specified by ``locator`` and compare with reference value from ``value``.
       
-       
+
+   * - pause
+     - Will pause for the number of secons in ``value``. Valid numbers are float, e.g. 2, 0.2, 0.1, 25
+   * - iban
+     - Will create a random IBAN account number. ``value 2`` is the destination field of the test case structure. If you
+       don't provide a field name (not necessarily one that exists in the input file. Can be any field name!) nothing will
+       happen. If you provide input parameters in column ``value`` (``SWIFT`` and/or ``COUNTRY``) the IBAN will be created for that bank-code
+       and/or country.
    * - address_create
      - provide an easy and easily extendable way to generate address data for a test case
        The following fields variable are stored in testcaseDataDict:
