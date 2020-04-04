@@ -17,3 +17,4 @@ __pycache__
 venv
 application.sublime-workspace
 /.project
+server.log
