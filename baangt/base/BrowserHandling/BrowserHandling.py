@@ -114,7 +114,7 @@ class BrowserDriver:
                 lCurPath = lCurPath.joinpath(ChromeExecutable)
 
                 if mobileType == 'True':
-                    self.mobileConnectAppium(ChromeExecutable, browserName, desired_app, lCurPath, mobileApp,
+                    self.mobileConnectAppium(ChromeExecutable, browserName, desired_app, mobileApp,
                                              mobile_app_setting)
                 else:
                     if not (os.path.isfile(str(lCurPath))):

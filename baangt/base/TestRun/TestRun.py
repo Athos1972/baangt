@@ -42,7 +42,7 @@ class TestRun:
         self.timing = Timing()
         self.timing.takeTime(GC.TIMING_TESTRUN)  # Initialize Testrun Duration
         self.testRunUtils = TestRunUtils()
-        self._initTestRun()
+        self._initTestRun()   # Loads the globals*.json file
 
         self.browserProxyAndServer = self.getBrowserProxyAndServer() \
             if self.globalSettings.get('TC.' + GC.EXECUTION_NETWORK_INFO) == 'True' else None
@@ -286,7 +286,6 @@ class TestRun:
         if ".XLSX" in self.testRunFileName.upper():
             logger.info(f"Reading Definition from {self.testRunFileName}")
             lExcelImport = TestRunExcelImporter(FileNameAndPath=self.testRunFileName, testRunUtils=self.testRunUtils)
-            self.globalSettings['TC.Mobile'] = "False"
             lExcelImport.importConfig(self.globalSettings)
 
     @staticmethod
