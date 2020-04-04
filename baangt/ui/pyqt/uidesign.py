@@ -8,13 +8,16 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QObject
+import os
 
 class Ui_MainWindow(QObject):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(926, 480)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("./baangt/ressources/favicon.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        # icon.addPixmap(QtGui.QPixmap("./baangt/ressources/favicon.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(os.path.join("baangt","ressources","favicon.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        
         MainWindow.setWindowIcon(icon)
         MainWindow.setStyleSheet("background-color: rgb(229, 222, 206);")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -140,7 +143,8 @@ class Ui_MainWindow(QObject):
         self.logo.setMinimumSize(QtCore.QSize(400, 200))
         self.logo.setMaximumSize(QtCore.QSize(400, 200))
         self.logo.setText("")
-        self.logo.setPixmap(QtGui.QPixmap("./baangt/ressources/baangtLogo2020.png"))
+        # self.logo.setPixmap(QtGui.QPixmap("./baangt/ressources/baangtLogo2020.png"))
+        self.logo.setPixmap(QtGui.QPixmap(os.path.join("baangt","ressources","baangtLogo2020.png")))
         self.logo.setScaledContents(True)
         self.logo.setObjectName("logo")
         self.horizontalLayout_4.addWidget(self.logo)
