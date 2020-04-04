@@ -7,6 +7,7 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import pyqtSlot
 import os
 import glob
+import json
 
 
 
@@ -37,6 +38,7 @@ class MainWindow(Ui_MainWindow):
         self.browsePushButton.clicked.connect(self.browsePathSlot)
         # self.executePushButton.clicked(self.executeTest)
         self.settingsPushButton.clicked.connect(self.settingView)
+        self.settingComboBox.activated.connect(self.updateSettings)
 
         # settings View action
         self.settingsClosePushButton.clicked.connect(self.refreshNew)
@@ -71,6 +73,13 @@ class MainWindow(Ui_MainWindow):
         self.testRunComboBox.addItems(self.testRunFiles)
         self.settingComboBox.addItems(self.configFiles)
 
+        # set default selection to 0
+        if len(self.testRunFiles) > 0:
+            self.testRunComboBox.setCurrentIndex(0)
+        if len(self.configFiles) > 0:
+            self.settingComboBox.setCurrentIndex(0)
+            self.updateSettings()
+
     def setupBasePath(self, dirPath=""):
         """ Setup Base path of Execution as per directory Path"""
         if not dirPath:
@@ -79,6 +88,8 @@ class MainWindow(Ui_MainWindow):
             dirPath = os.path.dirname(os.path.dirname(
                           os.path.dirname(os.path.dirname(__file__))
                           ))
+            if not dirPath:
+                dirPath = os.path.abspath(os.curdir)
             self.pathLineEdit.insert(dirPath)
         else:
             self.pathLineEdit.insert(dirPath)
@@ -93,13 +104,51 @@ class MainWindow(Ui_MainWindow):
         Hide Bottom Settings and Logs Viewer.
         Made for closeSettingsButton and closeLogsButton
         """
-        # Initially Hide splitter bottom part
-        self.centralwidget.resize(912, 400)
-
+        # Bottom Left and Right splitter
         self.settingsAndLogSplitter.setSizes([300, 0])
 
         # Hide Log Viewer Initially
         self.mainAndExtraSplitter.setSizes([300, 0])
+
+        # Initially Hide splitter bottom part
+        self.centralwidget.resize(912, 400)
+
+    @pyqtSlot()
+    def updateSettings(self):
+        """ Update the settings Variable with content in fileName"""
+        # Try to get full path
+        self.configFile = self.settingComboBox.currentText()
+
+        if os.path.abspath(self.configFile):
+            # File is valid , try to open
+            try:
+                with open(self.configFile, 'r') as f:
+                    globaldata = json.loads(f.read())
+
+            except Exception as e:
+                print("Error occured ", e)
+                globaldata = {}
+
+            # clear all exiting settings
+            self.settingsTableWidget.clear()
+            # reprint the table data
+            for i, keypair in enumerate(globaldata.items()):
+                # parameter
+                self.settingsTableWidget.setItem(
+                                    i,
+                                    0,
+                                    QtWidgets.QTableWidgetItem(keypair[0])
+                                    )
+                # value
+                self.settingsTableWidget.setItem(
+                                    i,
+                                    1,
+                                    QtWidgets.QTableWidgetItem(keypair[1])
+                                    )
+
+
+
+
 
     @pyqtSlot()
     def settingView(self):
