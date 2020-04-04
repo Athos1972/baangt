@@ -193,7 +193,7 @@ class BrowserDriver:
                 desired_cap['appActivity'] = mobile_app_setting[GC.MOBILE_APP_ACTIVITY]
             else:
                 desired_cap['browserName'] = browserName
-                desired_cap['chromedriverExecutable'] = self.__findBrowserDriverPaths(BrowserExecutable)
+                desired_cap['chromedriverExecutable'] = mobile_app_setting[GC.MOBILE_APP_BROWSER_PATH]
                 desired_cap['noReset'] = False
             self.driver = Appiumwebdriver.Remote("http://localhost:4723/wd/hub", desired_cap)
         elif desired_app[GC.MOBILE_PLATFORM_NAME] == "iOS":

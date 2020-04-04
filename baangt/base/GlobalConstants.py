@@ -89,6 +89,7 @@ MOBILE_PLATFORM_VERSION = "platformVersion"
 MOBILE_APP_URL = 'app'
 MOBILE_APP_PACKAGE = 'appPackage'
 MOBILE_APP_ACTIVITY = 'appActivity'
+MOBILE_APP_BROWSER_PATH = 'mobileAppBrowserPath'   # Path to Browser on Mobile device
 
 WIN_PLATFORM = 'windows'
 LINUX_PLATFORM = 'linux'
