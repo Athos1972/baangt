@@ -243,19 +243,10 @@ class BrowserDriver:
         self.takeTime("Browser Start")
 
     def __findBrowserDriverPaths(self, filename):
-        if hasattr(sys, 'frozen') and hasattr(sys, '_MEIPASS'):
-            # We're in pyinstaller. Chromedriver and Geckodriver are in the executable-directory
-            # in the subdirectory /chromedriver/ or /geckodriver for Linux und MAC,
-            # directly in the exeuctable directory for the windows.exe
-            if platform.system().lower() == 'windows':
-                lCurPath = Path(sys.executable).parent.joinpath(filename)
-            else:
-                lCurPath = Path(sys.executable).parent.joinpath(filename).joinpath(filename)
 
-        else:
-            lCurPath = Path(os.getcwd())
-            lCurPath = lCurPath.joinpath("browserDrivers")
-            lCurPath = lCurPath.joinpath(filename)
+        lCurPath = Path(os.getcwd())
+        lCurPath = lCurPath.joinpath("browserDrivers")
+        lCurPath = lCurPath.joinpath(filename)
 
         logger.debug(f"Path for BrowserDrivers: {lCurPath}")
         return str(lCurPath)
@@ -801,7 +792,6 @@ class BrowserDriver:
             raise Exceptions.baangtTestStepException(
                 f"Action not possible after {timeout} s, Locator: {self.locatorType}: {self.locator}")
 
-
     def goToUrl(self, url):
         self._log(logging.INFO, f'GoToUrl:{url}')
         try:
@@ -827,7 +817,8 @@ class BrowserDriver:
 
     def downloadDriver(self, browserName):
         path = Path(os.getcwd())
-        path.joinpath("browserDrivers").mkdir(exist_ok=True,parents=True)
+        logger.debug(f"Trying to download browserDriver for {browserName} into {path.joinpath('browserDrivers')}")
+        path.joinpath("browserDrivers").mkdir(parents=True, exist_ok=True)
         path = path.joinpath("browserDrivers")
         tar_url = ''
         url = ''
@@ -859,20 +850,20 @@ class BrowserDriver:
             if tar_url != '':
                 path_zip = path.joinpath(GC.GECKO_DRIVER.replace('exe', 'tar.gz'))
                 filename, headers = urlretrieve(tar_url, path_zip)
+                logger.debug(f"Tarfile with browser expected here: {filename} ")
                 tar = tarfile.open(filename, "r:gz")
                 tar.extractall(path)
                 tar.close()
 
-
             else:
                 file = requests.get(url)
                 path_zip = path.joinpath(GC.GECKO_DRIVER.replace('exe', 'zip'))
+                logger.debug(f"Zipfile with browser expected here: {path_zip} ")
                 open(path_zip, 'wb').write(file.content)
                 with zipfile.ZipFile(path_zip, 'r') as zip_ref:
                     zip_ref.extractall(path)
 
-
-        else:
+        elif browserName == GC.BROWSER_CHROME:
             response = requests.get(GC.CHROME_URL)
             chromeversion = response.text
             chromedriver_url_dict = []
@@ -895,13 +886,19 @@ class BrowserDriver:
                 url = chromeDriversDict[GC.OS_list[2]]
             file = requests.get(url)
             path_zip = path.joinpath(GC.CHROME_DRIVER.replace('exe', 'zip'))
+            logger.debug(f"Writing Chrome file into {path_zip}")
             open(path_zip, 'wb').write(file.content)
             with zipfile.ZipFile(path_zip, 'r') as zip_ref:
                 zip_ref.extractall(path)
-
+                logger.debug(f"Extracting Chrome driver into {path}")
                 # permissions
 
             if platform.system().lower() != GC.WIN_PLATFORM:
                 file_path = path.joinpath(GC.CHROME_DRIVER.replace('.exe', ''))
                 os.chmod(file_path, 0o777)
-        os.remove(path_zip)
+
+            os.remove(path_zip)
+
+        else:
+
+            logging.critical(f"Please download driver for {browserName} manually into folder /browserDrivers")

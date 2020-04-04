@@ -49,13 +49,14 @@ This needs to work on all platforms and drivers (FF, Chrome, Safari), also when 
 
 # DoD:
 * Microservice created and pushed to new repository (not part of baangt repository) (sum: 9,5 hours)
-    * Creation of new items with upload of PDF, return of UUID, insert criteria to ignore differences, 
+    * Creation of new items with upload of PDF, return of UUID, insert criteria to ignore differences (0..n RegEx Strings), 
     description text (unlimited length). --> 6 hours
     * Viewing of created items (show UUID and provide PDF for download) --> 0,5 hour
     * Update of reference PDFs (replace existing PDF with a new upload) --> 1 hour
-    * Update of criteria to ignore differences and description text --> 1 hour
+    * Update of criteria to ignore differences (0..n RegEx Strings) and description text --> 2 hours
     * Search for UUID and fulltext in description text --> 1 hour
 * baangt changes (deal with PDF-Downloads, new method "PDF-compare") committed to a new branch and tested (2 hours)
+    * Get familiar with the baangt codebase (in TestStepMaster.py mainly) (8 hours)
     * test examples documented in /examples (1 hour)
 * Technical documentation up2date (classes have Docstrings, Methods where needed) (no additional effort)
 * Documentation of Microservice and updated documentation of baangt parameters in /docs-Folder (2 hours)

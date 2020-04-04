@@ -109,7 +109,7 @@
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">   Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="BrowserDrivers.html">   Browser Drivers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">:subheader: Articles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">   :subheader: Articles</a></li>
 <li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
 </ul>
 
@@ -181,7 +181,7 @@
 <div class="section" id="prerequisits">
 <h2>Prerequisits<a class="headerlink" href="#prerequisits" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><p>Firefox installed</p></li>
+<li><p>Chrome installed</p></li>
 <li><p>Python3 installed</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">baangt</span></code> installed (either via PIP or from the GIT-Repository at <a class="reference external" href="https://gogs.earthsquad.global/athos/baangt">https://gogs.earthsquad.global/athos/baangt</a>)</p></li>
 </ul>
@@ -375,6 +375,8 @@ follow different nomenclature, so we made it very easy to subclass the correspon
 <li><p>If</p></li>
 <li><p>EndIf</p></li>
 <li><p>Pause</p></li>
+<li><p>Assert</p></li>
+<li><p>address_create</p></li>
 </ul>
 </div></blockquote>
 <table class="colwidths-given docutils align-default" id="id2">
@@ -436,7 +438,13 @@ want conditional execution of a larger block of statements depending on an eleme
 <tr class="row-even"><td><p>pause</p></td>
 <td><p>Will pause for the number of secons in <code class="docutils literal notranslate"><span class="pre">value</span></code>. Valid numbers are float, e.g. 2, 0.2, 0.1, 25</p></td>
 </tr>
-<tr class="row-odd"><td><p>address_create</p></td>
+<tr class="row-odd"><td><p>iban</p></td>
+<td><p>Will create a random IBAN account number. <code class="docutils literal notranslate"><span class="pre">value</span> <span class="pre">2</span></code> is the destination field of the test case structure. If you
+don’t provide a field name (not necessarily one that exists in the input file. Can be any field name!) nothing will
+happen. If you provide input parameters in column <code class="docutils literal notranslate"><span class="pre">value</span></code> (<code class="docutils literal notranslate"><span class="pre">SWIFT</span></code> and/or <code class="docutils literal notranslate"><span class="pre">COUNTRY</span></code>) the IBAN will be created for that bank-code
+and/or country.</p></td>
+</tr>
+<tr class="row-even"><td><p>address_create</p></td>
 <td><p>provide an easy and easily extendable way to generate address data for a test case
 The following fields variable are stored in testcaseDataDict:</p>
 <p>CountryCode

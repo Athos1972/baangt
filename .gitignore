@@ -5,6 +5,7 @@
 /baangt/logs
 geckodriver.log
 /Screenshots/*.png
+/browserDrivers
 baangt.ini
 /Screenshots
 /docs/logs
@@ -12,6 +13,7 @@ __pycache__
 *.pyc
 *.db
 *.log
+*.pyo
 venv
 application.sublime-workspace
 /.project

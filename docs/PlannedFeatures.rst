@@ -4,21 +4,18 @@ We implement all features for 3 operating Systems (Mac, Windows, Debian Linux an
 
 Short/Medium term features
 ---------------------------
-* Refactoring of parallel processing on a single computer (2020.03) --> Done
-* Executables on Mac, Linux and Windows (2020.03) --> Done
 * Nicer interactive UI-Starter (2020.03)
     * Phase 1 done 2020.02
     * Phase 2 (UI-elements) (2020.03) --> will move to 2020.04 RC5
     * Provide live statistics (2020.04)
 * Double Opt-In Automation (2020.03) --> will move to 2020.04 RC6
-* Support for Selenium Grid V4 (2020.04)
-* Better support for multiple sources (e.g. multiple XLSX) of test data (2020.04)
 * Better support to store test data output to database and export files (2020.04)
 * Support for Appium integration (2020.04)
 * Katalon Importer/Converter as Webservice (2020.04)
 
 Features for later
 ------------------
+* Better support for multiple sources (e.g. multiple XLSX)
 * Proof of concept with PyWinAuto
 * Integration with SAP Gui Scripting via VBS and PyWinAuto
 * Better support for Mass testing APIs
@@ -42,4 +39,5 @@ Future features might include:
 * XML/PDF-Compare
 * Consulting
 * Priority support
-
+* Testcase creation as a Service
+* Testing as a service

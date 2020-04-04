@@ -1,12 +1,27 @@
 Change log
 ==========
 
+2020.04
+^^^^^^^
+
+Summary:
+
+New features
+++++++++++++
+* SimpleFormat: New short command ``iban`` will create a random IBAN. Powered by Schwifty library.
+
+Changes
++++++++
+* Chrome now as default browser as many people don't have Firefox
+* Improved browserDriver Download for executables (didn't work in some cases)
+
 2020.03
 ^^^^^^^
 Summary: Release Candiate 3 is on the road!
 
 New features
 ++++++++++++
+* Executable files and ZIP-Archives for Mac, Windows and Ubuntu - no more GIT CLONE needed! Simply download, unzip and run.
 * Network logging during WEB-Sessions and export to Excel-Result in separate tab. Use ``TC.NetworkInfo`` with value ``True`` (tested on Mac and Windows, most probably works on Linux too).
 * baangtDB: Import and Export functionality for simpleFormat and complex XLSX-Testrun definitions.
 * baangtDB: Export also to JSON-Format
@@ -17,6 +32,7 @@ New features
 * SimpleFormat: ``address_creation`` command added to create a random address. Customizable.
   Multiple calls will create multiple random addresses.
 * CLI: New parameter ``--reloadDrivers=True`` downloads latest version of webdrivers for Chrome and Firefox.
+* Integration with Selenium Grid V4.0 and baangt. See docs for further details. Separate Repository for the Dockerfile
 
 Bugfixes
 ++++++++
