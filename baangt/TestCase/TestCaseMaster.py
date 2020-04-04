@@ -22,6 +22,8 @@ class TestCaseMaster:
         self.timing : Timing = self.kwargs.get(GC.KWARGS_TIMING)
         self.timingName = self.timing.takeTime(self.__class__.__name__, forceNew=True)
         if self.testCaseType == GC.KWARGS_BROWSER:
+            logger.info(f"Settings for this TestCase: {self.testCaseSettings}. "
+                        f"Starting or using Browser {self.kwargs.get(GC.KWARGS_BROWSER)}")
             if self.kwargs.get(GC.KWARGS_BROWSER):
                 self.browser = self.kwargs[GC.KWARGS_BROWSER] # Browser already set - most probably from parallel run
             else:
