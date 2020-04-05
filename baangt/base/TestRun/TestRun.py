@@ -23,7 +23,7 @@ class TestRun:
     This is the main Class of Testexecution in the baangt Framework. It is usually started
     from baangt.py
     """
-    def __init__(self, testRunName, globalSettingsFileNameAndPath=None):
+    def __init__(self, testRunName, globalSettingsFileNameAndPath=None, testRunDict=None): # -- API support: testRunDict --
         """
         @param testRunName: The name of the TestRun to be executed.
         @param globalSettingsFileNameAndPath: from where to read the <globals>.json
@@ -37,6 +37,13 @@ class TestRun:
         self.dataRecords = {}
         self.globalSettingsFileNameAndPath = globalSettingsFileNameAndPath
         self.globalSettings = {}
+
+        # -- API support --
+        # results
+        self.results = None
+        self.testRunDict = testRunDict
+        # -- END of API support
+
         self.testRunName, self.testRunFileName = \
             self._sanitizeTestRunNameAndFileName(testRunName)
         self.timing = Timing()
@@ -92,7 +99,7 @@ class TestRun:
 
         if self.testCasesEndDateTimes_2D and self.testCasesEndDateTimes_2D[0]:
             self.kwargs['testCasesEndDateTimes_2D'] = self.testCasesEndDateTimes_2D
-        ExportResults(**self.kwargs)
+        self.results = ExportResults(**self.kwargs) # -- API support: self.results --
         successful, error = self.getSuccessAndError()
         logger.info(f"Finished execution of Testrun {self.testRunName}. "
                     f"{successful} Testcases successfully executed, {error} errors")
@@ -265,13 +272,21 @@ class TestRun:
             self.globalSettings = utils.openJson(self.globalSettingsFileNameAndPath)
 
     def _loadJSONTestRunDefinitions(self):
-        if not self.testRunFileName:
+        if not self.testRunFileName and not self.testRunDict: # -- API support: testRunDict --
             return
 
-        if ".JSON" in self.testRunFileName.upper():
+        if self.testRunFileName and ".JSON" in self.testRunFileName.upper(): # -- API support: self.testRunFileName --
             data = utils.replaceAllGlobalConstantsInDict(utils.openJson(self.testRunFileName))
             self.testRunUtils.setCompleteTestRunAttributes(testRunName=self.testRunName,
                                                            testRunAttributes=data)
+
+        # -- API support --
+        # load TestRun from dict
+        if self.testRunDict:
+            data = utils.replaceAllGlobalConstantsInDict(self.testRunDict)
+            self.testRunUtils.setCompleteTestRunAttributes(testRunName=self.testRunName,
+                                                           testRunAttributes=data)
+        # -- END of API support --
 
     def _loadExcelTestRunDefinitions(self):
         if not self.testRunFileName:
