@@ -10,7 +10,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QObject
 import os
 import resources
-#from pathlib import Path
+# from pathlib import Path
 
 class Ui_MainWindow(QObject):
     def setupUi(self, MainWindow):
@@ -140,8 +140,8 @@ class Ui_MainWindow(QObject):
         self.gridLayout.addLayout(self.verticalLayout, 0, 0, 1, 1)
         self.horizontalLayout_4.addWidget(self.mainGroupBox)
         self.logo = QtWidgets.QLabel(self.widget)
-        self.logo.setMinimumSize(QtCore.QSize(300, 120))
-        self.logo.setMaximumSize(QtCore.QSize(500, 200))
+        self.logo.setMinimumSize(QtCore.QSize(400, 160))
+        self.logo.setMaximumSize(QtCore.QSize(400, 160))
         self.logo.setText("")
         self.logo.setPixmap(QtGui.QPixmap(":/baangt/baangtlogo"))
         self.logo.setSizePolicy(

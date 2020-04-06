@@ -51,6 +51,9 @@ class MainWindow(Ui_MainWindow):
         self.actionsettings.triggered.connect(self.displaySettings)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+        # Quit Event
+        self.actionExit.triggered.connect(self.quitApplication)
+
     def statusMessage(self, str, duration=1000):
         """ Display status message passed in Status Bar
         Default duration (ms) = 1000 (1 sec)
@@ -70,14 +73,23 @@ class MainWindow(Ui_MainWindow):
         # update the combo box
         self.testRunComboBox.clear()
         self.settingComboBox.clear()
+        # Also, disable Execute and Details Button
+        self.executePushButton.setEnabled(False)
+        self.settingsPushButton.setEnabled(False)
+        # Add files in Combo Box
         self.testRunComboBox.addItems(self.testRunFiles)
         self.settingComboBox.addItems(self.configFiles)
 
         # set default selection to 0
         if len(self.testRunFiles) > 0:
             self.testRunComboBox.setCurrentIndex(0)
+            # Activate the Execute Button
+            self.executePushButton.setEnabled(True)
+
         if len(self.configFiles) > 0:
             self.settingComboBox.setCurrentIndex(0)
+            # Activate the Settings Detail Button
+            self.settingsPushButton.setEnabled(True)
             self.updateSettings()
 
     def setupBasePath(self, dirPath=""):
@@ -96,6 +108,20 @@ class MainWindow(Ui_MainWindow):
         self.directory = dirPath
         self.getSettingsAndTestFilesInDirectory(dirPath)
         self.statusMessage("Current Path: {} ".format(dirPath), 2000)
+
+    @pyqtSlot()
+    def quitApplication(self):
+        """ This function will close the UI """
+        buttonReply = QtWidgets.QMessageBox.question(
+                           self.centralwidget,
+                           "Close Confirmation ",
+                           "Are you sure to quit?",
+                           QtWidgets.QMessageBox.Yes |
+                           QtWidgets.QMessageBox.No,
+                           QtWidgets.QMessageBox.No
+                           )
+        if buttonReply == QtWidgets.QMessageBox.Yes:
+            QtWidgets.QApplication.exit()
 
     @pyqtSlot()
     def refreshNew(self):
@@ -134,12 +160,16 @@ class MainWindow(Ui_MainWindow):
             # reprint the table data
             for i, keypair in enumerate(globaldata.items()):
                 # parameter
+                if not isinstance(keypair[1], str):
+                    print("Invalid value pair found", keypair)
+                    continue
                 self.settingsTableWidget.setItem(
                                     i,
                                     0,
                                     QtWidgets.QTableWidgetItem(keypair[0])
                                     )
                 # value
+
                 self.settingsTableWidget.setItem(
                                     i,
                                     1,
