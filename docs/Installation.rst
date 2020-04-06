@@ -12,6 +12,9 @@ download to your local computer and unzip.
 
 In the new folder you'll find ``baangt`` executable. Click on it and explore examples in ``/examples`` folder.
 
+There's also a video on Youtube: https://www.youtube.com/watch?v=25wdwElMlH4 and an article with more background
+information in the blog: https://www.baangt.org/4-ways-to-install-baangt-on-macos-windows-and-linux/
+
 Install from sources
 --------------------
 
