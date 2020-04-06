@@ -10,7 +10,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QObject
 import os
 import resources
-
+#from pathlib import Path
 
 class Ui_MainWindow(QObject):
     def setupUi(self, MainWindow):
@@ -148,6 +148,8 @@ class Ui_MainWindow(QObject):
                            QtWidgets.QSizePolicy.MinimumExpanding,
                            QtWidgets.QSizePolicy.MinimumExpanding
                             )
+        # self.logo.setPixmap(QtGui.QPixmap("./baangt/ressources/baangtLogo2020.png"))
+        # self.logo.setPixmap(QtGui.QPixmap(f'{Path(os.getcwd()).joinpath("baangt").joinpath("ressources").joinpath("baangtLogo2020.png")}'))
         self.logo.setScaledContents(True)
         self.logo.setObjectName("logo")
         self.horizontalLayout_4.addWidget(self.logo)
