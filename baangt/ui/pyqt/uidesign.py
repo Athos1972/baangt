@@ -9,15 +9,15 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QObject
 import os
+import resources
+
 
 class Ui_MainWindow(QObject):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(926, 480)
         icon = QtGui.QIcon()
-        # icon.addPixmap(QtGui.QPixmap("./baangt/ressources/favicon.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon.addPixmap(QtGui.QPixmap(os.path.join("baangt","ressources","favicon.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        
+        icon.addPixmap(QtGui.QPixmap(":/baangt/baangticon"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
         MainWindow.setStyleSheet("background-color: rgb(229, 222, 206);")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -133,18 +133,21 @@ class Ui_MainWindow(QObject):
         sizePolicy.setHeightForWidth(self.settingsPushButton.sizePolicy().hasHeightForWidth())
         self.settingsPushButton.setSizePolicy(sizePolicy)
         self.settingsPushButton.setStyleSheet("color: rgb(255, 255, 255);\n"
-"background-color: rgb(114, 159, 207);")
+              "background-color: rgb(114, 159, 207);")
         self.settingsPushButton.setObjectName("settingsPushButton")
         self.horizontalLayout_3.addWidget(self.settingsPushButton)
         self.verticalLayout.addLayout(self.horizontalLayout_3)
         self.gridLayout.addLayout(self.verticalLayout, 0, 0, 1, 1)
         self.horizontalLayout_4.addWidget(self.mainGroupBox)
         self.logo = QtWidgets.QLabel(self.widget)
-        self.logo.setMinimumSize(QtCore.QSize(400, 200))
-        self.logo.setMaximumSize(QtCore.QSize(400, 200))
+        self.logo.setMinimumSize(QtCore.QSize(300, 120))
+        self.logo.setMaximumSize(QtCore.QSize(500, 200))
         self.logo.setText("")
-        # self.logo.setPixmap(QtGui.QPixmap("./baangt/ressources/baangtLogo2020.png"))
-        self.logo.setPixmap(QtGui.QPixmap(os.path.join("baangt","ressources","baangtLogo2020.png")))
+        self.logo.setPixmap(QtGui.QPixmap(":/baangt/baangtlogo"))
+        self.logo.setSizePolicy(
+                           QtWidgets.QSizePolicy.MinimumExpanding,
+                           QtWidgets.QSizePolicy.MinimumExpanding
+                            )
         self.logo.setScaledContents(True)
         self.logo.setObjectName("logo")
         self.horizontalLayout_4.addWidget(self.logo)

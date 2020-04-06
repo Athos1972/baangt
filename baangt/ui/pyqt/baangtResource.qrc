@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/baangt">
+        <file alias="baangticon">favicon.ico</file>
+        <file alias="baangtlogo">baangtLogo2020.png</file>
+    </qresource>
+</RCC>

@@ -1,38 +1,39 @@
-[
- {
-"variableName":"Release",
-"hint":"set particular version to test ",
-"type":"editText",
-"value":"",
-"displayText":"Current Release"
-},
 {
-"variableName":"TC.slowExecution",
-"hint":"Stop Browser for sometime",
-"type":"bool",
-"value":"False",
-"displayText":"TC.slowExecution"
-},
-{
-"variableName":"dontCloseBrowser",
-"hint":"When the browser or script finds an error, it usually takes a screenshot and moves on to the next testcase. With this setting to True the browser session will stop right at the error.",
-"type":"bool",
-"value":"False",
-"displayText":"Dont Close Browser",
+    "settings": [
+        {
+            "variableName": "Release",
+            "hint": "set particular version to test ",
+            "type": "editText",
+            "value": "",
+            "displayText": "Current Release"
+        },
+        {
+            "variableName": "TC.slowExecution",
+            "hint": "Stop Browser for sometime",
+            "type": "bool",
+            "value": "False",
+            "displayText": "TC.slowExecution"
+        },
+        {
+            "variableName": "dontCloseBrowser",
+            "hint": "When the browser or script finds an error, it usually takes a screenshot and moves on to the next testcase. With this setting to True the browser session will stop right at the error.",
+            "type": "bool",
+            "value": "False",
+            "displayText": "Dont Close Browser"
+        },
+        {
+            "variableName": "TC.BrowserAttributes",
+            "hint": "Chrome, FF and Safari",
+            "type": "editText",
+            "value": "FF",
+            "displayText": "Browser "
+        },
+        {
+            "variableName": "TC.NetworkInfo",
+            "hint": "True or False",
+            "type": "bool",
+            "value": "False",
+            "displayText": "Trace Network Info"
+        }
+    ]
 }
-{
-"variableName":"TC.BrowserAttributes",
-"hint":"Chrome, FF and Safari",
-"type":"editText",
-"value":"FF",
-"displayText":"Browser ",
-},
-{
-"variableName":"TC.NetworkInfo",
-"hint":"True or False",
-"type":"bool",
-"value":"False",
-"displayText":"Trace Network Info",
-}
-
-]
