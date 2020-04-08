@@ -95,30 +95,30 @@ class BrowserDriver:
                 if not (os.path.isfile(str(lCurPath))):
                     self.downloadDriver(browserName)
 
-                profile = None
-                firefox_proxy = browserProxy.selenium_proxy() if browserProxy else None
-                if firefox_proxy:
-                    profile = webdriver.FirefoxProfile()
-                    profile.set_proxy(firefox_proxy)
-                self.driver = browserNames[browserName](options=self.__createBrowserOptions(browserName=browserName,
-                                                                                            desiredCapabilities=desiredCapabilities),
+                profile = webdriver.FirefoxProfile()
+                profile = self.__setFirefoxProfile(browserProxy, profile)
+                logger.debug(f"Firefox Profile as follows:{profile.userPrefs}")
+
+                self.driver = browserNames[browserName](
+                    options=self.__createBrowserOptions(browserName=browserName,
+                                                        desiredCapabilities=desiredCapabilities),
                                                         executable_path=self.__findBrowserDriverPaths(GeckoExecutable),
                                                         firefox_profile=profile)
-                browserProxy.new_har("baangt-firefox-{}".format(browserInstance),
-                                     options={'captureHeaders': True, 'captureContent': True}) \
-                    if firefox_proxy else None
+                self.__startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance,
+                                            browserProxy=browserProxy)
 
             elif browserName == GC.BROWSER_CHROME:
                 lCurPath = lCurPath.joinpath(ChromeExecutable)
                 if not (os.path.isfile(str(lCurPath))):
                     self.downloadDriver(browserName)
+
                 self.driver = browserNames[browserName](
                     chrome_options=self.__createBrowserOptions(browserName=browserName,
                                                                desiredCapabilities=desiredCapabilities,
                                                                browserProxy=browserProxy),
-                    executable_path=self.__findBrowserDriverPaths(ChromeExecutable))
-                browserProxy.new_har("baangt-chrome-{}".format(browserInstance),
-                                     options={'captureHeaders': True, 'captureContent': True}) if browserProxy else None
+                                                               executable_path=self.__findBrowserDriverPaths(ChromeExecutable))
+                self.__startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance,
+                                            browserProxy=browserProxy)
             elif browserName == GC.BROWSER_EDGE:
                 self.driver = browserNames[browserName](
                     executable_path=self.__findBrowserDriverPaths("msedgedriver.exe"))
@@ -168,6 +168,46 @@ class BrowserDriver:
 
         self.takeTime("Browser Start")
 
+    def __setFirefoxProfile(self, browserProxy, profile):
+        if browserProxy:
+            profile.set_proxy(browserProxy.selenium_proxy())
+
+        profile.set_preference("browser.download.folderList", 2)
+        profile.set_preference("browser.helperApps.alwaysAsk.force", False)
+        profile.set_preference("browser.download.manager.showWhenStarting", False)
+        profile.set_preference("browser.download.manager.showAlertOnComplete", False)
+        profile.set_preference('browser.helperApps.neverAsk.saveToDisk',
+                               'application/octet-stream,application/pdf,application/x-pdf,application/vnd.pdf,application/zip,application/octet-stream,application/x-zip-compressed,multipart/x-zip,application/x-rar-compressed, application/octet-stream,application/msword,application/vnd.ms-word.document.macroEnabled.12,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/rtf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,application/vnd.ms-word.document.macroEnabled.12,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/xls,application/msword,text/csv,application/vnd.ms-excel.sheet.binary.macroEnabled.12,text/plain,text/csv/xls/xlsb,application/csv,application/download,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/octet-stream')
+        profile.set_preference('browser.helperApps.neverAsk.openFile',
+                               'application/octet-stream,application/pdf,application/x-pdf,application/vnd.pdf,application/zip,application/octet-stream,application/x-zip-compressed,multipart/x-zip,application/x-rar-compressed, application/octet-stream,application/msword,application/vnd.ms-word.document.macroEnabled.12,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/rtf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,application/vnd.ms-word.document.macroEnabled.12,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/xls,application/msword,text/csv,application/vnd.ms-excel.sheet.binary.macroEnabled.12,text/plain,text/csv/xls/xlsb,application/csv,application/download,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/octet-stream')
+        profile.set_preference("browser.download.dir", self.__setBrowserDownloadDirRandom())
+        profile.set_preference("browser.download.manager.useWindow", False)
+        profile.set_preference("browser.download.manager.focusWhenStarting", False)
+        profile.set_preference("browser.download.manager.showAlertOnComplete", False)
+        profile.set_preference("browser.download.manager.closeWhenDone", True)
+        profile.set_preference("pdfjs.enabledCache.state", False)
+        profile.set_preference("pdfjs.disabled", True) # This is nowhere on the Internet! But that did the trick!
+        return profile
+
+    def __setBrowserDownloadDirRandom(self):
+        """
+        Generate a new Directory for downloads. This needs to be specific for each browser session,
+        so that we can know, which documents were created during this test case.
+        :return:
+        """
+        randomValue = str(uuid.uuid4())
+
+        downloadDir = str(Path(os.getcwd()).joinpath("TestDownloads").joinpath(randomValue))
+        Path(downloadDir).mkdir(parents=True, exist_ok=True)
+
+        logger.debug(f"Directory for download {downloadDir}")
+        return downloadDir
+
+
+    def __startBrowsermobProxy(self, browserName, browserInstance, browserProxy):
+        browserProxy.new_har(f"baangt-{browserName}-{browserInstance}",
+                             options={'captureHeaders': True, 'captureContent': True}) if browserProxy else None
+
     def __findBrowserDriverPaths(self, filename):
 
         lCurPath = Path(os.getcwd())
@@ -209,11 +249,23 @@ class BrowserDriver:
 
         if browserName == GC.BROWSER_CHROME:
             lOptions = ChromeOptions()
-            lOptions.add_argument('--proxy-server={0}'.format(browserProxy.proxy)) if browserProxy else None
         elif browserName == GC.BROWSER_FIREFOX:
             lOptions = ffOptions()
         else:
             return None
+
+        if browserProxy and browserName == GC.BROWSER_FIREFOX:
+            lOptions.add_argument('--proxy-server={0}'.format(browserProxy.proxy))
+
+        # Default Download Directory for Attachment downloads
+        if browserName == GC.BROWSER_CHROME:
+            prefs = {"plugins.plugins_disabled" : ["Chrome PDF Viewer"],
+                     "plugins.always_open_pdf_externally": True,
+                     "profile.default_content_settings.popups": 0,
+                     "download.default_directory":
+                         self.__setBrowserDownloadDirRandom(),  # IMPORTANT - ENDING SLASH V IMPORTANT
+                     "directory_upgrade": True}
+            lOptions.add_experimental_option("prefs", prefs)
 
         if not desiredCapabilities and not browserProxy:
             return None
