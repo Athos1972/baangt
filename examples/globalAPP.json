@@ -9,7 +9,7 @@
     "TC.MobileApp": "True",
     "TC.platformName": "Android",
     "TC.deviceName": "emulator-5554",
-    "TC.platformVersion": "7",
+    "TC.platformVersion": "5",
     "TC.app": "/baangt/examples/calculator.apk",
     "TC.appPackage": "com.google.android.calculator",
     "TC.appWaitActivity": "com.android.calculator2.Calculator",
