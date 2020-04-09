@@ -135,6 +135,9 @@ class TestStepMaster:
             elif lActivity == 'IBAN':
                 # Create Random IBAN. Value1 = Input-Parameter for IBAN-Function. Value2=Fieldname
                 self.__getIBAN(lValue, lValue2)
+            elif lActivity == 'PDFCOMPARE':
+                lFiles = self.browserSession.findNewFiles()
+                # fixme: Implement the API-Call here
             else:
                 raise BaseException(f"Unknown command in TestStep {lActivity}")
 

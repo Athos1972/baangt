@@ -10,6 +10,7 @@ from selenium.webdriver.common import keys
 from baangt.base import GlobalConstants as GC
 from baangt.base.Timing.Timing import Timing
 from baangt.TestSteps import Exceptions
+from baangt.base.DownloadFolderMonitoring import DownloadFolderMonitoring
 import uuid
 import time
 import logging
@@ -46,6 +47,8 @@ class BrowserDriver:
         self.locator = None
         self.slowExecution = False
         self.slowExecutionTimeoutInSeconds = 1
+        self.downloadFolder = None
+        self.downloadFolderMonitoring = None
 
         if timing:
             self.timing = timing
@@ -166,6 +169,9 @@ class BrowserDriver:
         else:
             raise SystemExit("Browsername unknown")
 
+        if self.downloadFolder:
+            self.downloadFolderMonitoring = DownloadFolderMonitoring(self.downloadFolder)
+
         self.takeTime("Browser Start")
 
     def __setFirefoxProfile(self, browserProxy, profile):
@@ -197,11 +203,11 @@ class BrowserDriver:
         """
         randomValue = str(uuid.uuid4())
 
-        downloadDir = str(Path(os.getcwd()).joinpath("TestDownloads").joinpath(randomValue))
-        Path(downloadDir).mkdir(parents=True, exist_ok=True)
+        self.downloadFolder = str(Path(os.getcwd()).joinpath("TestDownloads").joinpath(randomValue))
+        Path(self.downloadFolder).mkdir(parents=True, exist_ok=True)
 
-        logger.debug(f"Directory for download {downloadDir}")
-        return downloadDir
+        logger.debug(f"Directory for download {self.downloadFolder}")
+        return self.downloadFolder
 
 
     def __startBrowsermobProxy(self, browserName, browserInstance, browserProxy):
@@ -549,6 +555,15 @@ class BrowserDriver:
         self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
 
         self.__doSomething(GC.CMD_FORCETEXT, value=value, timeout=timeout, xpath=xpath, optional=optional)
+
+    def findNewFiles(self):
+        """
+        Returns a list of new files from downloadFolderMonitoring since the last call
+
+        :return: List of Files since last call
+        """
+        l_list = self.downloadFolderMonitoring.getNewFiles()
+        return l_list
 
     def findBy(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=60, loggingOn=True,
                optional=False):
