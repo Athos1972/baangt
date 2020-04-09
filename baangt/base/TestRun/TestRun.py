@@ -140,7 +140,11 @@ class TestRun:
         if mobileType == 'True' :
             logger.info(f"opening new Appium instance {browserInstance} of Appium browser {browserName}")
             self._getBrowserInstance(browserInstance=browserInstance)
-            browser_proxy = self.browserProxyAndServer[0] if self.browserProxyAndServer else None
+            self.setBrowserProxy(browserInstance=browserInstance)
+            if self.browsersProxies:
+                browser_proxy = self.browsersProxies[browserInstance]
+            else:
+                browser_proxy = None
             self.browser[browserInstance].createNewBrowser(mobileType=mobileType,
                                                            mobileApp=mobileApp,
                                                            desired_app=desired_app,
@@ -156,7 +160,11 @@ class TestRun:
             if browserInstance not in self.browser.keys():
                 logger.info(f"opening new instance {browserInstance} of browser {browserName}")
                 self._getBrowserInstance(browserInstance=browserInstance)
-                browser_proxy = self.browserProxyAndServer[0] if self.browserProxyAndServer else None
+                self.setBrowserProxy(browserInstance=browserInstance)
+                if self.browsersProxies:
+                    browser_proxy = self.browsersProxies[browserInstance]
+                else:
+                    browser_proxy = None
                 self.browser[browserInstance].createNewBrowser(mobileType=mobileType,
                                                                mobileApp=mobileApp,
                                                                desired_app=desired_app,
@@ -310,7 +318,7 @@ class TestRun:
         if ".XLSX" in self.testRunFileName.upper():
             logger.info(f"Reading Definition from {self.testRunFileName}")
             lExcelImport = TestRunExcelImporter(FileNameAndPath=self.testRunFileName, testRunUtils=self.testRunUtils)
-            lExcelImport.importConfig()
+            lExcelImport.importConfig(global_settings=self.globalSettings)
 
     @staticmethod
     def __dynamicImportClasses(fullQualifiedImportName):

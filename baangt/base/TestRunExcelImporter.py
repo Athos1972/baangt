@@ -104,7 +104,7 @@ class TestRunExcelImporter:
                                      "TestCaseType": GC.KWARGS_API_SESSION,
                                      "TestCaseClass": GC.CLASSES_TESTCASE}}
             else:
-                if global_settings['TC.Mobile'] == 'True':
+                if global_settings.get('TC.Mobile'):
                     lTestCaseDict = {1: {"TestCaseSequenceNumber": 1,
                                          "TestCaseNumber": 1,
                                          "TestCaseType": GC.KWARGS_BROWSER,
