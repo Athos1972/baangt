@@ -223,6 +223,11 @@ More details on Activities
 
    * - pause
      - Will pause for the number of secons in ``value``. Valid numbers are float, e.g. 2, 0.2, 0.1, 25
+   * - iban
+     - Will create a random IBAN account number. ``value 2`` is the destination field of the test case structure. If you
+       don't provide a field name (not necessarily one that exists in the input file. Can be any field name!) nothing will
+       happen. If you provide input parameters in column ``value`` (``SWIFT`` and/or ``COUNTRY``) the IBAN will be created for that bank-code
+       and/or country.
    * - address_create
      - provide an easy and easily extendable way to generate address data for a test case
        The following fields variable are stored in testcaseDataDict:

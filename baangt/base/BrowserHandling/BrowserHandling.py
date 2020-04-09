@@ -1,5 +1,6 @@
 import os
 from selenium import webdriver
+from appium import webdriver as Appiumwebdriver
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -10,6 +11,7 @@ from selenium.webdriver.common import keys
 from baangt.base import GlobalConstants as GC
 from baangt.base.Timing.Timing import Timing
 from baangt.TestSteps import Exceptions
+from baangt.base.DownloadFolderMonitoring import DownloadFolderMonitoring
 import uuid
 import time
 import logging
@@ -22,6 +24,7 @@ from urllib.request import urlretrieve
 import tarfile
 import zipfile
 import requests
+import time
 
 logger = logging.getLogger("pyC")
 
@@ -46,6 +49,8 @@ class BrowserDriver:
         self.locator = None
         self.slowExecution = False
         self.slowExecutionTimeoutInSeconds = 1
+        self.downloadFolder = None
+        self.downloadFolderMonitoring = None
 
         if timing:
             self.timing = timing
@@ -60,7 +65,7 @@ class BrowserDriver:
         else:
             self.screenshotPath = os.getcwd()
 
-    def createNewBrowser(self, browserName=GC.BROWSER_CHROME, desiredCapabilities={}, **kwargs):
+    def createNewBrowser(self, mobileType=None, mobileApp = None,   desired_app = None,mobile_app_setting = None, browserName=GC.BROWSER_FIREFOX, desiredCapabilities={}, **kwargs):
         """
         Will find the specified executables of the desired browser and start it with the given capabilities.
 
@@ -76,12 +81,7 @@ class BrowserDriver:
             GC.BROWSER_EDGE: webdriver.Edge,
             GC.BROWSER_REMOTE: webdriver.Remote}
 
-        GeckoExecutable = "geckodriver"
-        ChromeExecutable = "chromedriver"
-
-        if 'NT' in os.name.upper():
-            GeckoExecutable = GeckoExecutable + ".exe"
-            ChromeExecutable = ChromeExecutable + ".exe"
+        ChromeExecutable, GeckoExecutable = BrowserDriver.__getBrowserExecutableNames()
 
         lCurPath = Path(os.getcwd())
         lCurPath = lCurPath.joinpath("browserDrivers")
@@ -90,35 +90,47 @@ class BrowserDriver:
 
             browserProxy = kwargs.get('browserProxy')
             browserInstance = kwargs.get('browserInstance', 'unknown')
+
             if browserName == GC.BROWSER_FIREFOX:
                 lCurPath = lCurPath.joinpath(GeckoExecutable)
-                if not (os.path.isfile(str(lCurPath))):
-                    self.downloadDriver(browserName)
 
-                profile = None
-                firefox_proxy = browserProxy.selenium_proxy() if browserProxy else None
-                if firefox_proxy:
+                if mobileType == 'True':
+                    self.mobileConnectAppium(GeckoExecutable, browserName, desired_app, lCurPath, mobileApp,
+                                             mobile_app_setting)
+                else:
+                    if not (os.path.isfile(str(lCurPath))):
+                        self.downloadDriver(browserName)
+
                     profile = webdriver.FirefoxProfile()
-                    profile.set_proxy(firefox_proxy)
-                self.driver = browserNames[browserName](options=self.__createBrowserOptions(browserName=browserName,
-                                                                                            desiredCapabilities=desiredCapabilities),
-                                                        executable_path=self.__findBrowserDriverPaths(GeckoExecutable),
-                                                        firefox_profile=profile)
-                browserProxy.new_har("baangt-firefox-{}".format(browserInstance),
-                                     options={'captureHeaders': True, 'captureContent': True}) \
-                    if firefox_proxy else None
+                    profile = self.__setFirefoxProfile(browserProxy, profile)
+                    logger.debug(f"Firefox Profile as follows:{profile.userPrefs}")
+
+                    self.driver = browserNames[browserName](
+                        options=self.__createBrowserOptions(browserName=browserName,
+                                                            desiredCapabilities=desiredCapabilities),
+                                                            executable_path=self.__findBrowserDriverPaths(GeckoExecutable),
+                                                            firefox_profile=profile)
+                    self.__startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance,
+                                                browserProxy=browserProxy)
 
             elif browserName == GC.BROWSER_CHROME:
                 lCurPath = lCurPath.joinpath(ChromeExecutable)
-                if not (os.path.isfile(str(lCurPath))):
-                    self.downloadDriver(browserName)
-                self.driver = browserNames[browserName](
-                    chrome_options=self.__createBrowserOptions(browserName=browserName,
-                                                               desiredCapabilities=desiredCapabilities,
-                                                               browserProxy=browserProxy),
-                    executable_path=self.__findBrowserDriverPaths(ChromeExecutable))
-                browserProxy.new_har("baangt-chrome-{}".format(browserInstance),
-                                     options={'captureHeaders': True, 'captureContent': True}) if browserProxy else None
+
+                if mobileType == 'True':
+                    self.mobileConnectAppium(ChromeExecutable, browserName, desired_app, mobileApp,
+                                             mobile_app_setting)
+                else:
+
+                    if not (os.path.isfile(str(lCurPath))):
+                        self.downloadDriver(browserName)
+
+                    self.driver = browserNames[browserName](
+                        chrome_options=self.__createBrowserOptions(browserName=browserName,
+                                                                   desiredCapabilities=desiredCapabilities,
+                                                                   browserProxy=browserProxy),
+                                                                   executable_path=self.__findBrowserDriverPaths(ChromeExecutable))
+                    self.__startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance,
+                                                browserProxy=browserProxy)
             elif browserName == GC.BROWSER_EDGE:
                 self.driver = browserNames[browserName](
                     executable_path=self.__findBrowserDriverPaths("msedgedriver.exe"))
@@ -162,11 +174,85 @@ class BrowserDriver:
 
             serverUrl = 'http://' + seleniumGridIp + ':' + seleniumGridPort
 
-            self.driver = webdriver.Remote(command_executor=serverUrl, desired_capabilities=desired_capabilities)
+            self.driver = webdriver.Remote(command_executor=serverUrl,
+                                           desired_capabilities=desiredCapabilities)
         else:
             raise SystemExit("Browsername unknown")
 
+        if self.downloadFolder:
+            self.downloadFolderMonitoring = DownloadFolderMonitoring(self.downloadFolder)
+
         self.takeTime("Browser Start")
+
+    def __setFirefoxProfile(self, browserProxy, profile):
+        if browserProxy:
+            profile.set_proxy(browserProxy.selenium_proxy())
+
+        profile.set_preference("browser.download.folderList", 2)
+        profile.set_preference("browser.helperApps.alwaysAsk.force", False)
+        profile.set_preference("browser.download.manager.showWhenStarting", False)
+        profile.set_preference("browser.download.manager.showAlertOnComplete", False)
+        profile.set_preference('browser.helperApps.neverAsk.saveToDisk',
+                               'application/octet-stream,application/pdf,application/x-pdf,application/vnd.pdf,application/zip,application/octet-stream,application/x-zip-compressed,multipart/x-zip,application/x-rar-compressed, application/octet-stream,application/msword,application/vnd.ms-word.document.macroEnabled.12,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/rtf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,application/vnd.ms-word.document.macroEnabled.12,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/xls,application/msword,text/csv,application/vnd.ms-excel.sheet.binary.macroEnabled.12,text/plain,text/csv/xls/xlsb,application/csv,application/download,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/octet-stream')
+        profile.set_preference('browser.helperApps.neverAsk.openFile',
+                               'application/octet-stream,application/pdf,application/x-pdf,application/vnd.pdf,application/zip,application/octet-stream,application/x-zip-compressed,multipart/x-zip,application/x-rar-compressed, application/octet-stream,application/msword,application/vnd.ms-word.document.macroEnabled.12,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/rtf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,application/vnd.ms-word.document.macroEnabled.12,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/xls,application/msword,text/csv,application/vnd.ms-excel.sheet.binary.macroEnabled.12,text/plain,text/csv/xls/xlsb,application/csv,application/download,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/octet-stream')
+        profile.set_preference("browser.download.dir", self.__setBrowserDownloadDirRandom())
+        profile.set_preference("browser.download.manager.useWindow", False)
+        profile.set_preference("browser.download.manager.focusWhenStarting", False)
+        profile.set_preference("browser.download.manager.showAlertOnComplete", False)
+        profile.set_preference("browser.download.manager.closeWhenDone", True)
+        profile.set_preference("pdfjs.enabledCache.state", False)
+        profile.set_preference("pdfjs.disabled", True) # This is nowhere on the Internet! But that did the trick!
+        return profile
+
+    def __setBrowserDownloadDirRandom(self):
+        """
+        Generate a new Directory for downloads. This needs to be specific for each browser session,
+        so that we can know, which documents were created during this test case.
+        :return:
+        """
+        randomValue = str(uuid.uuid4())
+
+        self.downloadFolder = str(Path(os.getcwd()).joinpath("TestDownloads").joinpath(randomValue))
+        Path(self.downloadFolder).mkdir(parents=True, exist_ok=True)
+
+        logger.debug(f"Directory for download {self.downloadFolder}")
+        return self.downloadFolder
+
+
+    def __startBrowsermobProxy(self, browserName, browserInstance, browserProxy):
+        browserProxy.new_har(f"baangt-{browserName}-{browserInstance}",
+                             options={'captureHeaders': True, 'captureContent': True}) if browserProxy else None
+
+    @staticmethod
+    def __getBrowserExecutableNames():
+        GeckoExecutable = "geckodriver"
+        ChromeExecutable = "chromedriver"
+        if 'NT' in os.name.upper():
+            GeckoExecutable = GeckoExecutable + ".exe"
+            ChromeExecutable = ChromeExecutable + ".exe"
+        return ChromeExecutable, GeckoExecutable
+
+    def mobileConnectAppium(self, BrowserExecutable, browserName, desired_app, mobileApp, mobile_app_setting):
+        if desired_app[GC.MOBILE_PLATFORM_NAME] == "Android":
+            desired_cap = desired_app
+            if mobileApp == 'True':
+                desired_cap['app'] = mobile_app_setting[GC.MOBILE_APP_URL]
+                desired_cap['appPackage'] = mobile_app_setting[GC.MOBILE_APP_PACKAGE]
+                desired_cap['appActivity'] = mobile_app_setting[GC.MOBILE_APP_ACTIVITY]
+            else:
+                desired_cap['browserName'] = browserName
+                desired_cap['chromedriverExecutable'] = mobile_app_setting[GC.MOBILE_APP_BROWSER_PATH]
+                desired_cap['noReset'] = False
+            self.driver = Appiumwebdriver.Remote("http://localhost:4723/wd/hub", desired_cap)
+        elif desired_app[GC.MOBILE_PLATFORM_NAME] == "iOS":
+            desired_cap = desired_app
+            if mobileApp == 'True':
+                desired_cap['automationName'] = 'XCUITest'
+                desired_cap['app'] = mobile_app_setting[GC.MOBILE_APP_URL]
+            else:
+                desired_cap['browserName'] = 'safari'
+            self.driver = Appiumwebdriver.Remote("http://localhost:4723/wd/hub", desired_cap)
 
     def __findBrowserDriverPaths(self, filename):
 
@@ -206,14 +292,25 @@ class BrowserDriver:
         @param browserProxy: Proxy-Server IP+Port
         @return: the proper BrowserOptions for the currently active browser.
         """
-
         if browserName == GC.BROWSER_CHROME:
             lOptions = ChromeOptions()
-            lOptions.add_argument('--proxy-server={0}'.format(browserProxy.proxy)) if browserProxy else None
         elif browserName == GC.BROWSER_FIREFOX:
             lOptions = ffOptions()
         else:
             return None
+
+        if browserProxy and browserName == GC.BROWSER_FIREFOX:
+            lOptions.add_argument('--proxy-server={0}'.format(browserProxy.proxy))
+
+        # Default Download Directory for Attachment downloads
+        if browserName == GC.BROWSER_CHROME:
+            prefs = {"plugins.plugins_disabled" : ["Chrome PDF Viewer"],
+                     "plugins.always_open_pdf_externally": True,
+                     "profile.default_content_settings.popups": 0,
+                     "download.default_directory":
+                         self.__setBrowserDownloadDirRandom(),  # IMPORTANT - ENDING SLASH V IMPORTANT
+                     "directory_upgrade": True}
+            lOptions.add_experimental_option("prefs", prefs)
 
         if not desiredCapabilities and not browserProxy:
             return None
@@ -497,6 +594,15 @@ class BrowserDriver:
         self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
 
         self.__doSomething(GC.CMD_FORCETEXT, value=value, timeout=timeout, xpath=xpath, optional=optional)
+
+    def findNewFiles(self):
+        """
+        Returns a list of new files from downloadFolderMonitoring since the last call
+
+        :return: List of Files since last call
+        """
+        l_list = self.downloadFolderMonitoring.getNewFiles()
+        return l_list
 
     def findBy(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=60, loggingOn=True,
                optional=False):

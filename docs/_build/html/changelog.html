@@ -94,13 +94,18 @@
 <li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">   History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">   Changelog</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id1">2020.03</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">2020.04</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#new-features">New features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#changes">Changes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">2020.03</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">New features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#bugfixes">Bugfixes</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id2">2020.02</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">2020.01</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">2020.02</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">2020.01</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
@@ -174,10 +179,27 @@
   <div class="section" id="change-log">
 <h1>Change log<a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
-<h2>2020.03<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
-<p>Summary: Release Candiate 3 is on the road!</p>
+<h2>2020.04<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>Summary:</p>
 <div class="section" id="new-features">
 <h3>New features<a class="headerlink" href="#new-features" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>SimpleFormat: New short command <code class="docutils literal notranslate"><span class="pre">iban</span></code> will create a random IBAN. Powered by Schwifty library.</p></li>
+</ul>
+</div>
+<div class="section" id="changes">
+<h3>Changes<a class="headerlink" href="#changes" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Chrome now as default browser as many people don’t have Firefox</p></li>
+<li><p>Improved browserDriver Download for executables (didn’t work in some cases)</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>2020.03<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>Summary: Release Candiate 3 is on the road!</p>
+<div class="section" id="id3">
+<h3>New features<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Executable files and ZIP-Archives for Mac, Windows and Ubuntu - no more GIT CLONE needed! Simply download, unzip and run.</p></li>
 <li><p>Network logging during WEB-Sessions and export to Excel-Result in separate tab. Use <code class="docutils literal notranslate"><span class="pre">TC.NetworkInfo</span></code> with value <code class="docutils literal notranslate"><span class="pre">True</span></code> (tested on Mac and Windows, most probably works on Linux too).</p></li>
@@ -203,8 +225,8 @@ less resources. 10 parallel Firefox sessions on a single MacBook with 16 GB RAM 
 </ul>
 </div>
 </div>
-<div class="section" id="id2">
-<h2>2020.02<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id4">
+<h2>2020.02<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <p>Summary: Web- and API-Tests XLSX-SimpleFormat are almost completed. Shouldn’t take much longer to have a production ready version.</p>
 <ul class="simple">
 <li><p>Pypi-Version 2020.02.* deployed</p></li>
@@ -219,8 +241,8 @@ less resources. 10 parallel Firefox sessions on a single MacBook with 16 GB RAM 
 <li><p>Apart from exporting to XLSX it’s now also possible to export testrun results to CSV. In simpleFormat you can set parameter <code class="docutils literal notranslate"><span class="pre">TC.Export</span> <span class="pre">Format</span></code> to the value <code class="docutils literal notranslate"><span class="pre">CSV</span></code>. In baangtDB and full Excel format you can use Testrun property <code class="docutils literal notranslate"><span class="pre">Export</span> <span class="pre">format</span></code></p></li>
 </ul>
 </div>
-<div class="section" id="id3">
-<h2>2020.01<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id5">
+<h2>2020.01<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <p>Very first public beta version. Not at all ready for production.</p>
 <ul class="simple">
 <li><p>First version on Pypi (<a class="reference external" href="https://pypi.org/project/baangt/">https://pypi.org/project/baangt/</a>), Docker (<a class="reference external" href="https://gogs.earthsquad.global/athos/baangt-Docker">https://gogs.earthsquad.global/athos/baangt-Docker</a>) and GIT Repository (<a class="reference external" href="https://gogs.earthsquad.global/athos/baangt">https://gogs.earthsquad.global/athos/baangt</a>)</p></li>

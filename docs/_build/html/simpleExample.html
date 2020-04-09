@@ -438,7 +438,13 @@ want conditional execution of a larger block of statements depending on an eleme
 <tr class="row-even"><td><p>pause</p></td>
 <td><p>Will pause for the number of secons in <code class="docutils literal notranslate"><span class="pre">value</span></code>. Valid numbers are float, e.g. 2, 0.2, 0.1, 25</p></td>
 </tr>
-<tr class="row-odd"><td><p>address_create</p></td>
+<tr class="row-odd"><td><p>iban</p></td>
+<td><p>Will create a random IBAN account number. <code class="docutils literal notranslate"><span class="pre">value</span> <span class="pre">2</span></code> is the destination field of the test case structure. If you
+don’t provide a field name (not necessarily one that exists in the input file. Can be any field name!) nothing will
+happen. If you provide input parameters in column <code class="docutils literal notranslate"><span class="pre">value</span></code> (<code class="docutils literal notranslate"><span class="pre">SWIFT</span></code> and/or <code class="docutils literal notranslate"><span class="pre">COUNTRY</span></code>) the IBAN will be created for that bank-code
+and/or country.</p></td>
+</tr>
+<tr class="row-even"><td><p>address_create</p></td>
 <td><p>provide an easy and easily extendable way to generate address data for a test case
 The following fields variable are stored in testcaseDataDict:</p>
 <p>CountryCode

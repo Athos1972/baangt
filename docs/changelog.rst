@@ -8,7 +8,8 @@ Summary:
 
 New features
 ++++++++++++
-* SimpleFormat: New short command ``iban`` will create a random IBAN. Powered by Schwifty library.
+* SimpleFormat: New command ``iban`` will create a random IBAN. Powered by Schwifty library.
+* SimpleFormat: New command ``pdfcompare`` compares a downloaded PDF-File with a reference PDF-File and reports differences. Works also well with parallel sessions.
 
 Changes
 +++++++
