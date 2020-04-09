@@ -46,7 +46,6 @@ class DownloadFolderMonitoring:
     def __readFiles(self):
         newFiles = []
         newFilesWithDate = []
-        iterator = 0
         for file in os.scandir(self.directoryToWatch):
             if not file.is_dir():
                 newFiles.append(file)
