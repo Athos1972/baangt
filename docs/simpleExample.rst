@@ -228,6 +228,9 @@ More details on Activities
        don't provide a field name (not necessarily one that exists in the input file. Can be any field name!) nothing will
        happen. If you provide input parameters in column ``value`` (``SWIFT`` and/or ``COUNTRY``) the IBAN will be created for that bank-code
        and/or country.
+   * - pdfcompare
+     - In a step before you must have downloaded a PDF-File. Before you can compare, you have to provide a reference PDF
+       to upload. After the upload you'll receive a unique ID for this document. Paste this ID into the ``value`` field.
    * - address_create
      - provide an easy and easily extendable way to generate address data for a test case
        The following fields variable are stored in testcaseDataDict:

@@ -23,7 +23,7 @@ class TestRun:
     This is the main Class of Testexecution in the baangt Framework. It is usually started
     from baangt.py
     """
-    def __init__(self, testRunName, globalSettingsFileNameAndPath=None):
+    def __init__(self, testRunName, globalSettingsFileNameAndPath=None, testRunDict=None): # -- API support: testRunDict --
         """
         @param testRunName: The name of the TestRun to be executed.
         @param globalSettingsFileNameAndPath: from where to read the <globals>.json
@@ -37,6 +37,13 @@ class TestRun:
         self.dataRecords = {}
         self.globalSettingsFileNameAndPath = globalSettingsFileNameAndPath
         self.globalSettings = {}
+
+        # -- API support --
+        # results
+        self.results = None
+        self.testRunDict = testRunDict
+        # -- END of API support
+
         self.testRunName, self.testRunFileName = \
             self._sanitizeTestRunNameAndFileName(testRunName)
         self.timing = Timing()
@@ -44,8 +51,10 @@ class TestRun:
         self.testRunUtils = TestRunUtils()
         self._initTestRun()   # Loads the globals*.json file
 
-        self.browserProxyAndServer = self.getBrowserProxyAndServer() \
+        self.browserServer = self.getBrowserServer() \
             if self.globalSettings.get('TC.' + GC.EXECUTION_NETWORK_INFO) == 'True' else None
+        self.browsersProxies = {}
+
         self.testCasesEndDateTimes_1D = []  # refer to single execution
         self.testCasesEndDateTimes_2D = [[]]  # refer to parallel execution
         self._loadJSONTestRunDefinitions()
@@ -56,13 +65,13 @@ class TestRun:
     def append1DTestCaseEndDateTimes(self, dt):
         self.testCasesEndDateTimes_1D.append(dt)
 
-    def append2DTestCaseEndDateTimes(self, index, dt):
+    def append2DTestCaseEndDateTimes(self, index, tcAndDt):
+        tc = tcAndDt[0]
+        dt = tcAndDt[1]
         [self.testCasesEndDateTimes_2D.append([]) for i in range(
             index + 1 - len(self.testCasesEndDateTimes_2D))] if index + 1 > len(
                 self.testCasesEndDateTimes_2D) else None
-        logger.info('before append index: {}, dt: {},  testCasesEndDateTimes_2D:{}'.format(index, dt, self.testCasesEndDateTimes_2D))
-        self.testCasesEndDateTimes_2D[index].append(dt)
-        logger.info('after append index: {}, dt: {},  testCasesEndDateTimes_2D:{}'.format(index, dt, self.testCasesEndDateTimes_2D))
+        self.testCasesEndDateTimes_2D[index].append([tc, dt])
 
     def tearDown(self):
         """
@@ -80,19 +89,17 @@ class TestRun:
         if self.apiInstance:
             self.apiInstance.tearDown()
 
-        if self.browserProxyAndServer:
-            network_info = self.browserProxyAndServer[0].har
-            self.browserProxyAndServer[1].stop()
+        if self.browserServer:
+            network_info = [info.har if info else {} for info in self.browsersProxies.values()]
+            self.browserServer.stop()
             self.kwargs['networkInfo'] = network_info
 
         if self.testCasesEndDateTimes_1D:
             self.kwargs['testCasesEndDateTimes_1D'] = self.testCasesEndDateTimes_1D
 
-        logger.info('before prepared testCasesEndDateTimes_2D: {}'.format(self.testCasesEndDateTimes_2D))
         if self.testCasesEndDateTimes_2D and self.testCasesEndDateTimes_2D[0]:
             self.kwargs['testCasesEndDateTimes_2D'] = self.testCasesEndDateTimes_2D
-        logger.info('after prepared testCasesEndDateTimes_2D: {}'.format(self.testCasesEndDateTimes_2D))
-        ExportResults(**self.kwargs)
+        self.results = ExportResults(**self.kwargs) # -- API support: self.results --
         successful, error = self.getSuccessAndError()
         logger.info(f"Finished execution of Testrun {self.testRunName}. "
                     f"{successful} Testcases successfully executed, {error} errors")
@@ -116,7 +123,7 @@ class TestRun:
     def getAllTestRunAttributes(self):
         return self.testRunUtils.getCompleteTestRunAttributes(self.testRunName)
 
-    def getBrowser(self, browserInstance=1, browserName=None, browserAttributes=None, mobileType=None, mobileApp=None, desired_app=None ,mobile_app_setting=None):
+    def getBrowser(self, browserInstance=0, browserName=None, browserAttributes=None, mobileType=None, mobileApp=None, desired_app=None ,mobile_app_setting=None):
         """
         This method is called whenever a browser instance (existing or new) is needed. If called without
         parameters it will create one instance of Firefox (geckodriver).
@@ -171,15 +178,25 @@ class TestRun:
     def downloadBrowserProxy(self):
         pass
 
-    def getBrowserProxyAndServer(self):
+    def getBrowserServer(self):
         from browsermobproxy import Server
         server = Server(os.getcwd() + GC.BROWSER_PROXY_PATH)
         logger.info("Starting browsermob proxy")
         server.start()
+        return server
+
+    def setBrowserProxy(self, browserInstance):
+
         time.sleep(1)
-        proxy = server.create_proxy()
+
+        proxy = self.browserServer.create_proxy() if self.browserServer else None
+
+        if not proxy:
+            return
+
         time.sleep(1)
-        return proxy, server
+
+        self.browsersProxies[browserInstance] = proxy
 
     def getAPI(self):
         if not self.apiInstance:
@@ -253,7 +270,6 @@ class TestRun:
             l_class(**kwargs)  # Executes the class __init__
         self.kwargs = kwargs
 
-
     def _initTestRun(self):
         self.loadJSONGlobals()
         if not self.globalSettings.get(GC.PATH_SCREENSHOTS,None):
@@ -271,13 +287,21 @@ class TestRun:
             self.globalSettings = utils.openJson(self.globalSettingsFileNameAndPath)
 
     def _loadJSONTestRunDefinitions(self):
-        if not self.testRunFileName:
+        if not self.testRunFileName and not self.testRunDict: # -- API support: testRunDict --
             return
 
-        if ".JSON" in self.testRunFileName.upper():
+        if self.testRunFileName and ".JSON" in self.testRunFileName.upper(): # -- API support: self.testRunFileName --
             data = utils.replaceAllGlobalConstantsInDict(utils.openJson(self.testRunFileName))
             self.testRunUtils.setCompleteTestRunAttributes(testRunName=self.testRunName,
                                                            testRunAttributes=data)
+
+        # -- API support --
+        # load TestRun from dict
+        if self.testRunDict:
+            data = utils.replaceAllGlobalConstantsInDict(self.testRunDict)
+            self.testRunUtils.setCompleteTestRunAttributes(testRunName=self.testRunName,
+                                                           testRunAttributes=data)
+        # -- END of API support --
 
     def _loadExcelTestRunDefinitions(self):
         if not self.testRunFileName:
@@ -286,7 +310,7 @@ class TestRun:
         if ".XLSX" in self.testRunFileName.upper():
             logger.info(f"Reading Definition from {self.testRunFileName}")
             lExcelImport = TestRunExcelImporter(FileNameAndPath=self.testRunFileName, testRunUtils=self.testRunUtils)
-            lExcelImport.importConfig(self.globalSettings)
+            lExcelImport.importConfig()
 
     @staticmethod
     def __dynamicImportClasses(fullQualifiedImportName):
