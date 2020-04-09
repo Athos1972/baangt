@@ -21,7 +21,7 @@ class Config(object):
 	#
 	# Testrun web-service
 	#
-	TESTRUN_SERVICE_HOST = os.getenv('TESTRUN_SERVICE_HOST') or 'http://172.17.0.1:8000'
+	TESTRUN_SERVICE_HOST = os.getenv('TESTRUN_SERVICE_HOST') or 'http://127.0.0.1:6000'
 	TESTRUN_SERVICE_URI = 'api/json/json'
 
 
