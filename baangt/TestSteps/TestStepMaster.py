@@ -48,7 +48,6 @@ class TestStepMaster:
             # reach Endif
             if not self.ifIsTrue and command["Activity"] != "ENDIF":
                 continue
-
             lActivity = command["Activity"].upper()
             if lActivity == "COMMENT":
                 continue     # Comment's are ignored
@@ -80,7 +79,6 @@ class TestStepMaster:
             if not TestStepMaster.ifQualifyForExecution(self.globalRelease, lRelease):
                 logger.debug(f"we skipped this line due to {lRelease} disqualifies according to {self.globalRelease} ")
                 continue  # We ignored the steps as it doesn't qualify
-
             if lActivity == "GOTOURL":
                 self.browserSession.goToUrl(lValue)
             elif lActivity == "SETTEXT":
@@ -135,6 +133,9 @@ class TestStepMaster:
             elif lActivity == 'IBAN':
                 # Create Random IBAN. Value1 = Input-Parameter for IBAN-Function. Value2=Fieldname
                 self.__getIBAN(lValue, lValue2)
+            elif lActivity == 'PDFCOMPARE':
+                lFiles = self.browserSession.findNewFiles()
+                # fixme: Implement the API-Call here
             else:
                 raise BaseException(f"Unknown command in TestStep {lActivity}")
 

@@ -14,8 +14,6 @@ class IBAN:
         self.bankLeitZahl = bankLeitZahl
         self.bankLand = bankLand
 
-        pass
-
     def getRandomIBAN(self):
         """
         Generates a random IBAN based on bankLand and bankLeitzahl as well as a random account number
