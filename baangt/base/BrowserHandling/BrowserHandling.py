@@ -1,5 +1,6 @@
 import os
 from selenium import webdriver
+from appium import webdriver as Appiumwebdriver
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -23,6 +24,7 @@ from urllib.request import urlretrieve
 import tarfile
 import zipfile
 import requests
+import time
 
 logger = logging.getLogger("pyC")
 
@@ -63,7 +65,7 @@ class BrowserDriver:
         else:
             self.screenshotPath = os.getcwd()
 
-    def createNewBrowser(self, browserName=GC.BROWSER_CHROME, desiredCapabilities={}, **kwargs):
+    def createNewBrowser(self, mobileType=None, mobileApp = None,   desired_app = None,mobile_app_setting = None, browserName=GC.BROWSER_FIREFOX, desiredCapabilities={}, **kwargs):
         """
         Will find the specified executables of the desired browser and start it with the given capabilities.
 
@@ -79,12 +81,7 @@ class BrowserDriver:
             GC.BROWSER_EDGE: webdriver.Edge,
             GC.BROWSER_REMOTE: webdriver.Remote}
 
-        GeckoExecutable = "geckodriver"
-        ChromeExecutable = "chromedriver"
-
-        if 'NT' in os.name.upper():
-            GeckoExecutable = GeckoExecutable + ".exe"
-            ChromeExecutable = ChromeExecutable + ".exe"
+        ChromeExecutable, GeckoExecutable = BrowserDriver.__getBrowserExecutableNames()
 
         lCurPath = Path(os.getcwd())
         lCurPath = lCurPath.joinpath("browserDrivers")
@@ -93,35 +90,47 @@ class BrowserDriver:
 
             browserProxy = kwargs.get('browserProxy')
             browserInstance = kwargs.get('browserInstance', 'unknown')
+
             if browserName == GC.BROWSER_FIREFOX:
                 lCurPath = lCurPath.joinpath(GeckoExecutable)
-                if not (os.path.isfile(str(lCurPath))):
-                    self.downloadDriver(browserName)
 
-                profile = webdriver.FirefoxProfile()
-                profile = self.__setFirefoxProfile(browserProxy, profile)
-                logger.debug(f"Firefox Profile as follows:{profile.userPrefs}")
+                if mobileType == 'True':
+                    self.mobileConnectAppium(GeckoExecutable, browserName, desired_app, lCurPath, mobileApp,
+                                             mobile_app_setting)
+                else:
+                    if not (os.path.isfile(str(lCurPath))):
+                        self.downloadDriver(browserName)
 
-                self.driver = browserNames[browserName](
-                    options=self.__createBrowserOptions(browserName=browserName,
-                                                        desiredCapabilities=desiredCapabilities),
-                                                        executable_path=self.__findBrowserDriverPaths(GeckoExecutable),
-                                                        firefox_profile=profile)
-                self.__startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance,
-                                            browserProxy=browserProxy)
+                    profile = webdriver.FirefoxProfile()
+                    profile = self.__setFirefoxProfile(browserProxy, profile)
+                    logger.debug(f"Firefox Profile as follows:{profile.userPrefs}")
+
+                    self.driver = browserNames[browserName](
+                        options=self.__createBrowserOptions(browserName=browserName,
+                                                            desiredCapabilities=desiredCapabilities),
+                                                            executable_path=self.__findBrowserDriverPaths(GeckoExecutable),
+                                                            firefox_profile=profile)
+                    self.__startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance,
+                                                browserProxy=browserProxy)
 
             elif browserName == GC.BROWSER_CHROME:
                 lCurPath = lCurPath.joinpath(ChromeExecutable)
-                if not (os.path.isfile(str(lCurPath))):
-                    self.downloadDriver(browserName)
 
-                self.driver = browserNames[browserName](
-                    chrome_options=self.__createBrowserOptions(browserName=browserName,
-                                                               desiredCapabilities=desiredCapabilities,
-                                                               browserProxy=browserProxy),
-                                                               executable_path=self.__findBrowserDriverPaths(ChromeExecutable))
-                self.__startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance,
-                                            browserProxy=browserProxy)
+                if mobileType == 'True':
+                    self.mobileConnectAppium(ChromeExecutable, browserName, desired_app, mobileApp,
+                                             mobile_app_setting)
+                else:
+
+                    if not (os.path.isfile(str(lCurPath))):
+                        self.downloadDriver(browserName)
+
+                    self.driver = browserNames[browserName](
+                        chrome_options=self.__createBrowserOptions(browserName=browserName,
+                                                                   desiredCapabilities=desiredCapabilities,
+                                                                   browserProxy=browserProxy),
+                                                                   executable_path=self.__findBrowserDriverPaths(ChromeExecutable))
+                    self.__startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance,
+                                                browserProxy=browserProxy)
             elif browserName == GC.BROWSER_EDGE:
                 self.driver = browserNames[browserName](
                     executable_path=self.__findBrowserDriverPaths("msedgedriver.exe"))
@@ -165,7 +174,8 @@ class BrowserDriver:
 
             serverUrl = 'http://' + seleniumGridIp + ':' + seleniumGridPort
 
-            self.driver = webdriver.Remote(command_executor=serverUrl, desired_capabilities=desired_capabilities)
+            self.driver = webdriver.Remote(command_executor=serverUrl,
+                                           desired_capabilities=desiredCapabilities)
         else:
             raise SystemExit("Browsername unknown")
 
@@ -214,6 +224,36 @@ class BrowserDriver:
         browserProxy.new_har(f"baangt-{browserName}-{browserInstance}",
                              options={'captureHeaders': True, 'captureContent': True}) if browserProxy else None
 
+    @staticmethod
+    def __getBrowserExecutableNames():
+        GeckoExecutable = "geckodriver"
+        ChromeExecutable = "chromedriver"
+        if 'NT' in os.name.upper():
+            GeckoExecutable = GeckoExecutable + ".exe"
+            ChromeExecutable = ChromeExecutable + ".exe"
+        return ChromeExecutable, GeckoExecutable
+
+    def mobileConnectAppium(self, BrowserExecutable, browserName, desired_app, mobileApp, mobile_app_setting):
+        if desired_app[GC.MOBILE_PLATFORM_NAME] == "Android":
+            desired_cap = desired_app
+            if mobileApp == 'True':
+                desired_cap['app'] = mobile_app_setting[GC.MOBILE_APP_URL]
+                desired_cap['appPackage'] = mobile_app_setting[GC.MOBILE_APP_PACKAGE]
+                desired_cap['appActivity'] = mobile_app_setting[GC.MOBILE_APP_ACTIVITY]
+            else:
+                desired_cap['browserName'] = browserName
+                desired_cap['chromedriverExecutable'] = mobile_app_setting[GC.MOBILE_APP_BROWSER_PATH]
+                desired_cap['noReset'] = False
+            self.driver = Appiumwebdriver.Remote("http://localhost:4723/wd/hub", desired_cap)
+        elif desired_app[GC.MOBILE_PLATFORM_NAME] == "iOS":
+            desired_cap = desired_app
+            if mobileApp == 'True':
+                desired_cap['automationName'] = 'XCUITest'
+                desired_cap['app'] = mobile_app_setting[GC.MOBILE_APP_URL]
+            else:
+                desired_cap['browserName'] = 'safari'
+            self.driver = Appiumwebdriver.Remote("http://localhost:4723/wd/hub", desired_cap)
+
     def __findBrowserDriverPaths(self, filename):
 
         lCurPath = Path(os.getcwd())
@@ -252,7 +292,6 @@ class BrowserDriver:
         @param browserProxy: Proxy-Server IP+Port
         @return: the proper BrowserOptions for the currently active browser.
         """
-
         if browserName == GC.BROWSER_CHROME:
             lOptions = ChromeOptions()
         elif browserName == GC.BROWSER_FIREFOX:

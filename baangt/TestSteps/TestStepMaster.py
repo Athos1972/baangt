@@ -48,7 +48,6 @@ class TestStepMaster:
             # reach Endif
             if not self.ifIsTrue and command["Activity"] != "ENDIF":
                 continue
-
             lActivity = command["Activity"].upper()
             if lActivity == "COMMENT":
                 continue     # Comment's are ignored
@@ -80,7 +79,6 @@ class TestStepMaster:
             if not TestStepMaster.ifQualifyForExecution(self.globalRelease, lRelease):
                 logger.debug(f"we skipped this line due to {lRelease} disqualifies according to {self.globalRelease} ")
                 continue  # We ignored the steps as it doesn't qualify
-
             if lActivity == "GOTOURL":
                 self.browserSession.goToUrl(lValue)
             elif lActivity == "SETTEXT":
