@@ -9,7 +9,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QObject
 import os
-import resources
+from baangt.ui.pyqt import resources
 # from pathlib import Path
 
 class Ui_MainWindow(QObject):

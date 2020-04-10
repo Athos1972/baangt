@@ -3,7 +3,8 @@ from baangt.base.Utils import utils
 from baangt.ui.ui import UI
 from baangt import plugin_manager
 import baangt.base.GlobalConstants as GC
-
+from PyQt5 import QtWidgets
+from baangt.ui.pyqt.uimain import MainWindow
 def print_args():
     print("""
 Call: python baangt.py --parameters 
@@ -72,7 +73,12 @@ def run():
         lDriver.downloadDriver(GC.BROWSER_CHROME)
         print("Latest versions of drivers for Firefox and Chrome were downloaded")
     else:
-        UI()
+        app = QtWidgets.QApplication(sys.argv)
+        window = QtWidgets.QMainWindow()
+        ui = MainWindow()
+        ui.setupUi(window)
+        window.show()
+        sys.exit(app.exec_())
 
 
 
