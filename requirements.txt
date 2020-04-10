@@ -1,6 +1,7 @@
 openpyxl==2.3.5
 pytest
 pydispatch
+Appium-Python-Client==0.50
 alabaster==0.7.12
 Babel>=2.8.0
 beautifulsoup4==4.8.2
