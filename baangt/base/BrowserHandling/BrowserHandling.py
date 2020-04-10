@@ -766,6 +766,26 @@ class BrowserDriver:
         raise Exceptions.baangtTestStepException(
             f"Element still here after {timeout} seconds. Locator: xpath={xpath}, id={id}")
 
+    def checkLinks(self):
+        """
+        For the current page we'll check all links and return result in format
+        <status_code> <link_that_was_checked>
+
+        :return: List of checked links
+        """
+        lResult = []
+        links = self.driver.find_elements_by_css_selector("a")
+        logger.debug(f"Checking links on page {self.driver.current_url}")
+        for link in links:
+            lHref = link.get_attribute("href")
+            if lHref.startswith("mailto"):
+                pass
+            else:
+                r = requests.head(lHref)
+                lResult.append([r.status_code, lHref])
+                logger.debug(f"Result was: {r.status_code}, {lHref}")
+        return lResult
+
     @staticmethod
     def sleep(sleepTimeinSeconds):
         time.sleep(sleepTimeinSeconds)

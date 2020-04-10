@@ -231,6 +231,15 @@ More details on Activities
    * - pdfcompare
      - In a step before you must have downloaded a PDF-File. Before you can compare, you have to provide a reference PDF
        to upload. After the upload you'll receive a unique ID for this document. Paste this ID into the ``value`` field.
+   * - CheckLinks
+     - Whenever you enter this command, all (if any) links on the current page will be checked and the status of the
+       link will be reported accordingly. Reporting format is:
+
+       Links on <base_url>:
+
+       <status>:<Link>
+
+       You'll find the output in the Export sheet in the column "CheckedLinks", which will be created automatically.
    * - address_create
      - provide an easy and easily extendable way to generate address data for a test case
        The following fields variable are stored in testcaseDataDict:

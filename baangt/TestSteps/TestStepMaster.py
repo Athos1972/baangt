@@ -136,6 +136,8 @@ class TestStepMaster:
             elif lActivity == 'PDFCOMPARE':
                 lFiles = self.browserSession.findNewFiles()
                 # fixme: Implement the API-Call here
+            elif lActivity == 'CHECKLINKS':
+                self.checkLinks()
             else:
                 raise BaseException(f"Unknown command in TestStep {lActivity}")
 
@@ -148,6 +150,17 @@ class TestStepMaster:
         lIBAN = IBAN()
         self.testcaseDataDict[lValue2] = lIBAN.getRandomIBAN()
         pass
+
+    def checkLinks(self):
+        """
+        Will check all links on the current webpage
+
+        Result will be written into "CheckedLinks" in TestDataDict
+        """
+        if self.testcaseDataDict.get("CheckedLinks"):
+            self.testcaseDataDict["CheckedLinks"] += self.browserSession.checkLinks()
+        else:
+            self.testcaseDataDict["CheckedLinks"] = self.browserSession.checkLinks()
 
     @staticmethod
     def _sanitizeXField(inField):
