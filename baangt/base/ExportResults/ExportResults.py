@@ -11,7 +11,7 @@ from xlsxwriter.worksheet import (
     Worksheet, cell_number_tuple, cell_string_tuple)
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from baangt.base.DataBaseORM import DATABASE_URL, TestrunLog
+from baangt.base.DataBaseORM import DATABASE_URL, TestrunLog, TestCaseLog, ExtraField
 from datetime import datetime
 import time
 from baangt import plugin_manager
@@ -135,8 +135,8 @@ class ExportResults:
 
         # get documents
         datafiles = self.fileName
-
-        # create object
+        '''
+        # create testrun object
         log = TestrunLog(
             testrunName = self.testRunName,
             logfileName = logger.handlers[1].baseFilename,
@@ -151,6 +151,66 @@ class ExportResults:
         # write to DataBase
         session.add(log)
         session.commit()
+
+        # create testcase objects
+        for testcase in self.dataRecords.values():
+            caseLog = TestCaseLog(testrun=log)
+            for key, value in testcase.items():
+                # check for known fields
+                if key == 'Toasts':
+                    caseLog.toasts = value
+                elif key == 'TCErrorLog':
+                    caseLog.tcErrorLog = value
+                elif key == 'VIGOGF#':
+                    caseLog.vigogf = value
+                elif key == 'SAP Polizzennr':
+                    caseLog.sapPolizzennr = value
+                elif key == 'Prämie':
+                    caseLog.pramie = value
+                elif key == 'PolNR Host':
+                    caseLog.polNrHost = value
+                elif key == 'TestCaseStatus':
+                    caseLog.testCaseStatus = value
+                elif key == 'Duration':
+                    caseLog.duration = value
+                elif key == 'Screenshots':
+                    caseLog.screenshots = value
+                elif key == 'timelog':
+                    caseLog.timelog = value
+                elif key == 'exportFilesBasePath':
+                    caseLog.exportFilesBasePath = value
+                elif key == 'TC.Lines':
+                    caseLog.tcLines = value
+                elif key == 'TC.dontCloseBrowser':
+                    caseLog.tcDontCloseBrowser = value
+                elif key == 'TC.BrowserAttributes':
+                    caseLog.tcBrowserAttributes = value
+                elif key == 'TC.slowExecution':
+                    caseLog.tsSlowExecution = value
+                elif key == 'TC.NetworkInfo':
+                    caseLog.tcNetworkInfo = value
+                elif key == 'TX.DEBUG':
+                    caseLog.txDebug = value
+                elif key == 'ScreenshotPath':
+                    caseLog.screenshotPath = value
+                elif key == 'ExportPath':
+                    caseLog.exportPath = value
+                elif key == 'ImportPath':
+                    caseLog.importPath = value
+                elif key == 'RootPath':
+                    caseLog.rootPath = value
+                else:
+                    # add extra field
+                    extraField = ExtraField(name=key, value=value)
+                    session.add(extraField)
+                    session.commit()
+                    caseLog.extraFields.append(extraField)
+            # save to db
+            session.add(caseLog)
+            session.commit()
+        '''               
+
+
 
     def exportResultExcel(self, **kwargs):
         self._exportData()
