@@ -11,7 +11,7 @@ from xlsxwriter.worksheet import (
     Worksheet, cell_number_tuple, cell_string_tuple)
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from baangt.base.DataBaseORM import DATABASE_URL, TestrunLog, TestCaseLog, ExtraField
+from baangt.base.DataBaseORM import DATABASE_URL, TestrunLog, TestCaseLog, TestCaseExtraField
 from datetime import datetime
 import time
 from baangt import plugin_manager
@@ -135,7 +135,7 @@ class ExportResults:
 
         # get documents
         datafiles = self.fileName
-        '''
+
         # create testrun object
         log = TestrunLog(
             testrunName = self.testRunName,
@@ -207,8 +207,7 @@ class ExportResults:
                     caseLog.extraFields.append(extraField)
             # save to db
             session.add(caseLog)
-            session.commit()
-        '''               
+            session.commit()              
 
 
 
