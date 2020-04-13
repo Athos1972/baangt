@@ -118,6 +118,8 @@ class TestStepMaster:
                 self.apiSession.setHeaders(setHeaderData=lValue)
             elif lActivity == 'SAVE':
                 self.doSaveData(lValue, lValue2)
+            elif lActivity == 'SUBMIT':
+                self.browserSession.submit()
             elif lActivity == "ADDRESS_CREATE":
                 # Create Address with option lValue and lValue2
                 AddressCreate(lValue,lValue2)
@@ -156,11 +158,20 @@ class TestStepMaster:
         Will check all links on the current webpage
 
         Result will be written into "CheckedLinks" in TestDataDict
+
+        If theres a returncode >= 400 in the list, we'll mark the testcase as failed
         """
         if self.testcaseDataDict.get("CheckedLinks"):
-            self.testcaseDataDict["CheckedLinks"] += self.browserSession.checkLinks()
+            self.testcaseDataDict["Result_CheckedLinks"] += self.browserSession.checkLinks()
         else:
-            self.testcaseDataDict["CheckedLinks"] = self.browserSession.checkLinks()
+            self.testcaseDataDict["Result_CheckedLinks"] = self.browserSession.checkLinks()
+
+        for entry in self.testcaseDataDict["Result_CheckedLinks"]:
+            if entry[0] > 400:
+                self.testcaseDataDict[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
+                self.testcaseDataDict[GC.TESTCASEERRORLOG] = self.testcaseDataDict.get(GC.TESTCASEERRORLOG,"")\
+                                                             + "URL-Checker error"
+                break
 
     @staticmethod
     def _sanitizeXField(inField):
