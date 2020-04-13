@@ -203,6 +203,7 @@
 <code class="sig-name descname">checkLinks</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#baangt.TestSteps.TestStepMaster.TestStepMaster.checkLinks" title="Permalink to this definition">¶</a></dt>
 <dd><p>Will check all links on the current webpage</p>
 <p>Result will be written into “CheckedLinks” in TestDataDict</p>
+<p>If theres a returncode &gt;= 400 in the list, we’ll mark the testcase as failed</p>
 </dd></dl>
 
 <dl class="method">
@@ -234,6 +235,8 @@
 <code class="sig-name descname">replaceVariables</code><span class="sig-paren">(</span><em class="sig-param">expression</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.TestSteps.TestStepMaster.TestStepMaster.replaceVariables" title="Permalink to this definition">¶</a></dt>
 <dd><p>The syntax for variables is currently $(&lt;column_name_from_data_file&gt;). Multiple variables can be assigned
 in one cell, for instance perfectly fine: “<a class="reference external" href="http://$(BASEURL)/$(ENDPOINT">http://$(BASEURL)/$(ENDPOINT</a>)”</p>
+<p>There’s a special syntax for the faker module: $(FAKER.&lt;fakermethod&gt;).</p>
+<p>Also a special syntax for API-Handling: $(APIHandling.&lt;DictElementName&gt;).</p>
 <p>&#64;param expression: the current cell, either as fixed value, e.g. “Franzi” or with a varible $(DATE)
 &#64;return: the replaced value, e.g. if expression was $(DATE) and the value in column “DATE” of data-file was</p>
 <blockquote>

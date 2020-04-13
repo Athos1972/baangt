@@ -7,6 +7,7 @@ from pkg_resources import parse_version
 import logging
 from baangt.TestSteps.Exceptions import baangtTestStepException
 from baangt.TestSteps.AddressCreation import AddressCreate
+from baangt.base.Faker import Faker as baangtFaker
 
 logger = logging.getLogger("pyC")
 
@@ -31,6 +32,7 @@ class TestStepMaster:
         self.globalRelease = self.testRunInstance.globalSettings.get("Release", "")
         self.ifActive = False
         self.ifIsTrue = True
+        self.baangtFaker = None
 
         if not isinstance(lTestStep, str):
             # This TestStepMaster-Instance should actually do something - activitites are described
@@ -316,6 +318,10 @@ class TestStepMaster:
         The syntax for variables is currently $(<column_name_from_data_file>). Multiple variables can be assigned
         in one cell, for instance perfectly fine: "http://$(BASEURL)/$(ENDPOINT)"
 
+        There's a special syntax for the faker module: $(FAKER.<fakermethod>).
+
+        Also a special syntax for API-Handling: $(APIHandling.<DictElementName>).
+
         @param expression: the current cell, either as fixed value, e.g. "Franzi" or with a varible $(DATE)
         @return: the replaced value, e.g. if expression was $(DATE) and the value in column "DATE" of data-file was
             "01.01.2020" then return will be "01.01.2020"
@@ -344,6 +350,9 @@ class TestStepMaster:
 
                 if dictVariable == 'ANSWER_CONTENT':
                     center = self.apiSession.session[1].answerJSON.get(dictValue, "Empty")
+                elif dictVariable == 'FAKER':
+                    # This is to call Faker Module with the Method, that is given after the .
+                    center = self.__getFakerData(dictValue)
                 else:
                     raise BaseException(f"Missing code to replace value for: {center}")
 
@@ -352,3 +361,11 @@ class TestStepMaster:
 
             expression = "".join([left_part, center, right_part])
         return expression
+
+    def __getFakerData(self, fakerMethod):
+        if not self.baangtFaker:
+            self.baangtFaker = baangtFaker()
+
+        logger.debug(f"Calling faker with method: {fakerMethod}")
+
+        return self.baangtFaker.fakerProxy(fakerMethod=fakerMethod)
