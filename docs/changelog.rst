@@ -5,15 +5,18 @@ Change log
 ^^^^^^^
 
 Summary:
+A huge step closer to release 1. Some minor functionalities still need fixing. May May be the release month!
 
 New features
 ++++++++++++
 * SimpleFormat: New command ``iban`` will create a random IBAN. Powered by Schwifty library.
 * SimpleFormat: New command ``pdfcompare`` compares a downloaded PDF-File with a reference PDF-File and reports differences. Works also well with parallel sessions.
+* All: Variable replacement using Faker module. For instance ``$(FAKER.email)`` will generate a random E-Mail address
+* Appium integration for Android and iOS App tests using Appium Webdriver (see in /examples/App* and globalsApp.json)
+
 
 Changes
 +++++++
-* Chrome now as default browser as many people don't have Firefox
 * Improved browserDriver Download for executables (didn't work in some cases)
 
 2020.03

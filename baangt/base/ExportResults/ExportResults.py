@@ -360,15 +360,23 @@ class ExportResults:
         """
         Fields, that start with "RESULT_" shall always be exported.
 
+        Other fields, that shall always be exported are also added
+
         @return:
         """
+
         try:
             for key in self.dataRecords[0].keys():
-                if "RESULT_" in key:
+                if "RESULT_" in key.upper():
                     if not key in self.fieldListExport:
                         self.fieldListExport.append(key)
+
         except Exception as e:
             logger.critical(f'looks like we have no data in records: {self.dataRecords}, len of dataRecords: {len(self.dataRecords)}')
+
+        # They are added here, because they'll not necessarily appear in the first record of the export data:
+        self.fieldListExport.append(GC.TESTCASEERRORLOG)
+        self.fieldListExport.append(GC.SCREENSHOTS)
 
     def _exportData(self):
         for key, value in self.dataRecords.items():
@@ -386,10 +394,15 @@ class ExportResults:
 
     def __writeCell(self, line, cellNumber, testRecordDict, fieldName, strip=False):
         if fieldName in testRecordDict.keys() and testRecordDict[fieldName]:
+            # Remove leading New-Line:
             if '\n' in testRecordDict[fieldName][0:5] or strip:
                 testRecordDict[fieldName] = testRecordDict[fieldName].strip()
-            if isinstance(testRecordDict[fieldName], dict) or isinstance(testRecordDict[fieldName], list):
-                self.worksheet.write(line, cellNumber, testRecordDict[fieldName].strip())
+            # Do different stuff for Dicts and Lists:
+            if isinstance(testRecordDict[fieldName], dict):
+                self.worksheet.write(line, cellNumber, testRecordDict[fieldName])
+            elif isinstance(testRecordDict[fieldName], list):
+                self.worksheet.write(line, cellNumber,
+                                     utils.listToString(testRecordDict[fieldName]))
             else:
                 if fieldName == GC.TESTCASESTATUS:
                     if testRecordDict[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_SUCCESS:

@@ -230,9 +230,14 @@ class TestRun:
 
         """
         self.testRunUtils.replaceGlobals(self.globalSettings)
+
+        kwargs = {GC.KWARGS_TESTRUNATTRIBUTES: self.getAllTestRunAttributes(),
+                  GC.KWARGS_TESTRUNINSTANCE: self,
+                  GC.KWARGS_TIMING: self.timing}
+
         self.executeDictSequenceOfClasses(
-            self.testRunUtils.getCompleteTestRunAttributes(self.testRunName)[GC.STRUCTURE_TESTCASESEQUENCE],
-            counterName=GC.STRUCTURE_TESTCASESEQUENCE)
+            kwargs[GC.KWARGS_TESTRUNATTRIBUTES][GC.STRUCTURE_TESTCASESEQUENCE],
+            counterName=GC.STRUCTURE_TESTCASESEQUENCE, **kwargs)
 
     def executeDictSequenceOfClasses(self, dictSequenceOfClasses, counterName, **kwargs):
         """
