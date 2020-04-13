@@ -16,41 +16,32 @@ logger = logging.getLogger("pyC")
 class ImportKatalonRecorder:
     def __init__(self, directory):
         self.window = None
+        self.fileNameExport = None
         self.directory = directory
         self.clipboardText = ""
         self.outputText = ""
         self.outputData = {}
 
-        self.clipboardText = """open | https://www.orf.at/ | 
-click | //main[@id='content']/div[2]/div/div[2]/a/div[2]/div | 
-click | //input[@type='text'] | 
-type | //input[@type='text'] | test151
-click | //input[@type='password'] | 
-type | //input[@type='password'] | test4711
-click | xpath=(//button[@type='button'])[5] | 
-click | //div[@id='main']/div[2]/div/div[2]/div/div[3]/div[2]/button/div[2]/i | 
-click | //input[@type='text'] | 
-type | //input[@type='text'] | franzi
-type | xpath=(//input[@type='text'])[2] | franzi@fritzi.com
-type | //input[@type='password'] | 1234567
-type | xpath=(//input[@type='password'])[2] | 1234567
-click | //div[@id='main']/div[2]/div/div[2]/div/div[5]/button/div[2] | 
-click | //input[@type='password'] | 
-type | //input[@type='password'] | 12345678
-type | xpath=(//input[@type='password'])[2] | 12345678
-click | //div[@id='main']/div[2]/div/div[2]/div/div[5]/button/div[2]/i | 
-click | xpath=(//input[@type='password'])[2] | 
-click | //input[@type='password'] | 
-sendKeys | //input[@type='password'] | ${KEY_DOWN}
-sendKeys | //input[@type='password'] | ${KEY_DOWN}
-type | //input[@type='password'] | 12345678!!
-click | xpath=(//input[@type='password'])[2] | 
-type | xpath=(//input[@type='password'])[2] | 12345678!!
-click | //div[@id='main']/div[2]/div/div[2]/div/div[5]/button/div[2] | 
+        self.clipboardText = """
+        
+Please
+        
+export the recording 
+        
+in 
+        
+Katalon Recorder (Firefox or Chrome)
+        
+and
+        
+click "Import Clipboard" button below.
+   
+        
+Alternatively copy + paste manually
+into this side of the window.
 """
         self.outputFormatted = []
         self.startWindow()
-        self.fileNameExport = None
 
     def startWindow(self):
         self.getLayout()
@@ -70,6 +61,7 @@ click | //div[@id='main']/div[2]/div/div[2]/div/div[5]/button/div[2] |
                 self.fileNameExport = sg.popup_get_text("Name of new Testcase:")
                 if self.fileNameExport:
                     self.saveTestCase()
+                    break
 
             if lEvent == "TextIn":  # Textinput in TextIn
                 self.__importTranslateAndUpdate(lWindow=lWindow)
@@ -172,7 +164,7 @@ click | //div[@id='main']/div[2]/div/div[2]/div/div[5]/button/div[2] |
         if "|" not in lineIn:
             return None
         lParts = lineIn.split("|")
-        command = lParts[0].strip()
+        command = lParts[0].strip().lower()
         locator = lParts[1].strip()
         if command == "type" or command == "sendKeys":
             value = lParts[2].strip()
@@ -181,14 +173,16 @@ click | //div[@id='main']/div[2]/div/div[2]/div/div[5]/button/div[2] |
             return ImportKatalonRecorder.doTranslateClick(locator)
         elif command == 'type':
             return ImportKatalonRecorder.doTranslateType(locator, value)
-        elif command == 'sendKeys':
+        elif command == 'sendkeys':
             return ImportKatalonRecorder.doTranslateType(locator, value)
         elif command == 'open':
             return ImportKatalonRecorder.__fillDict("GOTOURL", "", locator)
-        elif command == 'goBackAndWait' or command == 'goBack':
+        elif command == 'gobackandwait' or command == 'goback':
             return ImportKatalonRecorder.doTranslategoBackAndWait()
         elif command == 'select':
             return ImportKatalonRecorder.doTranslateSelect(locator)
+        elif command == 'submit':
+            return ImportKatalonRecorder.doTranslateSubmit(locator)
         else:
             logger.exception(f"Translation for command not implemented: {command}")
             return None
@@ -208,6 +202,10 @@ click | //div[@id='main']/div[2]/div/div[2]/div/div[5]/button/div[2] |
     @staticmethod
     def doTranslateSelect(locator):
         return ImportKatalonRecorder.__fillDict("select", locator)
+
+    @staticmethod
+    def doTranslateSubmit(locator):
+        return ImportKatalonRecorder.__fillDict("submit", locator)
 
     @staticmethod
     def __fillDict(activity, locator, value="", locatorType='xpath'):
