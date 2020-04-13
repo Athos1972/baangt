@@ -23,7 +23,11 @@ class TestrunToTestcase(base):
 # declare models
 #
 class TestrunLog(base):
+	#
+	# summary on Testrun results 
+	#
 	__tablename__ = "testrunLog"
+	# columns
 	id = Column(Integer, primary_key=True)
 	testrunName = Column(String, nullable=False)
 	logfileName = Column(String, nullable=False)
@@ -34,11 +38,29 @@ class TestrunLog(base):
 	statusOk = Column(Integer, nullable=False)
 	statusFailed = Column(Integer, nullable=False)
 	statusPaused = Column(Integer, nullable=False)
+	# relationships
 	globalVars = relationship('GlobalAttribute')
 	testcases = relationship('TestCaseLog')
 
+class GlobalAttribute(base):
+	#
+	# global vars
+	#
+	__tablename__ = 'globals'
+	# columns
+	id = Column(Integer, primary_key=True)
+	name = Column(String, nullable=False)
+	value = Column(String, nullable=True)
+	testrun_id = Column(Integer, ForeignKey('testrunLog.id'), nullable=False)
+	# relationships
+	testrun = relationship('TestrunLog', foreign_keys=[testrun_id])
+
 class TestCaseLog(base):
+	#
+	# TestCase results
+	#
 	__tablename__ = 'testCaseLog'
+	# columns
 	id = Column(Integer, primary_key=True)
 	toasts = Column(String, nullable=True)
 	tcErrorLog =Column(String, nullable=True)
@@ -61,26 +83,49 @@ class TestCaseLog(base):
 	importPath = Column(String, nullable=True)
 	rootPath = Column(String, nullable=True)
 	testrun_id = Column(Integer, ForeignKey('testrunLog.id'), nullable=False)
+	# relationships
 	testrun = relationship('TestrunLog', foreign_keys=[testrun_id])
 	extraFields = relationship('TestCaseExtraField')
+	networkInfo = relationship('TestCaseNetworkInfo')
 
 class TestCaseExtraField(base):
+	#
+	# extra field for a TestCase results 
+	#
 	__tablename__ = 'extraFields'
+	# columns
 	id = Column(Integer, primary_key=True)
 	name = Column(String, nullable=False)
 	value = Column(String, nullable=True)
 	testcase_id = Column(Integer, ForeignKey('testCaseLog.id'), nullable=False)
+	# relationships
 	testcase = relationship('TestCaseLog', foreign_keys=[testcase_id])
 
-class GlobalAttribute(base):
-	__tablename__ = 'globals'
+class TestCaseNetworkInfo(base):
+	#
+	# network info for a TestCase
+	#
+	__tablename__ = 'networkInfo'
+	# columns
 	id = Column(Integer, primary_key=True)
-	name = Column(String, nullable=False)
-	value = Column(String, nullable=True)
-	testrun_id = Column(Integer, ForeignKey('testrunLog.id'), nullable=False)
-	testrun = relationship('TestrunLog', foreign_keys=[testrun_id])
+	browserName = Column(String, nullable=True)
+	status = Column(Integer, nullable=True)
+	method = Column(String, nullable=True)
+	url = Column(String, nullable=True)
+	contentType = Column(String, nullable=True)
+	contentSize = Column(Integer, nullable=True)
+	headers = Column(String, nullable=True)
+	params = Column(String, nullable=True)
+	response = Column(String, nullable=True)
+	startDateTime = Column(DateTime, nullable=True)
+	duration = Column(Integer, nullable=True)
+	testcase_id = Column(Integer, ForeignKey('testCaseLog.id'), nullable=True)
+	# relationships
+	testcase = relationship('TestCaseLog', foreign_keys=[testcase_id])
+
+
 
 
 # create tables
-if __name__ == '__main__':
-	base.metadata.create_all(engine)
+#if __name__ == '__main__':
+base.metadata.create_all(engine)

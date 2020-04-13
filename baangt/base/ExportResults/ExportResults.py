@@ -11,7 +11,7 @@ from xlsxwriter.worksheet import (
     Worksheet, cell_number_tuple, cell_string_tuple)
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from baangt.base.DataBaseORM import DATABASE_URL, TestrunLog, TestCaseLog, TestCaseExtraField
+from baangt.base.DataBaseORM import DATABASE_URL, TestrunLog, TestCaseLog, TestCaseExtraField, GlobalAttribute, TestCaseNetworkInfo
 from datetime import datetime
 import time
 from baangt import plugin_manager
@@ -126,12 +126,14 @@ class ExportResults:
                 waiting += 1
 
         # get globals
+        '''
         globalString = '{'
         for key, value in self.testRunInstance.globalSettings.items():
             if len(globalString) > 1:
                 globalString += ', '
             globalString += f'{key}: {value}'
         globalString += '}'
+        '''
 
         # get documents
         datafiles = self.fileName
@@ -145,69 +147,107 @@ class ExportResults:
             statusOk = success,
             statusFailed = error,
             statusPaused = waiting,
-            globalVars = globalString,
             dataFile = datafiles,
         )
-        # write to DataBase
+        # add to DataBase
         session.add(log)
+
+        # set globals
+        for key, value in self.testRunInstance.globalSettings.items():
+            globalVar = GlobalAttribute(
+                name=key,
+                value=str(value),
+                testrun=log,
+            )
+            session.add(globalVar)
+
         session.commit()
 
-        # create testcase objects
-        for testcase in self.dataRecords.values():
-            caseLog = TestCaseLog(testrun=log)
-            for key, value in testcase.items():
-                # check for known fields
-                if key == 'Toasts':
-                    caseLog.toasts = value
-                elif key == 'TCErrorLog':
-                    caseLog.tcErrorLog = value
-                elif key == 'VIGOGF#':
-                    caseLog.vigogf = value
-                elif key == 'SAP Polizzennr':
-                    caseLog.sapPolizzennr = value
-                elif key == 'Prämie':
-                    caseLog.pramie = value
-                elif key == 'PolNR Host':
-                    caseLog.polNrHost = value
-                elif key == 'TestCaseStatus':
-                    caseLog.testCaseStatus = value
-                elif key == 'Duration':
-                    caseLog.duration = value
-                elif key == 'Screenshots':
-                    caseLog.screenshots = value
-                elif key == 'timelog':
-                    caseLog.timelog = value
-                elif key == 'exportFilesBasePath':
-                    caseLog.exportFilesBasePath = value
-                elif key == 'TC.Lines':
-                    caseLog.tcLines = value
-                elif key == 'TC.dontCloseBrowser':
-                    caseLog.tcDontCloseBrowser = value
-                elif key == 'TC.BrowserAttributes':
-                    caseLog.tcBrowserAttributes = value
-                elif key == 'TC.slowExecution':
-                    caseLog.tsSlowExecution = value
-                elif key == 'TC.NetworkInfo':
-                    caseLog.tcNetworkInfo = value
-                elif key == 'TX.DEBUG':
-                    caseLog.txDebug = value
-                elif key == 'ScreenshotPath':
-                    caseLog.screenshotPath = value
-                elif key == 'ExportPath':
-                    caseLog.exportPath = value
-                elif key == 'ImportPath':
-                    caseLog.importPath = value
-                elif key == 'RootPath':
-                    caseLog.rootPath = value
-                else:
-                    # add extra field
-                    extraField = ExtraField(name=key, value=value)
-                    session.add(extraField)
-                    session.commit()
-                    caseLog.extraFields.append(extraField)
-            # save to db
-            session.add(caseLog)
-            session.commit()              
+        # create testcases
+        # predifined fields
+        fields = [
+            'Toasts',
+            'TCErrorLog',
+            'VIGOGF#',
+            'SAP Polizzennr',
+            'Prämie',
+            'PolNR Host',
+            'TestCaseStatus',
+            'Duration',
+            'Screenshots',
+            'timelog',
+            'exportFilesBasePath',
+            'TC.Lines',
+            'TC.dontCloseBrowser',
+            'TC.slowExecution',
+            'TC.NetworkInfo',
+            'TX.DEBUG',
+            'ScreenshotPath',
+            'ExportPath',
+            'ImportPath',
+            'RootPath',
+        ]
+
+        for tc in self.dataRecords.values():
+            # create TestCaseLog with predefined attributes
+            tc_log = TestCaseLog(
+                testrun=log,
+                toasts=tc.get('Toasts'),
+                tcErrorLog=tc.get('TCErrorLog'),
+                vigogf=tc.get('VIGOGF#'),
+                sapPolizzennr=tc.get('SAP Polizzennr'),
+                pramie=tc.get('Prämie'),
+                polNrHost=tc.get('PolNR Host'),
+                testCaseStatus=tc.get('TestCaseStatus'),
+                duration=tc.get('Duration'),
+                screenshots=tc.get('Screenshots'),
+                timelog=tc.get('timelog'),
+                exportFilesBasePath=tc.get('exportFilesBasePath'),
+                tcLines=tc.get('TC.Lines'),
+                tcDontCloseBrowser=tc.get('TC.dontCloseBrowser'),
+                tcSlowExecution=tc.get('TC.slowExecution'),
+                tcNetworkInfo=tc.get('TC.NetworkInfo'),
+                txDebug=tc.get('TX.DEBUG'),
+                screenshotPath=tc.get('ScreenshotPath'),
+                exportPath=tc.get('ExportPath'),
+                importPath=tc.get('ImportPath'),
+                rootPath=tc.get('RootPath'),
+            )
+            session.add(tc_log)
+            # add other attributes as TestCaseExtraField instances
+            for key, value in tc.items():
+                if not key in fields:
+                    extra = TestCaseExtraField(name=key, value=str(value), testcase=tc_log)
+                    session.add(extra)
+
+        session.commit()
+
+        # network info
+        if self.networkInfo:
+            for info in self.networkInfo:
+                for entry in info['log']['entries']:
+                    # get TestCase number
+                    test_case_num = self.exportNetWork._get_test_case_num(entry['startedDateTime'], entry['pageref']) - 1
+                    nw_info = TestCaseNetworkInfo(
+                        testcase = log.testcases[test_case_num],
+                        browserName = entry.get('pageref'),
+                        status = entry['response'].get('status'),
+                        method = entry['request'].get('method'),
+                        url = entry['request'].get('url'),
+                        contentType = entry['response']['content'].get('mimeType'),
+                        contentSize = entry['response']['content'].get('size'),
+                        headers = str(entry['response']['headers']),
+                        params = str(entry['request']['queryString']),
+                        response = entry['response']['content'].get('text'),
+                        startDateTime = datetime.strptime(entry['startedDateTime'][:19], '%Y-%m-%dT%H:%M:%S'), 
+                        duration = entry.get('time'),
+                    )
+                    session.add(nw_info)
+
+        session.commit()
+
+
+             
 
 
 

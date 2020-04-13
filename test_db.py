@@ -5,6 +5,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 path_to_db = 'test.db'
+path_to_globals = 'tests/jsons/globals.json'
+path_to_results = 'tests/jsons/results.json'
+path_to_network = 'tests/jsons/network.json'
 
 #
 # fixtures
@@ -49,7 +52,7 @@ def global_vars():
 	#
 	# returns presaved global attributes as dict
 	#
-	with open('examples/globals_grid4.json', 'r') as f:
+	with open(path_to_globals, 'r') as f:
 		return json.load(f)
 
 
@@ -58,9 +61,16 @@ def results_google():
 	#
 	# returns presaved Testrun results as dict
 	#
-	with open('jsons/results_example_googleImages.json', 'r') as f:
+	with open(path_to_results, 'r') as f:
 		return json.load(f)
 
+@pytest.fixture(scope='function')
+def network_google():
+	#
+	# returns presaved Testrun network results as dict
+	#
+	with open(path_to_network, 'r') as f:
+		return json.load(f)
 
 #
 # Tests
@@ -111,6 +121,7 @@ def test_testcaselog(session_db, tr_log):
 	# assertions
 	assert len(tr_log.testcases) == 1
 	assert len(tc_log.extraFields) == 0
+	assert len(tc_log.networkInfo) == 0
 
 def test_extrafield(session_db, tr_log):
 	#
@@ -127,13 +138,31 @@ def test_extrafield(session_db, tr_log):
 	# assertions
 	assert len(tr_log.testcases) == 1
 	assert len(tc_log.extraFields) == 1
+	assert len(tc_log.networkInfo) == 0
+
+def test_networkinfo(session_db, tr_log):
+	#
+	# create a TestCaseNetworkInfo instance
+	#
+	from baangt.base.DataBaseORM import TestCaseLog, TestCaseNetworkInfo
+
+	tc_log = TestCaseLog(testrun=tr_log)
+	info = TestCaseNetworkInfo(testcase=tc_log)
+	session_db.add(tr_log)
+	session_db.add(tc_log)
+	session_db.add(info)
+	session_db.commit()
+	# assertions
+	assert len(tr_log.testcases) == 1
+	assert len(tc_log.extraFields) == 0
+	assert len(tc_log.networkInfo) == 1
 
 
-def test_sampletestrun(session_db, tr_log, results_google):
+def test_sampletestcases(session_db, tr_log, results_google, network_google):
 	#
 	# create sample TestCaseLog instances
 	#
-	from baangt.base.DataBaseORM import TestCaseLog, TestCaseExtraField
+	from baangt.base.DataBaseORM import TestCaseLog, TestCaseExtraField, TestCaseNetworkInfo
 	
 	# predefined fields of TestCaseLog object
 	predefinedFields = [
@@ -194,6 +223,33 @@ def test_sampletestrun(session_db, tr_log, results_google):
 
 	session_db.commit()
 
+	# create network infos
+	for info in network_google:
+		for entry in info['log']['entries']:
+			ni = TestCaseNetworkInfo(
+				browserName = entry.get('pageref'),
+				status = entry['response'].get('status'),
+				method = entry['request'].get('method'),
+				url = entry['request'].get('url'),
+				contentType = entry['response']['content'].get('mimeType'),
+				contentSize = entry['response']['content'].get('size'),
+				headers = str(entry['response']['headers']),
+				params = str(entry['request']['queryString']),
+				response = entry['response']['content'].get('text'),
+				startDateTime = datetime.strptime(entry['startedDateTime'][:19], '%Y-%m-%dT%H:%M:%S'), 
+				duration = entry.get('time'),
+				testcase = tr_log.testcases[0],
+			)
+			session_db.add(ni)
+
+	session_db.commit()
+
 	# assertions
 	assert len(tr_log.testcases) == 4
 	assert len(tr_log.testcases[0].extraFields) == 3
+	assert len(tr_log.testcases[1].extraFields) == 3
+	assert len(tr_log.testcases[2].extraFields) == 3
+	assert len(tr_log.testcases[3].extraFields) == 3
+	assert len(tr_log.testcases[0].networkInfo) == 171
+
+
