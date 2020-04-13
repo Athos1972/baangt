@@ -680,7 +680,7 @@ class BrowserDriver:
         else:
             pollFrequency = 0.5
 
-        internalTimeout = timeout / 3
+        internalTimeout = timeout / 5
 
         lLoopCount = 0
 
@@ -766,6 +766,36 @@ class BrowserDriver:
         raise Exceptions.baangtTestStepException(
             f"Element still here after {timeout} seconds. Locator: xpath={xpath}, id={id}")
 
+    def checkLinks(self):
+        """
+        For the current page we'll check all links and return result in format
+        <status_code> <link_that_was_checked>
+
+        :return: List of checked links
+        """
+        lResult = []
+        links = self.driver.find_elements_by_css_selector("a")
+        logger.debug(f"Checking links on page {self.driver.current_url}")
+        for link in links:
+            lHref = link.get_attribute("href")
+            if not lHref:
+                continue
+            if lHref.startswith("mailto"):
+                pass
+            else:
+                try:
+                    r = requests.head(lHref)
+                    lResult.append([r.status_code, lHref])
+                    logger.debug(f"Result was: {r.status_code}, {lHref}")
+                except requests.exceptions.InvalidURL as e:
+                    lResult.append([500, f"Invalid URL: {lHref}"])
+                except requests.exceptions.ConnectionError as e:
+                    lResult.append([500, f"HTTP connection error: {lHref}"])
+                except requests.exceptions.MissingSchema as e:
+                    lResult.append([500, f"Missing Schema - invalid URL: {lHref}"])
+
+        return lResult
+
     @staticmethod
     def sleep(sleepTimeinSeconds):
         time.sleep(sleepTimeinSeconds)
@@ -786,7 +816,7 @@ class BrowserDriver:
 
         while not didWork and elapsed < timeout:
             try:
-                self._log(logging.DEBUG, f"Do_something {command} with {value}")
+                self._log(logging.DEBUG, f"__doSomething {command} with {value}")
                 if command.upper() == GC.CMD_SETTEXT:
                     self.element.send_keys(value)
                 elif command.upper() == GC.CMD_CLICK:
@@ -813,7 +843,8 @@ class BrowserDriver:
                 raise Exceptions.baangtTestStepException(e)
             except ElementNotInteractableException as e:
                 self._log(logging.ERROR, f"Element not interactable {e}")
-                raise Exceptions.baangtTestStepException(e)
+                time.sleep(0.2)
+                # raise Exceptions.baangtTestStepException(e)
             except NoSuchWindowException as e:
                 raise Exceptions.baangtTestStepException(e)
             elapsed = time.time() - begin

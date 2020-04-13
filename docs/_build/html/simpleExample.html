@@ -444,6 +444,18 @@ don’t provide a field name (not necessarily one that exists in the input file.
 happen. If you provide input parameters in column <code class="docutils literal notranslate"><span class="pre">value</span></code> (<code class="docutils literal notranslate"><span class="pre">SWIFT</span></code> and/or <code class="docutils literal notranslate"><span class="pre">COUNTRY</span></code>) the IBAN will be created for that bank-code
 and/or country.</p></td>
 </tr>
+<tr class="row-even"><td><p>pdfcompare</p></td>
+<td><p>In a step before you must have downloaded a PDF-File. Before you can compare, you have to provide a reference PDF
+to upload. After the upload you’ll receive a unique ID for this document. Paste this ID into the <code class="docutils literal notranslate"><span class="pre">value</span></code> field.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CheckLinks</p></td>
+<td><p>Whenever you enter this command, all (if any) links on the current page will be checked and the status of the
+link will be reported accordingly. Reporting format is:</p>
+<p>Links on &lt;base_url&gt;:</p>
+<p>&lt;status&gt;:&lt;Link&gt;</p>
+<p>You’ll find the output in the Export sheet in the column “CheckedLinks”, which will be created automatically.</p>
+</td>
+</tr>
 <tr class="row-even"><td><p>address_create</p></td>
 <td><p>provide an easy and easily extendable way to generate address data for a test case
 The following fields variable are stored in testcaseDataDict:</p>

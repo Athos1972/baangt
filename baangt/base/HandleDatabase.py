@@ -120,12 +120,13 @@ class HandleDatabase:
         try:
             # the topmost record of the RangeDict (RangeDict was built by the range(s) from the TestRun
             # - 1 because there's a header line in the Excel-Sheet.
-            lRecord = self.dataDict[(list(self.rangeDict.keys())[0])-1]
+            lRecord = self.dataDict[(list(self.rangeDict.keys())[0])]
         except Exception as e:
             logger.debug(f"Couldn't read record from database: {list(self.rangeDict.keys())[0]}")
             self.rangeDict.pop(list(self.rangeDict.keys())[0])
             return None
 
+        # Remove the topmost entry fro the rangeDict, so that next time we read the next entry in the lines above
         self.rangeDict.pop(list(self.rangeDict.keys())[0])
         return self.updateGlobals(lRecord)
 
