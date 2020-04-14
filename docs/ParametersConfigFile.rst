@@ -42,6 +42,10 @@ for instance to slowly retest a single testrecord or to not close the browser af
      - Number of parallel sessions to be executed. Values depend largely on your hardware and internet connection. Debugging works only in a single session.
    * - ``TC.NetworkInfo``
      - Creates a very detailed trace of network activity of the browser(s). In the output file you'll find another Tab "Network", that holds all API-Calls from the frontend (including header, payload and answer).
+   * - ``TC.ExportAllFields``
+     - When set to "True", instead of specifying certain fields from the input data, that will be exported to the result field, take ALL fields for export.
+   * - ``TC.RestartBrowser``
+     - When set to "True", will always start a new browser after the previous test case was done.
 
 # Todo:
 BrowserAttributes
