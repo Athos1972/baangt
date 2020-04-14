@@ -24,6 +24,15 @@ class TestCaseMaster:
         if self.testCaseType == GC.KWARGS_BROWSER:
             logger.info(f"Settings for this TestCase: {self.testCaseSettings}. "
                         f"Starting or using Browser {self.kwargs.get(GC.KWARGS_BROWSER)}")
+
+            if self.testRunInstance.globalSettings.get("TC.RestartBrowser"):
+                logger.debug("TC.RestartBrowser was set. Quitting old browser. Starting new one")
+                if self.kwargs.get(GC.KWARGS_BROWSER):
+                    self.browser = self.kwargs.get(GC.KWARGS_BROWSER)
+                    self.browser.closeBrowser()
+                    self.browser = None
+                    del self.kwargs[GC.KWARGS_BROWSER]
+
             if self.kwargs.get(GC.KWARGS_BROWSER):
                 self.browser = self.kwargs[GC.KWARGS_BROWSER] # Browser already set - most probably from parallel run
             else:
