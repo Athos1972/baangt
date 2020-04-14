@@ -7,6 +7,7 @@ from pkg_resources import parse_version
 import logging
 from baangt.TestSteps.Exceptions import baangtTestStepException
 from baangt.TestSteps.AddressCreation import AddressCreate
+from baangt.base.Faker import Faker as baangtFaker
 
 logger = logging.getLogger("pyC")
 
@@ -26,16 +27,17 @@ class TestStepMaster:
         # check, if this TestStep has additional Parameters and if so, execute
         lSequence = self.testRunUtil.getSequenceByNumber(testRunName=self.testRunInstance.testRunName,
                                                          sequence=kwargs.get(GC.STRUCTURE_TESTCASESEQUENCE))
-        lTestCase = self.testRunUtil.getTestCaseByNumber(lSequence, kwargs.get(GC.STRUCTURE_TESTCASE))
-        lTestStep = self.testRunUtil.getTestStepByNumber(lTestCase, kwargs.get(GC.STRUCTURE_TESTSTEP))
+        self.testCase = self.testRunUtil.getTestCaseByNumber(lSequence, kwargs.get(GC.STRUCTURE_TESTCASE))
+        self.testStep = self.testRunUtil.getTestStepByNumber(self.testCase, kwargs.get(GC.STRUCTURE_TESTSTEP))
         self.globalRelease = self.testRunInstance.globalSettings.get("Release", "")
         self.ifActive = False
         self.ifIsTrue = True
+        self.baangtFaker = None
 
-        if not isinstance(lTestStep, str):
+        if not isinstance(self.testStep, str):
             # This TestStepMaster-Instance should actually do something - activitites are described
             # in the TestExecutionSteps
-            self.executeDirect(lTestStep[1][GC.STRUCTURE_TESTSTEPEXECUTION])
+            self.executeDirect(self.testStep[1][GC.STRUCTURE_TESTSTEPEXECUTION])
 
         self.teardown()
 
@@ -83,6 +85,8 @@ class TestStepMaster:
                 self.browserSession.goToUrl(lValue)
             elif lActivity == "SETTEXT":
                 self.browserSession.findByAndSetText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout)
+            elif lActivity == "FORCETEXT":
+                self.browserSession.findByAndForceText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout)
             elif lActivity == 'HANDLEIFRAME':
                 self.browserSession.handleIframe(lLocator)
             elif lActivity == "CLICK":
@@ -117,7 +121,10 @@ class TestStepMaster:
             elif lActivity == 'HEADER':
                 self.apiSession.setHeaders(setHeaderData=lValue)
             elif lActivity == 'SAVE':
-                self.doSaveData(lValue, lValue2)
+                self.doSaveData(lValue, lValue2, lLocatorType, lLocator)
+            elif lActivity == 'SAVETO':
+                # In this case, we need to parse the real field, not the representation of the replaced field value
+                self.doSaveData(command['Value'], lValue2, lLocatorType, lLocator)
             elif lActivity == 'SUBMIT':
                 self.browserSession.submit()
             elif lActivity == "ADDRESS_CREATE":
@@ -221,8 +228,24 @@ class TestStepMaster:
             logger.debug(f"Global version {version_global}, line version {version_line} ")
             return False
 
-    def doSaveData(self, toField, valueForField):
-        self.testcaseDataDict[toField] = valueForField
+    def doSaveData(self, toField, valueForField, lLocatorType, lLocator):
+        """
+        Save fields. Either from an existing DICT (usually in API-Mode) or from a Webelement (in Browser-Mode)
+
+        :param toField:
+        :param valueForField:
+        :param lLocatorType:
+        :param lLocator:
+        :return: no return parameter. The implicit return is a value in a field.
+        """
+        if self.testCase[1][GC.KWARGS_TESTCASETYPE] == GC.KWARGS_BROWSER:
+            xpath, css, id = TestStepMaster.__setLocator(lLocatorType, lLocator)
+            self.testcaseDataDict[toField] = self.browserSession.findByAndWaitForValue(xpath=xpath, css=css, id=id)
+            pass # check, if toField now has the proper value and returns it to calling Module
+        elif self.testCase[1][GC.KWARGS_TESTCASETYPE] == GC.KWARGS_API_SESSION:
+            self.testcaseDataDict[toField] = valueForField
+        else:
+            sys.exit("Testcase Type not supported")
 
     @staticmethod
     def __setLocator(lLocatorType, lLocator):
@@ -316,6 +339,10 @@ class TestStepMaster:
         The syntax for variables is currently $(<column_name_from_data_file>). Multiple variables can be assigned
         in one cell, for instance perfectly fine: "http://$(BASEURL)/$(ENDPOINT)"
 
+        There's a special syntax for the faker module: $(FAKER.<fakermethod>).
+
+        Also a special syntax for API-Handling: $(APIHandling.<DictElementName>).
+
         @param expression: the current cell, either as fixed value, e.g. "Franzi" or with a varible $(DATE)
         @return: the replaced value, e.g. if expression was $(DATE) and the value in column "DATE" of data-file was
             "01.01.2020" then return will be "01.01.2020"
@@ -344,11 +371,22 @@ class TestStepMaster:
 
                 if dictVariable == 'ANSWER_CONTENT':
                     center = self.apiSession.session[1].answerJSON.get(dictValue, "Empty")
+                elif dictVariable == 'FAKER':
+                    # This is to call Faker Module with the Method, that is given after the .
+                    center = self.__getFakerData(dictValue)
                 else:
                     raise BaseException(f"Missing code to replace value for: {center}")
 
             if not center:
-                raise BaseException(f"Variable not found: {center}")
+                raise BaseException(f"Variable not found: {center}, input parameter was: {expression}")
 
             expression = "".join([left_part, center, right_part])
         return expression
+
+    def __getFakerData(self, fakerMethod):
+        if not self.baangtFaker:
+            self.baangtFaker = baangtFaker()
+
+        logger.debug(f"Calling faker with method: {fakerMethod}")
+
+        return self.baangtFaker.fakerProxy(fakerMethod=fakerMethod)

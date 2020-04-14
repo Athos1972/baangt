@@ -261,10 +261,18 @@ class ExportResults:
         """
         Fields, that start with "RESULT_" shall always be exported.
 
-        Other fields, that shall always be exported are also added
+        Other fields, that shall always be exported are also added (Testcaseerrorlog, etc.)
+
+        If global Parameter "TC.ExportAllFields" is set to True ALL fields will be exported
 
         @return:
         """
+
+        if self.testRunInstance.globalSettings.get("TC.ExportAllFields", False):
+            self.fieldListExport = []   # Make an empty list, so that we don't have duplicates
+            for key in self.dataRecords[0].keys():
+                self.fieldListExport.append(key)
+            return
 
         try:
             for key in self.dataRecords[0].keys():

@@ -157,6 +157,13 @@ class TestRun:
                 self.browser[browserInstance].slowExecutionToggle()
             return self.browser[browserInstance]
         else:
+            if self.globalSettings.get("TC.RestartBrowser"):
+                if browserInstance in self.browser.keys():
+                    logger.debug(f"Instance {browserInstance}: TC.RestartBrowser was set. Quitting old browser.")
+                    lBrowser = self.browser[browserInstance]
+                    lBrowser.closeBrowser()
+                    del self.browser[browserInstance]
+
             if browserInstance not in self.browser.keys():
                 logger.info(f"opening new instance {browserInstance} of browser {browserName}")
                 self._getBrowserInstance(browserInstance=browserInstance)
