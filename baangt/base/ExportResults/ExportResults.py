@@ -103,6 +103,9 @@ class ExportResults:
         f.close()
 
     def exportToDataBase(self):
+        #
+        # writes results to DB
+        #
         engine = create_engine(f'sqlite:///{DATABASE_URL}')
 
         # create a Session
