@@ -21,7 +21,8 @@ class Singleton(type):
 
 
 class ProxyRotate(metaclass=Singleton):
-    def __init__(self):
+    def __init__(self, reReadProxies=False):
+        self.reReadProxies = reReadProxies
         self.proxy_file = "proxies.json"
         self.proxy_gather_link = "https://www.sslproxies.org/"
         self.proxies = self.__read_proxies()
@@ -34,14 +35,12 @@ class ProxyRotate(metaclass=Singleton):
             t.daemon = True
             t.start()
 
-
     def __threaded_proxy(self):
         while True:
-            if TestRun.TestRun.globalSettings["TC.ReReadProxies"] == True:
+            if self.reReadProxies == True:
                 self.__gather_proxy()
             else:
                 sleep(5)
-
 
     def __gather_proxy(self):
         self.__temp_proxies = [p for p in self.proxies]
@@ -73,10 +72,10 @@ class ProxyRotate(metaclass=Singleton):
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36'
         }
         for proxi in self.__temp_proxies:
-            logger.debug(f"{(str(self.temp_proxies.index(proxi) + 1))}/ {str(len(self.temp_proxies))}: {proxi}")
+            logger.debug(f"{(str(self.__temp_proxies.index(proxi) + 1))}/ {str(len(self.__temp_proxies))}: {proxi}")
             proxy = {
-                "http": "http://" + proxi["ip"] + ":" + proxi["port"],
-                "https": "http://" + proxi["ip"] + ":" + proxi["port"],
+                "http": f"http://{proxi['ip']}:{proxi['port']}",
+                "https": f"http://{proxi['ip']}:{proxi['port']}",
             }
             try:
                 response1 = requests.get(link1, proxies=proxy, headers=headers, timeout=20)
@@ -133,6 +132,6 @@ class ProxyRotate(metaclass=Singleton):
 
 
 if __name__ == '__main__':
-    lProxyRotate = ProxyRotate()
+    lProxyRotate = ProxyRotate(reReadProxies=False)
     lProxyRotate.recheckProxies()
-    print(lProxyRotate.__getProxy())
+    print(lProxyRotate.random_proxy())

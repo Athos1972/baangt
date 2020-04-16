@@ -29,7 +29,7 @@ class BrowserFactory:
 
     def __startRotatingProxies(self):
         if self.globalSettings.get("TC.UseRotatingProxies"):
-            self.rotatingProxiesService = ProxyRotate()
+            self.rotatingProxiesService = ProxyRotate(reReadProxies=self.globalSettings.get("TC.ReReadProxies"))
             if self.globalSettings.get("TC.ReReadProxies"):
                 self.rotatingProxiesService.recheckProxies()
 
