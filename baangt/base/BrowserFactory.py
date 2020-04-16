@@ -23,7 +23,7 @@ class BrowserFactory:
         self.globalSettings = testrun.globalSettings
         self.browserServer = BrowserFactory.__getBrowserServer() \
             if self.globalSettings.get('TC.' + GC.EXECUTION_NETWORK_INFO) == 'True' else None
-        self.browsersProxies = {}
+        self.browsersMobProxies = {}
 
         self.__startRotatingProxies()
 
@@ -53,17 +53,17 @@ class BrowserFactory:
             logger.info(f"opening new Appium instance {browserInstance} of Appium browser {browserName}")
             self._getBrowserInstance(browserInstance=browserInstance)
             self.setBrowserProxy(browserInstance=browserInstance)
-            if self.browsersProxies:
-                browser_proxy = self.browsersProxies[browserInstance]
+            if self.browsersMobProxies:
+                browserMobProxy = self.browsersMobProxies[browserInstance]
             else:
-                browser_proxy = None
+                browserMobProxy = None
             self.browser[browserInstance].createNewBrowser(mobileType=mobileType,
                                                            mobileApp=mobileApp,
                                                            desired_app=desired_app,
                                                            mobile_app_setting=mobile_app_setting,
                                                            browserName=browserName,
                                                            desiredCapabilities=browserAttributes,
-                                                           browserProxy=browser_proxy,
+                                                           browserProxy=browserMobProxy,
                                                            browserInstance=browserInstance)
             if self.globalSettings.get("TC." + GC.EXECUTION_SLOW):
                 self.browser[browserInstance].slowExecutionToggle()
@@ -80,10 +80,10 @@ class BrowserFactory:
                 logger.info(f"opening new instance {browserInstance} of browser {browserName}")
                 self._getBrowserInstance(browserInstance=browserInstance)
                 self.setBrowserProxy(browserInstance=browserInstance)
-                if self.browsersProxies:  # Locale call of browserMob-Proxy
-                    browser_proxy = self.browsersProxies[browserInstance]
+                if self.browsersMobProxies:  # Locale call of browserMob-Proxy
+                    browserMobProxy = self.browsersMobProxies[browserInstance]
                 else:
-                    browser_proxy = None
+                    browserMobProxy = None
 
                 randomProxy = None
                 if self.globalSettings.get("TC.UseRotatingProxies"):
@@ -96,7 +96,7 @@ class BrowserFactory:
                                                                mobile_app_setting=mobile_app_setting,
                                                                browserName=browserName,
                                                                desiredCapabilities=browserAttributes,
-                                                               browserProxy=browser_proxy,
+                                                               browserProxy=browserMobProxy,
                                                                browserInstance=browserInstance,
                                                                randomProxy=randomProxy)
                 if self.globalSettings.get("TC." + GC.EXECUTION_SLOW):
@@ -128,7 +128,7 @@ class BrowserFactory:
 
         sleep(1)
 
-        self.browsersProxies[browserInstance] = proxy
+        self.browsersMobProxies[browserInstance] = proxy
 
     def teardown(self):
         network_info = {}
@@ -137,7 +137,7 @@ class BrowserFactory:
                 self.browser[browserInstance].closeBrowser()
 
         if self.browserServer:
-            network_info = [info.har if info else {} for info in self.browsersProxies.values()]
+            network_info = [info.har if info else {} for info in self.browsersMobProxies.values()]
             self.browserServer.stop()
 
         return network_info

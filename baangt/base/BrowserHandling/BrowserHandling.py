@@ -129,7 +129,8 @@ class BrowserDriver:
                     self.driver = browserNames[browserName](
                         chrome_options=self.__createBrowserOptions(browserName=browserName,
                                                                    desiredCapabilities=desiredCapabilities,
-                                                                   browserProxy=browserProxy),
+                                                                   browserMobProxy=browserProxy,
+                                                                   randomProxy=randomProxy),
                                                                    executable_path=self.__findBrowserDriverPaths(ChromeExecutable))
                     self.__startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance,
                                                 browserProxy=browserProxy)
@@ -313,14 +314,15 @@ class BrowserDriver:
 
         return self.slowExecution
 
-    def __createBrowserOptions(self, browserName, desiredCapabilities, browserProxy=None):
+    def __createBrowserOptions(self, browserName, desiredCapabilities, browserMobProxy=None, randomProxy=None):
         """
         Translates desired capabilities from the Testrun (or globals) into specific BrowserOptions for the
         currently active browser
 
         @param browserName: any of the GC.BROWSER*
         @param desiredCapabilities: Settings from TestRun or globals
-        @param browserProxy: Proxy-Server IP+Port
+        @param browserMobProxy: Proxy-Server IP+Port of internal BrowserMobProxy.
+        @param randomProxy: Proxy-Server IP+Port of random external Proxy
         @return: the proper BrowserOptions for the currently active browser.
         """
         if browserName == GC.BROWSER_CHROME:
@@ -329,9 +331,6 @@ class BrowserDriver:
             lOptions = ffOptions()
         else:
             return None
-
-        if browserProxy and browserName == GC.BROWSER_FIREFOX:
-            lOptions.add_argument('--proxy-server={0}'.format(browserProxy.proxy))
 
         # Default Download Directory for Attachment downloads
         if browserName == GC.BROWSER_CHROME:
@@ -342,15 +341,21 @@ class BrowserDriver:
                          self.__setBrowserDownloadDirRandom(),  # IMPORTANT - ENDING SLASH V IMPORTANT
                      "directory_upgrade": True}
             lOptions.add_experimental_option("prefs", prefs)
+            # Set Proxy for Chrome. First RandomProxy (External), if set. If not, then internal Browsermob
+            if randomProxy:
+                lOptions.add_argument(f"--proxy-server={randomProxy['ip']}:{randomProxy['port']}")
+            elif browserMobProxy:
+                lOptions.add_argument('--proxy-server={0}'.format(browserMobProxy.proxy))
 
-        if not desiredCapabilities and not browserProxy:
+
+        if not desiredCapabilities and not browserMobProxy:
             return None
 
         # sometimes instead of DICT comes a string with DICT-Format
         if isinstance(desiredCapabilities, str) and "{" in desiredCapabilities and "}" in desiredCapabilities:
             desiredCapabilities = json.loads(desiredCapabilities.replace("'", '"'))
 
-        if not isinstance(desiredCapabilities, dict) and not browserProxy:
+        if not isinstance(desiredCapabilities, dict) and not browserMobProxy:
             return None
 
         if isinstance(desiredCapabilities, dict) and desiredCapabilities.get(GC.BROWSER_MODE_HEADLESS):
