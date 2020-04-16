@@ -164,18 +164,6 @@ You managed to have a working recording. Congratulations! Let's learn a bit more
 More details on Activities
 --------------------------
 
-       * GoToURL
-       * click
-       * setText
-       * SetTextIF
-       * clickIF
-       * goBack
-       * If
-       * EndIf
-       * Pause
-       * Assert
-       * address_create
-
 .. list-table:: Details of activities
    :widths: 25 75
    :header-rows: 1
@@ -214,6 +202,10 @@ More details on Activities
 
             $(YEAR2DATE) > $(YEARTOMONTH)
 
+            $(POSTCODE) (no comparison, no Value 2) --> checks for
+
+       Additionally you can check for empty/non-existing values by comparing to ``None``.
+
        Another use of the If-Statement is with ``LocatorType`` and ``Locator`` and comparison. This can be used when you
        want conditional execution of a larger block of statements depending on an element present or not present.
 
@@ -240,6 +232,12 @@ More details on Activities
        <status>:<Link>
 
        You'll find the output in the Export sheet in the column "CheckedLinks", which will be created automatically.
+   * - saveto (for Web test cases only)
+     - Saves the value of the element specified by ``locatorType`` and ``locator`` into the field given in column ``value``.
+            !!For this case, don't use variable syntax (``$(ColumnName)``) but put the column name only in field Value!!
+   * - clear
+     - ``Value`` must have the variable or column name, that should be cleared (without ``$(columnName)``,
+       just ``columnName``
    * - address_create
      - provide an easy and easily extendable way to generate address data for a test case
        The following fields variable are stored in testcaseDataDict:

@@ -45,7 +45,7 @@ class TestStepMaster:
         """
         This will execute single Operations directly
         """
-        for key, command in executionCommands.items():
+        for index, (key, command) in enumerate(executionCommands.items()):
             # when we have an IF-condition and it's condition was not TRUE, then skip whatever comes here until we
             # reach Endif
             if not self.ifIsTrue and command["Activity"] != "ENDIF":
@@ -70,7 +70,11 @@ class TestStepMaster:
             # check release line
             lRelease = command["Release"]
 
+            # Timeout defaults to 20 seconds, if not set otherwise.
             lTimeout = TestStepMaster.__setTimeout(command["Timeout"])
+
+            logger.debug(f"Executing TestStep {index} with parameters: act={lActivity}, lType={lLocatorType}, loc={lLocator}, "
+                         f"Val1={lValue}, comp={lComparison}, Val2={lValue2}, Optional={lOptional}, timeout={lTimeout}")
 
             # Replace variables from data file
             if len(lValue) > 0:
@@ -92,7 +96,7 @@ class TestStepMaster:
             elif lActivity == "CLICK":
                 self.browserSession.findByAndClick(xpath=xpath, css=css, id=id, timeout=lTimeout)
             elif lActivity == "PAUSE":
-                self.browserSession.sleep(sleepTimeinSeconds=lValue)
+                self.browserSession.sleep(sleepTimeinSeconds=float(lValue))
             elif lActivity == "IF":
                 if self.ifActive:
                     raise BaseException("No nested IFs at this point, sorry...")
@@ -122,6 +126,10 @@ class TestStepMaster:
                 self.apiSession.setHeaders(setHeaderData=lValue)
             elif lActivity == 'SAVE':
                 self.doSaveData(lValue, lValue2, lLocatorType, lLocator)
+            elif lActivity == 'CLEAR':
+                # Clear a variable:
+                if self.testcaseDataDict.get(lValue):
+                    del self.testcaseDataDict[lValue]
             elif lActivity == 'SAVETO':
                 # In this case, we need to parse the real field, not the representation of the replaced field value
                 self.doSaveData(command['Value'], lValue2, lLocatorType, lLocator)
@@ -136,9 +144,8 @@ class TestStepMaster:
             elif lActivity == 'ASSERT':
                 value_found = self.browserSession.findByAndWaitForValue(xpath=xpath, css=css, id=id, optional=lOptional,
                                                         timeout=lTimeout)
-                value_expected = lValue
-                if value_expected != value_found:
-                    raise baangtTestStepException(f"Expected Value: {value_expected}, Value found :{value_found} ")
+                if not self.__doComparisons(lComparison=lComparison, value1=value_found, value2=lValue):
+                    raise baangtTestStepException(f"Expected Value: {lValue}, Value found :{value_found} ")
             elif lActivity == 'IBAN':
                 # Create Random IBAN. Value1 = Input-Parameter for IBAN-Function. Value2=Fieldname
                 self.__getIBAN(lValue, lValue2)
@@ -241,7 +248,7 @@ class TestStepMaster:
         if self.testCase[1][GC.KWARGS_TESTCASETYPE] == GC.KWARGS_BROWSER:
             xpath, css, id = TestStepMaster.__setLocator(lLocatorType, lLocator)
             self.testcaseDataDict[toField] = self.browserSession.findByAndWaitForValue(xpath=xpath, css=css, id=id)
-            pass # check, if toField now has the proper value and returns it to calling Module
+            logger.debug(f"Saved {self.testcaseDataDict[toField]} to {toField}")
         elif self.testCase[1][GC.KWARGS_TESTCASETYPE] == GC.KWARGS_API_SESSION:
             self.testcaseDataDict[toField] = valueForField
         else:
@@ -271,11 +278,7 @@ class TestStepMaster:
 
     @staticmethod
     def __setTimeout(lTimeout):
-        if lTimeout:
-            lTimeout = float(lTimeout)
-        else:
-            lTimeout = 20
-        return lTimeout
+        return 20 if not lTimeout else float(lTimeout)
 
     @staticmethod
     def anyting2Boolean(valueIn):
@@ -298,6 +301,9 @@ class TestStepMaster:
             value1 = TestStepMaster.anyting2Boolean(value1)
             value2 = TestStepMaster.anyting2Boolean(value2)
 
+        if value2 == 'None':
+            value2 = None
+
         if lComparison == "=":
             if value1 == value2:
                 self.ifIsTrue = True
@@ -313,8 +319,12 @@ class TestStepMaster:
                 self.ifIsTrue = True
             else:
                 self.ifIsTrue = False
+        elif not lComparison:   # Check only, if Value1 has a value.
+            self.ifIsTrue = True if value1 else False
         else:
             raise BaseException(f"Comparison Operator not supported/unknown {lComparison}")
+
+        return self.ifIsTrue
 
     def execute(self):
         """Method is overwritten in all children/subclasses"""

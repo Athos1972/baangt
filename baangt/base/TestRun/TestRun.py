@@ -4,10 +4,12 @@ from baangt.base.ExportResults.ExportResults import ExportResults
 from baangt.base.Utils import utils
 from baangt.base import GlobalConstants as GC
 from baangt.base.TestRunExcelImporter import TestRunExcelImporter
+from baangt.base.BrowserFactory import BrowserFactory
 # needed - they'll be used dynamically later
 from baangt.TestSteps.TestStepMaster import TestStepMaster
 from baangt.TestCase.TestCaseMaster import TestCaseMaster
 from baangt.TestCaseSequence.TestCaseSequenceMaster import TestCaseSequenceMaster
+from baangt.base.ProxyRotate import ProxyRotate
 import logging
 from pathlib import Path
 import sys
@@ -15,6 +17,7 @@ import os
 from baangt.base.Timing.Timing import Timing
 from baangt.base.TestRunUtils import TestRunUtils
 import time
+
 logger = logging.getLogger("pyC")
 
 
@@ -23,13 +26,15 @@ class TestRun:
     This is the main Class of Testexecution in the baangt Framework. It is usually started
     from baangt.py
     """
-    def __init__(self, testRunName, globalSettingsFileNameAndPath=None, testRunDict=None): # -- API support: testRunDict --
+
+    def __init__(self, testRunName, globalSettingsFileNameAndPath=None,
+                 testRunDict=None):  # -- API support: testRunDict --
         """
         @param testRunName: The name of the TestRun to be executed.
         @param globalSettingsFileNameAndPath: from where to read the <globals>.json
         """
         logger.info('init Testrun, id is {}'.format(id(self)))
-        self.browser = {}
+
         self.apiInstance = None
         self.testType = None
         self.networkInfo = None
@@ -49,16 +54,15 @@ class TestRun:
         self.timing = Timing()
         self.timing.takeTime(GC.TIMING_TESTRUN)  # Initialize Testrun Duration
         self.testRunUtils = TestRunUtils()
-        self._initTestRun()   # Loads the globals*.json file
-
-        self.browserServer = self.getBrowserServer() \
-            if self.globalSettings.get('TC.' + GC.EXECUTION_NETWORK_INFO) == 'True' else None
-        self.browsersProxies = {}
+        self._initTestRun()  # Loads the globals*.json file
 
         self.testCasesEndDateTimes_1D = []  # refer to single execution
         self.testCasesEndDateTimes_2D = [[]]  # refer to parallel execution
         self._loadJSONTestRunDefinitions()
         self._loadExcelTestRunDefinitions()
+
+        self.browserFactory = BrowserFactory(self)
+
         self.executeTestRun()
         self.tearDown()
 
@@ -70,7 +74,7 @@ class TestRun:
         dt = tcAndDt[1]
         [self.testCasesEndDateTimes_2D.append([]) for i in range(
             index + 1 - len(self.testCasesEndDateTimes_2D))] if index + 1 > len(
-                self.testCasesEndDateTimes_2D) else None
+            self.testCasesEndDateTimes_2D) else None
         self.testCasesEndDateTimes_2D[index].append([tc, dt])
 
     def tearDown(self):
@@ -79,9 +83,6 @@ class TestRun:
         Take overall Time spent for the complete TestRun
         Write results of TestRun to output channel(s)
         """
-        if not self.globalSettings.get("TC." + GC.EXECUTION_DONTCLOSEBROWSER):
-            for browserInstance in self.browser.keys():
-                self.browser[browserInstance].closeBrowser()
 
         self.timing.takeTime(GC.TIMING_TESTRUN)
         self.timing.takeTimeSumOutput()
@@ -89,18 +90,18 @@ class TestRun:
         if self.apiInstance:
             self.apiInstance.tearDown()
 
-        if self.browserServer:
-            network_info = [info.har if info else {} for info in self.browsersProxies.values()]
-            self.browserServer.stop()
-            self.kwargs['networkInfo'] = network_info
+        network_info = self.browserFactory.teardown()
+        self.kwargs['networkInfo'] = network_info
 
         if self.testCasesEndDateTimes_1D:
             self.kwargs['testCasesEndDateTimes_1D'] = self.testCasesEndDateTimes_1D
 
         if self.testCasesEndDateTimes_2D and self.testCasesEndDateTimes_2D[0]:
             self.kwargs['testCasesEndDateTimes_2D'] = self.testCasesEndDateTimes_2D
-        self.results = ExportResults(**self.kwargs) # -- API support: self.results --
+
+        self.results = ExportResults(**self.kwargs)  # -- API support: self.results --
         successful, error = self.getSuccessAndError()
+
         logger.info(f"Finished execution of Testrun {self.testRunName}. "
                     f"{successful} Testcases successfully executed, {error} errors")
         print(f"Finished execution of Testrun {self.testRunName}. "
@@ -123,95 +124,16 @@ class TestRun:
     def getAllTestRunAttributes(self):
         return self.testRunUtils.getCompleteTestRunAttributes(self.testRunName)
 
-    def getBrowser(self, browserInstance=0, browserName=None, browserAttributes=None, mobileType=None, mobileApp=None, desired_app=None ,mobile_app_setting=None):
-        """
-        This method is called whenever a browser instance (existing or new) is needed. If called without
-        parameters it will create one instance of Firefox (geckodriver).
+    def getBrowser(self, browserInstance=0, browserName=None, browserAttributes=None, mobileType=None, mobileApp=None,
+                   desired_app=None, mobile_app_setting=None):
 
-        if global setting TC.EXECUTION_SLOW is set, inform the browser instance about it.
-
-        @param browserInstance: Number of the requested browser instance. If none is provided, always the default
-        browser instance will be returned
-        @param browserName: one of the browser names (e.g. FF, Chrome) from GC.BROWSER*
-        @param browserAttributes: optional Browser Attributes
-        @return: the browser instance of base class BrowserDriver
-
-        """
-        if mobileType == 'True' :
-            logger.info(f"opening new Appium instance {browserInstance} of Appium browser {browserName}")
-            self._getBrowserInstance(browserInstance=browserInstance)
-            self.setBrowserProxy(browserInstance=browserInstance)
-            if self.browsersProxies:
-                browser_proxy = self.browsersProxies[browserInstance]
-            else:
-                browser_proxy = None
-            self.browser[browserInstance].createNewBrowser(mobileType=mobileType,
-                                                           mobileApp=mobileApp,
-                                                           desired_app=desired_app,
-                                                           mobile_app_setting = mobile_app_setting,
-                                                           browserName=browserName,
-                                                           desiredCapabilities=browserAttributes,
-                                                           browserProxy=browser_proxy,
-                                                           browserInstance=browserInstance)
-            if self.globalSettings.get("TC." + GC.EXECUTION_SLOW):
-                self.browser[browserInstance].slowExecutionToggle()
-            return self.browser[browserInstance]
-        else:
-            if self.globalSettings.get("TC.RestartBrowser"):
-                if browserInstance in self.browser.keys():
-                    logger.debug(f"Instance {browserInstance}: TC.RestartBrowser was set. Quitting old browser.")
-                    lBrowser = self.browser[browserInstance]
-                    lBrowser.closeBrowser()
-                    del self.browser[browserInstance]
-
-            if browserInstance not in self.browser.keys():
-                logger.info(f"opening new instance {browserInstance} of browser {browserName}")
-                self._getBrowserInstance(browserInstance=browserInstance)
-                self.setBrowserProxy(browserInstance=browserInstance)
-                if self.browsersProxies:
-                    browser_proxy = self.browsersProxies[browserInstance]
-                else:
-                    browser_proxy = None
-                self.browser[browserInstance].createNewBrowser(mobileType=mobileType,
-                                                               mobileApp=mobileApp,
-                                                               desired_app=desired_app,
-                                                               mobile_app_setting = mobile_app_setting,
-                                                               browserName=browserName,
-                                                               desiredCapabilities=browserAttributes,
-                                                               browserProxy=browser_proxy,
-                                                               browserInstance=browserInstance)
-                if self.globalSettings.get("TC." + GC.EXECUTION_SLOW):
-                    self.browser[browserInstance].slowExecutionToggle()
-            else:
-                logger.debug(f"Using existing instance of browser {browserInstance}")
-            return self.browser[browserInstance]
-
-    def _getBrowserInstance(self, browserInstance):
-        self.browser[browserInstance] = BrowserDriver(timing=self.timing,
-                                                      screenshotPath=self.globalSettings[GC.PATH_SCREENSHOTS])
-
-    def downloadBrowserProxy(self):
-        pass
-
-    def getBrowserServer(self):
-        from browsermobproxy import Server
-        server = Server(os.getcwd() + GC.BROWSER_PROXY_PATH)
-        logger.info("Starting browsermob proxy")
-        server.start()
-        return server
-
-    def setBrowserProxy(self, browserInstance):
-
-        time.sleep(1)
-
-        proxy = self.browserServer.create_proxy() if self.browserServer else None
-
-        if not proxy:
-            return
-
-        time.sleep(1)
-
-        self.browsersProxies[browserInstance] = proxy
+        return self.browserFactory.getBrowser(browserInstance=browserInstance,
+                                              browserName=browserName,
+                                              browserAttributes=browserAttributes,
+                                              mobileType=mobileType,
+                                              mobileApp=mobileApp,
+                                              desired_app=desired_app,
+                                              mobile_app_setting=mobile_app_setting)
 
     def getAPI(self):
         if not self.apiInstance:
@@ -292,7 +214,7 @@ class TestRun:
 
     def _initTestRun(self):
         self.loadJSONGlobals()
-        if not self.globalSettings.get(GC.PATH_SCREENSHOTS,None):
+        if not self.globalSettings.get(GC.PATH_SCREENSHOTS, None):
             self.globalSettings[GC.PATH_SCREENSHOTS] = str(Path(self.globalSettingsFileNameAndPath
                                                                 ).parent.joinpath("Screenshots").expanduser())
             self.globalSettings[GC.PATH_EXPORT] = str(Path(self.globalSettingsFileNameAndPath
@@ -307,10 +229,10 @@ class TestRun:
             self.globalSettings = utils.openJson(self.globalSettingsFileNameAndPath)
 
     def _loadJSONTestRunDefinitions(self):
-        if not self.testRunFileName and not self.testRunDict: # -- API support: testRunDict --
+        if not self.testRunFileName and not self.testRunDict:  # -- API support: testRunDict --
             return
 
-        if self.testRunFileName and ".JSON" in self.testRunFileName.upper(): # -- API support: self.testRunFileName --
+        if self.testRunFileName and ".JSON" in self.testRunFileName.upper():  # -- API support: self.testRunFileName --
             data = utils.replaceAllGlobalConstantsInDict(utils.openJson(self.testRunFileName))
             self.testRunUtils.setCompleteTestRunAttributes(testRunName=self.testRunName,
                                                            testRunAttributes=data)
