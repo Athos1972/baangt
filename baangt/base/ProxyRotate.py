@@ -1,5 +1,6 @@
 import json
 import requests
+from time import sleep
 from random import randint
 from threading import Thread
 from bs4 import BeautifulSoup as bs
@@ -27,18 +28,19 @@ class ProxyRotate(metaclass=Singleton):
         self.__temp_proxies = []
 
     def recheckProxies(self, forever=False):
+        self.__gather_proxy()
         if forever:
             t = Thread(target=self.__threaded_proxy)
             t.daemon = True
             t.start()
-        else:
-            t = Thread(target=self.__gather_proxy)
-            t.daemon = True
-            t.start()
+
 
     def __threaded_proxy(self):
         while True:
-            self.__gather_proxy()
+            if TestRun.globalSettings["TC.ReReadProxies"] == True:
+                self.__gather_proxy()
+            else:
+                sleep(5)
 
     def __gather_proxy(self):
         self.__temp_proxies = [p for p in self.proxies]
@@ -131,8 +133,5 @@ class ProxyRotate(metaclass=Singleton):
 
 if __name__ == '__main__':
     lProxyRotate = ProxyRotate()
-    if TestRun.globalSettings["TC.ReReadProxies"] == True:
-        lProxyRotate.recheckProxies(forever=True)
-    else:
-        lProxyRotate.recheckProxies()
+    lProxyRotate.recheckProxies()
     print(lProxyRotate.__getProxy())
