@@ -26,6 +26,7 @@ class ProxyRotate(metaclass=Singleton):
         self.proxy_file = "proxies.json"
         self.proxy_gather_link = "https://www.sslproxies.org/"
         self.proxies = self.__read_proxies()
+        self.firstRun = True
         self.__temp_proxies = []
 
     def recheckProxies(self, forever=False):
@@ -33,7 +34,9 @@ class ProxyRotate(metaclass=Singleton):
         if forever:
             t = Thread(target=self.__threaded_proxy)
             t.daemon = True
+            logger.debug("Starting daemon process for threaded Proxy rechecks")
             t.start()
+            logger.debug("Daemon process started")
 
     def __threaded_proxy(self):
         while True:
@@ -71,7 +74,7 @@ class ProxyRotate(metaclass=Singleton):
         headers = {
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36'
         }
-        for proxi in self.__temp_proxies:
+        for lineCount, proxi in enumerate(self.__temp_proxies):
             logger.debug(f"{(str(self.__temp_proxies.index(proxi) + 1))}/ {str(len(self.__temp_proxies))}: {proxi}")
             proxy = {
                 "http": f"http://{proxi['ip']}:{proxi['port']}",
@@ -94,10 +97,24 @@ class ProxyRotate(metaclass=Singleton):
             except Exception as ex:
                 logger.debug(f"Proxy not usable for Youtube: {proxi}, Exception: {ex}")
                 removable.append(proxi)
+
+            # Check, if we have at least 4 proxies in the first run of the function.
+            # If yes, exit, as the function will re-run soon.
+            goodProxies = lineCount - len(removable) - 1   # Because enum starts with 0, LEN starts with 1
+            if goodProxies >= 2 and self.firstRun:
+                # Remove all proxies above our current lineCount
+                for index, (lDictEntry) in enumerate(self.__temp_proxies):
+                    if index > lineCount:
+                        removable.append(lDictEntry)
+                break
+
+        self.firstRun = False
+
         for rm in removable:
             self.__temp_proxies.remove(rm)
         self.proxies = [p for p in self.__temp_proxies]
         logger.info(f"Identified {len(self.proxies)} working proxies")
+
 
     def __read_proxies(self):
         try:
