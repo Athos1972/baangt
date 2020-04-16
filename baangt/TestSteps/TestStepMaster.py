@@ -301,6 +301,9 @@ class TestStepMaster:
             value1 = TestStepMaster.anyting2Boolean(value1)
             value2 = TestStepMaster.anyting2Boolean(value2)
 
+        if value2 == 'None':
+            value2 = None
+
         if lComparison == "=":
             if value1 == value2:
                 self.ifIsTrue = True

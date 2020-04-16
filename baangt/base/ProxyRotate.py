@@ -1,7 +1,10 @@
 import json
 import requests
+from time import sleep
 from random import randint
+from threading import Thread
 from bs4 import BeautifulSoup as bs
+from baangt.base.TestRun import TestRun
 import logging
 import sys
 
@@ -18,12 +21,32 @@ class Singleton(type):
 
 
 class ProxyRotate(metaclass=Singleton):
-    def __init__(self):
+    def __init__(self, reReadProxies=False):
+        self.reReadProxies = reReadProxies
         self.proxy_file = "proxies.json"
         self.proxy_gather_link = "https://www.sslproxies.org/"
         self.proxies = self.__read_proxies()
+        self.firstRun = True
+        self.__temp_proxies = []
 
-    def recheckProxies(self):
+    def recheckProxies(self, forever=False):
+        self.__gather_proxy()
+        if forever:
+            t = Thread(target=self.__threaded_proxy)
+            t.daemon = True
+            logger.debug("Starting daemon process for threaded Proxy rechecks")
+            t.start()
+            logger.debug("Daemon process started")
+
+    def __threaded_proxy(self):
+        while True:
+            if self.reReadProxies == True:
+                self.__gather_proxy()
+            else:
+                sleep(5)
+
+    def __gather_proxy(self):
+        self.__temp_proxies = [p for p in self.proxies]
         logger.debug("Checking for new proxies...")
         try:
             response = requests.get(self.proxy_gather_link, timeout=15)
@@ -38,9 +61,9 @@ class ProxyRotate(metaclass=Singleton):
             ip = tr.find_all('td')[0].text
             port = tr.find_all('td')[1].text
             proxy = {"ip": ip, "port": port}
-            if proxy not in self.proxies:
+            if proxy not in self.__temp_proxies:
                 logger.debug(f"Added {proxy} to be checked ")
-                self.proxies.append(proxy)
+                self.__temp_proxies.append(proxy)
         self.__verify_proxies()
         self.__write_proxies()
 
@@ -51,11 +74,11 @@ class ProxyRotate(metaclass=Singleton):
         headers = {
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36'
         }
-        for proxi in self.proxies:
-            logger.debug(f"{(str(self.proxies.index(proxi) + 1))}/ {str(len(self.proxies))}: {proxi}")
+        for lineCount, proxi in enumerate(self.__temp_proxies):
+            logger.debug(f"{(str(self.__temp_proxies.index(proxi) + 1))}/ {str(len(self.__temp_proxies))}: {proxi}")
             proxy = {
-                "http": "http://" + proxi["ip"] + ":" + proxi["port"],
-                "https": "http://" + proxi["ip"] + ":" + proxi["port"],
+                "http": f"http://{proxi['ip']}:{proxi['port']}",
+                "https": f"http://{proxi['ip']}:{proxi['port']}",
             }
             try:
                 response1 = requests.get(link1, proxies=proxy, headers=headers, timeout=20)
@@ -74,9 +97,24 @@ class ProxyRotate(metaclass=Singleton):
             except Exception as ex:
                 logger.debug(f"Proxy not usable for Youtube: {proxi}, Exception: {ex}")
                 removable.append(proxi)
+
+            # Check, if we have at least 4 proxies in the first run of the function.
+            # If yes, exit, as the function will re-run soon.
+            goodProxies = lineCount - len(removable) - 1   # Because enum starts with 0, LEN starts with 1
+            if goodProxies >= 2 and self.firstRun:
+                # Remove all proxies above our current lineCount
+                for index, (lDictEntry) in enumerate(self.__temp_proxies):
+                    if index > lineCount:
+                        removable.append(lDictEntry)
+                break
+
+        self.firstRun = False
+
         for rm in removable:
-            self.proxies.remove(rm)
+            self.__temp_proxies.remove(rm)
+        self.proxies = [p for p in self.__temp_proxies]
         logger.info(f"Identified {len(self.proxies)} working proxies")
+
 
     def __read_proxies(self):
         try:
@@ -86,7 +124,7 @@ class ProxyRotate(metaclass=Singleton):
             json_file.close()
             logger.debug(f"Read {len(proxies['list'])} proxies from file")
         except Exception as e:
-            proxies={"list":[]}
+            proxies = {"list": []}
         return proxies["list"]
 
     def __write_proxies(self):
@@ -105,7 +143,12 @@ class ProxyRotate(metaclass=Singleton):
     def random_proxy(self):
         return self.__getProxy()
 
+    def remove_proxy(self, ip, port):
+        self.proxies.remove({"ip": ip, "port": str(port)})
+        logger.debug(f"Ip {ip} - Port {port} removed successfully.")
+
+
 if __name__ == '__main__':
-    lProxyRotate = ProxyRotate()
+    lProxyRotate = ProxyRotate(reReadProxies=False)
     lProxyRotate.recheckProxies()
-    print(lProxyRotate.__getProxy())
+    print(lProxyRotate.random_proxy())
