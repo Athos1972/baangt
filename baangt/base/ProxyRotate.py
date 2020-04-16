@@ -135,5 +135,4 @@ if __name__ == '__main__':
         lProxyRotate.recheckProxies(forever=True)
     else:
         lProxyRotate.recheckProxies()
-
     print(lProxyRotate.__getProxy())
