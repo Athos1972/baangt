@@ -8,7 +8,7 @@
     "TC.ExportAllFields": "True",
     "TC.RestartBrowser": "True",
     "TC.UseRotatingProxies": "True",
-    "TC.ReReadProxies": "",
-    "TC.Browser": "CHROME",
+    "TC.ReReadProxies": "True",
+    "TC.Browser": "",
     "TC.BrowserAttributes": ""
 }
