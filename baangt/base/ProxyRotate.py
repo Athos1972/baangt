@@ -42,6 +42,7 @@ class ProxyRotate(metaclass=Singleton):
             else:
                 sleep(5)
 
+
     def __gather_proxy(self):
         self.__temp_proxies = [p for p in self.proxies]
         logger.debug("Checking for new proxies...")
