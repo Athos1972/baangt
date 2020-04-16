@@ -145,7 +145,7 @@ class ProxyRotate(metaclass=Singleton):
 
     def remove_proxy(self, ip, port):
         self.proxies.remove({"ip": ip, "port": str(port)})
-        logger.debug(f"Ip removed successfully.")
+        logger.debug(f"Ip {ip} - Port {port} removed successfully.")
 
 
 if __name__ == '__main__':
