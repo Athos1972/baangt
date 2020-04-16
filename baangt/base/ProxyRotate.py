@@ -1,7 +1,9 @@
 import json
 import requests
 from random import randint
+from threading import Thread
 from bs4 import BeautifulSoup as bs
+from baangt.base.TestRun import TestRun
 import logging
 import sys
 
@@ -22,8 +24,24 @@ class ProxyRotate(metaclass=Singleton):
         self.proxy_file = "proxies.json"
         self.proxy_gather_link = "https://www.sslproxies.org/"
         self.proxies = self.__read_proxies()
+        self.__temp_proxies = []
 
-    def recheckProxies(self):
+    def recheckProxies(self, forever=False):
+        if forever:
+            t = Thread(target=self.__threaded_proxy)
+            t.daemon = True
+            t.start()
+        else:
+            t = Thread(target=self.__gather_proxy)
+            t.daemon = True
+            t.start()
+
+    def __threaded_proxy(self):
+        while True:
+            self.__gather_proxy()
+
+    def __gather_proxy(self):
+        self.__temp_proxies = [p for p in self.proxies]
         logger.debug("Checking for new proxies...")
         try:
             response = requests.get(self.proxy_gather_link, timeout=15)
@@ -38,9 +56,9 @@ class ProxyRotate(metaclass=Singleton):
             ip = tr.find_all('td')[0].text
             port = tr.find_all('td')[1].text
             proxy = {"ip": ip, "port": port}
-            if proxy not in self.proxies:
+            if proxy not in self.__temp_proxies:
                 logger.debug(f"Added {proxy} to be checked ")
-                self.proxies.append(proxy)
+                self.__temp_proxies.append(proxy)
         self.__verify_proxies()
         self.__write_proxies()
 
@@ -51,8 +69,8 @@ class ProxyRotate(metaclass=Singleton):
         headers = {
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36'
         }
-        for proxi in self.proxies:
-            logger.debug(f"{(str(self.proxies.index(proxi) + 1))}/ {str(len(self.proxies))}: {proxi}")
+        for proxi in self.__temp_proxies:
+            logger.debug(f"{(str(self.temp_proxies.index(proxi) + 1))}/ {str(len(self.temp_proxies))}: {proxi}")
             proxy = {
                 "http": "http://" + proxi["ip"] + ":" + proxi["port"],
                 "https": "http://" + proxi["ip"] + ":" + proxi["port"],
@@ -75,7 +93,8 @@ class ProxyRotate(metaclass=Singleton):
                 logger.debug(f"Proxy not usable for Youtube: {proxi}, Exception: {ex}")
                 removable.append(proxi)
         for rm in removable:
-            self.proxies.remove(rm)
+            self.__temp_proxies.remove(rm)
+        self.proxies = [p for p in self.__temp_proxies]
         logger.info(f"Identified {len(self.proxies)} working proxies")
 
     def __read_proxies(self):
@@ -86,7 +105,7 @@ class ProxyRotate(metaclass=Singleton):
             json_file.close()
             logger.debug(f"Read {len(proxies['list'])} proxies from file")
         except Exception as e:
-            proxies={"list":[]}
+            proxies = {"list": []}
         return proxies["list"]
 
     def __write_proxies(self):
@@ -105,7 +124,15 @@ class ProxyRotate(metaclass=Singleton):
     def random_proxy(self):
         return self.__getProxy()
 
+    def remove_proxy(self, ip, port):
+        self.proxies.remove({"ip": ip, "port": str(port)})
+        logger.debug(f"Ip removed successfully.")
+
+
 if __name__ == '__main__':
     lProxyRotate = ProxyRotate()
-    lProxyRotate.recheckProxies()
+    if TestRun.globalSettings["TC.ReReadProxies"] == True:
+        lProxyRotate.recheckProxies(forever=True)
+    else:
+        lProxyRotate.recheckProxies()
     print(lProxyRotate.__getProxy())
