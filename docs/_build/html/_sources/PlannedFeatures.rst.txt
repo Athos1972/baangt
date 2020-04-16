@@ -1,6 +1,6 @@
 Future Features
 ===============
-We implement all features for 3 operating Systems (Mac, Windows, Debian Linux and Ubuntu on Docker).
+We implement all features for 3 operating Systems (Mac, Windows, Ubuntu and Ubuntu on Docker).
 
 Short/Medium term features
 ---------------------------
@@ -8,9 +8,8 @@ Short/Medium term features
     * Phase 1 done 2020.02
     * Phase 2 (UI-elements) (2020.03) --> will move to 2020.04 RC5
     * Provide live statistics (2020.04)
-* Double Opt-In Automation (2020.03) --> will move to 2020.04 RC6
+* Double Opt-In Automation (2020.03) --> will move to 2020.05 RCx
 * Better support to store test data output to database and export files (2020.04)
-* Support for Appium integration (2020.04)
 * Katalon Importer/Converter as Webservice (2020.04)
 
 Features for later

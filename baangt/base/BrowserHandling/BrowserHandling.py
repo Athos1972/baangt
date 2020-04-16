@@ -65,7 +65,9 @@ class BrowserDriver:
         else:
             self.screenshotPath = os.getcwd()
 
-    def createNewBrowser(self, mobileType=None, mobileApp = None,   desired_app = None,mobile_app_setting = None, browserName=GC.BROWSER_FIREFOX, desiredCapabilities={}, **kwargs):
+    def createNewBrowser(self, mobileType=None, mobileApp = None, desired_app = None, mobile_app_setting = None,
+                         browserName=GC.BROWSER_FIREFOX,
+                         desiredCapabilities={}, randomProxy=None, **kwargs):
         """
         Will find the specified executables of the desired browser and start it with the given capabilities.
 
@@ -102,7 +104,7 @@ class BrowserDriver:
                         self.downloadDriver(browserName)
 
                     profile = webdriver.FirefoxProfile()
-                    profile = self.__setFirefoxProfile(browserProxy, profile)
+                    profile = self.__setFirefoxProfile(browserProxy, profile, randomProxy)
                     logger.debug(f"Firefox Profile as follows:{profile.userPrefs}")
 
                     self.driver = browserNames[browserName](
@@ -184,9 +186,35 @@ class BrowserDriver:
 
         self.takeTime("Browser Start")
 
-    def __setFirefoxProfile(self, browserProxy, profile):
+    def __setFirefoxProfile(self, browserProxy, profile, randomProxy=None):
         if browserProxy:
             profile.set_proxy(browserProxy.selenium_proxy())
+
+        if randomProxy:
+            """
+            from selenium import webdriver
+            return webdriver.Proxy({
+                "httpProxy": self.proxy,
+                "sslProxy": self.proxy,
+            })
+            """
+            # We shall use a random Proxy from the list:
+            PROXY = f"{randomProxy['ip']}:{randomProxy['port']}"
+
+            logger.info(f"Using Proxy-Server: {PROXY}")
+
+            ffProxy = webdriver.Proxy( {
+                        "httpProxy":PROXY,
+                        "ftpProxy":PROXY,
+                        "sslProxy":PROXY,
+                        "noProxy":None,
+                        "proxy_type":"MANUAL",
+                        "proxyType":"MANUAL",
+                        "class":"org.openqa.selenium.Proxy",
+                        "autodetect":False
+                        })
+
+            profile.set_proxy(ffProxy)
 
         profile.set_preference("browser.download.folderList", 2)
         profile.set_preference("browser.helperApps.alwaysAsk.force", False)
@@ -203,6 +231,9 @@ class BrowserDriver:
         profile.set_preference("browser.download.manager.closeWhenDone", True)
         profile.set_preference("pdfjs.enabledCache.state", False)
         profile.set_preference("pdfjs.disabled", True) # This is nowhere on the Internet! But that did the trick!
+
+        # Set volume to 0
+        profile.set_preference("media.volume_scale", "0.0")
         return profile
 
     def __setBrowserDownloadDirRandom(self):
@@ -330,9 +361,13 @@ class BrowserDriver:
         return lOptions
 
     def closeBrowser(self):
-        self.driver.quit()
+        if self.driver:
+            try:
+                self.driver.quit()
+            except Exceptions as ex:
+                pass  # If the driver is already dead, it's fine.
 
-    def _log(self, logType, logText, **kwargs):
+    def _log(self, logType, logText, noScreenShot=False, **kwargs):
         """
         Interal wrapper of Browser-Class for Logging. Takes a screenshot on Error and Warning.
 
@@ -341,6 +376,8 @@ class BrowserDriver:
         @param kwargs: Additional Arguments to be logged
         """
         argsString = ""
+        xshot = "Couldn't take Screenshot"
+
         for key, value in kwargs.items():
             if value:
                 argsString = argsString + f" {key}: {value}"
@@ -351,16 +388,19 @@ class BrowserDriver:
         if logType == logging.DEBUG:
             logger.debug(logText + argsString)
         elif logType == logging.ERROR:
-            logger.error(logText + argsString)
-            self.takeScreenshot()
+            if not noScreenShot:
+                xshot = self.takeScreenshot()
+            logger.error(logText + argsString + f" Screenshot: {xshot}")
+
         elif logType == logging.WARN:
             logger.warning(logText + argsString)
-            self.takeScreenshot()
         elif logType == logging.INFO:
             logger.info(logText + argsString)
         elif logType == logging.CRITICAL:
-            logger.critical(logText + argsString)
-            self.takeScreenshot()
+
+            if not noScreenShot:
+                xshot = self.takeScreenshot()
+            logger.critical(logText + argsString + f" Screenshot: {xshot}")
         else:
             print(f"Unknown call to Logger: {logType}")
             self._log(logging.CRITICAL, f"Unknown type in call to logger: {logType}")
@@ -834,6 +874,7 @@ class BrowserDriver:
                 time.sleep(0.2)
             except StaleElementReferenceException as e:
                 self._log(logging.DEBUG, "doSomething: Element stale - retry")
+                # If the element is stale after 2 times, try to re-locate the element
                 time.sleep(0.2)
             except NoSuchElementException as e:
                 self._log(logging.DEBUG, "doSomething: Element not there yet - retry")
@@ -861,9 +902,13 @@ class BrowserDriver:
         try:
             self.driver.get(url)
         except WebDriverException as e:
-            self._log(logging.ERROR, f"Webpage {url} not reached. Error was: {e}")
+            # Use noScreenshot-Parameter as otherwise we'll try on a dead browser to create a screenshot
+            self._log(logging.ERROR, f"Webpage {url} not reached. Error was: {e}", noScreenShot=True)
             raise Exceptions.baangtTestStepException
-        pass
+        except Exceptions as e:
+            # Use noScreenshot-Parameter as otherwise we'll try on a dead browser to create a screenshot
+            self._log(logging.ERROR, f"Webpage {url} throws error {e}", noScreenShot=True)
+            raise Exceptions.baangtTestStepException(url, e)
 
     def goBack(self):
         """
