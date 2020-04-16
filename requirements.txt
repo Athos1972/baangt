@@ -1,14 +1,13 @@
 openpyxl==2.3.5
 pytest
 pydispatch
-browsermob-proxy>=0.8.0
 faker>=4.0.2
 Appium-Python-Client==0.50
 alabaster==0.7.12
 Babel>=2.8.0
 beautifulsoup4==4.8.2
 bleach>=3.1.4
-browsermob-proxy==0.8.0
+browsermob-proxy>=0.8.0
 certifi==2019.11.28
 chardet==3.0.4
 docutils==0.15.2
