@@ -37,7 +37,7 @@ class ProxyRotate(metaclass=Singleton):
 
     def __threaded_proxy(self):
         while True:
-            if TestRun.globalSettings["TC.ReReadProxies"] == True:
+            if TestRun.TestRun.globalSettings["TC.ReReadProxies"] == True:
                 self.__gather_proxy()
             else:
                 sleep(5)
