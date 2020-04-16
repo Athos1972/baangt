@@ -1,0 +1,17 @@
+{
+    "exportFilesBasePath": "",
+    "TC.Lines": "",
+    "TC.dontCloseBrowser": "",
+    "TC.slowExecution": "",
+    "TC.NetworkInfo": "",
+    "TX.DEBUG": "True",
+    "RootPath": "/Users/bernhardbuhl/git/baangt/examples",
+    "ScreenshotPath": "/Users/bernhardbuhl/git/baangt/examples/Screenshots",
+    "ExportPath": "/Users/bernhardbuhl/git/baangt/examples/1testoutput",
+    "ImportPath": "/Users/bernhardbuhl/git/baangt/examples/0testdateninput",
+    "TC.ExportAllFields": "True",
+    "TC.RestartBrowser": "True",
+    "TC.UseRotatingProxies": "True",
+    "TC.ReReadProxies": "True",
+    "TC.BrowserAttributes": ""
+}
