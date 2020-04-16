@@ -73,7 +73,7 @@ def network_google():
 		return json.load(f)
 
 #
-# Tests
+# TestrunLog test
 #
 
 def test_testrunlog(session_db, tr_log):
@@ -84,7 +84,7 @@ def test_testrunlog(session_db, tr_log):
 	session_db.add(tr_log)
 	session_db.commit()
 	# assertions
-	assert len(tr_log.testcases) == 0
+	assert len(tr_log.testcase_sequences) == 0
 	assert len(tr_log.globalVars) == 0
 
 def test_globalvars(session_db, tr_log, global_vars):
@@ -103,58 +103,108 @@ def test_globalvars(session_db, tr_log, global_vars):
 		session_db.add(ga)
 	session_db.commit()
 	# assertions
-	assert len(tr_log.testcases) == 0
+	assert len(tr_log.testcase_sequences) == 0
 	assert len(tr_log.globalVars) == 7
 
+
+#
+# TestCaseSequenceLog tests
+#
+
+def test_single_testcasesequencelog(session_db):
+	#
+	# fails to create a TestCaseSequenceLog instance without TestrunLog
+	#
+	from baangt.base.DataBaseORM import TestCaseSequenceLog
+
+	tcs_log = TestCaseSequenceLog()
+	session_db.add(tcs_log)
+	with pytest.raises(Exception) as e_info:
+		session_db.commit()
+
+def test_testcasesequencelog(session_db, tr_log):
+	#
+	# create a TestCaseSequenceLog instance
+	#
+	from baangt.base.DataBaseORM import TestCaseSequenceLog
+
+	tcs_log = TestCaseSequenceLog(testrun=tr_log)
+	session_db.add(tr_log)
+	session_db.add(tcs_log)
+	session_db.commit()
+	# assertions
+	assert len(tr_log.testcase_sequences) == 1
+	assert len(tcs_log.testcases) == 0
+
+
+#
+# TestCaseLog tests
+#
+
+def test_single_testcaselog(session_db):
+	#
+	# fails to create a TestCaseLog instance without TestCaseSequenceLog
+	#
+	from baangt.base.DataBaseORM import TestCaseLog
+
+	tc_log = TestCaseLog()
+	session_db.add(tc_log)
+	with pytest.raises(Exception) as e_info:
+		session_db.commit()
 
 
 def test_testcaselog(session_db, tr_log):
 	#
 	# create a TestCaseLog instance
 	#
-	from baangt.base.DataBaseORM import TestCaseLog
+	from baangt.base.DataBaseORM import TestCaseSequenceLog, TestCaseLog
 
-	tc_log = TestCaseLog(testrun=tr_log)
+	tcs_log = TestCaseSequenceLog(testrun=tr_log)
+	tc_log = TestCaseLog(testcase_sequence=tcs_log)
 	session_db.add(tr_log)
+	session_db.add(tcs_log)
 	session_db.add(tc_log)
 	session_db.commit()
 	# assertions
-	assert len(tr_log.testcases) == 1
-	assert len(tc_log.extraFields) == 0
+	assert len(tr_log.testcase_sequences) == 1
+	assert len(tcs_log.testcases) == 1
+	assert len(tc_log.fields) == 0
 	assert len(tc_log.networkInfo) == 0
 
-def test_extrafield(session_db, tr_log):
+def test_testcase_field(session_db, tr_log):
 	#
-	# create a TestCaseExtraField instance
+	# create a TestCaseField instance
 	#
-	from baangt.base.DataBaseORM import TestCaseLog, TestCaseExtraField
+	from baangt.base.DataBaseORM import TestCaseSequenceLog, TestCaseLog, TestCaseField
 
-	tc_log = TestCaseLog(testrun=tr_log)
-	extra = TestCaseExtraField(name='Name', value='Value', testcase=tc_log)
+	tcs_log = TestCaseSequenceLog(testrun=tr_log)
+	tc_log = TestCaseLog(testcase_sequence=tcs_log)
+	field = TestCaseField(name='Name', value='Value', testcase=tc_log)
 	session_db.add(tr_log)
+	session_db.add(tcs_log)
 	session_db.add(tc_log)
-	session_db.add(extra)
+	session_db.add(field)
 	session_db.commit()
 	# assertions
-	assert len(tr_log.testcases) == 1
-	assert len(tc_log.extraFields) == 1
+	assert len(tc_log.fields) == 1
 	assert len(tc_log.networkInfo) == 0
 
 def test_networkinfo(session_db, tr_log):
 	#
 	# create a TestCaseNetworkInfo instance
 	#
-	from baangt.base.DataBaseORM import TestCaseLog, TestCaseNetworkInfo
+	from baangt.base.DataBaseORM import TestCaseSequenceLog, TestCaseLog, TestCaseNetworkInfo
 
-	tc_log = TestCaseLog(testrun=tr_log)
+	tcs_log = TestCaseSequenceLog(testrun=tr_log)
+	tc_log = TestCaseLog(testcase_sequence=tcs_log)
 	info = TestCaseNetworkInfo(testcase=tc_log)
 	session_db.add(tr_log)
+	session_db.add(tcs_log)
 	session_db.add(tc_log)
 	session_db.add(info)
 	session_db.commit()
 	# assertions
-	assert len(tr_log.testcases) == 1
-	assert len(tc_log.extraFields) == 0
+	assert len(tc_log.fields) == 0
 	assert len(tc_log.networkInfo) == 1
 
 
@@ -162,65 +212,20 @@ def test_sampletestcases(session_db, tr_log, results_google, network_google):
 	#
 	# create sample TestCaseLog instances
 	#
-	from baangt.base.DataBaseORM import TestCaseLog, TestCaseExtraField, TestCaseNetworkInfo
-	
-	# predefined fields of TestCaseLog object
-	predefinedFields = [
-		'Toasts',
-		'TCErrorLog',
-		'VIGOGF#',
-		'SAP Polizzennr',
-		'Prämie',
-		'PolNR Host',
-		'TestCaseStatus',
-		'Duration',
-		'Screenshots',
-		'timelog',
-		'exportFilesBasePath',
-		'TC.Lines',
-		'TC.dontCloseBrowser',
-		'TC.slowExecution',
-		'TC.NetworkInfo',
-		'TX.DEBUG',
-		'ScreenshotPath',
-		'ExportPath',
-		'ImportPath',
-		'RootPath',
-	]
+	from baangt.base.DataBaseORM import TestCaseSequenceLog, TestCaseLog, TestCaseField, TestCaseNetworkInfo
 
+	tcs_log = TestCaseSequenceLog(testrun=tr_log)
 	session_db.add(tr_log)
-	for result in results_google.values():
-		# create TestCaseLog with predefined attributes
-		tc_log = TestCaseLog(
-			testrun=tr_log,
-			toasts=result.get('Toasts'),
-			tcErrorLog=result.get('TCErrorLog'),
-			vigogf=result.get('VIGOGF#'),
-			sapPolizzennr=result.get('SAP Polizzennr'),
-			pramie=result.get('Prämie'),
-			polNrHost=result.get('PolNR Host'),
-			testCaseStatus=result.get('TestCaseStatus'),
-			duration=result.get('Duration'),
-			screenshots=result.get('Screenshots'),
-			timelog=result.get('timelog'),
-			exportFilesBasePath=result.get('exportFilesBasePath'),
-			tcLines=result.get('TC.Lines'),
-			tcDontCloseBrowser=result.get('TC.dontCloseBrowser'),
-			tcSlowExecution=result.get('TC.slowExecution'),
-			tcNetworkInfo=result.get('TC.NetworkInfo'),
-			txDebug=result.get('TX.DEBUG'),
-			screenshotPath=result.get('ScreenshotPath'),
-			exportPath=result.get('ExportPath'),
-			importPath=result.get('ImportPath'),
-			rootPath=result.get('RootPath'),
-		)
-		session_db.add(tc_log)
-		# add other attributes as TestCaseExtraField instances
-		for key, value in result.items():
-			if not key in predefinedFields:
-				extra = TestCaseExtraField(name=key, value=str(value), testcase=tc_log)
-				session_db.add(extra)
+	session_db.add(tcs_log)
 
+	for result in results_google.values():
+		# create TestCaseLog per a record
+		tc_log = TestCaseLog(testcase_sequence=tcs_log)
+		session_db.add(tc_log)
+		# add TestCaseLog attributes
+		for key, value in result.items():
+			field = TestCaseField(name=key, value=str(value), testcase=tc_log)
+			session_db.add(field)
 	session_db.commit()
 
 	# create network infos
@@ -238,18 +243,18 @@ def test_sampletestcases(session_db, tr_log, results_google, network_google):
 				response = entry['response']['content'].get('text'),
 				startDateTime = datetime.strptime(entry['startedDateTime'][:19], '%Y-%m-%dT%H:%M:%S'), 
 				duration = entry.get('time'),
-				testcase = tr_log.testcases[0],
+				testcase = tcs_log.testcases[0],
 			)
 			session_db.add(ni)
 
 	session_db.commit()
 
 	# assertions
-	assert len(tr_log.testcases) == 4
-	assert len(tr_log.testcases[0].extraFields) == 3
-	assert len(tr_log.testcases[1].extraFields) == 3
-	assert len(tr_log.testcases[2].extraFields) == 3
-	assert len(tr_log.testcases[3].extraFields) == 3
-	assert len(tr_log.testcases[0].networkInfo) == 171
+	assert len(tcs_log.testcases) == 4
+	assert len(tcs_log.testcases[0].fields) == 23
+	assert len(tcs_log.testcases[1].fields) == 23
+	assert len(tcs_log.testcases[2].fields) == 23
+	assert len(tcs_log.testcases[3].fields) == 23
+	assert len(tcs_log.testcases[0].networkInfo) == 171
 
 

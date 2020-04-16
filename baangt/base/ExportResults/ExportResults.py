@@ -11,7 +11,8 @@ from xlsxwriter.worksheet import (
     Worksheet, cell_number_tuple, cell_string_tuple)
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from baangt.base.DataBaseORM import DATABASE_URL, TestrunLog, TestCaseLog, TestCaseExtraField, GlobalAttribute, TestCaseNetworkInfo
+from baangt.base.DataBaseORM import DATABASE_URL, TestrunLog, TestCaseSequenceLog
+from baangt.base.DataBaseORM import TestCaseLog, TestCaseField, GlobalAttribute, TestCaseNetworkInfo
 from datetime import datetime
 import time
 from baangt import plugin_manager
@@ -72,7 +73,9 @@ class ExportResults:
 
     # -- API support --
     def getSummary(self):
-        # records status
+        #
+        # returns records status as dict
+        #
         summary = {'Testrecords': len(self.dataRecords)}
         summary['Successful'] = len([x for x in self.dataRecords.values()
                                                    if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_SUCCESS])
@@ -128,21 +131,11 @@ class ExportResults:
             if value[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_WAITING:
                 waiting += 1
 
-        # get globals
-        '''
-        globalString = '{'
-        for key, value in self.testRunInstance.globalSettings.items():
-            if len(globalString) > 1:
-                globalString += ', '
-            globalString += f'{key}: {value}'
-        globalString += '}'
-        '''
-
         # get documents
         datafiles = self.fileName
 
         # create testrun object
-        log = TestrunLog(
+        tr_log = TestrunLog(
             testrunName = self.testRunName,
             logfileName = logger.handlers[1].baseFilename,
             startTime = datetime.strptime(start, "%H:%M:%S"),
@@ -153,75 +146,31 @@ class ExportResults:
             dataFile = datafiles,
         )
         # add to DataBase
-        session.add(log)
+        session.add(tr_log)
 
         # set globals
         for key, value in self.testRunInstance.globalSettings.items():
             globalVar = GlobalAttribute(
                 name=key,
                 value=str(value),
-                testrun=log,
+                testrun=tr_log,
             )
             session.add(globalVar)
 
         session.commit()
 
-        # create testcases
-        # predifined fields
-        fields = [
-            'Toasts',
-            'TCErrorLog',
-            'VIGOGF#',
-            'SAP Polizzennr',
-            'Prämie',
-            'PolNR Host',
-            'TestCaseStatus',
-            'Duration',
-            'Screenshots',
-            'timelog',
-            'exportFilesBasePath',
-            'TC.Lines',
-            'TC.dontCloseBrowser',
-            'TC.slowExecution',
-            'TC.NetworkInfo',
-            'TX.DEBUG',
-            'ScreenshotPath',
-            'ExportPath',
-            'ImportPath',
-            'RootPath',
-        ]
+        # create testcase sequence instance
+        tcs_log = TestCaseSequenceLog(testrun=tr_log)
 
+        # create testcases
         for tc in self.dataRecords.values():
-            # create TestCaseLog with predefined attributes
-            tc_log = TestCaseLog(
-                testrun=log,
-                toasts=tc.get('Toasts'),
-                tcErrorLog=tc.get('TCErrorLog'),
-                vigogf=tc.get('VIGOGF#'),
-                sapPolizzennr=tc.get('SAP Polizzennr'),
-                pramie=tc.get('Prämie'),
-                polNrHost=tc.get('PolNR Host'),
-                testCaseStatus=tc.get('TestCaseStatus'),
-                duration=tc.get('Duration'),
-                screenshots=tc.get('Screenshots'),
-                timelog=tc.get('timelog'),
-                exportFilesBasePath=tc.get('exportFilesBasePath'),
-                tcLines=tc.get('TC.Lines'),
-                tcDontCloseBrowser=tc.get('TC.dontCloseBrowser'),
-                tcSlowExecution=tc.get('TC.slowExecution'),
-                tcNetworkInfo=tc.get('TC.NetworkInfo'),
-                txDebug=tc.get('TX.DEBUG'),
-                screenshotPath=tc.get('ScreenshotPath'),
-                exportPath=tc.get('ExportPath'),
-                importPath=tc.get('ImportPath'),
-                rootPath=tc.get('RootPath'),
-            )
+            # create TestCaseLog instances
+            tc_log = TestCaseLog(testcase_sequence=tcs_log)
             session.add(tc_log)
-            # add other attributes as TestCaseExtraField instances
+            # add TestCase fields
             for key, value in tc.items():
-                if not key in fields:
-                    extra = TestCaseExtraField(name=key, value=str(value), testcase=tc_log)
-                    session.add(extra)
+                field = TestCaseField(name=key, value=str(value), testcase=tc_log)
+                session.add(field)
 
         session.commit()
 
@@ -230,27 +179,28 @@ class ExportResults:
             for info in self.networkInfo:
                 for entry in info['log']['entries']:
                     # get TestCase number
-                    test_case_num = self.exportNetWork._get_test_case_num(entry['startedDateTime'], entry['pageref']) - 1
-                    nw_info = TestCaseNetworkInfo(
-                        testcase = log.testcases[test_case_num],
-                        browserName = entry.get('pageref'),
-                        status = entry['response'].get('status'),
-                        method = entry['request'].get('method'),
-                        url = entry['request'].get('url'),
-                        contentType = entry['response']['content'].get('mimeType'),
-                        contentSize = entry['response']['content'].get('size'),
-                        headers = str(entry['response']['headers']),
-                        params = str(entry['request']['queryString']),
-                        response = entry['response']['content'].get('text'),
-                        startDateTime = datetime.strptime(entry['startedDateTime'][:19], '%Y-%m-%dT%H:%M:%S'), 
-                        duration = entry.get('time'),
-                    )
-                    session.add(nw_info)
+                    test_case_num = self.exportNetWork._get_test_case_num(entry['startedDateTime'], entry['pageref'])
+                    # check if number is int
+                    if type(test_case_num) == type(1):
+                        test_case_num -= 1
+
+                        nw_info = TestCaseNetworkInfo(
+                            testcase = tcs_log.testcases[test_case_num],
+                            browserName = entry.get('pageref'),
+                            status = entry['response'].get('status'),
+                            method = entry['request'].get('method'),
+                            url = entry['request'].get('url'),
+                            contentType = entry['response']['content'].get('mimeType'),
+                            contentSize = entry['response']['content'].get('size'),
+                            headers = str(entry['response']['headers']),
+                            params = str(entry['request']['queryString']),
+                            response = entry['response']['content'].get('text'),
+                            startDateTime = datetime.strptime(entry['startedDateTime'][:19], '%Y-%m-%dT%H:%M:%S'), 
+                            duration = entry.get('time'),
+                        )
+                        session.add(nw_info)
 
         session.commit()
-
-
-             
 
 
 

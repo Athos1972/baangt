@@ -8,25 +8,16 @@ DATABASE_URL = 'testrun.db'
 engine = create_engine(f'sqlite:///{DATABASE_URL}')
 base = declarative_base()
 
-#
-# declare realtion classes
-#
-'''
-class TestrunToTestcase(base):
-	__tablename__ = 'testrun_testcase'
-	testrunLog_id = Column(Integer, ForeignKey('testrunLog.id'), primary_key=True)
-	testcase_id = Column(Integer, ForeignKey('testCaseLog.id'), primary_key=True)
-'''
-
 
 #
-# declare models
+# Testrun models
 #
+
 class TestrunLog(base):
 	#
 	# summary on Testrun results 
 	#
-	__tablename__ = "testrunLog"
+	__tablename__ = "testruns"
 	# columns
 	id = Column(Integer, primary_key=True)
 	testrunName = Column(String, nullable=False)
@@ -40,7 +31,8 @@ class TestrunLog(base):
 	statusPaused = Column(Integer, nullable=False)
 	# relationships
 	globalVars = relationship('GlobalAttribute')
-	testcases = relationship('TestCaseLog')
+	testcase_sequences = relationship('TestCaseSequenceLog')
+
 
 class GlobalAttribute(base):
 	#
@@ -51,53 +43,57 @@ class GlobalAttribute(base):
 	id = Column(Integer, primary_key=True)
 	name = Column(String, nullable=False)
 	value = Column(String, nullable=True)
-	testrun_id = Column(Integer, ForeignKey('testrunLog.id'), nullable=False)
+	testrun_id = Column(Integer, ForeignKey('testruns.id'), nullable=False)
 	# relationships
 	testrun = relationship('TestrunLog', foreign_keys=[testrun_id])
+
+
+#
+# Test Case Sequence models
+#
+
+class TestCaseSequenceLog(base):
+	#
+	# TestCase Sequence
+	#
+
+	__tablename__ = 'testCaseSequences'
+	# columns
+	id = Column(Integer, primary_key=True)
+	testrun_id = Column(Integer, ForeignKey('testruns.id'), nullable=False)
+	# relationships
+	testrun = relationship('TestrunLog', foreign_keys=[testrun_id])
+	testcases = relationship('TestCaseLog')
+
+
+#
+# Test Case models
+#
 
 class TestCaseLog(base):
 	#
 	# TestCase results
 	#
-	__tablename__ = 'testCaseLog'
+	__tablename__ = 'testCases'
 	# columns
 	id = Column(Integer, primary_key=True)
-	toasts = Column(String, nullable=True)
-	tcErrorLog =Column(String, nullable=True)
-	vigogf = Column(String, nullable=True)
-	sapPolizzennr =Column(String, nullable=True)
-	pramie = Column(String, nullable=True)
-	polNrHost = Column(String, nullable=True)
-	testCaseStatus = Column(String, nullable=True)
-	duration = Column(String, nullable=True)
-	screenshots = Column(String, nullable=True)
-	timelog = Column(String, nullable=True)
-	exportFilesBasePath = Column(String, nullable=True)
-	tcLines = Column(String, nullable=True)
-	tcDontCloseBrowser = Column(String, nullable=True) #Boolean
-	tcSlowExecution = Column(String, nullable=True) #Boolean
-	tcNetworkInfo = Column(String, nullable=True) #Boolean
-	txDebug = Column(String, nullable=True) #Boolean
-	screenshotPath = Column(String, nullable=True)
-	exportPath = Column(String, nullable=True)
-	importPath = Column(String, nullable=True)
-	rootPath = Column(String, nullable=True)
-	testrun_id = Column(Integer, ForeignKey('testrunLog.id'), nullable=False)
+	testcase_sequence_id = Column(Integer, ForeignKey('testCaseSequences.id'), nullable=False)
 	# relationships
-	testrun = relationship('TestrunLog', foreign_keys=[testrun_id])
-	extraFields = relationship('TestCaseExtraField')
+	testcase_sequence = relationship('TestCaseSequenceLog', foreign_keys=[testcase_sequence_id])
+	fields = relationship('TestCaseField')
 	networkInfo = relationship('TestCaseNetworkInfo')
 
-class TestCaseExtraField(base):
+
+class TestCaseField(base):
 	#
-	# extra field for a TestCase results 
+	# field for a TestCase results 
 	#
-	__tablename__ = 'extraFields'
+	__tablename__ = 'testCaseFields'
 	# columns
 	id = Column(Integer, primary_key=True)
 	name = Column(String, nullable=False)
 	value = Column(String, nullable=True)
-	testcase_id = Column(Integer, ForeignKey('testCaseLog.id'), nullable=False)
+	testcase_id = Column(Integer, ForeignKey('testCases.id'), nullable=False)
 	# relationships
 	testcase = relationship('TestCaseLog', foreign_keys=[testcase_id])
 
@@ -119,7 +115,7 @@ class TestCaseNetworkInfo(base):
 	response = Column(String, nullable=True)
 	startDateTime = Column(DateTime, nullable=True)
 	duration = Column(Integer, nullable=True)
-	testcase_id = Column(Integer, ForeignKey('testCaseLog.id'), nullable=True)
+	testcase_id = Column(Integer, ForeignKey('testCases.id'), nullable=True)
 	# relationships
 	testcase = relationship('TestCaseLog', foreign_keys=[testcase_id])
 

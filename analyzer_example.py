@@ -3,7 +3,8 @@ import json
 from datetime import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from baangt.base.DataBaseORM import DATABASE_URL, TestrunLog, TestCaseLog, TestCaseExtraField, GlobalAttribute, TestCaseNetworkInfo
+from baangt.base.DataBaseORM import DATABASE_URL, TestrunLog, GlobalAttribute, TestCaseSequenceLog
+from baangt.base.DataBaseORM import TestCaseLog, TestCaseField, TestCaseNetworkInfo
 
 # db interface object
 class dbTestrun:
@@ -26,7 +27,7 @@ class dbTestrun:
 		tr_log = self.session.query(TestrunLog).get(testrun_id)
 		print(f'\n{"*"*10} Summary for Testrun #{testrun_id} {"*"*10}')
 		print(f'\nName\t{tr_log.testrunName}\n')
-		print(f'Testrecords\t{len(tr_log.testcases)}')
+		print(f'Testrecords\t{len(tr_log.testcase_sequences[0].testcases)}')
 		print(f'Successful\t{tr_log.statusOk}')
 		print(f'Paused\t\t{tr_log.statusPaused}')
 		print(f'Error\t\t{tr_log.statusFailed}')
@@ -49,10 +50,10 @@ class dbTestrun:
 		#
 		tc_counter = 0
 		print(f'\n{"*"*10} Testcases of Testrun #{testrun_id} {"*"*10}')
-		for tc in self.session.query(TestCaseLog).filter(TestCaseLog.testrun_id == testrun_id):
+		for tc in self.session.query(TestCaseLog).filter(TestCaseLog.testcase_sequence.has(TestCaseSequenceLog.testrun_id == testrun_id)):
 			tc_counter += 1
-			print(f'\nTestcase #{tc_counter}')
-			for log in self.session.query(TestCaseExtraField).filter(TestCaseExtraField.testcase_id == tc.id):
+			print(f'\n>>> Testcase #{tc_counter}')
+			for log in self.session.query(TestCaseField).filter(TestCaseField.testcase_id == tc.id):
 				print(f'{log.name:25}{log.value}')
 
 # execution code
