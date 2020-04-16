@@ -19,6 +19,7 @@ from baangt.base.TestRunUtils import TestRunUtils
 import time
 
 logger = logging.getLogger("pyC")
+
 globalSettings = {}
 globalSettings["TC.ReReadProxies"] = True
 
