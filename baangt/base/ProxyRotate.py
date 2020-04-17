@@ -4,7 +4,6 @@ from time import sleep
 from random import randint
 from threading import Thread
 from bs4 import BeautifulSoup as bs
-from baangt.base.TestRun import TestRun
 import logging
 import sys
 
