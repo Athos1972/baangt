@@ -24,6 +24,7 @@ logger = logging.getLogger("pyC")
 
 class ExportResults:
     def __init__(self, **kwargs):
+        self.kwargs = kwargs
         self.testList = []
         self.testRunInstance = kwargs.get(GC.KWARGS_TESTRUNINSTANCE)
         self.networkInfo = kwargs.get('networkInfo')
@@ -34,6 +35,8 @@ class ExportResults:
 
         try:
             self.exportFormat = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.EXPORT_FORMAT)[GC.EXPORT_FORMAT]
+            if not self.exportFormat:
+                self.exportFormat = GC.EXP_XLSX
         except KeyError:
             self.exportFormat = GC.EXP_XLSX
 
@@ -56,6 +59,7 @@ class ExportResults:
             self.__setHeaderDetailSheetExcel()
             self.makeSummaryExcel()
             self.exportResultExcel()
+            self.exportAdditionalData()
             self.exportTiming = ExportTiming(self.dataRecords,
                                             self.timingSheet)
             if self.networkInfo:
@@ -69,6 +73,18 @@ class ExportResults:
         elif self.exportFormat == GC.EXP_CSV:
             self.export2CSV()
         self.exportToDataBase()
+
+    def exportAdditionalData(self):
+        # Runs only, when KWARGS-Parameter is set.
+        if self.kwargs.get(GC.EXPORT_ADDITIONAL_DATA):
+            addExportData = self.kwargs[GC.EXPORT_ADDITIONAL_DATA]
+            # Loop over the items. KEY = Tabname, Value = Data to be exported.
+            # For data KEY = Fieldname, Value = Cell-Value
+
+            for key, value in addExportData.items():
+                lExport = ExportDataIntoTab(tabname=key, valueDict=value, outputExcelSheet=self.workbook)
+                lExport.export()
+
 
     # -- API support --
     def getSummary(self):
@@ -326,6 +342,28 @@ class ExportResults:
         # Next line doesn't work on MAC. Returns "not authorized"
         # subprocess.Popen([self.filename], shell=True)
 
+
+class ExportDataIntoTab:
+    def __init__(self, tabname, valueDict, outputExcelSheet:xlsxwriter.Workbook):
+        self.tab = outputExcelSheet.add_worksheet(tabname)
+        self.values = valueDict
+
+    def export(self):
+        self.makeHeader()
+        self.writeLines()
+
+    def makeHeader(self):
+        for cellNumber, entries in self.values.items():
+            for column, (key, value) in enumerate(entries.items()):
+                self.tab.write(0, column, key)
+            break  # Write header only for first line.
+
+    def writeLines(self):
+        currentLine = 1
+        for line, values in self.values.items():
+            for column, (key, value) in enumerate(values.items()):
+                self.tab.write(currentLine, column, value)
+            currentLine += 1
 
 class ExcelSheetHelperFunctions:
     def __init__(self):
