@@ -9,6 +9,6 @@
     "TC.RestartBrowser": "True",
     "TC.UseRotatingProxies": "True",
     "TC.ReReadProxies": "True",
-    "TC.Browser": "",
-    "TC.BrowserAttributes": ""
+    "TC.BrowserAttributes": "",
+    "TC.Browser": ""
 }
