@@ -112,6 +112,7 @@ class ProxyRotate(metaclass=Singleton):
         for rm in removable:
             self.__temp_proxies.remove(rm)
         self.proxies = [p for p in self.__temp_proxies]
+        logger.info(f"Total proxies in list currently = {str(len(self.proxies))}")
         logger.info(f"Identified {len(self.proxies)} working proxies")
 
 
