@@ -82,7 +82,7 @@ class ExportResults:
             # For data KEY = Fieldname, Value = Cell-Value
 
             for key, value in addExportData.items():
-                lExport = ExportDataIntoTab(tabname=key, valueDict=value, outputExcelSheet=self.workbook)
+                lExport = ExportAdditionalDataIntoTab(tabname=key, valueDict=value, outputExcelSheet=self.workbook)
                 lExport.export()
 
 
@@ -343,7 +343,7 @@ class ExportResults:
         # subprocess.Popen([self.filename], shell=True)
 
 
-class ExportDataIntoTab:
+class ExportAdditionalDataIntoTab:
     def __init__(self, tabname, valueDict, outputExcelSheet:xlsxwriter.Workbook):
         self.tab = outputExcelSheet.add_worksheet(tabname)
         self.values = valueDict
