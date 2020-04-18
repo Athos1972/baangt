@@ -1,0 +1,14 @@
+{
+    "exportFilesBasePath": "",
+    "TC.Lines": "",
+    "TC.dontCloseBrowser": "",
+    "TC.slowExecution": "",
+    "TC.NetworkInfo": "",
+    "TX.DEBUG": "True",
+    "TC.ExportAllFields": "True",
+    "TC.RestartBrowser": "True",
+    "TC.UseRotatingProxies": "True",
+    "TC.ReReadProxies": "True",
+    "TC.Browser": "",
+    "TC.BrowserAttributes": ""
+}

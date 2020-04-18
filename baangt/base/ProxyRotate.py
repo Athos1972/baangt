@@ -20,7 +20,7 @@ class Singleton(type):
 
 
 class ProxyRotate(metaclass=Singleton):
-    def __init__(self, reReadProxies=False):
+    def __init__(self, reReadProxies=True):
         self.reReadProxies = reReadProxies
         self.proxy_file = "proxies.json"
         self.proxy_gather_link = "https://www.sslproxies.org/"

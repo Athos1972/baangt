@@ -204,6 +204,8 @@ More details on Activities
 
             $(POSTCODE) (no comparison, no Value 2) --> checks for
 
+       Additionally you can check for empty/non-existing values by comparing to ``None``.
+
        Another use of the If-Statement is with ``LocatorType`` and ``Locator`` and comparison. This can be used when you
        want conditional execution of a larger block of statements depending on an element present or not present.
 

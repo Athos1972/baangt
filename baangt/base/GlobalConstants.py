@@ -67,6 +67,7 @@ EXECUTION_SLOW = "slowExecution"
 EXECUTION_NETWORK_INFO = 'NetworkInfo'
 
 EXPORT_FORMAT = "ExportFormat"
+EXPORT_ADDITIONAL_DATA = "AdditionalExportTabs"
 EXP_FIELDLIST = "Fieldlist"
 EXP_XLSX = "XLSX"
 EXP_CSV = "CSV"
