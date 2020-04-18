@@ -1,7 +1,7 @@
 import pandas as pd
 import json
 
-path_to_excel = '../DropsTestRunDefinition.xlsx'
+path_to_excel = '../aamiSpicerTestRunDefinition.xlsx'
 path_to_json = 'testrun.json'
 
 xl = pd.ExcelFile(path_to_excel)
