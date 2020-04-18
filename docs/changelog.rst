@@ -13,11 +13,14 @@ New features
 * SimpleFormat: New command ``pdfcompare`` compares a downloaded PDF-File with a reference PDF-File and reports differences. Works also well with parallel sessions.
 * All: Variable replacement using Faker module. For instance ``$(FAKER.email)`` will generate a random E-Mail address
 * Appium integration for Android and iOS App tests using Appium Webdriver (see in /examples/App* and globalsApp.json)
-
+* Subclassing: New commands to identify stale objects on page (HTML-Reload and SPA-Support)
+* Additional way to export data to Excel-Result (can be used for results of scraping) GC.EXPORT_ADDITIONAL_DATA in
+  TestRun.additionalExportTabs create one dict with <tabname>:<ExportDictContent>. Headers = Fieldnames.
 
 Changes
 +++++++
 * Improved browserDriver Download for executables (didn't work in some cases)
+* Improved database logging of testrun results
 
 2020.03
 ^^^^^^^
