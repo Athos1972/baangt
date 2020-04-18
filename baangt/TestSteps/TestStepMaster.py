@@ -8,6 +8,7 @@ import logging
 from baangt.TestSteps.Exceptions import baangtTestStepException
 from baangt.TestSteps.AddressCreation import AddressCreate
 from baangt.base.Faker import Faker as baangtFaker
+from baangt.base.Utils import utils
 
 logger = logging.getLogger("pyC")
 
@@ -256,25 +257,7 @@ class TestStepMaster:
 
     @staticmethod
     def __setLocator(lLocatorType, lLocator):
-        """
-
-        @param lLocatorType: XPATH, CSS, ID, etc.
-        @param lLocator: Value of the locator
-        @return:
-        """
-        xpath = None
-        css = None
-        lId = None
-
-        if lLocatorType:
-            if lLocatorType == 'XPATH':
-                xpath = lLocator
-            elif lLocatorType == 'CSS':
-                css = lLocator
-            elif lLocatorType == 'ID':
-                lId = lLocator
-
-        return xpath, css, lId
+        return utils.setLocatorFromLocatorType(lLocatorType, lLocator)
 
     @staticmethod
     def __setTimeout(lTimeout):

@@ -118,6 +118,29 @@ class utils:
         return returnString
 
     @staticmethod
+    def setLocatorFromLocatorType(lLocatorType, lLocator):
+        """
+
+        @param lLocatorType: XPATH, CSS, ID, etc.
+        @param lLocator: Value of the locator
+        @return:
+        """
+
+        xpath = None
+        css = None
+        lId = None
+
+        if lLocatorType:
+            if lLocatorType == 'XPATH':
+                xpath = lLocator
+            elif lLocatorType == 'CSS':
+                css = lLocator
+            elif lLocatorType == 'ID':
+                lId = lLocator
+
+        return xpath, css, lId
+
+    @staticmethod
     def findFileAndPathFromPath(fileNameAndPath, basePath=None):
         """
         Tries different approaches to locate a file

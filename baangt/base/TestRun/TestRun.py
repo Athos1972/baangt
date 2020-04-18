@@ -49,6 +49,10 @@ class TestRun:
         self.testRunDict = testRunDict
         # -- END of API support
 
+        # New way to export additional Tabs to Excel
+        # If you want to export additional data, place a Dict with Tabname + Datafields in additionalExportTabs.
+        self.additionalExportTabs = {}
+
         self.testRunName, self.testRunFileName = \
             self._sanitizeTestRunNameAndFileName(testRunName)
         self.timing = Timing()
@@ -98,6 +102,9 @@ class TestRun:
 
         if self.testCasesEndDateTimes_2D and self.testCasesEndDateTimes_2D[0]:
             self.kwargs['testCasesEndDateTimes_2D'] = self.testCasesEndDateTimes_2D
+
+        if len(self.additionalExportTabs) > 0:
+            self.kwargs[GC.EXPORT_ADDITIONAL_DATA] = self.additionalExportTabs
 
         self.results = ExportResults(**self.kwargs)  # -- API support: self.results --
         successful, error = self.getSuccessAndError()
