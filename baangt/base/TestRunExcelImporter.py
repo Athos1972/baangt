@@ -81,8 +81,7 @@ class TestRunExcelImporter:
                 "TestDataFileName": self.fileName,
                 "Sheetname": "data",
                 "ParallelRuns": 1,
-                "FromLine": 0,
-                "ToLine": 999999
+                "Lines": "0-999999"
                 },
             }
         for key, sequence in lSequenceDict.items():

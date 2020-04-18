@@ -366,21 +366,6 @@ follow different nomenclature, so we made it very easy to subclass the correspon
 </table>
 <div class="section" id="more-details-on-activities">
 <h3>More details on Activities<a class="headerlink" href="#more-details-on-activities" title="Permalink to this headline">¶</a></h3>
-<blockquote>
-<div><ul class="simple">
-<li><p>GoToURL</p></li>
-<li><p>click</p></li>
-<li><p>setText</p></li>
-<li><p>SetTextIF</p></li>
-<li><p>clickIF</p></li>
-<li><p>goBack</p></li>
-<li><p>If</p></li>
-<li><p>EndIf</p></li>
-<li><p>Pause</p></li>
-<li><p>Assert</p></li>
-<li><p>address_create</p></li>
-</ul>
-</div></blockquote>
 <table class="colwidths-given docutils align-default" id="id2">
 <caption><span class="caption-text">Details of activities</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
 <colgroup>
@@ -429,7 +414,9 @@ true, for instance:</p>
 <blockquote>
 <div><p>$(POSTCODE) = 7040</p>
 <p>$(YEAR2DATE) &gt; $(YEARTOMONTH)</p>
+<p>$(POSTCODE) (no comparison, no Value 2) –&gt; checks for</p>
 </div></blockquote>
+<p>Additionally you can check for empty/non-existing values by comparing to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
 <p>Another use of the If-Statement is with <code class="docutils literal notranslate"><span class="pre">LocatorType</span></code> and <code class="docutils literal notranslate"><span class="pre">Locator</span></code> and comparison. This can be used when you
 want conditional execution of a larger block of statements depending on an element present or not present.</p>
 </td>
@@ -457,6 +444,17 @@ link will be reported accordingly. Reporting format is:</p>
 <p>&lt;status&gt;:&lt;Link&gt;</p>
 <p>You’ll find the output in the Export sheet in the column “CheckedLinks”, which will be created automatically.</p>
 </td>
+</tr>
+<tr class="row-even"><td><p>saveto (for Web test cases only)</p></td>
+<td><dl class="simple">
+<dt>Saves the value of the element specified by <code class="docutils literal notranslate"><span class="pre">locatorType</span></code> and <code class="docutils literal notranslate"><span class="pre">locator</span></code> into the field given in column <code class="docutils literal notranslate"><span class="pre">value</span></code>.</dt><dd><p>!!For this case, don’t use variable syntax (<code class="docutils literal notranslate"><span class="pre">$(ColumnName)</span></code>) but put the column name only in field Value!!</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="row-odd"><td><p>clear</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Value</span></code> must have the variable or column name, that should be cleared (without <code class="docutils literal notranslate"><span class="pre">$(columnName)</span></code>,
+just <code class="docutils literal notranslate"><span class="pre">columnName</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>address_create</p></td>
 <td><p>provide an easy and easily extendable way to generate address data for a test case

@@ -51,7 +51,7 @@ class HandleDatabase:
         lRange = []
         if not rangeFromConfigFile:
             # No selection - means all records
-            return [[0,9999]]
+            return [[0,99999]]
         else:
             # Format: 4;6-99;17-200;203 or
             # Format: 4,6-100,800-1000

@@ -8,6 +8,7 @@ import logging
 from baangt.TestSteps.Exceptions import baangtTestStepException
 from baangt.TestSteps.AddressCreation import AddressCreate
 from baangt.base.Faker import Faker as baangtFaker
+from baangt.base.Utils import utils
 
 logger = logging.getLogger("pyC")
 
@@ -27,17 +28,17 @@ class TestStepMaster:
         # check, if this TestStep has additional Parameters and if so, execute
         lSequence = self.testRunUtil.getSequenceByNumber(testRunName=self.testRunInstance.testRunName,
                                                          sequence=kwargs.get(GC.STRUCTURE_TESTCASESEQUENCE))
-        lTestCase = self.testRunUtil.getTestCaseByNumber(lSequence, kwargs.get(GC.STRUCTURE_TESTCASE))
-        lTestStep = self.testRunUtil.getTestStepByNumber(lTestCase, kwargs.get(GC.STRUCTURE_TESTSTEP))
+        self.testCase = self.testRunUtil.getTestCaseByNumber(lSequence, kwargs.get(GC.STRUCTURE_TESTCASE))
+        self.testStep = self.testRunUtil.getTestStepByNumber(self.testCase, kwargs.get(GC.STRUCTURE_TESTSTEP))
         self.globalRelease = self.testRunInstance.globalSettings.get("Release", "")
         self.ifActive = False
         self.ifIsTrue = True
         self.baangtFaker = None
 
-        if not isinstance(lTestStep, str):
+        if not isinstance(self.testStep, str):
             # This TestStepMaster-Instance should actually do something - activitites are described
             # in the TestExecutionSteps
-            self.executeDirect(lTestStep[1][GC.STRUCTURE_TESTSTEPEXECUTION])
+            self.executeDirect(self.testStep[1][GC.STRUCTURE_TESTSTEPEXECUTION])
 
         self.teardown()
 
@@ -45,7 +46,7 @@ class TestStepMaster:
         """
         This will execute single Operations directly
         """
-        for key, command in executionCommands.items():
+        for index, (key, command) in enumerate(executionCommands.items()):
             # when we have an IF-condition and it's condition was not TRUE, then skip whatever comes here until we
             # reach Endif
             if not self.ifIsTrue and command["Activity"] != "ENDIF":
@@ -70,7 +71,11 @@ class TestStepMaster:
             # check release line
             lRelease = command["Release"]
 
+            # Timeout defaults to 20 seconds, if not set otherwise.
             lTimeout = TestStepMaster.__setTimeout(command["Timeout"])
+
+            logger.debug(f"Executing TestStep {index} with parameters: act={lActivity}, lType={lLocatorType}, loc={lLocator}, "
+                         f"Val1={lValue}, comp={lComparison}, Val2={lValue2}, Optional={lOptional}, timeout={lTimeout}")
 
             # Replace variables from data file
             if len(lValue) > 0:
@@ -85,12 +90,14 @@ class TestStepMaster:
                 self.browserSession.goToUrl(lValue)
             elif lActivity == "SETTEXT":
                 self.browserSession.findByAndSetText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout)
+            elif lActivity == "FORCETEXT":
+                self.browserSession.findByAndForceText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout)
             elif lActivity == 'HANDLEIFRAME':
                 self.browserSession.handleIframe(lLocator)
             elif lActivity == "CLICK":
                 self.browserSession.findByAndClick(xpath=xpath, css=css, id=id, timeout=lTimeout)
             elif lActivity == "PAUSE":
-                self.browserSession.sleep(sleepTimeinSeconds=lValue)
+                self.browserSession.sleep(sleepTimeinSeconds=float(lValue))
             elif lActivity == "IF":
                 if self.ifActive:
                     raise BaseException("No nested IFs at this point, sorry...")
@@ -119,7 +126,14 @@ class TestStepMaster:
             elif lActivity == 'HEADER':
                 self.apiSession.setHeaders(setHeaderData=lValue)
             elif lActivity == 'SAVE':
-                self.doSaveData(lValue, lValue2)
+                self.doSaveData(lValue, lValue2, lLocatorType, lLocator)
+            elif lActivity == 'CLEAR':
+                # Clear a variable:
+                if self.testcaseDataDict.get(lValue):
+                    del self.testcaseDataDict[lValue]
+            elif lActivity == 'SAVETO':
+                # In this case, we need to parse the real field, not the representation of the replaced field value
+                self.doSaveData(command['Value'], lValue2, lLocatorType, lLocator)
             elif lActivity == 'SUBMIT':
                 self.browserSession.submit()
             elif lActivity == "ADDRESS_CREATE":
@@ -131,9 +145,8 @@ class TestStepMaster:
             elif lActivity == 'ASSERT':
                 value_found = self.browserSession.findByAndWaitForValue(xpath=xpath, css=css, id=id, optional=lOptional,
                                                         timeout=lTimeout)
-                value_expected = lValue
-                if value_expected != value_found:
-                    raise baangtTestStepException(f"Expected Value: {value_expected}, Value found :{value_found} ")
+                if not self.__doComparisons(lComparison=lComparison, value1=value_found, value2=lValue):
+                    raise baangtTestStepException(f"Expected Value: {lValue}, Value found :{value_found} ")
             elif lActivity == 'IBAN':
                 # Create Random IBAN. Value1 = Input-Parameter for IBAN-Function. Value2=Fieldname
                 self.__getIBAN(lValue, lValue2)
@@ -223,38 +236,32 @@ class TestStepMaster:
             logger.debug(f"Global version {version_global}, line version {version_line} ")
             return False
 
-    def doSaveData(self, toField, valueForField):
-        self.testcaseDataDict[toField] = valueForField
+    def doSaveData(self, toField, valueForField, lLocatorType, lLocator):
+        """
+        Save fields. Either from an existing DICT (usually in API-Mode) or from a Webelement (in Browser-Mode)
+
+        :param toField:
+        :param valueForField:
+        :param lLocatorType:
+        :param lLocator:
+        :return: no return parameter. The implicit return is a value in a field.
+        """
+        if self.testCase[1][GC.KWARGS_TESTCASETYPE] == GC.KWARGS_BROWSER:
+            xpath, css, id = TestStepMaster.__setLocator(lLocatorType, lLocator)
+            self.testcaseDataDict[toField] = self.browserSession.findByAndWaitForValue(xpath=xpath, css=css, id=id)
+            logger.debug(f"Saved {self.testcaseDataDict[toField]} to {toField}")
+        elif self.testCase[1][GC.KWARGS_TESTCASETYPE] == GC.KWARGS_API_SESSION:
+            self.testcaseDataDict[toField] = valueForField
+        else:
+            sys.exit("Testcase Type not supported")
 
     @staticmethod
     def __setLocator(lLocatorType, lLocator):
-        """
-
-        @param lLocatorType: XPATH, CSS, ID, etc.
-        @param lLocator: Value of the locator
-        @return:
-        """
-        xpath = None
-        css = None
-        lId = None
-
-        if lLocatorType:
-            if lLocatorType == 'XPATH':
-                xpath = lLocator
-            elif lLocatorType == 'CSS':
-                css = lLocator
-            elif lLocatorType == 'ID':
-                lId = lLocator
-
-        return xpath, css, lId
+        return utils.setLocatorFromLocatorType(lLocatorType, lLocator)
 
     @staticmethod
     def __setTimeout(lTimeout):
-        if lTimeout:
-            lTimeout = float(lTimeout)
-        else:
-            lTimeout = 20
-        return lTimeout
+        return 20 if not lTimeout else float(lTimeout)
 
     @staticmethod
     def anyting2Boolean(valueIn):
@@ -277,6 +284,9 @@ class TestStepMaster:
             value1 = TestStepMaster.anyting2Boolean(value1)
             value2 = TestStepMaster.anyting2Boolean(value2)
 
+        if value2 == 'None':
+            value2 = None
+
         if lComparison == "=":
             if value1 == value2:
                 self.ifIsTrue = True
@@ -292,8 +302,12 @@ class TestStepMaster:
                 self.ifIsTrue = True
             else:
                 self.ifIsTrue = False
+        elif not lComparison:   # Check only, if Value1 has a value.
+            self.ifIsTrue = True if value1 else False
         else:
             raise BaseException(f"Comparison Operator not supported/unknown {lComparison}")
+
+        return self.ifIsTrue
 
     def execute(self):
         """Method is overwritten in all children/subclasses"""
@@ -357,7 +371,7 @@ class TestStepMaster:
                     raise BaseException(f"Missing code to replace value for: {center}")
 
             if not center:
-                raise BaseException(f"Variable not found: {center}")
+                raise BaseException(f"Variable not found: {center}, input parameter was: {expression}")
 
             expression = "".join([left_part, center, right_part])
         return expression
