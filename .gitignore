@@ -12,4 +12,5 @@ __pycache__
 *.pyo
 venv
 baangt_*.xlsx
+/tests/logs
 
