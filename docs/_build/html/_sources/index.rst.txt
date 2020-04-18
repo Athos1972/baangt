@@ -24,9 +24,10 @@ and well documented master functionality.
       First Steps <simpleExample.rst>
       Structure <Structure.rst>
       Parameters <ParametersConfigFile.rst>
-      Data file <DataFile.rst>
       First API Test <SimpleAPI.rst>
       Types of Tests <TestTypes.rst>
+      Data file <DataFile.rst>
+      Results in Database <SaveResults2Database.rst>
       For Developers <Developer.rst>
       History <HistoryAndReasons.rst>
       Contributions <contributors.rst>
