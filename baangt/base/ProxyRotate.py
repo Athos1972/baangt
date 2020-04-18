@@ -4,7 +4,6 @@ from time import sleep
 from random import randint
 from threading import Thread
 from bs4 import BeautifulSoup as bs
-from baangt.base.TestRun import TestRun
 import logging
 import sys
 
@@ -21,7 +20,7 @@ class Singleton(type):
 
 
 class ProxyRotate(metaclass=Singleton):
-    def __init__(self, reReadProxies=False):
+    def __init__(self, reReadProxies=True):
         self.reReadProxies = reReadProxies
         self.proxy_file = "proxies.json"
         self.proxy_gather_link = "https://www.sslproxies.org/"
@@ -113,6 +112,7 @@ class ProxyRotate(metaclass=Singleton):
         for rm in removable:
             self.__temp_proxies.remove(rm)
         self.proxies = [p for p in self.__temp_proxies]
+        logger.info(f"Total proxies in list currently = {str(len(self.proxies))}")
         logger.info(f"Identified {len(self.proxies)} working proxies")
 
 
@@ -135,6 +135,7 @@ class ProxyRotate(metaclass=Singleton):
 
     def __getProxy(self):
         if len(self.proxies) > 0:
+            logger.critical(f"Proxies count: {len(self.proxies)}")
             return self.proxies[randint(0, len(self.proxies) - 1)]
         else:
             logger.critical("Sorry there is no working proxy!")

@@ -191,12 +191,16 @@ A huge step closer to release 1. Some minor functionalities still need fixing. M
 <li><p>SimpleFormat: New command <code class="docutils literal notranslate"><span class="pre">pdfcompare</span></code> compares a downloaded PDF-File with a reference PDF-File and reports differences. Works also well with parallel sessions.</p></li>
 <li><p>All: Variable replacement using Faker module. For instance <code class="docutils literal notranslate"><span class="pre">$(FAKER.email)</span></code> will generate a random E-Mail address</p></li>
 <li><p>Appium integration for Android and iOS App tests using Appium Webdriver (see in /examples/App* and globalsApp.json)</p></li>
+<li><p>Subclassing: New commands to identify stale objects on page (HTML-Reload and SPA-Support)</p></li>
+<li><p>Additional way to export data to Excel-Result (can be used for results of scraping) GC.EXPORT_ADDITIONAL_DATA in
+TestRun.additionalExportTabs create one dict with &lt;tabname&gt;:&lt;ExportDictContent&gt;. Headers = Fieldnames.</p></li>
 </ul>
 </div>
 <div class="section" id="changes">
 <h3>Changes<a class="headerlink" href="#changes" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Improved browserDriver Download for executables (didn’t work in some cases)</p></li>
+<li><p>Improved database logging of testrun results</p></li>
 </ul>
 </div>
 </div>
