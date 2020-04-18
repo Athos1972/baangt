@@ -10,8 +10,8 @@ Table: ``testruns``
 ^^^^^^^^^^^^^^^^^^^
 Table holds results of the executed Testruns: Testrun Logs
 
-.. list-table::Testrun Logs
-   :width: 25 15 60
+.. list-table:: Testrun Logs
+   :widths: 25 15 60
    :header-rows: 1
 
    * - Column
@@ -50,8 +50,8 @@ Table: ``testCaseSequences``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Table holds data on the executed test case sequences: TestCaseSequence Logs
 
-.. list-table::TestCaseSequence Logs
-   :width: 25 15 60
+.. list-table:: TestCaseSequence Logs
+   :widths: 25 15 60
    :header-rows: 1
 
    * - Column
@@ -70,8 +70,8 @@ Table: ``testCases``
 ^^^^^^^^^^^^^^^^^^^^
 Table holds data on the executed test cases: TestCase Logs
 
-.. list-table::TestCase Logs
-   :width: 25 15 60
+.. list-table:: TestCase Logs
+   :widths: 25 15 60
    :header-rows: 1
 
    * - Column
@@ -90,8 +90,8 @@ Table: ``globals``
 ^^^^^^^^^^^^^^^^^^
 Table holds global variables of the executed Testruns
 
-.. list-table::Globals
-   :width: 25 15 60
+.. list-table:: Globals
+   :widths: 25 15 60
    :header-rows: 1
 
    * - Column
@@ -116,8 +116,8 @@ Table: ``testCaseFields``
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 Table holds log fields of the executed test cases
 
-.. list-table::Testcase Fields
-   :width: 25 15 60
+.. list-table:: Testcase Fields
+   :widths: 25 15 60
    :header-rows: 1
 
    * - Column
@@ -142,8 +142,8 @@ Table: ``networkInfo``
 ^^^^^^^^^^^^^^^^^^^^^^
 Table holds info on requests made while execution of the test cases
 
-.. list-table::Network Info
-   :width: 25 15 60
+.. list-table:: Network Info
+   :widths: 25 15 60
    :header-rows: 1
 
    * - Column
