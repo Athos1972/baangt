@@ -135,6 +135,7 @@ class ProxyRotate(metaclass=Singleton):
 
     def __getProxy(self):
         if len(self.proxies) > 0:
+            logger.critical(f"Proxies count: {len(self.proxies)}")
             return self.proxies[randint(0, len(self.proxies) - 1)]
         else:
             logger.critical("Sorry there is no working proxy!")
