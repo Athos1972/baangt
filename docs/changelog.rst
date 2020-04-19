@@ -16,11 +16,14 @@ New features
 * Subclassing: New commands to identify stale objects on page (HTML-Reload and SPA-Support)
 * Additional way to export data to Excel-Result (can be used for results of scraping) GC.EXPORT_ADDITIONAL_DATA in
   TestRun.additionalExportTabs create one dict with <tabname>:<ExportDictContent>. Headers = Fieldnames.
+* Web-Testcases: Screenshots automatically embedded to result file, not only as a link. Makes it easier to share results
+  on a communication channel.
 
 Changes
 +++++++
 * Improved browserDriver Download for executables (didn't work in some cases)
 * Improved database logging of testrun results
+* Dramatically improved speed for reading larger Input files (got rid of Pandas for XLSX-Import)
 
 2020.03
 ^^^^^^^
