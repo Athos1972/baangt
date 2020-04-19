@@ -107,8 +107,9 @@ class HandleDatabase:
             for col_index in range(sheet.ncols):
                 d[keys[col_index]] = sheet.cell(row_index, col_index).value
                 if type(d[keys[col_index]])==float:
-                    if repr(d[keys[col_index]])[-2:]==".0":
-                        d[keys[col_index]] = repr(d[keys[col_index]])[:-2]
+                    d[keys[col_index]] = repr(d[keys[col_index]])
+                    if d[keys[col_index]][-2:]==".0":
+                        d[keys[col_index]] = d[keys[col_index]][:-2]
             self.dataDict.append(d)
 
 
