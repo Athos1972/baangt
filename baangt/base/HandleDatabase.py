@@ -103,14 +103,14 @@ class HandleDatabase:
         keys = [sheet.cell(0, col_index).value for col_index in range(sheet.ncols)]
 
         for row_index in range(1, sheet.nrows):
-            d = {}
+            temp_dic = {}
             for col_index in range(sheet.ncols):
-                d[keys[col_index]] = sheet.cell(row_index, col_index).value
-                if type(d[keys[col_index]])==float:
-                    d[keys[col_index]] = repr(d[keys[col_index]])
-                    if d[keys[col_index]][-2:]==".0":
-                        d[keys[col_index]] = d[keys[col_index]][:-2]
-            self.dataDict.append(d)
+                temp_dic[keys[col_index]] = sheet.cell(row_index, col_index).value
+                if type(temp_dic[keys[col_index]])==float:
+                    temp_dic[keys[col_index]] = repr(temp_dic[keys[col_index]])
+                    if temp_dic[keys[col_index]][-2:]==".0":
+                        temp_dic[keys[col_index]] = temp_dic[keys[col_index]][:-2]
+            self.dataDict.append(temp_dic)
 
 
     def readNextRecord(self):
