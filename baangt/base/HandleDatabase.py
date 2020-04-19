@@ -1,5 +1,5 @@
 import logging
-import pandas as pd
+from xlrd import open_workbook
 import itertools
 import json
 import baangt.base.CustGlobalConstants as CGC
@@ -34,7 +34,7 @@ class HandleDatabase:
         self.rangeDict = {}
         self.__buildRangeDict()
         self.df_json = None
-        self.dataDict = {}
+        self.dataDict = []
         self.recordPointer = 0
 
     def __buildRangeDict(self):
@@ -96,16 +96,22 @@ class HandleDatabase:
             logger.critical(f"Can't open file: {fileName}")
             return
 
-        # FIXME: Sooner or later replace Pandas with direct XLSX-Import
-        xl = pd.ExcelFile(fileName)
-        ncols = xl.book.sheet_by_name(sheet_name=sheetName).ncols
-        # Read all columns as strings:
-        df = xl.parse(sheet_name=sheetName, converters={i: str for i in range(ncols)})
+        book = open_workbook(fileName)
+        sheet = book.sheet_by_name(sheetName)
 
-        # Set all Nan to empty String:
-        df = df.where((pd.notnull(df)), '')
-        # Create Dict of Header + item:
-        self.dataDict = df.to_dict(orient="records")
+        # read header values into the list
+        keys = [sheet.cell(0, col_index).value for col_index in range(sheet.ncols)]
+
+        for row_index in range(1, sheet.nrows):
+            temp_dic = {}
+            for col_index in range(sheet.ncols):
+                temp_dic[keys[col_index]] = sheet.cell(row_index, col_index).value
+                if type(temp_dic[keys[col_index]])==float:
+                    temp_dic[keys[col_index]] = repr(temp_dic[keys[col_index]])
+                    if temp_dic[keys[col_index]][-2:]==".0":
+                        temp_dic[keys[col_index]] = temp_dic[keys[col_index]][:-2]
+            self.dataDict.append(temp_dic)
+
 
     def readNextRecord(self):
         """
