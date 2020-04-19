@@ -305,6 +305,8 @@ class TestStepMaster:
                 self.ifIsTrue = True
             else:
                 self.ifIsTrue = False
+        elif lComparison == "!=":
+            self.ifIsTrue = False if value1 == value2 else True
         elif lComparison == ">":
             if value1 > value2:
                 self.ifIsTrue = True
