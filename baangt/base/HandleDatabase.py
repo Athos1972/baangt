@@ -102,7 +102,6 @@ class HandleDatabase:
         # read header values into the list
         keys = [sheet.cell(0, col_index).value for col_index in range(sheet.ncols)]
 
-        dict_list = []
         for row_index in range(1, sheet.nrows):
             d = {}
             for col_index in range(sheet.ncols):
@@ -111,7 +110,7 @@ class HandleDatabase:
                     if repr(d[keys[col_index]])[-2:]==".0":
                         d[keys[col_index]] = repr(d[keys[col_index]])[:-2]
             self.dataDict.append(d)
-        logger.info(self.dataDict)
+
 
     def readNextRecord(self):
         """
