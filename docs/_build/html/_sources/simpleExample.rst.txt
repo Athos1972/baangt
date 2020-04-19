@@ -6,7 +6,7 @@ You can try baangt right away and see how it works. It'll take less than 5 minut
 Prerequisits
 ^^^^^^^^^^^^^
 
-* Firefox installed
+* Chrome installed
 * Python3 installed
 * ``baangt`` installed (either via PIP or from the GIT-Repository at https://gogs.earthsquad.global/athos/baangt)
 
@@ -164,16 +164,6 @@ You managed to have a working recording. Congratulations! Let's learn a bit more
 More details on Activities
 --------------------------
 
-       * GoToURL
-       * click
-       * setText
-       * SetTextIF
-       * clickIF
-       * goBack
-       * If
-       * EndIf
-       * Pause
-
 .. list-table:: Details of activities
    :widths: 25 75
    :header-rows: 1
@@ -212,6 +202,10 @@ More details on Activities
 
             $(YEAR2DATE) > $(YEARTOMONTH)
 
+            $(POSTCODE) (no comparison, no Value 2) --> checks for
+
+       Additionally you can check for empty/non-existing values by comparing to ``None``.
+
        Another use of the If-Statement is with ``LocatorType`` and ``Locator`` and comparison. This can be used when you
        want conditional execution of a larger block of statements depending on an element present or not present.
 
@@ -221,6 +215,29 @@ More details on Activities
 
    * - pause
      - Will pause for the number of secons in ``value``. Valid numbers are float, e.g. 2, 0.2, 0.1, 25
+   * - iban
+     - Will create a random IBAN account number. ``value 2`` is the destination field of the test case structure. If you
+       don't provide a field name (not necessarily one that exists in the input file. Can be any field name!) nothing will
+       happen. If you provide input parameters in column ``value`` (``SWIFT`` and/or ``COUNTRY``) the IBAN will be created for that bank-code
+       and/or country.
+   * - pdfcompare
+     - In a step before you must have downloaded a PDF-File. Before you can compare, you have to provide a reference PDF
+       to upload. After the upload you'll receive a unique ID for this document. Paste this ID into the ``value`` field.
+   * - CheckLinks
+     - Whenever you enter this command, all (if any) links on the current page will be checked and the status of the
+       link will be reported accordingly. Reporting format is:
+
+       Links on <base_url>:
+
+       <status>:<Link>
+
+       You'll find the output in the Export sheet in the column "CheckedLinks", which will be created automatically.
+   * - saveto (for Web test cases only)
+     - Saves the value of the element specified by ``locatorType`` and ``locator`` into the field given in column ``value``.
+            !!For this case, don't use variable syntax (``$(ColumnName)``) but put the column name only in field Value!!
+   * - clear
+     - ``Value`` must have the variable or column name, that should be cleared (without ``$(columnName)``,
+       just ``columnName``
    * - address_create
      - provide an easy and easily extendable way to generate address data for a test case
        The following fields variable are stored in testcaseDataDict:

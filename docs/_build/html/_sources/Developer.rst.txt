@@ -59,3 +59,37 @@ In the output file you'll see a new tab "Network" that shows all calls, headers,
 call.
 
 Use with care, as the file can get pretty big.
+
+Building baangt sources
+-----------------------
+Core project members can build distribution as follows:
+
+Building pyPi
+^^^^^^^^^^^^^
+
+* Increase version in ``setup.py``
+* ``MakePackage.sh`` to upload to PyPi
+* Use latest version in depending project's ``requirements.txt`` (Custom projects)
+* ``pip install -r requirements.txt``
+
+Building Executables
+^^^^^^^^^^^^^^^^^^^^
+
+* Checkout ``https://github.com/Athos1972/baangt-executables``
+* On a Windows computer: ``execWindow.bat``
+* Move ``/executables/baangt_windows_executable.zip`` to checked out ``baangt-executables`` ideally with this line:
+
+    ``mv executables/baangt_mac_executable.zip ../baangt-executables``
+* Repeat accordingly on Mac (``execMac.sh``)
+* Repeat accordingly on Ubuntu (``execUbuntu.sh``)
+* ``git add .`` in the folder ``baangt-executables``
+* ``git commit -m <version>``
+* ``git push``
+
+Windows bundle executables:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* Install innosetup-qsp (QuickStartPack) Versoin 6 from https://jrsoftware.org/isdl.php
+* Open Inno Setup
+* Use Script ``/windows/baangtSetupWindows.iss``
+

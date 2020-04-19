@@ -33,6 +33,7 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Structure of baangt" href="Structure.html" />
@@ -109,7 +110,8 @@
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">   Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="BrowserDrivers.html">   Browser Drivers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">:subheader: Articles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Variables.html">   Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">   :subheader: Articles</a></li>
 <li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
 </ul>
 
@@ -181,7 +183,7 @@
 <div class="section" id="prerequisits">
 <h2>Prerequisits<a class="headerlink" href="#prerequisits" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><p>Firefox installed</p></li>
+<li><p>Chrome installed</p></li>
 <li><p>Python3 installed</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">baangt</span></code> installed (either via PIP or from the GIT-Repository at <a class="reference external" href="https://gogs.earthsquad.global/athos/baangt">https://gogs.earthsquad.global/athos/baangt</a>)</p></li>
 </ul>
@@ -364,19 +366,6 @@ follow different nomenclature, so we made it very easy to subclass the correspon
 </table>
 <div class="section" id="more-details-on-activities">
 <h3>More details on Activities<a class="headerlink" href="#more-details-on-activities" title="Permalink to this headline">¶</a></h3>
-<blockquote>
-<div><ul class="simple">
-<li><p>GoToURL</p></li>
-<li><p>click</p></li>
-<li><p>setText</p></li>
-<li><p>SetTextIF</p></li>
-<li><p>clickIF</p></li>
-<li><p>goBack</p></li>
-<li><p>If</p></li>
-<li><p>EndIf</p></li>
-<li><p>Pause</p></li>
-</ul>
-</div></blockquote>
 <table class="colwidths-given docutils align-default" id="id2">
 <caption><span class="caption-text">Details of activities</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
 <colgroup>
@@ -425,7 +414,9 @@ true, for instance:</p>
 <blockquote>
 <div><p>$(POSTCODE) = 7040</p>
 <p>$(YEAR2DATE) &gt; $(YEARTOMONTH)</p>
+<p>$(POSTCODE) (no comparison, no Value 2) –&gt; checks for</p>
 </div></blockquote>
+<p>Additionally you can check for empty/non-existing values by comparing to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
 <p>Another use of the If-Statement is with <code class="docutils literal notranslate"><span class="pre">LocatorType</span></code> and <code class="docutils literal notranslate"><span class="pre">Locator</span></code> and comparison. This can be used when you
 want conditional execution of a larger block of statements depending on an element present or not present.</p>
 </td>
@@ -436,7 +427,36 @@ want conditional execution of a larger block of statements depending on an eleme
 <tr class="row-even"><td><p>pause</p></td>
 <td><p>Will pause for the number of secons in <code class="docutils literal notranslate"><span class="pre">value</span></code>. Valid numbers are float, e.g. 2, 0.2, 0.1, 25</p></td>
 </tr>
-<tr class="row-odd"><td><p>address_create</p></td>
+<tr class="row-odd"><td><p>iban</p></td>
+<td><p>Will create a random IBAN account number. <code class="docutils literal notranslate"><span class="pre">value</span> <span class="pre">2</span></code> is the destination field of the test case structure. If you
+don’t provide a field name (not necessarily one that exists in the input file. Can be any field name!) nothing will
+happen. If you provide input parameters in column <code class="docutils literal notranslate"><span class="pre">value</span></code> (<code class="docutils literal notranslate"><span class="pre">SWIFT</span></code> and/or <code class="docutils literal notranslate"><span class="pre">COUNTRY</span></code>) the IBAN will be created for that bank-code
+and/or country.</p></td>
+</tr>
+<tr class="row-even"><td><p>pdfcompare</p></td>
+<td><p>In a step before you must have downloaded a PDF-File. Before you can compare, you have to provide a reference PDF
+to upload. After the upload you’ll receive a unique ID for this document. Paste this ID into the <code class="docutils literal notranslate"><span class="pre">value</span></code> field.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CheckLinks</p></td>
+<td><p>Whenever you enter this command, all (if any) links on the current page will be checked and the status of the
+link will be reported accordingly. Reporting format is:</p>
+<p>Links on &lt;base_url&gt;:</p>
+<p>&lt;status&gt;:&lt;Link&gt;</p>
+<p>You’ll find the output in the Export sheet in the column “CheckedLinks”, which will be created automatically.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>saveto (for Web test cases only)</p></td>
+<td><dl class="simple">
+<dt>Saves the value of the element specified by <code class="docutils literal notranslate"><span class="pre">locatorType</span></code> and <code class="docutils literal notranslate"><span class="pre">locator</span></code> into the field given in column <code class="docutils literal notranslate"><span class="pre">value</span></code>.</dt><dd><p>!!For this case, don’t use variable syntax (<code class="docutils literal notranslate"><span class="pre">$(ColumnName)</span></code>) but put the column name only in field Value!!</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="row-odd"><td><p>clear</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Value</span></code> must have the variable or column name, that should be cleared (without <code class="docutils literal notranslate"><span class="pre">$(columnName)</span></code>,
+just <code class="docutils literal notranslate"><span class="pre">columnName</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>address_create</p></td>
 <td><p>provide an easy and easily extendable way to generate address data for a test case
 The following fields variable are stored in testcaseDataDict:</p>
 <p>CountryCode

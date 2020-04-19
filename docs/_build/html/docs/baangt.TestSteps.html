@@ -33,6 +33,7 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
 </head>
@@ -94,6 +95,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">   Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PlannedFeatures.html">   Planned Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../BrowserDrivers.html">   Browser Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Variables.html">   Variables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../articles/Articles.html">   :subheader: Articles</a></li>
 <li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
 </ul>
@@ -199,14 +201,36 @@
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="baangt.TestSteps.TestStepMaster.TestStepMaster.checkLinks">
+<code class="sig-name descname">checkLinks</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#baangt.TestSteps.TestStepMaster.TestStepMaster.checkLinks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Will check all links on the current webpage</p>
+<p>Result will be written into “CheckedLinks” in TestDataDict</p>
+<p>If theres a returncode &gt;= 400 in the list, we’ll mark the testcase as failed</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="baangt.TestSteps.TestStepMaster.TestStepMaster.doSaveData">
-<code class="sig-name descname">doSaveData</code><span class="sig-paren">(</span><em class="sig-param">toField</em>, <em class="sig-param">valueForField</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.TestSteps.TestStepMaster.TestStepMaster.doSaveData" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">doSaveData</code><span class="sig-paren">(</span><em class="sig-param">toField</em>, <em class="sig-param">valueForField</em>, <em class="sig-param">lLocatorType</em>, <em class="sig-param">lLocator</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.TestSteps.TestStepMaster.TestStepMaster.doSaveData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save fields. Either from an existing DICT (usually in API-Mode) or from a Webelement (in Browser-Mode)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>toField</strong> – </p></li>
+<li><p><strong>valueForField</strong> – </p></li>
+<li><p><strong>lLocatorType</strong> – </p></li>
+<li><p><strong>lLocator</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>no return parameter. The implicit return is a value in a field.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="method">
 <dt id="baangt.TestSteps.TestStepMaster.TestStepMaster.execute">
 <code class="sig-name descname">execute</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#baangt.TestSteps.TestStepMaster.TestStepMaster.execute" title="Permalink to this definition">¶</a></dt>
-<dd><p>Method is overwritten in all children</p>
+<dd><p>Method is overwritten in all children/subclasses</p>
 </dd></dl>
 
 <dl class="method">
@@ -227,6 +251,8 @@
 <code class="sig-name descname">replaceVariables</code><span class="sig-paren">(</span><em class="sig-param">expression</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.TestSteps.TestStepMaster.TestStepMaster.replaceVariables" title="Permalink to this definition">¶</a></dt>
 <dd><p>The syntax for variables is currently $(&lt;column_name_from_data_file&gt;). Multiple variables can be assigned
 in one cell, for instance perfectly fine: “<a class="reference external" href="http://$(BASEURL)/$(ENDPOINT">http://$(BASEURL)/$(ENDPOINT</a>)”</p>
+<p>There’s a special syntax for the faker module: $(FAKER.&lt;fakermethod&gt;).</p>
+<p>Also a special syntax for API-Handling: $(APIHandling.&lt;DictElementName&gt;).</p>
 <p>&#64;param expression: the current cell, either as fixed value, e.g. “Franzi” or with a varible $(DATE)
 &#64;return: the replaced value, e.g. if expression was $(DATE) and the value in column “DATE” of data-file was</p>
 <blockquote>

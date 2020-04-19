@@ -88,6 +88,59 @@ class utils:
         return data
 
     @staticmethod
+    def listToString(completeList):
+        """
+        Returns a concatenated string from a list-object
+        :param completeList: any List
+        :return: String
+        """
+        if len(completeList) > 0:
+            returnString = utils.__listChildToString(completeList)
+
+        returnString = returnString.lstrip("\n")
+        return returnString
+
+    @staticmethod
+    def __listChildToString(listEntry):
+        """
+        Recursively going through a dict and transforming each layer into a string.
+        :param listEntry:
+        :return:
+        """
+        returnString = ""
+        for entry in listEntry:
+            if isinstance(entry, list):
+                returnString = f"{returnString}\n{utils.__listChildToString(entry)}"
+            else:
+                returnString = f"{returnString}, {entry}"
+
+        returnString = returnString.lstrip(", ")
+        return returnString
+
+    @staticmethod
+    def setLocatorFromLocatorType(lLocatorType, lLocator):
+        """
+
+        @param lLocatorType: XPATH, CSS, ID, etc.
+        @param lLocator: Value of the locator
+        @return:
+        """
+
+        xpath = None
+        css = None
+        lId = None
+
+        if lLocatorType:
+            if lLocatorType == 'XPATH':
+                xpath = lLocator
+            elif lLocatorType == 'CSS':
+                css = lLocator
+            elif lLocatorType == 'ID':
+                lId = lLocator
+
+        return xpath, css, lId
+
+    @staticmethod
     def findFileAndPathFromPath(fileNameAndPath, basePath=None):
         """
         Tries different approaches to locate a file

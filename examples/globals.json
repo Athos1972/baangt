@@ -1,7 +1,8 @@
 {
     "exportFilesBasePath": "",
     "TC.Lines": "",
-    "TC.dontCloseBrowser": "True",
-    "TC.slowExecution": "True",
-    "TC.NetworkInfo": ""
+    "TC.dontCloseBrowser": "",
+    "TC.slowExecution": "",
+    "TC.NetworkInfo": "",
+    "TX.DEBUG": "True"
 }

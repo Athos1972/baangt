@@ -3,6 +3,18 @@ Installation
 
 There are various ways to install and use ``baangt`` depending on your requirements and setup.
 
+Run the executables
+-------------------
+
+Installing the executables for your operating system (MacOS, Windows, Ubuntu) is simple. Head over to
+https://github.com/Athos1972/baangt/tree/master/executables select the archive for your operating system,
+download to your local computer and unzip.
+
+In the new folder you'll find ``baangt`` executable. Click on it and explore examples in ``/examples`` folder.
+
+There's also a video on Youtube: https://www.youtube.com/watch?v=25wdwElMlH4 and an article with more background
+information in the blog: https://www.baangt.org/4-ways-to-install-baangt-on-macos-windows-and-linux/
+
 Install from sources
 --------------------
 
@@ -23,15 +35,16 @@ Install from GIT:
 
     git clone https://gogs.earthsquad.global/athos/baangt-Docker
     cd baangt-Docker
-    Make build
-    Make run
+    make build
+    make run
 
 then use your preferred VNC-Client with ``vnc://localhost:5902``. Unless you changed the default password, the
 password is ``password`` .
 
 Install PIP-Package
 ------------------------
-If you're planning to implement subclassing you can also use the pip package:
+If you're planning to implement subclassing and you don't want to contribute to this open source project you can also
+use the pip package:
 
 ::
 

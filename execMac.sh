@@ -4,6 +4,7 @@ pyinstaller --clean --onedir \
 	--distpath exec_mac/ \
 	--workpath exec_mac/build \
 	--specpath exec_mac \
+	--windowed \
 	--name baangt \
 	--add-data '../baangt/ressources/baangtLogo2020Small.png:ressources' \
 	--add-data '../examples/:examples/.' \

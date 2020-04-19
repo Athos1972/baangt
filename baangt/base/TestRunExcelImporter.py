@@ -22,18 +22,18 @@ class TestRunExcelImporter:
         self.testStepExecutionNumber = 0
         # self.testRunAttributes = testRunUtils.testRunAttributes
         self.testRunUtils = testRunUtils
+
         try:
             self.excelFile = xlrd.open_workbook(FileNameAndPath)
         except FileNotFoundError as e:
             raise BaseException(f"File not found - exiting {e}")
-
         self.fileName = utils.extractFileNameFromFullPath(FileNameAndPath)
 
-    def importConfig(self):
-        self._initTestRun()
+    def importConfig(self, global_settings):
+        self._initTestRun(global_settings)
         return self.testRunUtils.getCompleteTestRunAttributes(self.fileName)
 
-    def _initTestRun(self):
+    def _initTestRun(self, global_settings):
         """
         Writes a new entry to testRunUtils --> = this current TestRunDefinition (Filename)
         Then loops through the tabs "TestRun", "ExportFieldList", "TestCaseSequence" and so on,
@@ -81,8 +81,7 @@ class TestRunExcelImporter:
                 "TestDataFileName": self.fileName,
                 "Sheetname": "data",
                 "ParallelRuns": 1,
-                "FromLine": 0,
-                "ToLine": 999999
+                "Lines": "0-999999"
                 },
             }
         for key, sequence in lSequenceDict.items():
@@ -99,17 +98,34 @@ class TestRunExcelImporter:
         else:
             # Dirty, but not possible in any other way in API-Simple-Format:
             if "API" in self.fileName.upper():
-                lTestCaseDict = {1: {"TestCaseSequenceNumber": 1,
-                                 "TestCaseNumber": 1,
-                                 "TestCaseType": GC.KWARGS_API_SESSION,
-                                 "TestCaseClass": GC.CLASSES_TESTCASE}}
+                    lTestCaseDict = {1: {"TestCaseSequenceNumber": 1,
+                                     "TestCaseNumber": 1,
+                                     "TestCaseType": GC.KWARGS_API_SESSION,
+                                     "TestCaseClass": GC.CLASSES_TESTCASE}}
             else:
-                lTestCaseDict = {1: {"TestCaseSequenceNumber": 1,
-                                 "TestCaseNumber": 1,
-                                 "TestCaseType": GC.KWARGS_BROWSER,
-                                 "TestCaseClass": GC.CLASSES_TESTCASE,
-                                 GC.KWARGS_BROWSER: GC.BROWSER_FIREFOX,
-                                 GC.BROWSER_ATTRIBUTES: ""}}
+                if global_settings.get('TC.Mobile'):
+                    lTestCaseDict = {1: {"TestCaseSequenceNumber": 1,
+                                         "TestCaseNumber": 1,
+                                         "TestCaseType": GC.KWARGS_BROWSER,
+                                         "TestCaseClass": GC.CLASSES_TESTCASE,
+                                         GC.KWARGS_BROWSER: GC.BROWSER_FIREFOX,
+                                         GC.BROWSER_ATTRIBUTES: "",
+                                         GC.KWARGS_MOBILE: "",
+                                         GC.KWARGS_MOBILE_APP: "",
+                                         GC.MOBILE_PLATFORM_NAME: "",
+                                         GC.MOBILE_DEVICE_NAME: "",
+                                         GC.MOBILE_PLATFORM_VERSION: "",
+                                         GC.MOBILE_APP_URL: "",
+                                         GC.MOBILE_APP_PACKAGE : "",
+                                         GC.MOBILE_APP_ACTIVITY : ""}}
+
+                else:
+                    lTestCaseDict = {1: {"TestCaseSequenceNumber": 1,
+                                     "TestCaseNumber": 1,
+                                     "TestCaseType": GC.KWARGS_BROWSER,
+                                     "TestCaseClass": GC.CLASSES_TESTCASE,
+                                     GC.KWARGS_BROWSER: GC.BROWSER_FIREFOX,
+                                     GC.BROWSER_ATTRIBUTES: ""}}
         for key, testCase in lTestCaseDict.items():
             testSequenceRoot = testrunSequence[testCase["TestCaseSequenceNumber"]][1]
             testSequenceRoot[GC.STRUCTURE_TESTCASE] = {testCase["TestCaseNumber"]: []}
@@ -117,7 +133,15 @@ class TestRunExcelImporter:
             testSequenceRoot[GC.STRUCTURE_TESTCASE][testCase["TestCaseNumber"]].append(
                 {"TestCaseType": testCase["TestCaseType"],
                  GC.KWARGS_BROWSER: testCase.get("Browser"),
-                 GC.BROWSER_ATTRIBUTES: testCase.get("BrowserAttributes")
+                 GC.BROWSER_ATTRIBUTES: testCase.get("BrowserAttributes"),
+                 GC.KWARGS_MOBILE: testCase.get("Mobile"),
+                 GC.KWARGS_MOBILE_APP: testCase.get('MobileApp'),
+                 GC.MOBILE_PLATFORM_NAME: testCase.get('PlatformName'),
+                 GC.MOBILE_DEVICE_NAME: testCase.get('DeviceName'),
+                 GC.MOBILE_PLATFORM_VERSION: testCase.get('PlatformVersion'),
+                 GC.MOBILE_APP_URL: testCase.get('app'),
+                 GC.MOBILE_APP_PACKAGE: testCase.get('appPackage'),
+                 GC.MOBILE_APP_ACTIVITY: testCase.get('appActivity')
                  })
 
         xlsTab = self._getTab("TestStep")
@@ -136,7 +160,8 @@ class TestRunExcelImporter:
                 testStepRoot.append({GC.STRUCTURE_TESTSTEP: {}})
 
             testStepRoot = testStepRoot[2][GC.STRUCTURE_TESTSTEP]
-            testStepRoot[testStep["TestStepNumber"]] = testStep["TestStepClass"]
+            testStepRoot[testStep["TestStepNumber"]] = [{"TestStepClass": testStep["TestStepClass"]},
+                                                        {GC.STRUCTURE_TESTSTEPEXECUTION: {}}]
 
 
         xlsTab = self._getTab("TestStepExecution")
