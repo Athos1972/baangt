@@ -19,6 +19,7 @@ from baangt import plugin_manager
 import re
 import csv
 from dateutil.parser import parse
+import os
 
 logger = logging.getLogger("pyC")
 
@@ -62,7 +63,7 @@ class ExportResults:
             self.exportResultExcel()
             self.exportAdditionalData()
             self.exportTiming = ExportTiming(self.dataRecords,
-                                            self.timingSheet)
+                                             self.timingSheet)
             if self.networkInfo:
                 self.networkSheet = self.workbook.add_worksheet("Network")
                 self.exportNetWork = ExportNetWork(self.networkInfo,
@@ -86,7 +87,6 @@ class ExportResults:
                 lExport = ExportAdditionalDataIntoTab(tabname=key, valueDict=value, outputExcelSheet=self.workbook)
                 lExport.export()
 
-
     # -- API support --
     def getSummary(self):
         #
@@ -94,21 +94,22 @@ class ExportResults:
         #
         summary = {'Testrecords': len(self.dataRecords)}
         summary['Successful'] = len([x for x in self.dataRecords.values()
-                                                   if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_SUCCESS])
+                                     if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_SUCCESS])
         summary['Paused'] = len([x for x in self.dataRecords.values()
-                                                   if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_WAITING])
+                                 if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_WAITING])
         summary['Error'] = len([x for x in self.dataRecords.values()
-                                                   if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR])
+                                if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR])
         # logfile
         summary['Logfile'] = logger.handlers[1].baseFilename
         # timing
-        timing:Timing = self.testRunInstance.timing
+        timing: Timing = self.testRunInstance.timing
         summary['Starttime'], summary['Endtime'], summary['Duration'] = timing.returnTimeSegment(GC.TIMING_TESTRUN)
         summary['Globals'] = {key: value for key, value in self.testRunInstance.globalSettings.items()}
-        
+
         return summary
+
     # -- END of API support --
-    
+
     def export2CSV(self):
         """
         Writes CSV-File of datarecords
@@ -117,7 +118,7 @@ class ExportResults:
         f = open(self.fileName, 'w')
         writer = csv.DictWriter(f, self.dataRecords[0].keys())
         writer.writeheader()
-        for i in range(0, len(self.dataRecords)-1):
+        for i in range(0, len(self.dataRecords) - 1):
             writer.writerow(self.dataRecords[i])
         f.close()
 
@@ -152,14 +153,14 @@ class ExportResults:
 
         # create testrun object
         tr_log = TestrunLog(
-            testrunName = self.testRunName,
-            logfileName = logger.handlers[1].baseFilename,
-            startTime = datetime.strptime(start, "%H:%M:%S"),
-            endTime = datetime.strptime(end, "%H:%M:%S"),
-            statusOk = success,
-            statusFailed = error,
-            statusPaused = waiting,
-            dataFile = datafiles,
+            testrunName=self.testRunName,
+            logfileName=logger.handlers[1].baseFilename,
+            startTime=datetime.strptime(start, "%H:%M:%S"),
+            endTime=datetime.strptime(end, "%H:%M:%S"),
+            statusOk=success,
+            statusFailed=error,
+            statusPaused=waiting,
+            dataFile=datafiles,
         )
         # add to DataBase
         session.add(tr_log)
@@ -201,47 +202,45 @@ class ExportResults:
                         test_case_num -= 1
 
                         nw_info = TestCaseNetworkInfo(
-                            testcase = tcs_log.testcases[test_case_num],
-                            browserName = entry.get('pageref'),
-                            status = entry['response'].get('status'),
-                            method = entry['request'].get('method'),
-                            url = entry['request'].get('url'),
-                            contentType = entry['response']['content'].get('mimeType'),
-                            contentSize = entry['response']['content'].get('size'),
-                            headers = str(entry['response']['headers']),
-                            params = str(entry['request']['queryString']),
-                            response = entry['response']['content'].get('text'),
-                            startDateTime = datetime.strptime(entry['startedDateTime'][:19], '%Y-%m-%dT%H:%M:%S'), 
-                            duration = entry.get('time'),
+                            testcase=tcs_log.testcases[test_case_num],
+                            browserName=entry.get('pageref'),
+                            status=entry['response'].get('status'),
+                            method=entry['request'].get('method'),
+                            url=entry['request'].get('url'),
+                            contentType=entry['response']['content'].get('mimeType'),
+                            contentSize=entry['response']['content'].get('size'),
+                            headers=str(entry['response']['headers']),
+                            params=str(entry['request']['queryString']),
+                            response=entry['response']['content'].get('text'),
+                            startDateTime=datetime.strptime(entry['startedDateTime'][:19], '%Y-%m-%dT%H:%M:%S'),
+                            duration=entry.get('time'),
                         )
                         session.add(nw_info)
 
         session.commit()
-
-
 
     def exportResultExcel(self, **kwargs):
         self._exportData()
 
     def makeSummaryExcel(self):
 
-        self.summarySheet.write(0,0, f"Testreport for {self.testRunName}", self.cellFormatBold)
+        self.summarySheet.write(0, 0, f"Testreport for {self.testRunName}", self.cellFormatBold)
         self.summarySheet.set_column(0, last_col=0, width=15)
         # get testrunname my
         self.testList.append(self.testRunName)
         # Testrecords
         self.__writeSummaryCell("Testrecords", len(self.dataRecords), row=2, format=self.cellFormatBold)
         value = len([x for x in self.dataRecords.values()
-                                                   if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_SUCCESS])
-        self.testList.append(value) # Ok my
+                     if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_SUCCESS])
+        self.testList.append(value)  # Ok my
         if not value:
             value = ""
         self.__writeSummaryCell("Successful", value, format=self.cellFormatGreen)
         self.testList.append(value)  # paused my
         self.__writeSummaryCell("Paused", len([x for x in self.dataRecords.values()
-                                                   if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_WAITING]))
-        value = len([x for x in self.dataRecords.values()
-                                               if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR])
+                                               if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_WAITING]))
+        value = len([x["Screenshots"] for x in self.dataRecords.values()
+                     if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR])
         self.testList.append(value)  # error my
         if not value:
             value = ""
@@ -252,7 +251,7 @@ class ExportResults:
         # get logfilename for database my
         self.testList.append(logger.handlers[1].baseFilename)
         # Timing
-        timing:Timing = self.testRunInstance.timing
+        timing: Timing = self.testRunInstance.timing
         start, end, duration = timing.returnTimeSegment(GC.TIMING_TESTRUN)
         self.__writeSummaryCell("Starttime", start, row=9)
         # get start end during time my
@@ -260,7 +259,7 @@ class ExportResults:
         self.testList.append(end)
 
         self.__writeSummaryCell("Endtime", end)
-        self.__writeSummaryCell("Duration", duration, format=self.cellFormatBold )
+        self.__writeSummaryCell("Duration", duration, format=self.cellFormatBold)
         self.__writeSummaryCell("Avg. Dur", "")
         # Globals:
         self.__writeSummaryCell("Global settings for this testrun", "", format=self.cellFormatBold, row=14)
@@ -269,7 +268,7 @@ class ExportResults:
             # get global data my
             self.testList.append(str(value))
         # Testcase and Testsequence setting
-        self.__writeSummaryCell("TestSequence settings follow:", "", row=16+len(self.testRunInstance.globalSettings),
+        self.__writeSummaryCell("TestSequence settings follow:", "", row=16 + len(self.testRunInstance.globalSettings),
                                 format=self.cellFormatBold)
         lSequence = self.testRunInstance.testRunUtils.getSequenceByNumber(testRunName=self.testRunName, sequence="1")
         if lSequence:
@@ -278,7 +277,7 @@ class ExportResults:
                     continue
                 self.__writeSummaryCell(key, str(value))
 
-    def __writeSummaryCell(self, lineHeader, lineText, row=None, format=None):
+    def __writeSummaryCell(self, lineHeader, lineText, row=None, format=None, image=False):
         if not row:
             self.summaryRow += 1
         else:
@@ -337,7 +336,7 @@ class ExportResults:
         """
 
         if self.testRunInstance.globalSettings.get("TC.ExportAllFields", False):
-            self.fieldListExport = []   # Make an empty list, so that we don't have duplicates
+            self.fieldListExport = []  # Make an empty list, so that we don't have duplicates
             for key in self.dataRecords[0].keys():
                 self.fieldListExport.append(key)
             return
@@ -349,7 +348,8 @@ class ExportResults:
                         self.fieldListExport.append(key)
 
         except Exception as e:
-            logger.critical(f'looks like we have no data in records: {self.dataRecords}, len of dataRecords: {len(self.dataRecords)}')
+            logger.critical(
+                f'looks like we have no data in records: {self.dataRecords}, len of dataRecords: {len(self.dataRecords)}')
 
         # They are added here, because they'll not necessarily appear in the first record of the export data:
         self.fieldListExport.append(GC.TESTCASEERRORLOG)
@@ -358,15 +358,15 @@ class ExportResults:
     def _exportData(self):
         for key, value in self.dataRecords.items():
             for (n, column) in enumerate(self.fieldListExport):
-                self.__writeCell(key+1, n, value, column)
+                self.__writeCell(key + 1, n, value, column)
             # Also write everything as JSON-String into the last column
-            self.worksheet.write(key+1, len(self.fieldListExport), json.dumps(value))
+            self.worksheet.write(key + 1, len(self.fieldListExport), json.dumps(value))
 
         # Create autofilter
-        self.worksheet.autofilter(0,0,len(self.dataRecords.items()),len(self.fieldListExport)-1)
+        self.worksheet.autofilter(0, 0, len(self.dataRecords.items()), len(self.fieldListExport) - 1)
 
         # Make cells wide enough
-        for n in range(0,len(self.fieldListExport)):
+        for n in range(0, len(self.fieldListExport)):
             ExcelSheetHelperFunctions.set_column_autowidth(self.worksheet, n)
 
     def __writeCell(self, line, cellNumber, testRecordDict, fieldName, strip=False):
@@ -386,6 +386,18 @@ class ExportResults:
                         self.worksheet.write(line, cellNumber, testRecordDict[fieldName], self.cellFormatGreen)
                     elif testRecordDict[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR:
                         self.worksheet.write(line, cellNumber, testRecordDict[fieldName], self.cellFormatRed)
+                elif fieldName == GC.SCREENSHOTS:
+                    if type(testRecordDict[fieldName]) == list:
+                        self.worksheet.insert_image(line, cellNumber, testRecordDict[fieldName][-1], {'x_scale': 0.05,
+                                                                                                      'y_scale': 0.05})
+                        for nm in range(len(testRecordDict[fieldName]) - 1):
+                            self.worksheet.insert_image(line, len(self.fieldListExport) + nm + 1,
+                                                        testRecordDict[fieldName][nm],
+                                                        {'x_scale': 0.05, 'y_scale': 0.05})
+                    else:
+                        self.worksheet.insert_image(line, cellNumber, testRecordDict[fieldName], {'x_scale': 0.05,
+                                                                                                  'y_scale': 0.05})
+                    self.worksheet.set_row(line, 35)
                 else:
                     self.worksheet.write(line, cellNumber, testRecordDict[fieldName])
 
@@ -396,7 +408,7 @@ class ExportResults:
 
 
 class ExportAdditionalDataIntoTab:
-    def __init__(self, tabname, valueDict, outputExcelSheet:xlsxwriter.Workbook):
+    def __init__(self, tabname, valueDict, outputExcelSheet: xlsxwriter.Workbook):
         self.tab = outputExcelSheet.add_worksheet(tabname)
         self.values = valueDict
 
@@ -416,6 +428,7 @@ class ExportAdditionalDataIntoTab:
             for column, (key, value) in enumerate(values.items()):
                 self.tab.write(currentLine, column, value)
             currentLine += 1
+
 
 class ExcelSheetHelperFunctions:
     def __init__(self):
@@ -465,7 +478,6 @@ class ExcelSheetHelperFunctions:
 
 
 class ExportNetWork:
-
     headers = ['BrowserName', 'TestCaseNum', 'Status', 'Method', 'URL', 'ContentType', 'ContentSize', 'Headers',
                'Params', 'Response', 'startDateTime', 'Duration/ms']
 
@@ -506,7 +518,7 @@ class ExportNetWork:
     def get_column_style(self, alignment=None):
         column_style = self.workbook.add_format()
         column_style.set_color("black")
-        column_style.set_align('right') if alignment == 'right'\
+        column_style.set_align('right') if alignment == 'right' \
             else column_style.set_align('left') if alignment == 'left' else None
         column_style.set_border()
         return column_style
@@ -535,7 +547,6 @@ class ExportNetWork:
         if not self.networkInfo:
             return
 
-
         partition_index = 0
 
         for info in self.networkInfo:
@@ -562,11 +573,10 @@ class ExportNetWork:
             partition_index += len(info['log']['entries'])
 
 
-
 class ExportTiming:
-    def __init__(self, testdataRecords:dict, sheet:xlsxwriter.worksheet):
+    def __init__(self, testdataRecords: dict, sheet: xlsxwriter.worksheet):
         self.testdataRecords = testdataRecords
-        self.sheet:xlsxwriter.worksheet = sheet
+        self.sheet: xlsxwriter.worksheet = sheet
 
         self.sections = {}
 
@@ -575,21 +585,21 @@ class ExportTiming:
         self.writeLines()
 
         # Autowidth
-        for n in range(0,len(self.sections)+1):
+        for n in range(0, len(self.sections) + 1):
             ExcelSheetHelperFunctions.set_column_autowidth(self.sheet, n)
 
     def writeHeader(self):
-        self.wc(0,0,"Testcase#")
+        self.wc(0, 0, "Testcase#")
         for index, key in enumerate(self.sections.keys(), start=1):
             self.wc(0, index, key)
 
     def writeLines(self):
-        for tcNumber, (key, line) in enumerate(self.testdataRecords.items(),start=1):
+        for tcNumber, (key, line) in enumerate(self.testdataRecords.items(), start=1):
             self.wc(tcNumber, 0, tcNumber)
             lSections = self.interpretTimeLog(line[GC.TIMELOG])
             for section, timingValue in lSections.items():
                 # find, in which column this section should be written:
-                for column, key in enumerate(self.sections.keys(),1):
+                for column, key in enumerate(self.sections.keys(), 1):
                     if key == section:
                         self.wc(tcNumber, column,
                                 timingValue[GC.TIMING_DURATION])
@@ -599,7 +609,7 @@ class ExportTiming:
     def shortenTimingValue(timingValue):
         # TimingValue is seconds in Float. 2 decimals is enough:
         timingValue = int(float(timingValue) * 100)
-        return timingValue/100
+        return timingValue / 100
 
     def writeCell(self, row, col, content, format=None):
         self.sheet.write(row, col, content, format)
@@ -615,7 +625,7 @@ class ExportTiming:
         """
         lSections = {}
         for key, line in self.testdataRecords.items():
-            lTiming:dict = ExportTiming.interpretTimeLog(line[GC.TIMELOG])
+            lTiming: dict = ExportTiming.interpretTimeLog(line[GC.TIMELOG])
             for key in lTiming.keys():
                 if lSections.get(key):
                     continue
@@ -651,7 +661,7 @@ class ExportTiming:
                 # Format <sequence>: <Start>: <time.loctime>
                 continue
             else:
-                lSection = parts[0].replace(":","").strip()
+                lSection = parts[0].replace(":", "").strip()
                 lDuration = parts[1].split("since last call: ")[1]
                 lExport[lSection] = {GC.TIMING_DURATION: lDuration}
         return lExport
