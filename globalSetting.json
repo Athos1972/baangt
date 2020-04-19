@@ -1,0 +1,39 @@
+{
+    "settings": {
+       "Release": {
+            "hint": "set particular version to test ",
+            "type": "text",
+            "default": "",
+            "options": ["1.a.dev",  "1.b", "2.a"],
+            "displayText": "Current Release"
+        },
+        "TC.slowExecution": {
+            "hint": "Stop Browser for sometime",
+            "type": "bool",
+            "default": "False",
+            "options": ["True", "False"],
+            "displayText": "TC.slowExecution"
+        },
+        "dontCloseBrowser":  {
+            "hint": "When the browser or script finds an error, it usually takes a screenshot and moves on to the next testcase. With this setting to True the browser session will stop right at the error.",
+            "type": "bool",
+            "default": "False",
+            "options": ["True", "False"],
+            "displayText": "Dont Close Browser"
+        },
+        "TC.BrowserAttributes": {
+            "hint": "Choose browser to test the application",
+            "type": "select",
+            "default": "FF",
+            "options": ["FF", "Chrome", "Safari" ],
+            "displayText": "Browser "
+        },
+        "TC.NetworkInfo": {
+            "hint": "Trace Network status Information",
+            "type": "bool",
+            "default": "False",
+            "options": ["True", "False" ],
+            "displayText": "Trace Network Info"
+        }
+    }
+}
