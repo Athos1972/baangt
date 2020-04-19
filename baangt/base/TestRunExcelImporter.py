@@ -160,7 +160,8 @@ class TestRunExcelImporter:
                 testStepRoot.append({GC.STRUCTURE_TESTSTEP: {}})
 
             testStepRoot = testStepRoot[2][GC.STRUCTURE_TESTSTEP]
-            testStepRoot[testStep["TestStepNumber"]] = testStep["TestStepClass"]
+            testStepRoot[testStep["TestStepNumber"]] = [{"TestStepClass": testStep["TestStepClass"]},
+                                                        {GC.STRUCTURE_TESTSTEPEXECUTION: {}}]
 
 
         xlsTab = self._getTab("TestStepExecution")

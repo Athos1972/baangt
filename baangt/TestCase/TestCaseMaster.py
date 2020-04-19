@@ -61,8 +61,11 @@ class TestCaseMaster:
         self.kwargs[GC.KWARGS_BROWSER] = self.browser
 
     def execute(self):
+        lTestStepClasses = {}
+        for testStepSequenceNumer, testStep in enumerate(self.testSteps.keys(),start=1):
+            lTestStepClasses[testStepSequenceNumer] = self.testSteps[testStep][0]["TestStepClass"]
         try:
-            self.testRunInstance.executeDictSequenceOfClasses(self.testSteps, GC.STRUCTURE_TESTSTEP, **self.kwargs)
+            self.testRunInstance.executeDictSequenceOfClasses(lTestStepClasses, GC.STRUCTURE_TESTSTEP, **self.kwargs)
         except baangtTestStepException as e:
             logger.info(f"Testcase {self.kwargs.get(GC.STRUCTURE_TESTSTEP,'')} failed")
             self.kwargs[GC.KWARGS_DATA][GC.TESTCASEERRORLOG] += '\n' + "Exception-Text: " + str(e)
