@@ -24,6 +24,27 @@ makes them also log into os.getcwd(). )
 After this TechSpec was implemented, all accces to the file system should be opinionated according to the OS
 and installer-option (pyInstaller (executable) vs. python script execution ``python3 baangtIA.py``).
 
+## Separate class
+
+It would be a good thing to have all writing file system accesses in one class and have a method for each
+OS. Inside the class we could determine, on which OS we are and whether or not we're in pyInstaller-mode
+or as executable in Windows.
+
+Methods could be: 
+* getScreenshotPath
+* getLogPath
+* getOutputDirectoryPath
+* getDatabasePath
+* getIniPath
+etc.
+
+This class must also respect paths, that are given by the user (like e.g. GC.PATH_SCREENSHOTS, 
+GC.PATH_EXPORT) and only make assumptions when these paths are not defined by the user.
+
+## How to find places to replace code
+os.getcwd() and pathlib are used throughout the code base to determine paths. Start there and look, what happens with
+the results. If write-access happens, encapsulate in the above mentioned class.
+
 # DoD
 * Script for creation of Windows Executable updated to create folders also in Users Home-Directory
 * Script for creation of Windows Executable updated to change log folder for browsermob-proxy
