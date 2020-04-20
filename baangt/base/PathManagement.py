@@ -16,7 +16,10 @@ class managedPaths:
         with open('Paths.json','r') as file:
             dic = json.load(file)
         if key in dic:
-            return dic[key]
+            if dic[key] != "":
+                return dic[key]
+            else:
+                return os.getcwd()
         else:
             return os.getcwd()
 
