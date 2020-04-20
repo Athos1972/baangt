@@ -438,6 +438,7 @@ class MainController:
         self.main = MainWindow()
         self.main.setupUi(self.window)
         self.main.menuKatalon_Studio.triggered.connect(self.show_katalon)
+        self.main.actionOpen_Studio.triggered.connect(self.show_katalon)
         self.main.settingsPushButton.clicked.connect(self.show_setting)
         self.main.actionSettings.triggered.connect(self.show_setting)
         self.window.show()

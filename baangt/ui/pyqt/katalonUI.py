@@ -42,7 +42,7 @@ class KatalonUI(Ui_Form):
         """ Read the baaangt.ini file """
         config = configparser.ConfigParser()
         try:
-            config = config.read('baangt.ini')
+            config.read('baangt.ini')
             self.directory = config['Default']['path']
         except Exception as e:
             print("Exception in KatalonUI", e)
