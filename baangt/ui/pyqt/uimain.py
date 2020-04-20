@@ -172,8 +172,12 @@ class MainWindow(Ui_MainWindow):
         self.executePushButton.setEnabled(False)
         self.settingsPushButton.setEnabled(False)
         # Add files in Combo Box
-        self.testRunComboBox.addItems(self.testRunFiles)
-        self.settingComboBox.addItems(self.configFiles)
+        self.testRunComboBox.addItems(
+                        sorted(self.testRunFiles, key=lambda x: x.lower())
+                               )
+        self.settingComboBox.addItems(
+                        sorted(self.configFiles, key=lambda x: x.lower())
+                               )
 
         # set default selection to 0
 
