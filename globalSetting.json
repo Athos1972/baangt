@@ -44,6 +44,13 @@
             "options": ["True", "False" ],
             "displayText": "Trace Network Info"
         },
+        "TC.ExportAllFields": {
+            "hint": "Ignore other settings and export all fields of the testDataFile to export format",
+            "type": "bool",
+            "default": "False",
+            "options": ["True", "False" ],
+            "displayText": "Export all fields"
+        },
         "TC.Release": {
             "hint": "set particular version to test ",
             "type": "text",
@@ -51,7 +58,7 @@
             "options": "",
             "displayText": "Current Release"
         },
-        "TX.Debug": {
+        "TX.DEBUG": {
             "hint": "Don't start new thread for execution. Use same thread. Used sometimes for debugging",
             "type": "bool",
             "default": "False",
