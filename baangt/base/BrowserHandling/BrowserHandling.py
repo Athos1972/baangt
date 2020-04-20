@@ -25,6 +25,7 @@ from urllib.request import urlretrieve
 import tarfile
 import zipfile
 import requests
+from baangt.base.PathManagement import managedPaths
 
 logger = logging.getLogger("pyC")
 
@@ -65,7 +66,7 @@ class BrowserDriver:
             self.screenshotPath = screenshotPath
             Path(self.screenshotPath).mkdir(exist_ok=True)
         else:
-            self.screenshotPath = os.getcwd()
+            self.screenshotPath = managedPaths.get_screenshot_path()
 
     def createNewBrowser(self, mobileType=None, mobileApp = None, desired_app = None, mobile_app_setting = None,
                          browserName=GC.BROWSER_FIREFOX,
@@ -247,7 +248,7 @@ class BrowserDriver:
         """
         randomValue = str(uuid.uuid4())
 
-        self.downloadFolder = str(Path(os.getcwd()).joinpath("TestDownloads").joinpath(randomValue))
+        self.downloadFolder = str(Path(managedPaths.get_download_path()).joinpath("TestDownloads").joinpath(randomValue))
         Path(self.downloadFolder).mkdir(parents=True, exist_ok=True)
 
         logger.debug(f"Directory for download {self.downloadFolder}")
