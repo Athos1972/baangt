@@ -58,3 +58,4 @@ xlrd==1.2.0
 XlsxWriter==1.2.7
 zipp==0.6.0
 gevent==1.4.0
+Faker==4.0.3
