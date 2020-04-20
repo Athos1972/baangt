@@ -31,7 +31,19 @@ class GlobalSettings:
         def __init__(self, jsonfile=None):
             """ Initialize the config data from json file """
             self.config = {}
-            # load globalSetting json file
+            if jsonfile:
+                # internally call initBaseConfig and addValue
+                self.addValue(jsonfile)
+            else:
+                self.initBaseConfig()
+
+        def initBaseConfig(self):
+            """ This function will initialize the config data
+            with globalSetting.json content
+            """
+            # init the file to base state
+            if self.config:
+                self.config = {}
             globalFile = "globalSetting.json"
             if not os.path.isfile(globalFile):
                 dirpath = os.path.dirname(os.path.abspath(__file__))
@@ -40,8 +52,12 @@ class GlobalSettings:
                 # package attempt is failed
                 dirpath = os.getcwd()
                 globalFile = os.path.join(os.path.dirname(dirpath), 'globalSetting.json')
+            # alert on console if globalSettings not found
+            if not os.path.isfile(globalFile):
+                print(" {} File not a valid file ".format(globalFile))
             data = self.parseJsonfile(globalFile)
             self.config = data
+
 
         def isValidFile(self, jsonfile):
             """ This return True if it can be opened """
@@ -101,8 +117,13 @@ class GlobalSettings:
 
         def addValue(self, jsonfile):
             """ This will update the existing settings with given dictionary
-            of data in json file
+            of data in json file.
+            Also, this will remove all current dictionary data
+
             """
+            # init with base config
+            self.initBaseConfig()
+
             # path should be absolute to process the file
             parsed_data = self.parseJsonfile(jsonfile)
             if parsed_data:
@@ -127,7 +148,9 @@ class GlobalSettings:
         """ Get the instance and update the value """
         if not GlobalSettings.__instance:
             # Create New instance
-            GlobalSettings.__instance = GlobalSettings.__GlobalSettings(jsonfile)
+            GlobalSettings.__instance = GlobalSettings.__GlobalSettings(
+                                     jsonfile
+                                     )
         else:
             GlobalSettings.__instance.addValue(jsonfile)
         return GlobalSettings.__instance

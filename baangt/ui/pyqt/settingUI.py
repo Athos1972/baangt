@@ -21,8 +21,7 @@ class settingUI(SettingForm):
         self.readConfig()
         self.readConfigFile()
         self.drawSetting()
-
-        self.okPushButton.clicked.connect(self.saveValue)
+        self.okPushButton.clicked.connect(self.saveToFile)
         self.savePushButton.clicked.connect(self.saveToFile)
         # self.exitPushButton.clicked.connect(self.quitApplication)
         self.saveAspushButton.clicked.connect(self.saveAsNewFile)
@@ -157,10 +156,19 @@ class settingUI(SettingForm):
             for d in range(n_rows):
                 self.formLayout.removeRow(0)
 
-
+        # update the groupbox headlines
+        if self.configFile:
+            settingFile = self.configFile
+        else:
+            settingFile = "globalSetting.json"
+        _translate = QtCore.QCoreApplication.translate
+        self.groupBox.setTitle(
+                   _translate(
+                       "Form",
+                       "Settings in {}".format(settingFile)
+                       ))
         settings = self.configInstance.config
         count = 0
-        _translate = QtCore.QCoreApplication.translate
         for key, value in sorted(
                          settings.items(),
                          key=lambda x: x[1]['type']

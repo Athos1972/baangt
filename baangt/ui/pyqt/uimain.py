@@ -454,6 +454,7 @@ class MainController:
         self.setting = settingUI()
         self.setting.setupUi(self.widget)
         self.setting.exitPushButton.clicked.connect(self.show_main)
+        self.setting.okPushButton.clicked.connect(self.show_main)
         self.window.setCentralWidget(self.widget)
 
 
