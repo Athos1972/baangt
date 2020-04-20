@@ -3,9 +3,9 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 
-DATABASE_URL = 'testrun.db'
+DATABASE_URL = 'sqlite:///testrun.db'
 
-engine = create_engine(f'sqlite:///{DATABASE_URL}')
+engine = create_engine(DATABASE_URL)
 base = declarative_base()
 
 
