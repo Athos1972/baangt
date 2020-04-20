@@ -11,7 +11,8 @@ from xlsxwriter.worksheet import (
     Worksheet, cell_number_tuple, cell_string_tuple)
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from baangt.base.DataBaseORM import DATABASE_URL, TestrunLog
+from baangt.base.DataBaseORM import DATABASE_URL, TestrunLog, TestCaseSequenceLog
+from baangt.base.DataBaseORM import TestCaseLog, TestCaseField, GlobalAttribute, TestCaseNetworkInfo
 from datetime import datetime
 import time
 from baangt import plugin_manager
@@ -24,6 +25,7 @@ logger = logging.getLogger("pyC")
 
 class ExportResults:
     def __init__(self, **kwargs):
+        self.kwargs = kwargs
         self.testList = []
         self.testRunInstance = kwargs.get(GC.KWARGS_TESTRUNINSTANCE)
         self.networkInfo = kwargs.get('networkInfo')
@@ -34,6 +36,8 @@ class ExportResults:
 
         try:
             self.exportFormat = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.EXPORT_FORMAT)[GC.EXPORT_FORMAT]
+            if not self.exportFormat:
+                self.exportFormat = GC.EXP_XLSX
         except KeyError:
             self.exportFormat = GC.EXP_XLSX
 
@@ -56,6 +60,7 @@ class ExportResults:
             self.__setHeaderDetailSheetExcel()
             self.makeSummaryExcel()
             self.exportResultExcel()
+            self.exportAdditionalData()
             self.exportTiming = ExportTiming(self.dataRecords,
                                             self.timingSheet)
             if self.networkInfo:
@@ -70,6 +75,40 @@ class ExportResults:
             self.export2CSV()
         self.exportToDataBase()
 
+    def exportAdditionalData(self):
+        # Runs only, when KWARGS-Parameter is set.
+        if self.kwargs.get(GC.EXPORT_ADDITIONAL_DATA):
+            addExportData = self.kwargs[GC.EXPORT_ADDITIONAL_DATA]
+            # Loop over the items. KEY = Tabname, Value = Data to be exported.
+            # For data KEY = Fieldname, Value = Cell-Value
+
+            for key, value in addExportData.items():
+                lExport = ExportAdditionalDataIntoTab(tabname=key, valueDict=value, outputExcelSheet=self.workbook)
+                lExport.export()
+
+
+    # -- API support --
+    def getSummary(self):
+        #
+        # returns records status as dict
+        #
+        summary = {'Testrecords': len(self.dataRecords)}
+        summary['Successful'] = len([x for x in self.dataRecords.values()
+                                                   if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_SUCCESS])
+        summary['Paused'] = len([x for x in self.dataRecords.values()
+                                                   if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_WAITING])
+        summary['Error'] = len([x for x in self.dataRecords.values()
+                                                   if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR])
+        # logfile
+        summary['Logfile'] = logger.handlers[1].baseFilename
+        # timing
+        timing:Timing = self.testRunInstance.timing
+        summary['Starttime'], summary['Endtime'], summary['Duration'] = timing.returnTimeSegment(GC.TIMING_TESTRUN)
+        summary['Globals'] = {key: value for key, value in self.testRunInstance.globalSettings.items()}
+        
+        return summary
+    # -- END of API support --
+    
     def export2CSV(self):
         """
         Writes CSV-File of datarecords
@@ -83,6 +122,9 @@ class ExportResults:
         f.close()
 
     def exportToDataBase(self):
+        #
+        # writes results to DB
+        #
         engine = create_engine(f'sqlite:///{DATABASE_URL}')
 
         # create a Session
@@ -105,19 +147,11 @@ class ExportResults:
             if value[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_WAITING:
                 waiting += 1
 
-        # get globals
-        globalString = '{'
-        for key, value in self.testRunInstance.globalSettings.items():
-            if len(globalString) > 1:
-                globalString += ', '
-            globalString += f'{key}: {value}'
-        globalString += '}'
-
         # get documents
         datafiles = self.fileName
 
-        # create object
-        log = TestrunLog(
+        # create testrun object
+        tr_log = TestrunLog(
             testrunName = self.testRunName,
             logfileName = logger.handlers[1].baseFilename,
             startTime = datetime.strptime(start, "%H:%M:%S"),
@@ -125,12 +159,66 @@ class ExportResults:
             statusOk = success,
             statusFailed = error,
             statusPaused = waiting,
-            globalVars = globalString,
             dataFile = datafiles,
         )
-        # write to DataBase
-        session.add(log)
+        # add to DataBase
+        session.add(tr_log)
+
+        # set globals
+        for key, value in self.testRunInstance.globalSettings.items():
+            globalVar = GlobalAttribute(
+                name=key,
+                value=str(value),
+                testrun=tr_log,
+            )
+            session.add(globalVar)
+
         session.commit()
+
+        # create testcase sequence instance
+        tcs_log = TestCaseSequenceLog(testrun=tr_log)
+
+        # create testcases
+        for tc in self.dataRecords.values():
+            # create TestCaseLog instances
+            tc_log = TestCaseLog(testcase_sequence=tcs_log)
+            session.add(tc_log)
+            # add TestCase fields
+            for key, value in tc.items():
+                field = TestCaseField(name=key, value=str(value), testcase=tc_log)
+                session.add(field)
+
+        session.commit()
+
+        # network info
+        if self.networkInfo:
+            for info in self.networkInfo:
+                for entry in info['log']['entries']:
+                    # get TestCase number
+                    test_case_num = self.exportNetWork._get_test_case_num(entry['startedDateTime'], entry['pageref'])
+                    # check if number is int
+                    if type(test_case_num) == type(1):
+                        test_case_num -= 1
+
+                        nw_info = TestCaseNetworkInfo(
+                            testcase = tcs_log.testcases[test_case_num],
+                            browserName = entry.get('pageref'),
+                            status = entry['response'].get('status'),
+                            method = entry['request'].get('method'),
+                            url = entry['request'].get('url'),
+                            contentType = entry['response']['content'].get('mimeType'),
+                            contentSize = entry['response']['content'].get('size'),
+                            headers = str(entry['response']['headers']),
+                            params = str(entry['request']['queryString']),
+                            response = entry['response']['content'].get('text'),
+                            startDateTime = datetime.strptime(entry['startedDateTime'][:19], '%Y-%m-%dT%H:%M:%S'), 
+                            duration = entry.get('time'),
+                        )
+                        session.add(nw_info)
+
+        session.commit()
+
+
 
     def exportResultExcel(self, **kwargs):
         self._exportData()
@@ -241,15 +329,31 @@ class ExportResults:
         """
         Fields, that start with "RESULT_" shall always be exported.
 
+        Other fields, that shall always be exported are also added (Testcaseerrorlog, etc.)
+
+        If global Parameter "TC.ExportAllFields" is set to True ALL fields will be exported
+
         @return:
         """
+
+        if self.testRunInstance.globalSettings.get("TC.ExportAllFields", False):
+            self.fieldListExport = []   # Make an empty list, so that we don't have duplicates
+            for key in self.dataRecords[0].keys():
+                self.fieldListExport.append(key)
+            return
+
         try:
             for key in self.dataRecords[0].keys():
-                if "RESULT_" in key:
+                if "RESULT_" in key.upper():
                     if not key in self.fieldListExport:
                         self.fieldListExport.append(key)
+
         except Exception as e:
             logger.critical(f'looks like we have no data in records: {self.dataRecords}, len of dataRecords: {len(self.dataRecords)}')
+
+        # They are added here, because they'll not necessarily appear in the first record of the export data:
+        self.fieldListExport.append(GC.TESTCASEERRORLOG)
+        self.fieldListExport.append(GC.SCREENSHOTS)
 
     def _exportData(self):
         for key, value in self.dataRecords.items():
@@ -267,10 +371,15 @@ class ExportResults:
 
     def __writeCell(self, line, cellNumber, testRecordDict, fieldName, strip=False):
         if fieldName in testRecordDict.keys() and testRecordDict[fieldName]:
+            # Remove leading New-Line:
             if '\n' in testRecordDict[fieldName][0:5] or strip:
                 testRecordDict[fieldName] = testRecordDict[fieldName].strip()
-            if isinstance(testRecordDict[fieldName], dict) or isinstance(testRecordDict[fieldName], list):
-                self.worksheet.write(line, cellNumber, testRecordDict[fieldName].strip())
+            # Do different stuff for Dicts and Lists:
+            if isinstance(testRecordDict[fieldName], dict):
+                self.worksheet.write(line, cellNumber, testRecordDict[fieldName])
+            elif isinstance(testRecordDict[fieldName], list):
+                self.worksheet.write(line, cellNumber,
+                                     utils.listToString(testRecordDict[fieldName]))
             else:
                 if fieldName == GC.TESTCASESTATUS:
                     if testRecordDict[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_SUCCESS:
@@ -285,6 +394,28 @@ class ExportResults:
         # Next line doesn't work on MAC. Returns "not authorized"
         # subprocess.Popen([self.filename], shell=True)
 
+
+class ExportAdditionalDataIntoTab:
+    def __init__(self, tabname, valueDict, outputExcelSheet:xlsxwriter.Workbook):
+        self.tab = outputExcelSheet.add_worksheet(tabname)
+        self.values = valueDict
+
+    def export(self):
+        self.makeHeader()
+        self.writeLines()
+
+    def makeHeader(self):
+        for cellNumber, entries in self.values.items():
+            for column, (key, value) in enumerate(entries.items()):
+                self.tab.write(0, column, key)
+            break  # Write header only for first line.
+
+    def writeLines(self):
+        currentLine = 1
+        for line, values in self.values.items():
+            for column, (key, value) in enumerate(values.items()):
+                self.tab.write(currentLine, column, value)
+            currentLine += 1
 
 class ExcelSheetHelperFunctions:
     def __init__(self):

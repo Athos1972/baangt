@@ -1,12 +1,34 @@
 Change log
 ==========
 
+2020.04
+^^^^^^^
+
+Summary:
+A huge step closer to release 1. Some minor functionalities still need fixing. May May be the release month!
+
+New features
+++++++++++++
+* SimpleFormat: New command ``iban`` will create a random IBAN. Powered by Schwifty library.
+* SimpleFormat: New command ``pdfcompare`` compares a downloaded PDF-File with a reference PDF-File and reports differences. Works also well with parallel sessions.
+* All: Variable replacement using Faker module. For instance ``$(FAKER.email)`` will generate a random E-Mail address
+* Appium integration for Android and iOS App tests using Appium Webdriver (see in /examples/App* and globalsApp.json)
+* Subclassing: New commands to identify stale objects on page (HTML-Reload and SPA-Support)
+* Additional way to export data to Excel-Result (can be used for results of scraping) GC.EXPORT_ADDITIONAL_DATA in
+  TestRun.additionalExportTabs create one dict with <tabname>:<ExportDictContent>. Headers = Fieldnames.
+
+Changes
++++++++
+* Improved browserDriver Download for executables (didn't work in some cases)
+* Improved database logging of testrun results
+
 2020.03
 ^^^^^^^
 Summary: Release Candiate 3 is on the road!
 
 New features
 ++++++++++++
+* Executable files and ZIP-Archives for Mac, Windows and Ubuntu - no more GIT CLONE needed! Simply download, unzip and run.
 * Network logging during WEB-Sessions and export to Excel-Result in separate tab. Use ``TC.NetworkInfo`` with value ``True`` (tested on Mac and Windows, most probably works on Linux too).
 * baangtDB: Import and Export functionality for simpleFormat and complex XLSX-Testrun definitions.
 * baangtDB: Export also to JSON-Format
@@ -17,6 +39,7 @@ New features
 * SimpleFormat: ``address_creation`` command added to create a random address. Customizable.
   Multiple calls will create multiple random addresses.
 * CLI: New parameter ``--reloadDrivers=True`` downloads latest version of webdrivers for Chrome and Firefox.
+* Integration with Selenium Grid V4.0 and baangt. See docs for further details. Separate Repository for the Dockerfile
 
 Bugfixes
 ++++++++

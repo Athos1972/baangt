@@ -33,6 +33,7 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Why baangt and why is it open source?" href="HistoryAndReasons.html" />
@@ -95,6 +96,14 @@
 <li class="toctree-l2"><a class="reference internal" href="#debugging">Debugging</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#plugins">Plugins</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#network-trace">Network trace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-baangt-sources">Building baangt sources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#building-pypi">Building pyPi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#building-executables">Building Executables</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#windows-bundle-executables">Windows bundle executables:</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">   History</a></li>
@@ -102,7 +111,8 @@
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">   Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="BrowserDrivers.html">   Browser Drivers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">:subheader: Articles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Variables.html">   Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">   :subheader: Articles</a></li>
 <li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
 </ul>
 
@@ -222,6 +232,44 @@ the calls that the browser exchanges with the backend. If you need this, use <co
 In the output file you’ll see a new tab “Network” that shows all calls, headers, payload and timing information for each
 call.</p>
 <p>Use with care, as the file can get pretty big.</p>
+</div>
+<div class="section" id="building-baangt-sources">
+<h2>Building baangt sources<a class="headerlink" href="#building-baangt-sources" title="Permalink to this headline">¶</a></h2>
+<p>Core project members can build distribution as follows:</p>
+<div class="section" id="building-pypi">
+<h3>Building pyPi<a class="headerlink" href="#building-pypi" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Increase version in <code class="docutils literal notranslate"><span class="pre">setup.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MakePackage.sh</span></code> to upload to PyPi</p></li>
+<li><p>Use latest version in depending project’s <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> (Custom projects)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-r</span> <span class="pre">requirements.txt</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="building-executables">
+<h3>Building Executables<a class="headerlink" href="#building-executables" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p>Checkout <code class="docutils literal notranslate"><span class="pre">https://github.com/Athos1972/baangt-executables</span></code></p></li>
+<li><p>On a Windows computer: <code class="docutils literal notranslate"><span class="pre">execWindow.bat</span></code></p></li>
+<li><p>Move <code class="docutils literal notranslate"><span class="pre">/executables/baangt_windows_executable.zip</span></code> to checked out <code class="docutils literal notranslate"><span class="pre">baangt-executables</span></code> ideally with this line:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">mv</span> <span class="pre">executables/baangt_mac_executable.zip</span> <span class="pre">../baangt-executables</span></code></p>
+</div></blockquote>
+</li>
+<li><p>Repeat accordingly on Mac (<code class="docutils literal notranslate"><span class="pre">execMac.sh</span></code>)</p></li>
+<li><p>Repeat accordingly on Ubuntu (<code class="docutils literal notranslate"><span class="pre">execUbuntu.sh</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">add</span> <span class="pre">.</span></code> in the folder <code class="docutils literal notranslate"><span class="pre">baangt-executables</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">commit</span> <span class="pre">-m</span> <span class="pre">&lt;version&gt;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">push</span></code></p></li>
+</ul>
+<div class="section" id="windows-bundle-executables">
+<h4>Windows bundle executables:<a class="headerlink" href="#windows-bundle-executables" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><p>Install innosetup-qsp (QuickStartPack) Versoin 6 from <a class="reference external" href="https://jrsoftware.org/isdl.php">https://jrsoftware.org/isdl.php</a></p></li>
+<li><p>Open Inno Setup</p></li>
+<li><p>Use Script <code class="docutils literal notranslate"><span class="pre">/windows/baangtSetupWindows.iss</span></code></p></li>
+</ul>
+</div>
+</div>
 </div>
 </div>
 

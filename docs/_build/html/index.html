@@ -33,6 +33,7 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Installation" href="Installation.html" /> 
@@ -86,15 +87,17 @@
 <li class="toctree-l1"><a class="reference internal" href="simpleExample.html">   First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Structure.html">   Structure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ParametersConfigFile.html">   Parameters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="DataFile.html">   Data file</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SimpleAPI.html">   First API Test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="TestTypes.html">   Types of Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DataFile.html">   Data file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SaveResults2Database.html">   Results in Database</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Developer.html">   For Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">   History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">   Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="BrowserDrivers.html">   Browser Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Variables.html">   Variables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">   :subheader: Articles</a></li>
 <li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
 </ul>
@@ -171,6 +174,7 @@ and well documented master functionality.</p>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Installation.html">   Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Installation.html#run-the-executables">Run the executables</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Installation.html#install-from-sources">Install from sources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Installation.html#docker">Docker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Installation.html#install-pip-package">Install PIP-Package</a></li>
@@ -199,7 +203,6 @@ and well documented master functionality.</p>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="ParametersConfigFile.html">   Parameters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="DataFile.html">   Data file</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SimpleAPI.html">   First API Test</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="SimpleAPI.html#steps-to-test-the-simple-api-format">Steps to test the simple API Format:</a></li>
 <li class="toctree-l2"><a class="reference internal" href="SimpleAPI.html#activities-for-api-tests">Activities for API-Tests:</a></li>
@@ -216,11 +219,17 @@ and well documented master functionality.</p>
 <li class="toctree-l2"><a class="reference internal" href="TestTypes.html#no-oversimplification">No oversimplification</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="DataFile.html">   Data file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SaveResults2Database.html">   Results in Database</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="SaveResults2Database.html#tables">Tables</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="Developer.html">   For Developers</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Developer.html#subclassing">Subclassing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Developer.html#debugging">Debugging</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Developer.html#plugins">Plugins</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Developer.html#network-trace">Network trace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Developer.html#building-baangt-sources">Building baangt sources</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">   History</a><ul>
@@ -235,9 +244,10 @@ and well documented master functionality.</p>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">   Changelog</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id1">2020.03</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id2">2020.02</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id3">2020.01</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id1">2020.04</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id2">2020.03</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id4">2020.02</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id5">2020.01</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a><ul>
@@ -249,6 +259,11 @@ and well documented master functionality.</p>
 <li class="toctree-l1"><a class="reference internal" href="BrowserDrivers.html">   Browser Drivers</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="BrowserDrivers.html#new-release-of-browser-drivers">New release of browser drivers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="BrowserDrivers.html#older-releases-of-browser-drivers">Older releases of browser drivers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Variables.html">   Variables</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Variables.html#special-variables-for-apis">Special variables for APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Variables.html#faker">Faker</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">   :subheader: Articles</a><ul>

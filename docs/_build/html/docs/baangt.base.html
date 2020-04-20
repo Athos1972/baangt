@@ -33,6 +33,7 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
 </head>
@@ -94,7 +95,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">   Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PlannedFeatures.html">   Planned Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../BrowserDrivers.html">   Browser Drivers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../articles/Articles.html">:subheader: Articles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Variables.html">   Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../articles/Articles.html">   :subheader: Articles</a></li>
 <li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
 </ul>
 
@@ -428,7 +430,7 @@ structural elements) into the deep dict.</p>
 
 <dl class="method">
 <dt id="baangt.base.TestRunExcelImporter.TestRunExcelImporter.importConfig">
-<code class="sig-name descname">importConfig</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.TestRunExcelImporter.TestRunExcelImporter.importConfig" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">importConfig</code><span class="sig-paren">(</span><em class="sig-param">global_settings</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.TestRunExcelImporter.TestRunExcelImporter.importConfig" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -517,6 +519,14 @@ lBasePath = the Path where the script is run</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="baangt.base.Utils.utils.listToString">
+<em class="property">static </em><code class="sig-name descname">listToString</code><span class="sig-paren">(</span><em class="sig-param">completeList</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.Utils.utils.listToString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a concatenated string from a list-object
+:param completeList: any List
+:return: String</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="baangt.base.Utils.utils.openJson">
 <em class="property">static </em><code class="sig-name descname">openJson</code><span class="sig-paren">(</span><em class="sig-param">fileNameAndPath</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.Utils.utils.openJson" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -537,6 +547,14 @@ given, this function will replace it with the actual value (e.g. FIREFOX)</p>
 <dt id="baangt.base.Utils.utils.sanitizeFileName">
 <em class="property">static </em><code class="sig-name descname">sanitizeFileName</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.Utils.utils.sanitizeFileName" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="baangt.base.Utils.utils.setLocatorFromLocatorType">
+<em class="property">static </em><code class="sig-name descname">setLocatorFromLocatorType</code><span class="sig-paren">(</span><em class="sig-param">lLocatorType</em>, <em class="sig-param">lLocator</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.Utils.utils.setLocatorFromLocatorType" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#64;param lLocatorType: XPATH, CSS, ID, etc.
+&#64;param lLocator: Value of the locator
+&#64;return:</p>
+</dd></dl>
 
 </dd></dl>
 

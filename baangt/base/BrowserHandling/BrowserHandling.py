@@ -1,5 +1,6 @@
 import os
 from selenium import webdriver
+from appium import webdriver as Appiumwebdriver
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -10,6 +11,8 @@ from selenium.webdriver.common import keys
 from baangt.base import GlobalConstants as GC
 from baangt.base.Timing.Timing import Timing
 from baangt.TestSteps import Exceptions
+from baangt.base.DownloadFolderMonitoring import DownloadFolderMonitoring
+from baangt.base.Utils import utils
 import uuid
 import time
 import logging
@@ -46,6 +49,10 @@ class BrowserDriver:
         self.locator = None
         self.slowExecution = False
         self.slowExecutionTimeoutInSeconds = 1
+        self.downloadFolder = None
+        self.downloadFolderMonitoring = None
+        # Reference to Selenium "HTML" in order to track page changes. It is set on every interaction with the page
+        self.html = None
 
         if timing:
             self.timing = timing
@@ -60,7 +67,9 @@ class BrowserDriver:
         else:
             self.screenshotPath = os.getcwd()
 
-    def createNewBrowser(self, browserName=GC.BROWSER_FIREFOX, desiredCapabilities={}, **kwargs):
+    def createNewBrowser(self, mobileType=None, mobileApp = None, desired_app = None, mobile_app_setting = None,
+                         browserName=GC.BROWSER_FIREFOX,
+                         desiredCapabilities={}, randomProxy=None, **kwargs):
         """
         Will find the specified executables of the desired browser and start it with the given capabilities.
 
@@ -76,12 +85,7 @@ class BrowserDriver:
             GC.BROWSER_EDGE: webdriver.Edge,
             GC.BROWSER_REMOTE: webdriver.Remote}
 
-        GeckoExecutable = "geckodriver"
-        ChromeExecutable = "chromedriver"
-
-        if 'NT' in os.name.upper():
-            GeckoExecutable = GeckoExecutable + ".exe"
-            ChromeExecutable = ChromeExecutable + ".exe"
+        ChromeExecutable, GeckoExecutable = BrowserDriver.__getBrowserExecutableNames()
 
         lCurPath = Path(os.getcwd())
         lCurPath = lCurPath.joinpath("browserDrivers")
@@ -90,35 +94,48 @@ class BrowserDriver:
 
             browserProxy = kwargs.get('browserProxy')
             browserInstance = kwargs.get('browserInstance', 'unknown')
+
             if browserName == GC.BROWSER_FIREFOX:
                 lCurPath = lCurPath.joinpath(GeckoExecutable)
-                if not (os.path.isfile(str(lCurPath))):
-                    self.downloadDriver(browserName)
 
-                profile = None
-                firefox_proxy = browserProxy.selenium_proxy() if browserProxy else None
-                if firefox_proxy:
+                if mobileType == 'True':
+                    self.mobileConnectAppium(GeckoExecutable, browserName, desired_app, lCurPath, mobileApp,
+                                             mobile_app_setting)
+                else:
+                    if not (os.path.isfile(str(lCurPath))):
+                        self.downloadDriver(browserName)
+
                     profile = webdriver.FirefoxProfile()
-                    profile.set_proxy(firefox_proxy)
-                self.driver = browserNames[browserName](options=self.__createBrowserOptions(browserName=browserName,
-                                                                                            desiredCapabilities=desiredCapabilities),
-                                                        executable_path=self.__findBrowserDriverPaths(GeckoExecutable),
-                                                        firefox_profile=profile)
-                browserProxy.new_har("baangt-firefox-{}".format(browserInstance),
-                                     options={'captureHeaders': True, 'captureContent': True}) \
-                    if firefox_proxy else None
+                    profile = self.__setFirefoxProfile(browserProxy, profile, randomProxy)
+                    logger.debug(f"Firefox Profile as follows:{profile.userPrefs}")
+
+                    self.driver = browserNames[browserName](
+                        options=self.__createBrowserOptions(browserName=browserName,
+                                                            desiredCapabilities=desiredCapabilities),
+                                                            executable_path=self.__findBrowserDriverPaths(GeckoExecutable),
+                                                            firefox_profile=profile)
+                    self.__startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance,
+                                                browserProxy=browserProxy)
 
             elif browserName == GC.BROWSER_CHROME:
                 lCurPath = lCurPath.joinpath(ChromeExecutable)
-                if not (os.path.isfile(str(lCurPath))):
-                    self.downloadDriver(browserName)
-                self.driver = browserNames[browserName](
-                    chrome_options=self.__createBrowserOptions(browserName=browserName,
-                                                               desiredCapabilities=desiredCapabilities,
-                                                               browserProxy=browserProxy),
-                    executable_path=self.__findBrowserDriverPaths(ChromeExecutable))
-                browserProxy.new_har("baangt-chrome-{}".format(browserInstance),
-                                     options={'captureHeaders': True, 'captureContent': True}) if browserProxy else None
+
+                if mobileType == 'True':
+                    self.mobileConnectAppium(ChromeExecutable, browserName, desired_app, mobileApp,
+                                             mobile_app_setting)
+                else:
+
+                    if not (os.path.isfile(str(lCurPath))):
+                        self.downloadDriver(browserName)
+
+                    self.driver = browserNames[browserName](
+                        chrome_options=self.__createBrowserOptions(browserName=browserName,
+                                                                   desiredCapabilities=desiredCapabilities,
+                                                                   browserMobProxy=browserProxy,
+                                                                   randomProxy=randomProxy),
+                                                                   executable_path=self.__findBrowserDriverPaths(ChromeExecutable))
+                    self.__startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance,
+                                                browserProxy=browserProxy)
             elif browserName == GC.BROWSER_EDGE:
                 self.driver = browserNames[browserName](
                     executable_path=self.__findBrowserDriverPaths("msedgedriver.exe"))
@@ -162,11 +179,114 @@ class BrowserDriver:
 
             serverUrl = 'http://' + seleniumGridIp + ':' + seleniumGridPort
 
-            self.driver = webdriver.Remote(command_executor=serverUrl, desired_capabilities=desired_capabilities)
+            self.driver = webdriver.Remote(command_executor=serverUrl,
+                                           desired_capabilities=desiredCapabilities)
         else:
             raise SystemExit("Browsername unknown")
 
+        if self.downloadFolder:
+            self.downloadFolderMonitoring = DownloadFolderMonitoring(self.downloadFolder)
+
         self.takeTime("Browser Start")
+
+    def __setFirefoxProfile(self, browserProxy, profile, randomProxy=None):
+        if browserProxy:
+            profile.set_proxy(browserProxy.selenium_proxy())
+
+        if randomProxy:
+            """
+            from selenium import webdriver
+            return webdriver.Proxy({
+                "httpProxy": self.proxy,
+                "sslProxy": self.proxy,
+            })
+            """
+            # We shall use a random Proxy from the list:
+            PROXY = f"{randomProxy['ip']}:{randomProxy['port']}"
+
+            logger.info(f"Using Proxy-Server: {PROXY}")
+
+            ffProxy = webdriver.Proxy( {
+                        "httpProxy":PROXY,
+                        "ftpProxy":PROXY,
+                        "sslProxy":PROXY,
+                        "noProxy":None,
+                        "proxy_type":"MANUAL",
+                        "proxyType":"MANUAL",
+                        "class":"org.openqa.selenium.Proxy",
+                        "autodetect":False
+                        })
+
+            profile.set_proxy(ffProxy)
+
+        profile.set_preference("browser.download.folderList", 2)
+        profile.set_preference("browser.helperApps.alwaysAsk.force", False)
+        profile.set_preference("browser.download.manager.showWhenStarting", False)
+        profile.set_preference("browser.download.manager.showAlertOnComplete", False)
+        profile.set_preference('browser.helperApps.neverAsk.saveToDisk',
+                               'application/octet-stream,application/pdf,application/x-pdf,application/vnd.pdf,application/zip,application/octet-stream,application/x-zip-compressed,multipart/x-zip,application/x-rar-compressed, application/octet-stream,application/msword,application/vnd.ms-word.document.macroEnabled.12,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/rtf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,application/vnd.ms-word.document.macroEnabled.12,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/xls,application/msword,text/csv,application/vnd.ms-excel.sheet.binary.macroEnabled.12,text/plain,text/csv/xls/xlsb,application/csv,application/download,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/octet-stream')
+        profile.set_preference('browser.helperApps.neverAsk.openFile',
+                               'application/octet-stream,application/pdf,application/x-pdf,application/vnd.pdf,application/zip,application/octet-stream,application/x-zip-compressed,multipart/x-zip,application/x-rar-compressed, application/octet-stream,application/msword,application/vnd.ms-word.document.macroEnabled.12,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/rtf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,application/vnd.ms-word.document.macroEnabled.12,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/xls,application/msword,text/csv,application/vnd.ms-excel.sheet.binary.macroEnabled.12,text/plain,text/csv/xls/xlsb,application/csv,application/download,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/octet-stream')
+        profile.set_preference("browser.download.dir", self.__setBrowserDownloadDirRandom())
+        profile.set_preference("browser.download.manager.useWindow", False)
+        profile.set_preference("browser.download.manager.focusWhenStarting", False)
+        profile.set_preference("browser.download.manager.showAlertOnComplete", False)
+        profile.set_preference("browser.download.manager.closeWhenDone", True)
+        profile.set_preference("pdfjs.enabledCache.state", False)
+        profile.set_preference("pdfjs.disabled", True) # This is nowhere on the Internet! But that did the trick!
+
+        # Set volume to 0
+        profile.set_preference("media.volume_scale", "0.0")
+        return profile
+
+    def __setBrowserDownloadDirRandom(self):
+        """
+        Generate a new Directory for downloads. This needs to be specific for each browser session,
+        so that we can know, which documents were created during this test case.
+        :return:
+        """
+        randomValue = str(uuid.uuid4())
+
+        self.downloadFolder = str(Path(os.getcwd()).joinpath("TestDownloads").joinpath(randomValue))
+        Path(self.downloadFolder).mkdir(parents=True, exist_ok=True)
+
+        logger.debug(f"Directory for download {self.downloadFolder}")
+        return self.downloadFolder
+
+
+    def __startBrowsermobProxy(self, browserName, browserInstance, browserProxy):
+        browserProxy.new_har(f"baangt-{browserName}-{browserInstance}",
+                             options={'captureHeaders': True, 'captureContent': True}) if browserProxy else None
+
+    @staticmethod
+    def __getBrowserExecutableNames():
+        GeckoExecutable = "geckodriver"
+        ChromeExecutable = "chromedriver"
+        if 'NT' in os.name.upper():
+            GeckoExecutable = GeckoExecutable + ".exe"
+            ChromeExecutable = ChromeExecutable + ".exe"
+        return ChromeExecutable, GeckoExecutable
+
+    def mobileConnectAppium(self, BrowserExecutable, browserName, desired_app, mobileApp, mobile_app_setting):
+        if desired_app[GC.MOBILE_PLATFORM_NAME] == "Android":
+            desired_cap = desired_app
+            if mobileApp == 'True':
+                desired_cap['app'] = mobile_app_setting[GC.MOBILE_APP_URL]
+                desired_cap['appPackage'] = mobile_app_setting[GC.MOBILE_APP_PACKAGE]
+                desired_cap['appActivity'] = mobile_app_setting[GC.MOBILE_APP_ACTIVITY]
+            else:
+                desired_cap['browserName'] = browserName
+                desired_cap['chromedriverExecutable'] = mobile_app_setting[GC.MOBILE_APP_BROWSER_PATH]
+                desired_cap['noReset'] = False
+            self.driver = Appiumwebdriver.Remote("http://localhost:4723/wd/hub", desired_cap)
+        elif desired_app[GC.MOBILE_PLATFORM_NAME] == "iOS":
+            desired_cap = desired_app
+            if mobileApp == 'True':
+                desired_cap['automationName'] = 'XCUITest'
+                desired_cap['app'] = mobile_app_setting[GC.MOBILE_APP_URL]
+            else:
+                desired_cap['browserName'] = 'safari'
+            self.driver = Appiumwebdriver.Remote("http://localhost:4723/wd/hub", desired_cap)
 
     def __findBrowserDriverPaths(self, filename):
 
@@ -196,33 +316,48 @@ class BrowserDriver:
 
         return self.slowExecution
 
-    def __createBrowserOptions(self, browserName, desiredCapabilities, browserProxy=None):
+    def __createBrowserOptions(self, browserName, desiredCapabilities, browserMobProxy=None, randomProxy=None):
         """
         Translates desired capabilities from the Testrun (or globals) into specific BrowserOptions for the
         currently active browser
 
         @param browserName: any of the GC.BROWSER*
         @param desiredCapabilities: Settings from TestRun or globals
-        @param browserProxy: Proxy-Server IP+Port
+        @param browserMobProxy: Proxy-Server IP+Port of internal BrowserMobProxy.
+        @param randomProxy: Proxy-Server IP+Port of random external Proxy
         @return: the proper BrowserOptions for the currently active browser.
         """
-
         if browserName == GC.BROWSER_CHROME:
             lOptions = ChromeOptions()
-            lOptions.add_argument('--proxy-server={0}'.format(browserProxy.proxy)) if browserProxy else None
         elif browserName == GC.BROWSER_FIREFOX:
             lOptions = ffOptions()
         else:
             return None
 
-        if not desiredCapabilities and not browserProxy:
+        # Default Download Directory for Attachment downloads
+        if browserName == GC.BROWSER_CHROME:
+            prefs = {"plugins.plugins_disabled" : ["Chrome PDF Viewer"],
+                     "plugins.always_open_pdf_externally": True,
+                     "profile.default_content_settings.popups": 0,
+                     "download.default_directory":
+                         self.__setBrowserDownloadDirRandom(),  # IMPORTANT - ENDING SLASH V IMPORTANT
+                     "directory_upgrade": True}
+            lOptions.add_experimental_option("prefs", prefs)
+            # Set Proxy for Chrome. First RandomProxy (External), if set. If not, then internal Browsermob
+            if randomProxy:
+                lOptions.add_argument(f"--proxy-server={randomProxy['ip']}:{randomProxy['port']}")
+            elif browserMobProxy:
+                lOptions.add_argument('--proxy-server={0}'.format(browserMobProxy.proxy))
+
+
+        if not desiredCapabilities and not browserMobProxy:
             return None
 
         # sometimes instead of DICT comes a string with DICT-Format
         if isinstance(desiredCapabilities, str) and "{" in desiredCapabilities and "}" in desiredCapabilities:
             desiredCapabilities = json.loads(desiredCapabilities.replace("'", '"'))
 
-        if not isinstance(desiredCapabilities, dict) and not browserProxy:
+        if not isinstance(desiredCapabilities, dict) and not browserMobProxy:
             return None
 
         if isinstance(desiredCapabilities, dict) and desiredCapabilities.get(GC.BROWSER_MODE_HEADLESS):
@@ -233,9 +368,13 @@ class BrowserDriver:
         return lOptions
 
     def closeBrowser(self):
-        self.driver.quit()
+        if self.driver:
+            try:
+                self.driver.quit()
+            except Exceptions as ex:
+                pass  # If the driver is already dead, it's fine.
 
-    def _log(self, logType, logText, **kwargs):
+    def _log(self, logType, logText, noScreenShot=False, **kwargs):
         """
         Interal wrapper of Browser-Class for Logging. Takes a screenshot on Error and Warning.
 
@@ -244,6 +383,8 @@ class BrowserDriver:
         @param kwargs: Additional Arguments to be logged
         """
         argsString = ""
+        xshot = "Couldn't take Screenshot"
+
         for key, value in kwargs.items():
             if value:
                 argsString = argsString + f" {key}: {value}"
@@ -254,16 +395,19 @@ class BrowserDriver:
         if logType == logging.DEBUG:
             logger.debug(logText + argsString)
         elif logType == logging.ERROR:
-            logger.error(logText + argsString)
-            self.takeScreenshot()
+            if not noScreenShot:
+                xshot = self.takeScreenshot()
+            logger.error(logText + argsString + f" Screenshot: {xshot}")
+
         elif logType == logging.WARN:
             logger.warning(logText + argsString)
-            self.takeScreenshot()
         elif logType == logging.INFO:
             logger.info(logText + argsString)
         elif logType == logging.CRITICAL:
-            logger.critical(logText + argsString)
-            self.takeScreenshot()
+
+            if not noScreenShot:
+                xshot = self.takeScreenshot()
+            logger.critical(logText + argsString + f" Screenshot: {xshot}")
         else:
             print(f"Unknown call to Logger: {logType}")
             self._log(logging.CRITICAL, f"Unknown type in call to logger: {logType}")
@@ -498,6 +642,15 @@ class BrowserDriver:
 
         self.__doSomething(GC.CMD_FORCETEXT, value=value, timeout=timeout, xpath=xpath, optional=optional)
 
+    def findNewFiles(self):
+        """
+        Returns a list of new files from downloadFolderMonitoring since the last call
+
+        :return: List of Files since last call
+        """
+        l_list = self.downloadFolderMonitoring.getNewFiles()
+        return l_list
+
     def findBy(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=60, loggingOn=True,
                optional=False):
         """
@@ -514,9 +667,6 @@ class BrowserDriver:
         @param optional: If set to true and within Timeout we can't find the element, we just return this info. If set to False (=default), an Exception is raised
         @return: True if element was located, False if element couldn't be found.
         """
-
-        if self.slowExecution:
-            time.sleep(self.slowExecutionTimeoutInSeconds)
 
         if self.slowExecution:
             time.sleep(self.slowExecutionTimeoutInSeconds)
@@ -539,9 +689,9 @@ class BrowserDriver:
             self.locator = id
 
         if loggingOn:
-            self._log(logging.DEBUG, f"Locating Element {self.locatorType} = {self.locator}")
+            logger.debug(f"Locating Element {self.locatorType} = {self.locator}")
 
-        successful = self.__tryAndRetry(id, css, xpath, class_name, timeout=timeout)
+        successful = self.__tryAndRetry(id, css, xpath, class_name, timeout=timeout, optional=optional)
 
         if not successful and not optional:
             raise Exceptions.baangtTestStepException(f"Element {self.locatorType} = {self.locator} could not be found "
@@ -555,7 +705,7 @@ class BrowserDriver:
         """
         return self.driver.current_url
 
-    def __tryAndRetry(self, id=None, css=None, xpath=None, class_name=None, timeout=20):
+    def __tryAndRetry(self, id=None, css=None, xpath=None, class_name=None, timeout=20, optional=False):
         """
         In: Locator
         Out: Boolean whether the element was found or not.
@@ -574,13 +724,15 @@ class BrowserDriver:
         else:
             pollFrequency = 0.5
 
-        internalTimeout = timeout / 3
+        internalTimeout = timeout / 5
 
         lLoopCount = 0
 
         while not wasSuccessful and elapsed < timeout:
             lLoopCount += 1
             try:
+                self.html = self.driver.find_element_by_tag_name('html')   # This is for waitForPageLoadAfterButton
+
                 driverWait = WebDriverWait(self.driver, timeout=internalTimeout, poll_frequency=pollFrequency)
 
                 if id:
@@ -593,7 +745,7 @@ class BrowserDriver:
                     # visibility of element sometimes not true, but still clickable. If we tried already
                     # 2 times with visibility, let's give it one more try with Presence of element
                     if lLoopCount > 1:
-                        self._log(logging.INFO, "Tried 2 times to find visible element, now trying presence "
+                        logger.debug("Tried 2 times to find visible element, now trying presence "
                                                 f"of element instead, XPATH = {xpath}")
                         self.element = driverWait.until(ec.presence_of_element_located((By.XPATH, xpath)))
                     else:
@@ -601,25 +753,25 @@ class BrowserDriver:
 
                 wasSuccessful = True
             except StaleElementReferenceException as e:
-                self._log(logging.DEBUG, "Stale Element Exception - retrying " + str(e))
+                logger.debug("Stale Element Exception - retrying " + str(e))
                 time.sleep(pollFrequency)
             except ElementClickInterceptedException as e:
-                self._log(logging.DEBUG, "ElementClickIntercepted - retrying " + str(e))
+                logger.debug("ElementClickIntercepted - retrying " + str(e))
                 time.sleep(pollFrequency)
             except TimeoutException as e:
-                self._log(logging.WARNING, "TimoutException - retrying " + str(e))
+                logger.debug("TimoutException - retrying " + str(e))
                 time.sleep(pollFrequency)
             except NoSuchElementException as e:
-                self._log(logging.WARNING, "Retrying Webdriver Exception: " + str(e))
+                logger.debug("Retrying Webdriver Exception: " + str(e))
                 time.sleep(pollFrequency)
             except InvalidSessionIdException as e:
-                self._log(logging.CRITICAL, "WebDriver Exception - terminating testrun: " + str(e))
+                logger.debug("WebDriver Exception - terminating testrun: " + str(e))
                 raise Exceptions.baangtTestStepException
             except NoSuchWindowException as e:
                 self._log(logging.CRITICAL, "WebDriver Exception - terminating testrun: " + str(e))
                 raise Exceptions.baangtTestStepException
             except ElementNotInteractableException as e:
-                self._log(logging.DEBUG, "Most probably timeout exception - retrying: " + str(e))
+                logger.debug("Most probably timeout exception - retrying: " + str(e))
             except WebDriverException as e:
                 self._log(logging.ERROR, "Retrying WebDriver Exception: " + str(e))
                 time.sleep(2)
@@ -634,7 +786,7 @@ class BrowserDriver:
         to disapear before you continue with your script in the main screen.
 
         """
-        self._log(logging.DEBUG, "Waiting for Element to disappear", **{"xpath": xpath, "timeout": timeout})
+        logger.debug(f"Waiting for Element to disappear: XPATH:{xpath}, timeout: {timeout}")
         time.sleep(0.5)
 
         stillHere = True
@@ -649,7 +801,7 @@ class BrowserDriver:
                     self.element = self.driver.find_element_by_id(id)
                 elif css:
                     self.element = self.driver.find_element_by_css_selector(css)
-                time.sleep(0.1)
+                time.sleep(0.2)
                 elapsed = time.time() - begin
             except Exception as e:
                 # Element gone - exit
@@ -659,6 +811,36 @@ class BrowserDriver:
 
         raise Exceptions.baangtTestStepException(
             f"Element still here after {timeout} seconds. Locator: xpath={xpath}, id={id}")
+
+    def checkLinks(self):
+        """
+        For the current page we'll check all links and return result in format
+        <status_code> <link_that_was_checked>
+
+        :return: List of checked links
+        """
+        lResult = []
+        links = self.driver.find_elements_by_css_selector("a")
+        logger.debug(f"Checking links on page {self.driver.current_url}")
+        for link in links:
+            lHref = link.get_attribute("href")
+            if not lHref:
+                continue
+            if lHref.startswith("mailto"):
+                pass
+            else:
+                try:
+                    r = requests.head(lHref)
+                    lResult.append([r.status_code, lHref])
+                    logger.debug(f"Result was: {r.status_code}, {lHref}")
+                except requests.exceptions.InvalidURL as e:
+                    lResult.append([500, f"Invalid URL: {lHref}"])
+                except requests.exceptions.ConnectionError as e:
+                    lResult.append([500, f"HTTP connection error: {lHref}"])
+                except requests.exceptions.MissingSchema as e:
+                    lResult.append([500, f"Missing Schema - invalid URL: {lHref}"])
+
+        return lResult
 
     @staticmethod
     def sleep(sleepTimeinSeconds):
@@ -680,7 +862,7 @@ class BrowserDriver:
 
         while not didWork and elapsed < timeout:
             try:
-                self._log(logging.DEBUG, f"Do_something {command} with {value}")
+                self._log(logging.DEBUG, f"__doSomething {command} with {value}")
                 if command.upper() == GC.CMD_SETTEXT:
                     self.element.send_keys(value)
                 elif command.upper() == GC.CMD_CLICK:
@@ -698,6 +880,7 @@ class BrowserDriver:
                 time.sleep(0.2)
             except StaleElementReferenceException as e:
                 self._log(logging.DEBUG, "doSomething: Element stale - retry")
+                # If the element is stale after 2 times, try to re-locate the element
                 time.sleep(0.2)
             except NoSuchElementException as e:
                 self._log(logging.DEBUG, "doSomething: Element not there yet - retry")
@@ -707,7 +890,8 @@ class BrowserDriver:
                 raise Exceptions.baangtTestStepException(e)
             except ElementNotInteractableException as e:
                 self._log(logging.ERROR, f"Element not interactable {e}")
-                raise Exceptions.baangtTestStepException(e)
+                time.sleep(0.2)
+                # raise Exceptions.baangtTestStepException(e)
             except NoSuchWindowException as e:
                 raise Exceptions.baangtTestStepException(e)
             elapsed = time.time() - begin
@@ -719,14 +903,84 @@ class BrowserDriver:
             raise Exceptions.baangtTestStepException(
                 f"Action not possible after {timeout} s, Locator: {self.locatorType}: {self.locator}")
 
+
+    def waitForElementChangeAfterButtonClick(self, timeout=3):
+        """
+        Wait for a stale element (in a good way). Stale means, that the object has changed.
+
+        old element is in self.element
+        old locator is in self.locatorType and self.locator
+
+        :param timeout:
+        :return:
+        """
+
+        lOldElement = self.element.id
+
+        lStartOfWaiting = time.time()
+        elapsed = 0
+
+        logger.debug("Starting")
+
+        xpath, css, id = utils.setLocatorFromLocatorType(self.locatorType, self.locator)
+
+        while elapsed < timeout:
+            lFound = self.findBy(xpath=xpath, css=css, id=id, timeout=0.5, optional=True)
+            if not lFound:
+                # Wonderful. Element is gone
+                logger.debug("Old object is not in the page any longer, save to continue")
+                return True
+            if self.element.id != lOldElement:
+                logger.debug("Old element is stale, save to continue")
+                return True
+
+            time.sleep(0.1)
+            elapsed = time.time() - lStartOfWaiting
+
+        logger.debug("Old element equal to new element after timeout. Staleness not detected using this method")
+
+    def waitForPageLoadAfterButtonClick(self, timeout=3):
+        """
+        Problem: If the same XPATH/CSS/ID exists on both pages (the current one, where a button is clicked
+                 and the next one, where we now want to interact, then it happens very often, that the element
+                 is stale (because it was bound to the current page BEFORE the page-load happened.
+        Solution: Wait deliberately until current self.element is stale.
+        :param timout: Yeah, you guessed it. The timeout
+        :return: True = New page loaded, False = The element didn't get stale within timeout
+        """
+
+        if not self.html:
+            sys.exit("Something is very wrong! self.html didn't exist when waitForPageLoadAfterButtonClick was called")
+
+        lStartOfWaiting = time.time()
+        elapsed = 0
+        logger.debug("Starting")
+
+        while elapsed < timeout:
+            lHTML = self.driver.find_element_by_tag_name("html")
+            if lHTML != self.html:
+                logger.debug("Page was reloaded")
+                return True
+
+            time.sleep(0.1)
+
+            elapsed = time.time() - lStartOfWaiting
+
+        logger.debug("No Page reload detected by this method")
+        return False    # There was no changed HTML
+
     def goToUrl(self, url):
         self._log(logging.INFO, f'GoToUrl:{url}')
         try:
             self.driver.get(url)
         except WebDriverException as e:
-            self._log(logging.ERROR, f"Webpage {url} not reached. Error was: {e}")
+            # Use noScreenshot-Parameter as otherwise we'll try on a dead browser to create a screenshot
+            self._log(logging.ERROR, f"Webpage {url} not reached. Error was: {e}", noScreenShot=True)
             raise Exceptions.baangtTestStepException
-        pass
+        except Exceptions as e:
+            # Use noScreenshot-Parameter as otherwise we'll try on a dead browser to create a screenshot
+            self._log(logging.ERROR, f"Webpage {url} throws error {e}", noScreenShot=True)
+            raise Exceptions.baangtTestStepException(url, e)
 
     def goBack(self):
         """
