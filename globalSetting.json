@@ -1,32 +1,39 @@
 {
     "settings": {
-       "Release": {
-            "hint": "set particular version to test ",
-            "type": "text",
-            "default": "",
-            "options": ["1.a.dev",  "1.b", "2.a"],
-            "displayText": "Current Release"
-        },
         "TC.slowExecution": {
-            "hint": "Stop Browser for sometime",
+            "hint": "Stop execution for 1 second after each step. Great for tracing errors!",
             "type": "bool",
             "default": "False",
             "options": ["True", "False"],
-            "displayText": "TC.slowExecution"
+            "displayText": "Slow execution"
         },
-        "dontCloseBrowser":  {
+        "TC.dontCloseBrowser":  {
             "hint": "When the browser or script finds an error, it usually takes a screenshot and moves on to the next testcase. With this setting to True the browser session will stop right at the error.",
             "type": "bool",
             "default": "False",
             "options": ["True", "False"],
-            "displayText": "Dont Close Browser"
+            "displayText": "Don't close Browser"
         },
         "TC.BrowserAttributes": {
             "hint": "Choose browser to test the application",
             "type": "select",
+            "default": "",
+            "options": ["{'HEADLESS':'True'}" ],
+            "displayText": "Browser attributes"
+        },
+        "TC.Browser": {
+            "hint": "Choose browser for this test run",
+            "type": "select",
             "default": "FF",
-            "options": ["FF", "Chrome", "Safari" ],
+            "options": ["FF", "Chrome", "Safari", "Edge", "REMOTE", "REMOTE_V4"],
             "displayText": "Browser "
+        },
+        "TC.Lines":  {
+            "hint": "Lines to execute for this test case. Syntax: 1, 5, 9, 10-50, 700-900",
+            "type": "text",
+            "default": "",
+            "options:": "",
+            "displayText": "Lines from Testfile"
         },
         "TC.NetworkInfo": {
             "hint": "Trace Network status Information",
@@ -34,6 +41,12 @@
             "default": "False",
             "options": ["True", "False" ],
             "displayText": "Trace Network Info"
+        },
+        "TC.Release": {
+            "hint": "set particular version to test ",
+            "type": "text",
+            "default": "",
+            "displayText": "Current Release"
         }
     }
 }
