@@ -3,6 +3,7 @@ import json
 from datetime import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+import uuid
 
 path_to_db = 'test.db'
 path_to_globals = 'tests/jsons/globals.json'
@@ -35,14 +36,15 @@ def tr_log():
 	from baangt.base.DataBaseORM import TestrunLog
 
 	log = TestrunLog(
-		testrunName = 'Test Testrun',
-		logfileName = 'Test Filename',
-		startTime = datetime.strptime('00:00:00', '%H:%M:%S'),
-		endTime = datetime.strptime('00:01:00', '%H:%M:%S'),
-		statusOk = 1,
-		statusFailed = 1,
-		statusPaused = 1,
-		dataFile = 'Test DataFile name',
+		uuid=uuid.uuid4().bytes,
+		testrunName='Test Testrun',
+		logfileName='Test Filename',
+		startTime=datetime.strptime('00:00:00', '%H:%M:%S'),
+		endTime=datetime.strptime('00:01:00', '%H:%M:%S'),
+		statusOk=1,
+		statusFailed=1,
+		statusPaused=1,
+		dataFile='Test DataFile name',
 	)
 
 	return log
@@ -78,7 +80,7 @@ def network_google():
 
 def test_testrunlog(session_db, tr_log):
 	#
-	# creata a TestrunLog instance
+	# creat a TestrunLog instance
 	#
 	
 	session_db.add(tr_log)
@@ -86,6 +88,24 @@ def test_testrunlog(session_db, tr_log):
 	# assertions
 	assert len(tr_log.testcase_sequences) == 0
 	assert len(tr_log.globalVars) == 0
+
+def test_get_testrunlog(session_db, tr_log):
+	#
+	# get a TestrunLog from DB
+	#
+
+	# set new UUID
+	tr_uuid = uuid.uuid4()
+	tr_log.uuid = tr_uuid.bytes
+	session_db.add(tr_log)
+	session_db.commit()
+
+	# get UUID as string
+	uuid_text = str(tr_uuid)
+	
+	# get item by UUID
+	from baangt.base.DataBaseORM import TestrunLog
+	get_tr = session_db.query(TestrunLog).get(uuid.UUID(uuid_text).bytes)
 
 def test_globalvars(session_db, tr_log, global_vars):
 	#
@@ -208,19 +228,19 @@ def test_networkinfo(session_db, tr_log):
 	assert len(tc_log.networkInfo) == 1
 
 
-def test_sampletestcases(session_db, tr_log, results_google, network_google):
+def test_sample_testcases(session_db, tr_log, results_google, network_google):
 	#
 	# create sample TestCaseLog instances
 	#
 	from baangt.base.DataBaseORM import TestCaseSequenceLog, TestCaseLog, TestCaseField, TestCaseNetworkInfo
 
-	tcs_log = TestCaseSequenceLog(testrun=tr_log)
+	tcs_log = TestCaseSequenceLog(uuid=uuid.uuid4().bytes, testrun=tr_log)
 	session_db.add(tr_log)
 	session_db.add(tcs_log)
 
 	for result in results_google.values():
 		# create TestCaseLog per a record
-		tc_log = TestCaseLog(testcase_sequence=tcs_log)
+		tc_log = TestCaseLog(uuid=uuid.uuid4().bytes, testcase_sequence=tcs_log)
 		session_db.add(tc_log)
 		# add TestCaseLog attributes
 		for key, value in result.items():

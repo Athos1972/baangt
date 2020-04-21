@@ -20,6 +20,7 @@ import re
 import csv
 from dateutil.parser import parse
 import os
+from uuid import uuid4
 
 logger = logging.getLogger("pyC")
 
@@ -47,7 +48,7 @@ class ExportResults:
         logger.info("Export-Sheet for results: " + self.fileName)
 
         # export results to DB
-        self.uuids = {}
+        self.testcase_uuids = []
         self.exportToDataBase()
 
         if self.exportFormat == GC.EXP_XLSX:
@@ -161,6 +162,7 @@ class ExportResults:
 
         # create testrun object
         tr_log = TestrunLog(
+            uuid=self.testRunInstance.uuid.bytes,
             testrunName=self.testRunName,
             logfileName=logger.handlers[1].baseFilename,
             startTime=datetime.strptime(start, "%H:%M:%S"),
@@ -189,8 +191,15 @@ class ExportResults:
 
         # create testcases
         for tc in self.dataRecords.values():
+            # get uuid
+            uuid = uuid4()
             # create TestCaseLog instances
-            tc_log = TestCaseLog(testcase_sequence=tcs_log)
+            tc_log = TestCaseLog(
+                uuid=uuid.bytes,
+                testcase_sequence=tcs_log
+            )
+            # store uuid
+            self.testcase_uuids.append(uuid)
             session.add(tc_log)
             # add TestCase fields
             for key, value in tc.items():
@@ -198,12 +207,6 @@ class ExportResults:
                 session.add(field)
 
         session.commit()
-
-        # collect uuids
-        self.uuids['testrun'] = tr_log.id
-        self.uuids['testcases'] = []
-        for tc in tcs_log.testcases:
-            self.uuids['testcases'].append(tc.id)
 
         # network info
         if self.networkInfo:
@@ -224,31 +227,7 @@ class ExportResults:
                         duration=entry.get('duration'),
                     )
                     session.add(nw_info)
-            '''
-            for info in self.networkInfo:
-                for entry in info['log']['entries']:
-                    # get TestCase number
-                    test_case_num = self.exportNetWork._get_test_case_num(entry['startedDateTime'], entry['pageref'])
-                    # check if number is int
-                    if type(test_case_num) == type(1):
-                        test_case_num -= 1
 
-                        nw_info = TestCaseNetworkInfo(
-                            testcase=tcs_log.testcases[test_case_num],
-                            browserName=entry.get('pageref'),
-                            status=entry['response'].get('status'),
-                            method=entry['request'].get('method'),
-                            url=entry['request'].get('url'),
-                            contentType=entry['response']['content'].get('mimeType'),
-                            contentSize=entry['response']['content'].get('size'),
-                            headers=str(entry['response']['headers']),
-                            params=str(entry['request']['queryString']),
-                            response=entry['response']['content'].get('text'),
-                            startDateTime=datetime.strptime(entry['startedDateTime'][:19], '%Y-%m-%dT%H:%M:%S'),
-                            duration=entry.get('time'),
-                        )
-                        session.add(nw_info)
-            '''
         session.commit()
 
     def _get_test_case_num(self, start_date_time, browser_name):
@@ -320,7 +299,7 @@ class ExportResults:
             for key, value in testcase.items():
                 row += 1
                 self.jsonSheet.write(row, 0, 'stage')
-                self.jsonSheet.write(row, 1, self.uuids['testcases'][index])
+                self.jsonSheet.write(row, 1, str(self.testcase_uuids[index]))
                 self.jsonSheet.write(row, 2, key)
                 self.jsonSheet.write(row, 3, str(value))
         # Autowidth
@@ -357,7 +336,7 @@ class ExportResults:
         # get logfilename for database my
         self.testList.append(logger.handlers[1].baseFilename)
         # database id
-        self.__writeSummaryCell("Testrun DB UUID", self.uuids.get('testrun'), row=8)
+        self.__writeSummaryCell("Testrun UUID", str(self.testRunInstance.uuid), row=8)
         # Timing
         timing: Timing = self.testRunInstance.timing
         start, end, duration = timing.returnTimeSegment(GC.TIMING_TESTRUN)
@@ -426,7 +405,7 @@ class ExportResults:
 
     def __setHeaderDetailSheetExcel(self):
         # the 1st column is DB UUID
-        self.worksheet.write(0, 0, 'DB UUID')
+        self.worksheet.write(0, 0, 'UUID')
         # Add fields with name "RESULT_*" to output fields.
         i = 1
         self.__extendFieldList()
@@ -470,7 +449,7 @@ class ExportResults:
     def _exportData(self):
         for key, value in self.dataRecords.items():
             # write DB UUID
-            self.worksheet.write(key + 1, 0, self.uuids['testcases'][key])
+            self.worksheet.write(key + 1, 0, str(self.testcase_uuids[key]))
             # write RESULT fields
             for (n, column) in enumerate(self.fieldListExport):
                 self.__writeCell(key + 1, n + 1, value, column)
@@ -683,31 +662,6 @@ class ExportNetWork:
             for i in range(len(data_list)):
                 self.sheet.write(index + 1, i, str(data_list[i]) or 'null')
 
-
-        '''
-        for info in self.networkInfo:
-            for index, entry in enumerate(info['log']['entries']):
-                browser_name = entry['pageref']
-                status = entry['response']['status']
-                method = entry['request']['method']
-                url = entry['request']['url']
-                content_type = entry['response']['content']['mimeType']
-                content_size = entry['response']['content']['size']
-                headers = entry['response']['headers']
-                params = entry['request']['queryString']
-                response = entry['response']['content']['text'] if 'text' in entry['response']['content'] else ''
-                start_date_time = entry['startedDateTime']
-                duration = entry['time']
-                test_case_num = self._get_test_case_num(start_date_time, browser_name)
-
-                data_list = [browser_name, test_case_num, status, method, url, content_type, content_size,
-                             headers, params, response, start_date_time, duration]
-
-                [self.sheet.write(index + partition_index + 1, i, str(data_list[i]) or 'null')
-                 for i in range(len(data_list))]
-
-            partition_index += len(info['log']['entries'])
-        '''
 
 class ExportTiming:
     def __init__(self, testdataRecords: dict, sheet: xlsxwriter.worksheet):

@@ -1,13 +1,21 @@
-from sqlalchemy import Column, String, Integer, DateTime, Boolean, Table, ForeignKey 
+from sqlalchemy import Column, String, Integer, DateTime, Boolean, Table, ForeignKey, LargeBinary
+#from sqlalchemy.types import Binary, TypeDecorator
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
+import os
+from uuid import uuid4
 
-DATABASE_URL = 'sqlite:///testrun.db'
+DATABASE_URL = os.getenv('BAANGT_RESULTS_DATABASE_URL') or 'sqlite:///testrun.db'
 
 engine = create_engine(DATABASE_URL)
 base = declarative_base()
 
+#
+# UUID as bytes
+#
+def getUuidBytes():
+	return uuid4().bytes
 
 #
 # Testrun models
@@ -19,7 +27,7 @@ class TestrunLog(base):
 	#
 	__tablename__ = "testruns"
 	# columns
-	id = Column(Integer, primary_key=True)
+	uuid = Column(LargeBinary, primary_key=True, default=getUuidBytes)
 	testrunName = Column(String, nullable=False)
 	logfileName = Column(String, nullable=False)
 	startTime = Column(DateTime, nullable=False)
@@ -43,9 +51,9 @@ class GlobalAttribute(base):
 	id = Column(Integer, primary_key=True)
 	name = Column(String, nullable=False)
 	value = Column(String, nullable=True)
-	testrun_id = Column(Integer, ForeignKey('testruns.id'), nullable=False)
+	testrun_uuid = Column(LargeBinary, ForeignKey('testruns.uuid'), nullable=False)
 	# relationships
-	testrun = relationship('TestrunLog', foreign_keys=[testrun_id])
+	testrun = relationship('TestrunLog', foreign_keys=[testrun_uuid])
 
 
 #
@@ -59,10 +67,10 @@ class TestCaseSequenceLog(base):
 
 	__tablename__ = 'testCaseSequences'
 	# columns
-	id = Column(Integer, primary_key=True)
-	testrun_id = Column(Integer, ForeignKey('testruns.id'), nullable=False)
+	uuid = Column(LargeBinary, primary_key=True, default=getUuidBytes)
+	testrun_uuid = Column(LargeBinary, ForeignKey('testruns.uuid'), nullable=False)
 	# relationships
-	testrun = relationship('TestrunLog', foreign_keys=[testrun_id])
+	testrun = relationship('TestrunLog', foreign_keys=[testrun_uuid])
 	testcases = relationship('TestCaseLog')
 
 
@@ -76,10 +84,10 @@ class TestCaseLog(base):
 	#
 	__tablename__ = 'testCases'
 	# columns
-	id = Column(Integer, primary_key=True)
-	testcase_sequence_id = Column(Integer, ForeignKey('testCaseSequences.id'), nullable=False)
+	uuid = Column(LargeBinary, primary_key=True, default=getUuidBytes)
+	testcase_sequence_uuid = Column(LargeBinary, ForeignKey('testCaseSequences.uuid'), nullable=False)
 	# relationships
-	testcase_sequence = relationship('TestCaseSequenceLog', foreign_keys=[testcase_sequence_id])
+	testcase_sequence = relationship('TestCaseSequenceLog', foreign_keys=[testcase_sequence_uuid])
 	fields = relationship('TestCaseField')
 	networkInfo = relationship('TestCaseNetworkInfo')
 
@@ -93,9 +101,9 @@ class TestCaseField(base):
 	id = Column(Integer, primary_key=True)
 	name = Column(String, nullable=False)
 	value = Column(String, nullable=True)
-	testcase_id = Column(Integer, ForeignKey('testCases.id'), nullable=False)
+	testcase_uuid = Column(LargeBinary, ForeignKey('testCases.uuid'), nullable=False)
 	# relationships
-	testcase = relationship('TestCaseLog', foreign_keys=[testcase_id])
+	testcase = relationship('TestCaseLog', foreign_keys=[testcase_uuid])
 
 class TestCaseNetworkInfo(base):
 	#
@@ -115,9 +123,9 @@ class TestCaseNetworkInfo(base):
 	response = Column(String, nullable=True)
 	startDateTime = Column(DateTime, nullable=True)
 	duration = Column(Integer, nullable=True)
-	testcase_id = Column(Integer, ForeignKey('testCases.id'), nullable=True)
+	testcase_uuid = Column(LargeBinary, ForeignKey('testCases.uuid'), nullable=True)
 	# relationships
-	testcase = relationship('TestCaseLog', foreign_keys=[testcase_id])
+	testcase = relationship('TestCaseLog', foreign_keys=[testcase_uuid])
 
 
 

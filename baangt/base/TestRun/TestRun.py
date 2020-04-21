@@ -17,6 +17,7 @@ import os
 from baangt.base.Timing.Timing import Timing
 from baangt.base.TestRunUtils import TestRunUtils
 import time
+from uuid import uuid4
 
 logger = logging.getLogger("pyC")
 
@@ -28,7 +29,7 @@ class TestRun:
     """
 
     def __init__(self, testRunName, globalSettingsFileNameAndPath=None,
-                 testRunDict=None):  # -- API support: testRunDict --
+                 testRunDict=None, uuid=uuid4()):  # -- API support: testRunDict --
         """
         @param testRunName: The name of the TestRun to be executed.
         @param globalSettingsFileNameAndPath: from where to read the <globals>.json
@@ -47,6 +48,7 @@ class TestRun:
         # results
         self.results = None
         self.testRunDict = testRunDict
+        self.uuid = uuid
         # -- END of API support
 
         # New way to export additional Tabs to Excel
