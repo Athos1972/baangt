@@ -2,17 +2,28 @@ import os
 import json
 
 
-class managedPaths:
-    def __init__(self):
-        self.path = os.cwd()
+class Singleton(type):
+    _instances = {}
 
-    @staticmethod
-    def check_paths_file():
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+    
+    
+class ManagedPaths(metaclass=Singleton):
+    def __init__(self):
+        self.path = os.getcwd()
+        self.LogFileName = ""
+        self.LogFileName = self.get_log_filename()
+        self.ScreenshotPath = ""
+        self.DownloadPath = ""
+
+    def check_paths_file(self):
         paths_file = os.path.isfile('Paths.json')
         return paths_file
 
-    @staticmethod
-    def __get_path(key):
+    def __get_path(self, key):
         with open('Paths.json','r') as file:
             dic = json.load(file)
         if key in dic:
@@ -23,28 +34,31 @@ class managedPaths:
         else:
             return os.getcwd()
 
-    @staticmethod
-    def get_log_filename():
-        if managedPaths.check_paths_file():
-            path = managedPaths.__get_path('logFile')
+    def get_log_filename(self):
+        if self.LogFileName != "":
+            return self.LogFileName
+        if self.check_paths_file():
+            path = self.__get_path('logFile')
         else:
             path = os.getcwd()
         return path
 
-    @staticmethod
-    def get_screenshot_path():
-        if managedPaths.check_paths_file():
-            path = managedPaths.__get_path('screenshot')
+    def set_screenshot_path(self, path=None, change=False):
+        if self.ScreenshotPath != "" and change is False:
+            return self.ScreenshotPath
+        if path:
+            self.ScreenshotPath = path
         else:
-            path = os.getcwd()
-        return path
+            self.ScreenshotPath = os.getcwd()
+        return self.ScreenshotPath
 
-    @staticmethod
-    def get_download_path():
-        if managedPaths.check_paths_file():
-            path = managedPaths.__get_path('download')
+    def set_download_path(self, path=None, change=False):
+        if self.DownloadPath != "" and change is False:
+            return self.DownloadPath
+        if path:
+            self.DownloadPath = path
         else:
-            path = os.getcwd()
-        return path
+            self.DownloadPath = os.getcwd()
+        return self.DownloadPath
 
 
