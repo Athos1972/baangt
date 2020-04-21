@@ -728,11 +728,11 @@ class BrowserDriver:
 
         lLoopCount = 0
 
+        self.html = self.driver.find_element_by_tag_name('html')  # This is for waitForPageLoadAfterButton
+
         while not wasSuccessful and elapsed < timeout:
             lLoopCount += 1
             try:
-                self.html = self.driver.find_element_by_tag_name('html')   # This is for waitForPageLoadAfterButton
-
                 driverWait = WebDriverWait(self.driver, timeout=internalTimeout, poll_frequency=pollFrequency)
 
                 if id:
@@ -859,10 +859,12 @@ class BrowserDriver:
         didWork = False
         elapsed = 0
         begin = time.time()
+        counter = 0
 
         while not didWork and elapsed < timeout:
+            counter += 1
+            self._log(logging.DEBUG, f"__doSomething {command} with {value}")
             try:
-                self._log(logging.DEBUG, f"__doSomething {command} with {value}")
                 if command.upper() == GC.CMD_SETTEXT:
                     self.element.send_keys(value)
                 elif command.upper() == GC.CMD_CLICK:
@@ -881,7 +883,18 @@ class BrowserDriver:
             except StaleElementReferenceException as e:
                 self._log(logging.DEBUG, "doSomething: Element stale - retry")
                 # If the element is stale after 2 times, try to re-locate the element
-                time.sleep(0.2)
+                if counter < 2:
+                    time.sleep(0.2)
+                else:
+                    xpath, css, id = utils.setLocatorFromLocatorType(self.locatorType, self.locator)
+                    foundNow = self.findBy(xpath=xpath, css=css, id=id, optional=True, timeout=timeout/2)
+                    if foundNow:
+                        logger.debug(f"Re-Found element {self.locatorType}: {self.locator}, will retry ")
+                        begin = time.time()
+                    else:
+                        raise Exceptions.baangtTestStepException(
+                            f"Element {self.locatorType} {self.locator} was stale. "
+                            f"Tried to re-find it, but not element was gone")
             except NoSuchElementException as e:
                 self._log(logging.DEBUG, "doSomething: Element not there yet - retry")
                 time.sleep(0.5)
