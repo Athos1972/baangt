@@ -12,7 +12,7 @@ configuration:
     file:
       -
         name: file
-        fileName: bmp.log
+        fileName: /logs/bmp.log
         PatternLayout:
           pattern: "[%-5level %date{ISO8601} %logger] (%thread) %msg %xThrowable%n"
         append: false

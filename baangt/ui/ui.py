@@ -119,9 +119,6 @@ class UI:
             if lValues.get('-directory-') != self.directory:
                 self.directory = lValues.get("-directory-")
                 self.getConfigFilesInDirectory()
-                lWindow['configFile'].update(values=self.configFiles, value="")
-                lWindow['testRunFile'].update(values=self.testRunFiles, value="")
-                lValues['configFile'] = ""
 
             if lValues["testRunFile"]:
                 self.testRunFile = lValues["testRunFile"]
@@ -145,8 +142,10 @@ class UI:
                 self.runTestRun()
 
             if lEvent == "Import Recorder":
-                ImportKatalonRecorder(self.directory)
+                lRecorder = ImportKatalonRecorder(self.directory)
                 self.getConfigFilesInDirectory()   # Refresh display
+                lWindow['testRunFile'].update(values=self.testRunFiles,
+                                              value=lRecorder.fileNameExport)
 
             if lEvent == 'ToggleFields':
                 lWindow = self.toggleAdditionalFieldsExecute(lWindow=lWindow)
@@ -281,6 +280,11 @@ class UI:
 
         self.configFiles = sorted(self.configFiles)
         self.testRunFiles = sorted(self.testRunFiles)
+
+        lWindow = self.window
+        if lWindow:
+            lWindow['configFile'].update(values=self.configFiles, value=self.configFile if self.configFile else "")
+            lWindow['testRunFile'].update(values=self.testRunFiles, value=self.testRunFile if self.testRunFile else "")
 
         os.chdir(lcwd)
 

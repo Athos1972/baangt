@@ -1,5 +1,5 @@
 import logging
-import pandas as pd
+from xlrd import open_workbook
 import itertools
 import json
 import baangt.base.CustGlobalConstants as CGC
@@ -34,7 +34,7 @@ class HandleDatabase:
         self.rangeDict = {}
         self.__buildRangeDict()
         self.df_json = None
-        self.dataDict = {}
+        self.dataDict = []
         self.recordPointer = 0
 
     def __buildRangeDict(self):
@@ -51,7 +51,7 @@ class HandleDatabase:
         lRange = []
         if not rangeFromConfigFile:
             # No selection - means all records
-            return [[0,9999]]
+            return [[0,99999]]
         else:
             # Format: 4;6-99;17-200;203 or
             # Format: 4,6-100,800-1000
@@ -96,16 +96,22 @@ class HandleDatabase:
             logger.critical(f"Can't open file: {fileName}")
             return
 
-        # FIXME: Sooner or later replace Pandas with direct XLSX-Import
-        xl = pd.ExcelFile(fileName)
-        ncols = xl.book.sheet_by_name(sheet_name=sheetName).ncols
-        # Read all columns as strings:
-        df = xl.parse(sheet_name=sheetName, converters={i: str for i in range(ncols)})
+        book = open_workbook(fileName)
+        sheet = book.sheet_by_name(sheetName)
 
-        # Set all Nan to empty String:
-        df = df.where((pd.notnull(df)), '')
-        # Create Dict of Header + item:
-        self.dataDict = df.to_dict(orient="records")
+        # read header values into the list
+        keys = [sheet.cell(0, col_index).value for col_index in range(sheet.ncols)]
+
+        for row_index in range(1, sheet.nrows):
+            temp_dic = {}
+            for col_index in range(sheet.ncols):
+                temp_dic[keys[col_index]] = sheet.cell(row_index, col_index).value
+                if type(temp_dic[keys[col_index]])==float:
+                    temp_dic[keys[col_index]] = repr(temp_dic[keys[col_index]])
+                    if temp_dic[keys[col_index]][-2:]==".0":
+                        temp_dic[keys[col_index]] = temp_dic[keys[col_index]][:-2]
+            self.dataDict.append(temp_dic)
+
 
     def readNextRecord(self):
         """
@@ -120,12 +126,13 @@ class HandleDatabase:
         try:
             # the topmost record of the RangeDict (RangeDict was built by the range(s) from the TestRun
             # - 1 because there's a header line in the Excel-Sheet.
-            lRecord = self.dataDict[(list(self.rangeDict.keys())[0])-1]
+            lRecord = self.dataDict[(list(self.rangeDict.keys())[0])]
         except Exception as e:
             logger.debug(f"Couldn't read record from database: {list(self.rangeDict.keys())[0]}")
             self.rangeDict.pop(list(self.rangeDict.keys())[0])
             return None
 
+        # Remove the topmost entry fro the rangeDict, so that next time we read the next entry in the lines above
         self.rangeDict.pop(list(self.rangeDict.keys())[0])
         return self.updateGlobals(lRecord)
 
