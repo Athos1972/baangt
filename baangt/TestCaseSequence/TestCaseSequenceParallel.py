@@ -1,10 +1,10 @@
-import multiprocessing
 import logging
 from baangt.TestSteps import Exceptions
 from baangt.base import GlobalConstants as GC
 from datetime import datetime
 import time
 import gevent.queue
+
 logger = logging.getLogger("pyC")
 
 
@@ -15,6 +15,8 @@ class TestCaseSequenceParallel:
         self.tcNumber = tcNumber
         self.testcaseSequence = testcaseSequence
         self.kwargs = kwargs
+        # Add the sequence-Number of parallel runs, so that the Testcase will know, which sequence he is in.
+        self.kwargs[GC.KWARGS_SEQUENCENUMBER] = sequenceNumber
 
     def one_sequence(self, results: gevent.queue.Queue):
         dataRecord = self.dataRecord

@@ -35,9 +35,9 @@ class DownloadFolderMonitoring:
         lNewFiles = [item for item in lFiles if item not in self.__files]
 
         if lNewFiles:
-            logger.info(f"List of new files in Folder {self.directoryToWatch}: {lNewFiles}")
+            logger.debug(f"List of new files in Folder {self.directoryToWatch}: {lNewFiles}")
         else:
-            logger.info(f"no new files detected in Folder {self.directoryToWatch}")
+            logger.debug(f"no new files detected in Folder {self.directoryToWatch}")
 
         self.__files = lFiles  # to avoid giving the same new results as on last call.
 

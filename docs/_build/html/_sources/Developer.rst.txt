@@ -85,3 +85,11 @@ Building Executables
 * ``git add .`` in the folder ``baangt-executables``
 * ``git commit -m <version>``
 * ``git push``
+
+Windows bundle executables:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* Install innosetup-qsp (QuickStartPack) Versoin 6 from https://jrsoftware.org/isdl.php
+* Open Inno Setup
+* Use Script ``/windows/baangtSetupWindows.iss``
+

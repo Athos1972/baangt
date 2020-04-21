@@ -33,6 +33,7 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Future Features" href="PlannedFeatures.html" />
@@ -110,6 +111,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="BrowserDrivers.html">   Browser Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Variables.html">   Variables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">   :subheader: Articles</a></li>
 <li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
 </ul>
@@ -180,18 +182,25 @@
 <h1>Change log<a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
 <h2>2020.04<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
-<p>Summary:</p>
+<p>Summary:
+A huge step closer to release 1. Some minor functionalities still need fixing. May May be the release month!</p>
 <div class="section" id="new-features">
 <h3>New features<a class="headerlink" href="#new-features" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><p>SimpleFormat: New short command <code class="docutils literal notranslate"><span class="pre">iban</span></code> will create a random IBAN. Powered by Schwifty library.</p></li>
+<li><p>SimpleFormat: New command <code class="docutils literal notranslate"><span class="pre">iban</span></code> will create a random IBAN. Powered by Schwifty library.</p></li>
+<li><p>SimpleFormat: New command <code class="docutils literal notranslate"><span class="pre">pdfcompare</span></code> compares a downloaded PDF-File with a reference PDF-File and reports differences. Works also well with parallel sessions.</p></li>
+<li><p>All: Variable replacement using Faker module. For instance <code class="docutils literal notranslate"><span class="pre">$(FAKER.email)</span></code> will generate a random E-Mail address</p></li>
+<li><p>Appium integration for Android and iOS App tests using Appium Webdriver (see in /examples/App* and globalsApp.json)</p></li>
+<li><p>Subclassing: New commands to identify stale objects on page (HTML-Reload and SPA-Support)</p></li>
+<li><p>Additional way to export data to Excel-Result (can be used for results of scraping) GC.EXPORT_ADDITIONAL_DATA in
+TestRun.additionalExportTabs create one dict with &lt;tabname&gt;:&lt;ExportDictContent&gt;. Headers = Fieldnames.</p></li>
 </ul>
 </div>
 <div class="section" id="changes">
 <h3>Changes<a class="headerlink" href="#changes" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><p>Chrome now as default browser as many people don’t have Firefox</p></li>
 <li><p>Improved browserDriver Download for executables (didn’t work in some cases)</p></li>
+<li><p>Improved database logging of testrun results</p></li>
 </ul>
 </div>
 </div>
