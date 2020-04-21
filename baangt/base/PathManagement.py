@@ -1,5 +1,6 @@
 import os
 import json
+from pathlib import Path
 
 
 class Singleton(type):
@@ -13,35 +14,18 @@ class Singleton(type):
     
 class ManagedPaths(metaclass=Singleton):
     def __init__(self):
-        self.path = os.getcwd()
-        self.LogFileName = ""
-        self.LogFileName = self.get_log_filename()
+        self.LogFilePath = None
+        self.LogFilePath = self.get_log_path()
         self.ScreenshotPath = ""
         self.DownloadPath = ""
 
-    def check_paths_file(self):
-        paths_file = os.path.isfile('Paths.json')
-        return paths_file
+    def get_log_path(self):
+        if self.LogFilePath:
+            return self.LogFilePath
 
-    def __get_path(self, key):
-        with open('Paths.json','r') as file:
-            dic = json.load(file)
-        if key in dic:
-            if dic[key] != "":
-                return dic[key]
-            else:
-                return os.getcwd()
-        else:
-            return os.getcwd()
+        self.LogFilePath = self.__combineBasePathWithObjectPath("Logs")
 
-    def get_log_filename(self):
-        if self.LogFileName != "":
-            return self.LogFileName
-        if self.check_paths_file():
-            path = self.__get_path('logFile')
-        else:
-            path = os.getcwd()
-        return path
+        return self.LogFilePath
 
     def set_screenshot_path(self, path=None, change=False):
         if self.ScreenshotPath != "" and change is False:
@@ -49,7 +33,8 @@ class ManagedPaths(metaclass=Singleton):
         if path:
             self.ScreenshotPath = path
         else:
-            self.ScreenshotPath = os.getcwd()
+            self.ScreenshotPath = self.__combineBasePathWithObjectPath("Screenshots")
+
         return self.ScreenshotPath
 
     def set_download_path(self, path=None, change=False):
@@ -58,7 +43,28 @@ class ManagedPaths(metaclass=Singleton):
         if path:
             self.DownloadPath = path
         else:
-            self.DownloadPath = os.getcwd()
+            self.DownloadPath = self.__combineBasePathWithObjectPath("1Testresults")
+
         return self.DownloadPath
 
+    def __combineBasePathWithObjectPath(self, objectPath : str):
+        """
 
+        :param objectPath:
+        :return:
+        """
+        newPath = self.__derivePathForOSAndInstallationOption()
+        newPath = newPath.joinpath(objectPath)
+
+        return newPath
+
+    def __derivePathForOSAndInstallationOption(self):
+        """
+        Will provide different **base paths** depending on each OS and install-version (e.g. Windows Repository, Windows
+        ZIP-file with Executable, Windows Installer vs. MacOS-Installer vs. MacOS Repository.
+
+        Each Method/File-Type might have additional rules, like e.g. .joinpath("directory_for_this_filetype")
+
+        :return: base Path
+        """
+        return Path(os.getcwd())

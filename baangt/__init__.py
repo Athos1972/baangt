@@ -31,9 +31,8 @@ plugin_manager.register(plugin=ExportTimingHookImpl())
 
 
 # fixme: Parameter für Logfile should include stage and browser()
-mp = ManagedPaths()
-logFilename:pathlib.Path = Path(mp.get_log_filename())
-logFilename = logFilename.joinpath('logs')
+managedPaths = ManagedPaths()
+logFilename:pathlib.Path = Path(managedPaths.get_log_path())
 pathlib.Path(logFilename).mkdir(parents=True, exist_ok=True)
 logFilename = logFilename.joinpath(datetime.now().strftime("%Y%m%d_%H%M%S") + '.log')
 
