@@ -65,7 +65,7 @@ class Timing:
 
             elapsed = value.end - value.start
             ret = f'{ret}\n{key}: , since last call: ' \
-                    f'{Timing.__format_time(value)}'
+                    f'{Timing.__format_time(elapsed)}'
             
             if not value.timestamp:
                 continue
@@ -78,8 +78,8 @@ class Timing:
         duration = self.timing[section]
         if duration.end:
             start, end, duration = map(Timing.__format_time, \
-                duration.start, duration.end, 
-                duration.end - duration.start)
+                (duration.start, duration.end, 
+                duration.end - duration.start))
 
             return start, end, duration
 
