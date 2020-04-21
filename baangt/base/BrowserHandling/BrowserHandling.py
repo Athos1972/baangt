@@ -917,7 +917,7 @@ class BrowserDriver:
                 f"Action not possible after {timeout} s, Locator: {self.locatorType}: {self.locator}")
 
 
-    def waitForElementChangeAfterButtonClick(self, timeout=3):
+    def waitForElementChangeAfterButtonClick(self, timeout=5):
         """
         Wait for a stale element (in a good way). Stale means, that the object has changed.
 
@@ -947,12 +947,12 @@ class BrowserDriver:
                 logger.debug("Old element is stale, save to continue")
                 return True
 
-            time.sleep(0.1)
+            time.sleep(0.2)
             elapsed = time.time() - lStartOfWaiting
 
         logger.debug("Old element equal to new element after timeout. Staleness not detected using this method")
 
-    def waitForPageLoadAfterButtonClick(self, timeout=3):
+    def waitForPageLoadAfterButtonClick(self, timeout=5):
         """
         Problem: If the same XPATH/CSS/ID exists on both pages (the current one, where a button is clicked
                  and the next one, where we now want to interact, then it happens very often, that the element
@@ -975,7 +975,7 @@ class BrowserDriver:
                 logger.debug("Page was reloaded")
                 return True
 
-            time.sleep(0.1)
+            time.sleep(0.2)
 
             elapsed = time.time() - lStartOfWaiting
 
