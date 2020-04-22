@@ -97,7 +97,7 @@ class ManagedPaths(metaclass=Singleton):
         if path:
             self.AttachmentDownloadPath = path
         else:
-            self.AttachmentDownloadPath = self.__combineBasePathWithObjectPath("TestDownloads")
+            self.AttachmentDownloadPath = os.path.join(self.getOrSetDownloadsPath(), "TestDownloads")
 
         return self.AttachmentDownloadPath
 
