@@ -114,8 +114,11 @@ class BrowserDriver:
                     self.driver = browserNames[browserName](
                         options=self.__createBrowserOptions(browserName=browserName,
                                                             desiredCapabilities=desiredCapabilities),
-                                                            executable_path=self.__findBrowserDriverPaths(GeckoExecutable),
-                                                            firefox_profile=profile)
+                        executable_path=self.__findBrowserDriverPaths(GeckoExecutable),
+                        firefox_profile=profile,
+                        service_log_path=os.path.join(self.managedPaths.getLogfilePath(), 'geckodriver.log'),
+                        log_path=os.path.join(self.managedPaths.getLogfilePath(),'firefox.log')
+                    )
                     self.__startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance,
                                                 browserProxy=browserProxy)
 
@@ -135,7 +138,9 @@ class BrowserDriver:
                                                                    desiredCapabilities=desiredCapabilities,
                                                                    browserMobProxy=browserProxy,
                                                                    randomProxy=randomProxy),
-                                                                   executable_path=self.__findBrowserDriverPaths(ChromeExecutable))
+                        executable_path=self.__findBrowserDriverPaths(ChromeExecutable),
+                        service_log_path=os.path.join(self.managedPaths.getLogfilePath(), 'chromedriver.log')
+                    )
                     self.__startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance,
                                                 browserProxy=browserProxy)
             elif browserName == GC.BROWSER_EDGE:
