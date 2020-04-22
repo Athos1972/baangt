@@ -110,8 +110,7 @@ class BrowserFactory:
             return self.browser[browserInstance]
 
     def _getBrowserInstance(self, browserInstance):
-        self.browser[browserInstance] = BrowserDriver(timing=self.timing,
-                                                      screenshotPath=self.globalSettings[GC.PATH_SCREENSHOTS])
+        self.browser[browserInstance] = BrowserDriver(timing=self.timing)
 
     @staticmethod
     def __getBrowserServer():

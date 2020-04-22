@@ -68,6 +68,7 @@ class BrowserDriver:
             Path(self.screenshotPath).mkdir(exist_ok=True)
         else:
             self.screenshotPath = self.managedPaths.getOrSetScreenshotsPath()
+            Path(self.screenshotPath).mkdir(exist_ok=True)
 
     def createNewBrowser(self, mobileType=None, mobileApp = None, desired_app = None, mobile_app_setting = None,
                          browserName=GC.BROWSER_FIREFOX,
@@ -89,8 +90,7 @@ class BrowserDriver:
 
         ChromeExecutable, GeckoExecutable = BrowserDriver.__getBrowserExecutableNames()
 
-        lCurPath = Path(os.getcwd())
-        lCurPath = lCurPath.joinpath("browserDrivers")
+        lCurPath = Path(self.managedPaths.getOrSetDriverPath())
 
         if browserName in browserNames:
 
@@ -296,8 +296,7 @@ class BrowserDriver:
 
     def __findBrowserDriverPaths(self, filename):
 
-        lCurPath = Path(os.getcwd())
-        lCurPath = lCurPath.joinpath("browserDrivers")
+        lCurPath = Path(self.managedPaths.getOrSetDriverPath())
         lCurPath = lCurPath.joinpath(filename)
 
         logger.debug(f"Path for BrowserDrivers: {lCurPath}")
@@ -1016,10 +1015,9 @@ class BrowserDriver:
         self.driver.execute_script(jsText)
 
     def downloadDriver(self, browserName):
-        path = Path(os.getcwd())
-        logger.debug(f"Trying to download browserDriver for {browserName} into {path.joinpath('browserDrivers')}")
-        path.joinpath("browserDrivers").mkdir(parents=True, exist_ok=True)
-        path = path.joinpath("browserDrivers")
+        path = Path(self.managedPaths.getOrSetDriverPath())
+        logger.debug(f"Trying to download browserDriver for {browserName} into {path}")
+        path.mkdir(parents=True, exist_ok=True)
         tar_url = ''
         url = ''
         if str(browserName) == GC.BROWSER_FIREFOX:
