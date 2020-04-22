@@ -19,6 +19,8 @@ class ManagedPaths(metaclass=Singleton):
     - getLogfilePath: Will return a path for logfile directory.
     - getOrSetScreenshotsPath: Will return a path for Screenshots directory. You can also set path.
     - getOrSetDownloadsPath: Will return a path for Download directory. You can also set path.
+    - getOrSetAttachmentDownloadPath: Will return a path for Attachment Download directory. You can also set path.
+    - getOrSetDriverPath: Will return a path were webdriver is located. You can also set path.
     """
     def __init__(self):
         self.LogFilePath = None
@@ -26,6 +28,7 @@ class ManagedPaths(metaclass=Singleton):
         self.ScreenshotPath = ""
         self.DownloadPath = ""
         self.AttachmentDownloadPath = ""
+        self.DriverPath = ""
 
     def getLogfilePath(self):
         """
@@ -99,6 +102,25 @@ class ManagedPaths(metaclass=Singleton):
             self.AttachmentDownloadPath = os.path.join(self.getOrSetDownloadsPath(), "TestDownloads")
 
         return self.AttachmentDownloadPath
+
+    def getOrSetDriverPath(self, path=None, change=False):
+        """
+        Will return path where webdrivers are located.
+
+        Default path will be browserDriver folder in current working directory.
+
+        :param path: Path to be set for location where webdrivers are located or to be downloaded.
+        :param change: True if you want to change the existing DriverPath with the one passed in path parameter.
+        :return: Attachment Download path
+        """
+        if self.DriverPath != "" and change is False:
+            return self.DriverPath
+        if path:
+            self.DriverPath = path
+        else:
+            self.DriverPath = self.__combineBasePathWithObjectPath("browserDriver")
+
+        return self.DriverPath
 
     def __combineBasePathWithObjectPath(self, objectPath : str):
         """
