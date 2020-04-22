@@ -253,7 +253,7 @@ class BrowserDriver:
         :return:
         """
         randomValue = str(uuid.uuid4())
-        self.downloadFolder = str(Path(self.managedPaths.getOrSetDownloadsPath()).joinpath("TestDownloads").joinpath(randomValue))
+        self.downloadFolder = str(Path(self.managedPaths.getOrSetAttachmentDownloadPath()).joinpath(randomValue))
         Path(self.downloadFolder).mkdir(parents=True, exist_ok=True)
 
         logger.debug(f"Directory for download {self.downloadFolder}")
