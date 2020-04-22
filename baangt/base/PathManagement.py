@@ -83,7 +83,6 @@ class ManagedPaths(metaclass=Singleton):
 
     def getOrSetAttachmentDownloadPath(self, path=None, change=False):
         """
-
         Will return path where downloaded file will be saved.
 
         Default path will be TestDownloads folder in current working directory.
