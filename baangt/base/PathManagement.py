@@ -13,13 +13,27 @@ class Singleton(type):
     
     
 class ManagedPaths(metaclass=Singleton):
+    """
+    The class to manage paths for different task.
+    Main Methods:
+    - getLogfilePath: Will return a path for logfile directory.
+    - getOrSetScreenshotsPath: Will return a path for Screenshots directory. You can also set path.
+    - getOrSetDownloadsPath: Will return a path for Download directory. You can also set path.
+    """
     def __init__(self):
         self.LogFilePath = None
-        self.LogFilePath = self.get_log_path()
+        self.LogFilePath = self.getLogfilePath()
         self.ScreenshotPath = ""
         self.DownloadPath = ""
 
-    def get_log_path(self):
+    def getLogfilePath(self):
+        """
+        Will return path where Log files will be saved.
+
+        This Path will be taken from Paths.json
+
+        :return: Logfile path
+        """
         if self.LogFilePath:
             return self.LogFilePath
 
@@ -27,7 +41,16 @@ class ManagedPaths(metaclass=Singleton):
 
         return self.LogFilePath
 
-    def set_screenshot_path(self, path=None, change=False):
+    def getOrSetScreenshotsPath(self, path=None, change=False):
+        """
+        Will return path where Screenshots taken by the browser will be saved.
+
+        Default path will be Screenshots folder in current working directory.
+
+        :param path: Path to be set for browser screenshots if Screenshots path didn't exists.
+        :param change: True if you want to change the existing Screenshots path with the one passed in path parameter.
+        :return: Screenshot path
+        """
         if self.ScreenshotPath != "" and change is False:
             return self.ScreenshotPath
         if path:
@@ -37,7 +60,17 @@ class ManagedPaths(metaclass=Singleton):
 
         return self.ScreenshotPath
 
-    def set_download_path(self, path=None, change=False):
+    def getOrSetDownloadsPath(self, path=None, change=False):
+        """
+
+        Will return path where downloaded file will be saved.
+
+        Default path will be 1Testresults folder in current working directory.
+
+        :param path: Path to be set for browser downloads if download path didn't exists.
+        :param change: True if you want to change the existing download path with the one passed in path parameter.
+        :return: Download path
+        """
         if self.DownloadPath != "" and change is False:
             return self.DownloadPath
         if path:
