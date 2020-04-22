@@ -25,6 +25,7 @@ class ManagedPaths(metaclass=Singleton):
         self.LogFilePath = self.getLogfilePath()
         self.ScreenshotPath = ""
         self.DownloadPath = ""
+        self.AttachmentDownloadPath = ""
 
     def getLogfilePath(self):
         """
@@ -79,6 +80,26 @@ class ManagedPaths(metaclass=Singleton):
             self.DownloadPath = self.__combineBasePathWithObjectPath("1Testresults")
 
         return self.DownloadPath
+
+    def getOrSetAttachmentDownloadPath(self, path=None, change=False):
+        """
+
+        Will return path where downloaded file will be saved.
+
+        Default path will be TestDownloads folder in current working directory.
+
+        :param path: Path to be set for browser Attachment Downloads if AttachmentDownloadPath path didn't exists.
+        :param change: True if you want to change the existing AttachmentDownloadPath with the one passed in path parameter.
+        :return: Attachment Download path
+        """
+        if self.AttachmentDownloadPath != "" and change is False:
+            return self.AttachmentDownloadPath
+        if path:
+            self.AttachmentDownloadPath = path
+        else:
+            self.AttachmentDownloadPath = self.__combineBasePathWithObjectPath("TestDownloads")
+
+        return self.AttachmentDownloadPath
 
     def __combineBasePathWithObjectPath(self, objectPath : str):
         """
