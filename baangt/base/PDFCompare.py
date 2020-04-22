@@ -45,7 +45,6 @@ class PDFCompare:
 
         # FIXME: details is for sure not the right thing!
         # FIXME: GET-Call might not be right
-        # FIXME:
 
         lResponse = requests.get(url="http://localhost:5080/", params=details)
         if lResponse.status_code == 200:
