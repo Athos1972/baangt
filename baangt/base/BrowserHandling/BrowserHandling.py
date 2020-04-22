@@ -54,6 +54,7 @@ class BrowserDriver:
         self.downloadFolderMonitoring = None
         # Reference to Selenium "HTML" in order to track page changes. It is set on every interaction with the page
         self.html = None
+        self.managedPaths = ManagedPaths()
 
         if timing:
             self.timing = timing
@@ -66,8 +67,7 @@ class BrowserDriver:
             self.screenshotPath = screenshotPath
             Path(self.screenshotPath).mkdir(exist_ok=True)
         else:
-            mp = ManagedPaths()
-            self.screenshotPath = mp.set_screenshot_path()
+            self.screenshotPath = self.managedPaths.getOrSetScreenshotsPath()
 
     def createNewBrowser(self, mobileType=None, mobileApp = None, desired_app = None, mobile_app_setting = None,
                          browserName=GC.BROWSER_FIREFOX,
@@ -248,8 +248,7 @@ class BrowserDriver:
         :return:
         """
         randomValue = str(uuid.uuid4())
-        mp = ManagedPaths()
-        self.downloadFolder = str(Path(mp.set_download_path()).joinpath("TestDownloads").joinpath(randomValue))
+        self.downloadFolder = str(Path(self.managedPaths.getOrSetDownloadsPath()).joinpath("TestDownloads").joinpath(randomValue))
         Path(self.downloadFolder).mkdir(parents=True, exist_ok=True)
 
         logger.debug(f"Directory for download {self.downloadFolder}")
