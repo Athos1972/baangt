@@ -117,6 +117,10 @@ class BrowserDriver:
                     self.__startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance,
                                                 browserProxy=browserProxy)
 
+                    self.driver.set_window_position(0, 0)
+                    # FIXME: Make it dynamic
+                    self.driver.set_window_size(2200, 1024)
+
             elif browserName == GC.BROWSER_CHROME:
                 lCurPath = lCurPath.joinpath(ChromeExecutable)
 
@@ -136,6 +140,10 @@ class BrowserDriver:
                                                                    executable_path=self.__findBrowserDriverPaths(ChromeExecutable))
                     self.__startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance,
                                                 browserProxy=browserProxy)
+
+                    # FIXME: Make it dynamic
+                    self.driver.set_window_size(2200, 1024)
+
             elif browserName == GC.BROWSER_EDGE:
                 self.driver = browserNames[browserName](
                     executable_path=self.__findBrowserDriverPaths("msedgedriver.exe"))
@@ -349,7 +357,6 @@ class BrowserDriver:
             elif browserMobProxy:
                 lOptions.add_argument('--proxy-server={0}'.format(browserMobProxy.proxy))
 
-
         if not desiredCapabilities and not browserMobProxy:
             return None
 
@@ -363,7 +370,6 @@ class BrowserDriver:
         if isinstance(desiredCapabilities, dict) and desiredCapabilities.get(GC.BROWSER_MODE_HEADLESS):
             logger.debug("Starting in Headless mode")
             lOptions.headless = True
-            lOptions.add_argument("--window-size=1920,1080")
 
         return lOptions
 
@@ -411,6 +417,9 @@ class BrowserDriver:
         else:
             print(f"Unknown call to Logger: {logType}")
             self._log(logging.CRITICAL, f"Unknown type in call to logger: {logType}")
+
+    def refresh(self):
+        self.driver.execute_script("window.location.reload()")
 
     def takeScreenshot(self, screenShotPath=None):
         driver = self.driver
@@ -474,8 +483,13 @@ class BrowserDriver:
                 exceptHandles = int(exceptHandles.strip()) - 1
                 totalWindows = len(self.driver.window_handles)
                 for windowHandle in self.driver.window_handles[-1:exceptHandles:-1]:
-                    self.driver.switch_to.window(windowHandle)
-                    self.driver.close()
+                    try:
+                        self.driver.switch_to.window(windowHandle)
+                        self.driver.close()
+                    except NoSuchWindowException as e:
+                        # If the window is already closed, it's fine. Don't do anything
+                        pass
+
                 self.driver.switch_to.window(self.driver.window_handles[exceptHandles])
         else:
             try:
@@ -728,7 +742,7 @@ class BrowserDriver:
 
         lLoopCount = 0
 
-        self.html = self.driver.find_element_by_tag_name('html')  # This is for waitForPageLoadAfterButton
+        self.__getCurrentHTMLReference()
 
         while not wasSuccessful and elapsed < timeout:
             lLoopCount += 1
@@ -772,6 +786,7 @@ class BrowserDriver:
                 raise Exceptions.baangtTestStepException
             except ElementNotInteractableException as e:
                 logger.debug("Most probably timeout exception - retrying: " + str(e))
+                time.sleep(pollFrequency)
             except WebDriverException as e:
                 self._log(logging.ERROR, "Retrying WebDriver Exception: " + str(e))
                 time.sleep(2)
@@ -779,6 +794,22 @@ class BrowserDriver:
             elapsed = time.time() - begin
 
         return wasSuccessful
+
+    def __getCurrentHTMLReference(self):
+        """
+        Get a reference of the current HTML-Tag into self.html. We need that for stale check
+        "waitForPageLoadAfterButtonClick"
+        :return:
+        """
+        retryCount = 0
+        wasSuccessful = False
+        while retryCount < 5 and not wasSuccessful:
+            try:
+                self.html = self.driver.find_element_by_tag_name('html')  # This is for waitForPageLoadAfterButton
+                wasSuccessful = True
+            except NoSuchElementException as e:
+                pass
+            self.sleep(0.2)
 
     def findWaitNotVisible(self, css=None, xpath=None, id=None, timeout=90, optional=False):
         """
@@ -881,20 +912,14 @@ class BrowserDriver:
                 self._log(logging.DEBUG, "doSomething: Element intercepted - retry")
                 time.sleep(0.2)
             except StaleElementReferenceException as e:
-                self._log(logging.DEBUG, "doSomething: Element stale - retry")
+                self._log(logging.DEBUG, f"doSomething: Element stale - retry {self.locatorType} {self.locator}")
                 # If the element is stale after 2 times, try to re-locate the element
                 if counter < 2:
                     time.sleep(0.2)
+                elif counter < 4:
+                    begin = self.refindElementAfterError(timeout)
                 else:
-                    xpath, css, id = utils.setLocatorFromLocatorType(self.locatorType, self.locator)
-                    foundNow = self.findBy(xpath=xpath, css=css, id=id, optional=True, timeout=timeout/2)
-                    if foundNow:
-                        logger.debug(f"Re-Found element {self.locatorType}: {self.locator}, will retry ")
-                        begin = time.time()
-                    else:
-                        raise Exceptions.baangtTestStepException(
-                            f"Element {self.locatorType} {self.locator} was stale. "
-                            f"Tried to re-find it, but not element was gone")
+                    raise Exceptions.baangtTestStepException(e)
             except NoSuchElementException as e:
                 self._log(logging.DEBUG, "doSomething: Element not there yet - retry")
                 time.sleep(0.5)
@@ -902,9 +927,15 @@ class BrowserDriver:
                 self._log(logging.ERROR, f"Invalid Session ID Exception caught - aborting... {e} ")
                 raise Exceptions.baangtTestStepException(e)
             except ElementNotInteractableException as e:
-                self._log(logging.ERROR, f"Element not interactable {e}")
-                time.sleep(0.2)
-                # raise Exceptions.baangtTestStepException(e)
+                if counter < 2:
+                    logger.debug(f"Element not interactable {self.locatorType} {self.locator}, retrying")
+                    time.sleep(0.2)
+                elif counter < 5:
+                    logger.debug(f"Element not interactable {self.locatorType} {self.locator}, re-finding element")
+                    begin = self.refindElementAfterError(timeout)
+                else:
+                    self._log(logging.ERROR, f"Element not interactable {e}")
+                    raise Exceptions.baangtTestStepException(e)
             except NoSuchWindowException as e:
                 raise Exceptions.baangtTestStepException(e)
             elapsed = time.time() - begin
@@ -916,6 +947,17 @@ class BrowserDriver:
             raise Exceptions.baangtTestStepException(
                 f"Action not possible after {timeout} s, Locator: {self.locatorType}: {self.locator}")
 
+    def refindElementAfterError(self, timeout):
+        xpath, css, id = utils.setLocatorFromLocatorType(self.locatorType, self.locator)
+        foundNow = self.findBy(xpath=xpath, css=css, id=id, optional=True, timeout=timeout / 2)
+        if foundNow:
+            logger.debug(f"Re-Found element {self.locatorType}: {self.locator}, will retry ")
+            begin = time.time()
+        else:
+            raise Exceptions.baangtTestStepException(
+                f"Element {self.locatorType} {self.locator} couldn't be found. "
+                f"Tried to re-find it, but not element was not found")
+        return begin
 
     def waitForElementChangeAfterButtonClick(self, timeout=5):
         """
@@ -1005,9 +1047,9 @@ class BrowserDriver:
         except Exception as e:
             self._log(logging.WARNING, f"Tried to go back in history, didn't work with error {e}")
 
-    def javaScript(self, jsText):
+    def javaScript(self, jsText, *args):
         """Execute a given JavaScript in the current Session"""
-        self.driver.execute_script(jsText)
+        self.driver.execute_script(jsText, *args)
 
     def downloadDriver(self, browserName):
         path = Path(os.getcwd())

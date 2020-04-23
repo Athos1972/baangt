@@ -13,12 +13,18 @@ from baangt.base.ProxyRotate import ProxyRotate
 import logging
 from pathlib import Path
 import sys
-import os
 from baangt.base.Timing.Timing import Timing
 from baangt.base.TestRunUtils import TestRunUtils
-import time
+from dataclasses import dataclass
 
 logger = logging.getLogger("pyC")
+
+
+@dataclass
+class ClassesForObjects:
+    browserFactory: str = "baangt.base.BrowserFactory.BrowserFactory"
+    browserHandling: str = "baangt.base.BrowserHandling.BrowserHandling.BrowserDriver"
+    testCaseSequenceMaster: str = "baangt.TestCaseSequenceMaster.TestCaseSequenceMaster"
 
 
 class TestRun:
@@ -42,6 +48,7 @@ class TestRun:
         self.dataRecords = {}
         self.globalSettingsFileNameAndPath = globalSettingsFileNameAndPath
         self.globalSettings = {}
+        self.classesForObjects = ClassesForObjects()         # Dynamically loaded classes
 
         # -- API support --
         # results
@@ -50,7 +57,8 @@ class TestRun:
         # -- END of API support
 
         # New way to export additional Tabs to Excel
-        # If you want to export additional data, place a Dict with Tabname + Datafields in additionalExportTabs.
+        # If you want to export additional data, place a Dict with Tabname + Datafields in additionalExportTabs
+        # from anywhere within your custom code base.
         self.additionalExportTabs = {}
 
         self.testRunName, self.testRunFileName = \
@@ -207,16 +215,24 @@ class TestRun:
             logger.info(f"Starting {counterName}: {key}, {value} ")
             kwargs[counterName] = key
 
+            # Get the class reference:
             if isinstance(value, list):
                 lFullQualified = value[0]  # First List-Entry must hold the ClassName
             else:
                 lFullQualified = value
 
-            if "." in lFullQualified:
+            # if "." in lFullQualified:
+            l_class = TestRun.__dynamicImportClasses(lFullQualified)
+            # else:
+            #    l_class = globals()[lFullQualified]
+
+            try:
+                l_class(**kwargs)  # Executes the class´es  __init__ method
+            except TypeError as e:
+                # Damn! The class is wrong.
                 l_class = TestRun.__dynamicImportClasses(lFullQualified)
-            else:
-                l_class = globals()[lFullQualified]
-            l_class(**kwargs)  # Executes the class __init__
+                l_class(**kwargs)
+
         self.kwargs = kwargs
 
     def _initTestRun(self):
@@ -234,6 +250,11 @@ class TestRun:
     def loadJSONGlobals(self):
         if self.globalSettingsFileNameAndPath:
             self.globalSettings = utils.openJson(self.globalSettingsFileNameAndPath)
+
+        # Support for new dataClass to load different Classes
+        for key, value in self.globalSettings.items():
+            if "CL." in key:
+                self.classesForObjects.__setattr__(key.strip("CL."), value)
 
     def _loadJSONTestRunDefinitions(self):
         if not self.testRunFileName and not self.testRunDict:  # -- API support: testRunDict --
@@ -263,33 +284,7 @@ class TestRun:
 
     @staticmethod
     def __dynamicImportClasses(fullQualifiedImportName):
-        """
-        Requires fully qualified Name of Import-Class and module,
-        e.g. TestCaseSequence.TCS_VIGO.TCS_VIGO if the class TCS_VIGO
-                                                is inside the Python-File TCS_VIGO
-                                                which is inside the Module TestCaseSequence
-        if name is not fully qualified, the ClassName must be identical with the Python-File-Name,
-        e.g. TestSteps.Franzi will try to import TestSteps.Franzi.Franzi
-        @param fullQualifiedImportName:
-        @return: The class instance. If no class instance can be found the TestRun aborts hard with sys.exit
-        """
-        importClass = fullQualifiedImportName.split(".")[-1]
-        if globals().get(importClass):
-            return globals()[importClass]  # Class already imported
-
-        if fullQualifiedImportName.split(".")[-2:-1][0] == fullQualifiedImportName.split(".")[-1]:
-            moduleToImport = ".".join(fullQualifiedImportName.split(".")[0:-1])
-        else:
-            moduleToImport = fullQualifiedImportName
-
-        mod = __import__(moduleToImport, fromlist=importClass)
-        logger.debug(f"Imported module {fullQualifiedImportName}, result was {str(mod)}")
-        retClass = getattr(mod, importClass)
-        if not retClass:
-            logger.critical(f"Can't import module: {fullQualifiedImportName}")
-            sys.exit("Critical Error in Class import - can't continue. "
-                     "Please maintain proper classnames in Testrundefinition.")
-        return retClass
+        return utils.dynamicImportOfClasses(fullQualifiedImportName=fullQualifiedImportName)
 
     @staticmethod
     def _sanitizeTestRunNameAndFileName(TestRunNameInput):
