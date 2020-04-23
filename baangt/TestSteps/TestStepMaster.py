@@ -35,12 +35,16 @@ class TestStepMaster:
         self.ifIsTrue = True
         self.baangtFaker = None
 
-        if not isinstance(self.testStep[1], str) and executeDirect:
-            # This TestStepMaster-Instance should actually do something - activitites are described
-            # in the TestExecutionSteps
-            self.executeDirect(self.testStep[1][GC.STRUCTURE_TESTSTEPEXECUTION])
+        if self.testStep:
+            if not isinstance(self.testStep[1], str) and executeDirect:
+                # This TestStepMaster-Instance should actually do something - activitites are described
+                # in the TestExecutionSteps
+                self.executeDirect(self.testStep[1][GC.STRUCTURE_TESTSTEPEXECUTION])
 
-        self.teardown()
+                # Relatively !sic: Teardown makes only sense, when we actually executed something directory in here
+                # Otherwise (if it was 1 or 2 Tabs more to the left) we'd take execution time without
+                # having done anything
+                self.teardown()
 
     def executeDirect(self, executionCommands):
         """
