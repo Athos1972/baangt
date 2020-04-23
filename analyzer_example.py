@@ -1,5 +1,6 @@
 import pytest
 import json
+import uuid
 from datetime import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -16,17 +17,18 @@ class dbTestrun:
 		#
 		# prints the list odf Testruns in DB
 		#
-		print('ID\tName')
+		print(f'{"UUID":40}Name')
 		for log in self.session.query(TestrunLog).all():
-			print(f'{log.id}\t{log.testrunName}')
+			print(f'{str(uuid.UUID(bytes=log.uuid)):40}{log.testrunName}')
 
-	def printTestrunSummary(self, testrun_id):
+	def printTestrunSummary(self, testrun_uuid):
 		#
 		# prints summary of the specified Testrun
 		#
-		tr_log = self.session.query(TestrunLog).get(testrun_id)
-		print(f'\n{"*"*10} Summary for Testrun #{testrun_id} {"*"*10}')
-		print(f'\nName\t{tr_log.testrunName}\n')
+		tr_log = self.session.query(TestrunLog).get(testrun_uuid)
+		print(f'\n{"*"*10} Summary for Testrun {uuid.UUID(bytes=testrun_uuid)} {"*"*10}')
+		print(f'\nUUID\t{uuid.UUID(bytes=testrun_uuid)}')
+		print(f'Name\t{tr_log.testrunName}\n')
 		print(f'Testrecords\t{len(tr_log.testcase_sequences[0].testcases)}')
 		print(f'Successful\t{tr_log.statusOk}')
 		print(f'Paused\t\t{tr_log.statusPaused}')
@@ -36,24 +38,28 @@ class dbTestrun:
 		print(f'End time\t{tr_log.endTime.strftime("%H:%M:%S")}')
 		print(f'Duration\t{tr_log.endTime - tr_log.startTime}')
 
-	def printTestrunGlobals(self, testrun_id):
+		print(type(tr_log.startTime))
+		print(type(tr_log.uuid))
+
+	def printTestrunGlobals(self, testrun_uuid):
 		#
 		# prints global settings for specified testrun
 		#
-		print(f'\n{"*"*10} Global Settings for Testrun #{testrun_id} {"*"*10}\n')
-		for log in self.session.query(GlobalAttribute).filter(GlobalAttribute.testrun_id == testrun_id):
+		print(f'\n{"*"*10} Global Settings for Testrun {uuid.UUID(bytes=testrun_uuid)} {"*"*10}\n')
+		for log in self.session.query(GlobalAttribute).filter(GlobalAttribute.testrun_uuid == testrun_uuid):
 			print(f'{log.name:25}{log.value}')
 
-	def printTestrunTestcases(self, testrun_id):
+	def printTestrunTestcases(self, testrun_uuid):
 		#
 		# prints Testcase info of the specified Testrun
 		#
 		tc_counter = 0
-		print(f'\n{"*"*10} Testcases of Testrun #{testrun_id} {"*"*10}')
-		for tc in self.session.query(TestCaseLog).filter(TestCaseLog.testcase_sequence.has(TestCaseSequenceLog.testrun_id == testrun_id)):
+		print(f'\n{"*"*10} Testcases of Testrun {uuid.UUID(bytes=testrun_uuid)} {"*"*10}')
+		for tc in self.session.query(TestCaseLog).filter(TestCaseLog.testcase_sequence.has(TestCaseSequenceLog.testrun_uuid == testrun_uuid)):
 			tc_counter += 1
 			print(f'\n>>> Testcase #{tc_counter}')
-			for log in self.session.query(TestCaseField).filter(TestCaseField.testcase_id == tc.id):
+			print(f'\nUUID\t{uuid.UUID(bytes=tc.uuid)}')
+			for log in self.session.query(TestCaseField).filter(TestCaseField.testcase_uuid == tc.uuid):
 				print(f'{log.name:25}{log.value}')
 
 # execution code
@@ -63,10 +69,10 @@ if __name__ == '__main__':
 	testrunName = 'example_googleImages.xlsx'
 
 	# interface object
-	db = dbTestrun(f'sqlite:///{DATABASE_URL}')
+	db = dbTestrun(DATABASE_URL)
 
 	# get target testrun
-	item = db.session.query(TestrunLog.id).filter(TestrunLog.testrunName == testrunName).first()
+	item = db.session.query(TestrunLog).filter(TestrunLog.testrunName == testrunName).first()
 	if item is None:
 		print(f'ERROR. Testrun \'{testrunName}\' does not exist in DB')
 		print('\nAvailable Testruns in DB:')
@@ -74,6 +80,6 @@ if __name__ == '__main__':
 		exit()
 	
 	# print Testrun Report
-	db.printTestrunSummary(item.id)
-	db.printTestrunGlobals(item.id)
-	db.printTestrunTestcases(item.id)
+	db.printTestrunSummary(item.uuid)
+	db.printTestrunGlobals(item.uuid)
+	db.printTestrunTestcases(item.uuid)
