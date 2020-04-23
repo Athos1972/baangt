@@ -17,6 +17,7 @@ import os
 from baangt.base.Timing.Timing import Timing
 from baangt.base.TestRunUtils import TestRunUtils
 import time
+from baangt.base.PathManagement import ManagedPaths
 
 logger = logging.getLogger("pyC")
 
@@ -42,6 +43,7 @@ class TestRun:
         self.dataRecords = {}
         self.globalSettingsFileNameAndPath = globalSettingsFileNameAndPath
         self.globalSettings = {}
+        self.managedPaths = ManagedPaths()
 
         # -- API support --
         # results
@@ -221,15 +223,26 @@ class TestRun:
 
     def _initTestRun(self):
         self.loadJSONGlobals()
+
         if not self.globalSettings.get(GC.PATH_SCREENSHOTS, None):
-            self.globalSettings[GC.PATH_SCREENSHOTS] = str(Path(self.globalSettingsFileNameAndPath
-                                                                ).parent.joinpath("Screenshots").expanduser())
-            self.globalSettings[GC.PATH_EXPORT] = str(Path(self.globalSettingsFileNameAndPath
-                                                           ).parent.joinpath("1testoutput").expanduser())
-            self.globalSettings[GC.PATH_IMPORT] = str(Path(self.globalSettingsFileNameAndPath
-                                                           ).parent.joinpath("0testdateninput").expanduser())
-            self.globalSettings[GC.PATH_ROOT] = str(Path(self.globalSettingsFileNameAndPath
-                                                         ).parent.expanduser())
+            self.globalSettings[GC.PATH_SCREENSHOTS] = str(Path(self.managedPaths.getOrSetScreenshotsPath()).expanduser())
+        else:
+            self.managedPaths.getOrSetScreenshotsPath(path=self.globalSettings.get(GC.PATH_SCREENSHOTS))
+
+        if not self.globalSettings.get(GC.PATH_EXPORT, None):
+            self.globalSettings[GC.PATH_EXPORT] = str(Path(self.managedPaths.getOrSetExportPath()).expanduser())
+        else:
+            self.managedPaths.getOrSetExportPath(path=self.globalSettings.get(GC.PATH_EXPORT))
+
+        if not self.globalSettings.get(GC.PATH_IMPORT, None):
+                self.globalSettings[GC.PATH_IMPORT] = str(Path(self.managedPaths.getOrSetImportPath()).expanduser())
+        else:
+            self.managedPaths.getOrSetImportPath(path=self.globalSettings.get(GC.PATH_IMPORT))
+
+        if not self.globalSettings.get(GC.PATH_ROOT, None):
+            self.globalSettings[GC.PATH_ROOT] = str(Path(self.managedPaths.getOrSetRootPath()).parent.expanduser())
+        else:
+            self.managedPaths.getOrSetRootPath(path=self.globalSettings.get(GC.PATH_ROOT))
 
     def loadJSONGlobals(self):
         if self.globalSettingsFileNameAndPath:
