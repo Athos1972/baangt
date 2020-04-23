@@ -1,7 +1,7 @@
 import os
 import json
 from pathlib import Path
-
+from baangt.base import GlobalConstants as GC
 
 class Singleton(type):
     _instances = {}
@@ -29,6 +29,9 @@ class ManagedPaths(metaclass=Singleton):
         self.DownloadPath = ""
         self.AttachmentDownloadPath = ""
         self.DriverPath = ""
+        self.RootPath = ""
+        self.ExportPath = ""
+        self.ImportPath = ""
 
     def getLogfilePath(self):
         """
@@ -58,9 +61,11 @@ class ManagedPaths(metaclass=Singleton):
         if self.ScreenshotPath != "" and change is False:
             return self.ScreenshotPath
         if path:
+            if os.path.basename(path) != GC.PATH_SCREENSHOTS:
+                path = os.path.join(path, GC.PATH_SCREENSHOTS)
             self.ScreenshotPath = path
         else:
-            self.ScreenshotPath = self.__combineBasePathWithObjectPath("Screenshots")
+            self.ScreenshotPath = self.__combineBasePathWithObjectPath(GC.PATH_SCREENSHOTS)
 
         return self.ScreenshotPath
 
@@ -111,7 +116,7 @@ class ManagedPaths(metaclass=Singleton):
 
         :param path: Path to be set for location where webdrivers are located or to be downloaded.
         :param change: True if you want to change the existing DriverPath with the one passed in path parameter.
-        :return: Attachment Download path
+        :return: Webdriver path
         """
         if self.DriverPath != "" and change is False:
             return self.DriverPath
@@ -121,6 +126,64 @@ class ManagedPaths(metaclass=Singleton):
             self.DriverPath = self.__combineBasePathWithObjectPath("browserDriver")
 
         return self.DriverPath
+
+    def getOrSetRootPath(self, path=None, change=False):
+        """
+
+        Will return path for root directory.
+
+        Default path will be current working directory.
+
+        :param path: Path to be set as root directory.
+        :param change: True if you want to change root path with the one passed in path parameter.
+        :return: Root path
+        """
+        if self.RootPath != "" and change is False:
+            return self.RootPath
+        if path:
+            self.RootPath = path
+        else:
+            self.RootPath = os.getcwd()
+
+        return self.RootPath
+
+    def getOrSetExportPath(self, path=None, change=False):
+        """
+        Will return path where output files should be save.
+
+        :param path: Path to be set for Export Path.
+        :param change: True if you want to change the existing Export Path with the one passed in path parameter.
+        :return: Export path
+        """
+        if self.ExportPath != "" and change is False:
+            return self.ExportPath
+        if path:
+            if os.path.basename(path) != GC.PATH_EXPORT:
+                path = os.path.join(path, GC.PATH_EXPORT)
+            self.ExportPath = path
+        else:
+            self.ExportPath = self.__combineBasePathWithObjectPath(GC.PATH_EXPORT)
+
+        return self.ExportPath
+
+    def getOrSetImportPath(self, path=None, change=False):
+        """
+        Will return path where program will search for input files.
+
+        :param path: Path to be set for location where input files are located.
+        :param change: True if you want to change the existing import path with the one passed in path parameter.
+        :return: Import path
+        """
+        if self.ImportPath != "" and change is False:
+            return self.ImportPath
+        if path:
+            if os.path.basename(path) != GC.PATH_IMPORT:
+                path = os.path.join(path, GC.PATH_IMPORT)
+            self.ImportPath = path
+        else:
+            self.ImportPath = self.__combineBasePathWithObjectPath(GC.PATH_IMPORT)
+
+        return self.ImportPath
 
     def __combineBasePathWithObjectPath(self, objectPath : str):
         """
