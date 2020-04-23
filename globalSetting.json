@@ -1,32 +1,41 @@
 {
     "settings": {
-       "Release": {
-            "hint": "set particular version to test ",
-            "type": "text",
-            "default": "",
-            "options": ["1.a.dev",  "1.b", "2.a"],
-            "displayText": "Current Release"
-        },
         "TC.slowExecution": {
-            "hint": "Stop Browser for sometime",
+            "hint": "Stop execution for 1 second after each step. Great for tracing errors!",
             "type": "bool",
             "default": "False",
             "options": ["True", "False"],
-            "displayText": "TC.slowExecution"
+            "displayText": "Slow execution"
         },
-        "dontCloseBrowser":  {
+        "TC.dontCloseBrowser":  {
             "hint": "When the browser or script finds an error, it usually takes a screenshot and moves on to the next testcase. With this setting to True the browser session will stop right at the error.",
             "type": "bool",
             "default": "False",
             "options": ["True", "False"],
-            "displayText": "Dont Close Browser"
+            "displayText": "Don't close Browser"
         },
-        "TC.BrowserAttributes": {
-            "hint": "Choose browser to test the application",
+        "TC.Browser": {
+            "hint": "Choose browser for this test run",
             "type": "select",
             "default": "FF",
-            "options": ["FF", "Chrome", "Safari" ],
-            "displayText": "Browser "
+            "options": ["FF", "Chrome", "Safari", "Edge", "REMOTE", "REMOTE_V4"],
+            "displayText": "Browser"
+        },
+        "TC.BrowserAttributes": {
+            "hint": "Choose browser attributes for this test run and Browser",
+            "type": "select",
+            "default": "",
+            "options": ["{'HEADLESS':'True'}",
+                        "{'browserName': 'firefox', 'seleniumGridIp': 'localhost', 'seleniumGridPort': '4444'}",
+                        ""],
+            "displayText": "Browser attributes"
+        },
+        "TC.Lines":  {
+            "hint": "Lines to execute for this test case. Syntax: 1, 5, 9, 10-50, 700-900",
+            "type": "text",
+            "default": "",
+            "options:": "",
+            "displayText": "Lines from Testfile"
         },
         "TC.NetworkInfo": {
             "hint": "Trace Network status Information",
@@ -34,6 +43,27 @@
             "default": "False",
             "options": ["True", "False" ],
             "displayText": "Trace Network Info"
+        },
+        "TC.ExportAllFields": {
+            "hint": "Ignore other settings and export all fields of the testDataFile to export format",
+            "type": "bool",
+            "default": "False",
+            "options": ["True", "False" ],
+            "displayText": "Export all fields"
+        },
+        "TC.Release": {
+            "hint": "set particular version to test ",
+            "type": "text",
+            "default": "",
+            "options": "",
+            "displayText": "Current Release"
+        },
+        "TX.DEBUG": {
+            "hint": "Don't start new thread for execution. Use same thread. Used sometimes for debugging",
+            "type": "bool",
+            "default": "False",
+            "options": ["True", "False" ],
+            "displayText": "Debug execution"
         }
     }
 }
