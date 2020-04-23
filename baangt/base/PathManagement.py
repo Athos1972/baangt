@@ -1,5 +1,6 @@
 import os
 import json
+import platform
 from pathlib import Path
 from baangt.base import GlobalConstants as GC
 
@@ -205,4 +206,8 @@ class ManagedPaths(metaclass=Singleton):
 
         :return: base Path
         """
+        if platform.system() == "Windows":
+            path = os.path.join(os.path.expanduser("~"), "baangt")
+            if os.path.exists(path):
+                return Path(path)
         return Path(os.getcwd())
