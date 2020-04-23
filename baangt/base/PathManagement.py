@@ -123,7 +123,7 @@ class ManagedPaths(metaclass=Singleton):
         if path:
             self.DriverPath = path
         else:
-            self.DriverPath = self.__combineBasePathWithObjectPath("browserDriver")
+            self.DriverPath = self.__combineBasePathWithObjectPath("browserDrivers")
 
         return self.DriverPath
 
