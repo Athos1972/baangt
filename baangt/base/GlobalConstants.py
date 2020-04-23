@@ -17,6 +17,12 @@ CLASSES_TESTCASE = 'TestCaseMaster'
 CLASSES_TESTSTEPMASTER_OLD = 'baangt.TestSteps.TestStepMaster'
 CLASSES_TESTSTEPMASTER = 'TestStepMaster'
 
+EXECUTION_STAGE = 'Stage'
+EXECUTION_STAGE_TEST = 'Test'
+EXECUTION_STAGE_DEVELOPMENT = 'Development'
+EXECUTION_STAGE_PRODUCTION = 'Production'
+EXECUTION_STAGE_QA = 'Quality Assurance'
+
 TIMING_END = "end"
 TIMING_START = "start"
 TIMING_TESTRUN = "Complete Testrun"

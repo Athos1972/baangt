@@ -66,7 +66,7 @@ class dbTestrun:
 if __name__ == '__main__':
 	
 	# target Testrun
-	testrunName = 'example_googleImages.xlsx'
+	testrunName = 'example_googleImages.xlsx_'
 
 	# interface object
 	db = dbTestrun(DATABASE_URL)

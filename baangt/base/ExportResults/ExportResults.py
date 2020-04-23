@@ -35,6 +35,7 @@ class ExportResults:
         self.networkInfo = self._get_network_info(kwargs.get('networkInfo'))
         self.testRunName = self.testRunInstance.testRunName
         self.dataRecords = self.testRunInstance.dataRecords
+        self.stage = self.testRunInstance.globalSettings.get('TC.Stage')
 
         try:
             self.exportFormat = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.EXPORT_FORMAT)[GC.EXPORT_FORMAT]
@@ -56,7 +57,7 @@ class ExportResults:
             self.workbook = xlsxwriter.Workbook(self.fileName)
             self.summarySheet = self.workbook.add_worksheet("Summary")
             self.worksheet = self.workbook.add_worksheet("Output")
-            self.jsonSheet = self.workbook.add_worksheet("JSON")
+            self.jsonSheet = self.workbook.add_worksheet(f"{self.stage}_JSON")
             self.timingSheet = self.workbook.add_worksheet("Timing")
             self.cellFormatGreen = self.workbook.add_format()
             self.cellFormatGreen.set_bg_color('green')
@@ -298,7 +299,7 @@ class ExportResults:
             # add TestCase fields
             for key, value in testcase.items():
                 row += 1
-                self.jsonSheet.write(row, 0, 'stage')
+                self.jsonSheet.write(row, 0, self.stage)
                 self.jsonSheet.write(row, 1, str(self.testcase_uuids[index]))
                 self.jsonSheet.write(row, 2, key)
                 self.jsonSheet.write(row, 3, str(value))
