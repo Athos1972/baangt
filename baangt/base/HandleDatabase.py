@@ -73,6 +73,12 @@ class HandleDatabase:
 
     @staticmethod
     def __sanitizeNumbers(numberIn):
+        if isinstance(numberIn, dict):
+            numberIn = numberIn['default']
+            try:
+                  return int(numberIn.strip())
+            except:
+                  return 0
         numberIn = numberIn.strip()
         return int(numberIn)
 

@@ -120,11 +120,14 @@ class MainWindow(Ui_MainWindow):
         configInstance.addValue(self.configFile)
         self.configContents = configInstance.config
         if not self.configContents.get('TC.' + GC.DATABASE_LINES):
-            self.configContents['TC.' + GC.DATABASE_LINES ] = GlobalSettings.transformToDict("")
+            key = 'TC.' + GC.DATABASE_LINES
+            self.configContents[key] = GlobalSettings.transformToDict(key, "")
         if not self.configContents.get('TC.' + GC.EXECUTION_DONTCLOSEBROWSER):
-            self.configContents['TC.' + GC.EXECUTION_DONTCLOSEBROWSER ] = GlobalSettings.transformToDict("")
+            key = 'TC.' + GC.EXECUTION_DONTCLOSEBROWSER
+            self.configContents[key] = GlobalSettings.transformToDict(key, "")
         if not self.configContents.get('TC.' + GC.EXECUTION_SLOW):
-            self.configContents['TC.' + GC.EXECUTION_SLOW] = GlobalSettings.transformToDict("")
+            key = 'TC.' + GC.EXECUTION_SLOW
+            self.configContents[key] = GlobalSettings.transformToDict(key, "")
 
     @QtCore.pyqtSlot()
     def show_katalon(self):
