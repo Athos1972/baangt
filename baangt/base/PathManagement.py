@@ -227,7 +227,7 @@ class ManagedPaths(metaclass=Singleton):
         """
         Path(newPath).mkdir(exist_ok=True, parents=True)
 
-        if not newPath.is_dir():
+        if not Path(newPath).is_dir():
             baangtExceptions.baangtTestStepException(f"Tried to create folder {newPath} and failed.")
 
         return None
