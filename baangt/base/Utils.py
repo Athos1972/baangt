@@ -6,6 +6,7 @@ import logging
 import json
 import sys
 from pathlib import Path
+from baangt.base.PathManagement import ManagedPaths
 
 logger = logging.getLogger("pyC")
 
@@ -164,6 +165,8 @@ class utils:
                 logger.debug(f"New Main Path to search for files: {lBasePath}")
 
         if not Path(lFileNameAndPath).exists():
+            managedPaths = ManagedPaths()
+            root_dir = managedPaths.getOrSetRootPath()
             if "~" in lFileNameAndPath:
                 lFileNameAndPath = Path(lFileNameAndPath).expanduser()
             elif Path(lBasePath).joinpath(fileNameAndPath).exists():
@@ -177,6 +180,12 @@ class utils:
                     lFileNameAndPath = Path(utils.__file__).parent.joinpath(lFileNameAndPath)
                 elif Path(utils.__file__).parent.parent.joinpath(lFileNameAndPath).exists:
                     lFileNameAndPath = Path(utils.__file__).parent.parent.joinpath(lFileNameAndPath)
+                elif Path(root_dir).joinpath(lFileNameAndPath).exists:
+                    lFileNameAndPath = Path(root_dir).joinpath(lFileNameAndPath)
+                elif Path(root_dir).joinpath("baangt").joinpath(lFileNameAndPath).exists:
+                    lFileNameAndPath = Path(root_dir).joinpath("baangt").joinpath(lFileNameAndPath)
+                elif Path(root_dir).joinpath("baangt").joinpath("base").joinpath(lFileNameAndPath).exists:
+                    lFileNameAndPath = Path(root_dir).joinpath("baangt").joinpath("base").joinpath(lFileNameAndPath)
                 else:
                     raise Exception(f"Can't find file {fileNameAndPath}")
             else:
