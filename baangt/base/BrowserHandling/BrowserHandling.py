@@ -760,7 +760,7 @@ class BrowserDriver:
                     # 2 times with visibility, let's give it one more try with Presence of element
                     if lLoopCount > 1:
                         logger.debug("Tried 2 times to find visible element, now trying presence "
-                                                f"of element instead, XPATH = {xpath}")
+                                     "of element instead, XPATH = {xpath}")
                         self.element = driverWait.until(ec.presence_of_element_located((By.XPATH, xpath)))
                     else:
                         self.element = driverWait.until(ec.visibility_of_element_located((By.XPATH, xpath)))
@@ -894,7 +894,7 @@ class BrowserDriver:
 
         while not didWork and elapsed < timeout:
             counter += 1
-            self._log(logging.DEBUG, f"__doSomething {command} with {value}")
+            logger.debug(f"__doSomething {command} with {value}")
             try:
                 if command.upper() == GC.CMD_SETTEXT:
                     self.element.send_keys(value)
@@ -909,10 +909,10 @@ class BrowserDriver:
                 didWork = True
                 return
             except ElementClickInterceptedException as e:
-                self._log(logging.DEBUG, "doSomething: Element intercepted - retry")
+                logger.debug("doSomething: Element intercepted - retry")
                 time.sleep(0.2)
             except StaleElementReferenceException as e:
-                self._log(logging.DEBUG, f"doSomething: Element stale - retry {self.locatorType} {self.locator}")
+                logger.debug(f"doSomething: Element stale - retry {self.locatorType} {self.locator}")
                 # If the element is stale after 2 times, try to re-locate the element
                 if counter < 2:
                     time.sleep(0.2)
@@ -921,7 +921,7 @@ class BrowserDriver:
                 else:
                     raise Exceptions.baangtTestStepException(e)
             except NoSuchElementException as e:
-                self._log(logging.DEBUG, "doSomething: Element not there yet - retry")
+                logger.debug("doSomething: Element not there yet - retry")
                 time.sleep(0.5)
             except InvalidSessionIdException as e:
                 self._log(logging.ERROR, f"Invalid Session ID Exception caught - aborting... {e} ")
@@ -951,7 +951,7 @@ class BrowserDriver:
         xpath, css, id = utils.setLocatorFromLocatorType(self.locatorType, self.locator)
         foundNow = self.findBy(xpath=xpath, css=css, id=id, optional=True, timeout=timeout / 2)
         if foundNow:
-            logger.debug(f"Re-Found element {self.locatorType}: {self.locator}, will retry ")
+            logging.debug(f"Re-Found element {self.locatorType}: {self.locator}, will retry ")
             begin = time.time()
         else:
             raise Exceptions.baangtTestStepException(
@@ -975,7 +975,7 @@ class BrowserDriver:
         lStartOfWaiting = time.time()
         elapsed = 0
 
-        logger.debug("Starting")
+        logging.debug("Starting")
 
         xpath, css, id = utils.setLocatorFromLocatorType(self.locatorType, self.locator)
 
@@ -1136,4 +1136,4 @@ class BrowserDriver:
 
         else:
 
-            logging.critical(f"Please download driver for {browserName} manually into folder /browserDrivers")
+            logger.critical(f"Please download driver for {browserName} manually into folder /browserDrivers")
