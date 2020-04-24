@@ -117,9 +117,9 @@ class BrowserDriver:
                     self.__startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance,
                                                 browserProxy=browserProxy)
 
-                    self.driver.set_window_position(0, 0)
                     # FIXME: Make it dynamic
-                    self.driver.set_window_size(2200, 1024)
+                    #  self.driver.set_window_position(0, 0)
+                    #  self.driver.set_window_size(2200, 1024)
 
             elif browserName == GC.BROWSER_CHROME:
                 lCurPath = lCurPath.joinpath(ChromeExecutable)
@@ -142,7 +142,7 @@ class BrowserDriver:
                                                 browserProxy=browserProxy)
 
                     # FIXME: Make it dynamic
-                    self.driver.set_window_size(2200, 1024)
+                    #  self.driver.set_window_size(2200, 1024)
 
             elif browserName == GC.BROWSER_EDGE:
                 self.driver = browserNames[browserName](
