@@ -68,7 +68,7 @@ class ManagedPaths(metaclass=Singleton):
             return self.ScreenshotPath
 
         if path:
-            self.ScreenshotPath = path
+            self.ScreenshotPath = Path(path)
         else:
             self.ScreenshotPath = self.__combineBasePathWithObjectPath(GC.PATH_SCREENSHOTS)
 
@@ -227,7 +227,7 @@ class ManagedPaths(metaclass=Singleton):
         """
         Path(newPath).mkdir(exist_ok=True, parents=True)
 
-        if not newPath.is_dir():
+        if not Path(newPath).is_dir():
             baangtExceptions.baangtTestStepException(f"Tried to create folder {newPath} and failed.")
 
         return None

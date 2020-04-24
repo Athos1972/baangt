@@ -292,20 +292,7 @@ class ExportResults:
             self.summarySheet.write(self.summaryRow, 1, lineText, format)
 
     def __getOutputFileName(self):
-        lManagedPaths = ManagedPaths()
-        l_file = lManagedPaths.getOrSetExportPath()
-        # if self.testRunInstance.globalSettings[GC.PATH_ROOT]:
-        #     basePath = Path(self.testRunInstance.globalSettings[GC.PATH_ROOT])
-        # elif "/" not in self.testRunInstance.globalSettings[GC.DATABASE_EXPORTFILENAMEANDPATH][0:1]:
-        #     basePath = Path(sys.modules['__main__'].__file__).parent
-        # else:
-        #     basePath = ""
-        # l_file: Path = Path(basePath).joinpath(self.testRunInstance.globalSettings[GC.DATABASE_EXPORTFILENAMEANDPATH])
-        # if "~" in str(l_file.absolute()):
-        #   l_file = l_file.expanduser()
-        # if not Path(l_file).is_dir():
-        #     logger.info(f"Create directory {l_file}")
-        #    Path(l_file).mkdir(parents=True, exist_ok=True)
+        l_file = Path(self.testRunInstance.managedPaths.getOrSetExportPath())
 
         if self.exportFormat == GC.EXP_XLSX:
             lExtension = '.xlsx'
