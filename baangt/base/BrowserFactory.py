@@ -1,5 +1,6 @@
 from baangt.base.BrowserHandling.BrowserHandling import BrowserDriver
 from baangt.base.ProxyRotate import ProxyRotate
+from baangt.base.Utils import utils
 import baangt.base.GlobalConstants as GC
 
 import logging
@@ -15,10 +16,12 @@ class BrowserFactory:
 
     """
     def __init__(self, testrun):
+        self.testrun = testrun
+
         self.rotatingProxiesService = None
         self.browser = {}
         self.browserInstances = {}
-        self.testrun = testrun
+
         self.timing = self.testrun.timing
         self.globalSettings = testrun.globalSettings
         self.browserServer = BrowserFactory.__getBrowserServer() \
@@ -110,7 +113,13 @@ class BrowserFactory:
             return self.browser[browserInstance]
 
     def _getBrowserInstance(self, browserInstance):
-        self.browser[browserInstance] = BrowserDriver(timing=self.timing)
+        if self.testrun.classesForObjects.browserHandling:
+            lClass = utils.dynamicImportOfClasses(fullQualifiedImportName=self.testrun.classesForObjects.browserHandling)
+
+            self.browser[browserInstance] = lClass(timing=self.timing)
+        else:
+            # !Sic: code duplication for convenince reasons. Pure Duck-Typing would prevent where-used-list to work.
+            self.browser[browserInstance] = BrowserDriver(timing=self.timing)
 
     @staticmethod
     def __getBrowserServer():
