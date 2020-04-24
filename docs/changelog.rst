@@ -10,17 +10,30 @@ A huge step closer to release 1. Some minor functionalities still need fixing. M
 New features
 ++++++++++++
 * SimpleFormat: New command ``iban`` will create a random IBAN. Powered by Schwifty library.
-* SimpleFormat: New command ``pdfcompare`` compares a downloaded PDF-File with a reference PDF-File and reports differences. Works also well with parallel sessions.
+* SimpleFormat: New command ``pdfcompare`` compares a downloaded PDF-File with a reference PDF-File and
+  reports differences. Works also well with parallel sessions.
 * All: Variable replacement using Faker module. For instance ``$(FAKER.email)`` will generate a random E-Mail address
+* All: New flag to export all fields of TestDataDict to result file: ``TC.ExportAllFields`` = ``True``
+* All: Web-Testcases: Screenshots automatically embedded to result file, not only as a link. Makes it easier to share results
+  on a communication channel.
+* All: Support of Proxies and rotating Proxies (``TC.UseRotatingProxies`` and ``TC.ReReadProxies``)
+* All: Support of restarting browser-sessions after each TestCase execution (``TC.RestartBrowser`` = ``True``)
+* All: CL.* in Globals-File to overwrite standard classes (e.g. BrowserDriver) to custom classes.
 * Appium integration for Android and iOS App tests using Appium Webdriver (see in /examples/App* and globalsApp.json)
 * Subclassing: New commands to identify stale objects on page (HTML-Reload and SPA-Support)
-* Additional way to export data to Excel-Result (can be used for results of scraping) GC.EXPORT_ADDITIONAL_DATA in
+* Subclassing: Additional way to export data to Excel-Result (can be used for results of scraping) GC.EXPORT_ADDITIONAL_DATA in
   TestRun.additionalExportTabs create one dict with <tabname>:<ExportDictContent>. Headers = Fieldnames.
+
 
 Changes
 +++++++
 * Improved browserDriver Download for executables (didn't work in some cases)
 * Improved database logging of testrun results
+* Dramatically improved speed for reading larger Input files (got rid of Pandas for XLSX-Import)
+* Improved ease of subclassing for TestStepMaster.
+* Improved reaction to common errors on Webpages (Stale element, not accessable, etc.)
+* Improved handling of closed windows and tabs (when e.g. PDF-Download was activated)
+* Support to supply webelement in driver.javaScript() as *args
 
 2020.03
 ^^^^^^^
