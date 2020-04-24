@@ -35,12 +35,16 @@ class TestStepMaster:
         self.ifIsTrue = True
         self.baangtFaker = None
 
-        if not isinstance(self.testStep[1], str) and executeDirect:
-            # This TestStepMaster-Instance should actually do something - activitites are described
-            # in the TestExecutionSteps
-            self.executeDirect(self.testStep[1][GC.STRUCTURE_TESTSTEPEXECUTION])
+        if self.testStep:
+            if not isinstance(self.testStep[1], str) and executeDirect:
+                # This TestStepMaster-Instance should actually do something - activitites are described
+                # in the TestExecutionSteps
+                self.executeDirect(self.testStep[1][GC.STRUCTURE_TESTSTEPEXECUTION])
 
-        self.teardown()
+                # Relatively !sic: Teardown makes only sense, when we actually executed something directory in here
+                # Otherwise (if it was 1 or 2 Tabs more to the left) we'd take execution time without
+                # having done anything
+                self.teardown()
 
     def executeDirect(self, executionCommands):
         """
@@ -83,6 +87,8 @@ class TestStepMaster:
         # Timeout defaults to 20 seconds, if not set otherwise.
         lTimeout = TestStepMaster.__setTimeout(command["Timeout"])
 
+        lTimingString = f"TS {commandNumber} {lActivity.lower()}"
+        self.timing.takeTime(lTimingString)
         logger.debug(f"Executing TestStep {commandNumber} with parameters: act={lActivity}, lType={lLocatorType}, loc={lLocator}, "
                      f"Val1={lValue}, comp={lComparison}, Val2={lValue2}, Optional={lOptional}, timeout={lTimeout}")
 
@@ -162,6 +168,8 @@ class TestStepMaster:
             self.checkLinks()
         else:
             raise BaseException(f"Unknown command in TestStep {lActivity}")
+
+        self.timing.takeTime(lTimingString)
 
     def replaceAllVariables(self, lValue, lValue2):
         # Replace variables from data file

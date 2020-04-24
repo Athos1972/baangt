@@ -10,12 +10,12 @@ KWARGS_TESTRUNINSTANCE = "TESTRUNINSTANCE"
 KWARGS_TIMING = "TimingClassInstance"
 KWARGS_SEQUENCENUMBER = "SequenceNumberOfThisTestCase"
 
-CLASSES_TESTCASESEQUENCE_OLD = "baangt.TestCaseSequence.TestCaseSequenceMaster.TestCaseSequenceMaster"
-CLASSES_TESTCASESEQUENCE = "TestCaseSequenceMaster"
-CLASSES_TESTCASE_OLD = "baangt.TestCase.TestCaseMaster.TestCaseMaster"
-CLASSES_TESTCASE = 'TestCaseMaster'
-CLASSES_TESTSTEPMASTER_OLD = 'baangt.TestSteps.TestStepMaster'
-CLASSES_TESTSTEPMASTER = 'TestStepMaster'
+CLASSES_TESTCASESEQUENCE = "baangt.TestCaseSequence.TestCaseSequenceMaster.TestCaseSequenceMaster"
+CLASSES_TESTCASESEQUENCE_new = "TestCaseSequenceMaster"
+CLASSES_TESTCASE = "baangt.TestCase.TestCaseMaster.TestCaseMaster"
+CLASSES_TESTCASE_new = 'TestCaseMaster'
+CLASSES_TESTSTEPMASTER = 'baangt.TestSteps.TestStepMaster.TestStepMaster'
+CLASSES_TESTSTEPMASTER_new = 'TestStepMaster'
 
 TIMING_END = "end"
 TIMING_START = "start"
@@ -72,9 +72,9 @@ EXP_FIELDLIST = "Fieldlist"
 EXP_XLSX = "XLSX"
 EXP_CSV = "CSV"
 
-PATH_EXPORT = 'ExportPath'
-PATH_IMPORT = 'ImportPath'
-PATH_SCREENSHOTS = 'ScreenshotPath'
+PATH_EXPORT = '1TestResults'
+PATH_IMPORT = '0TestInput'
+PATH_SCREENSHOTS = 'Screenshots'
 PATH_ROOT = 'RootPath'
 
 ADDRESS_COUNTRYCODE = "CountryCode"

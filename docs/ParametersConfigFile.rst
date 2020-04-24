@@ -60,4 +60,9 @@ for instance to slowly retest a single testrecord or to not close the browser af
      - When set to "True", the proxy-servers will be re-evaluated. Otherwise existing list of Proxy-Servers will be used
        for proxy rotation. List must be named ``proxies.json`` and contain a list of proxies.
        Each entry in the json file must contain ``ip`` and ``port``.
+   * - ``CL.<classType>``
+     - Usually you'd set the className of your own subclassing classes either in the testrun-JSON or XLSX for each
+       object of a testrun (TestCaseSequence, TestCase, TestStepSequence, TestStep). Here you also have the
+       change/define other classes (e.g. BrowserDriver, Timing, etc.), which you subclassed and enhanced for your
+       local installation.
 
