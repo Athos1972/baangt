@@ -22,7 +22,10 @@ class ManagedPaths(metaclass=Singleton):
     - getOrSetScreenshotsPath: Will return a path for Screenshots directory. You can also set path.
     - getOrSetDownloadsPath: Will return a path for Download directory. You can also set path.
     - getOrSetAttachmentDownloadPath: Will return a path for Attachment Download directory. You can also set path.
-    - getOrSetDriverPath: Will return a path were webdriver is located. You can also set path.
+    - getOrSetDriverPath: Will return path were webdriver is located. You can also set path.
+    - getOrSetImportPath: Will return path were input files are located. You can also set path.
+    - getOrSetExportPath: Will return path were files will be save. You can also set path.
+    - getOrSetRootPath: Will return root directory path. You can also set path.
     """
     def __init__(self):
         self.LogFilePath = None
@@ -47,7 +50,7 @@ class ManagedPaths(metaclass=Singleton):
             return self.LogFilePath
 
         self.LogFilePath = self.__combineBasePathWithObjectPath("Logs")
-        Path(self.LogFilePath).mkdir(exist_ok=True, parents=True)
+        self.__makeAndCheckDir(self.LogFilePath)
 
         return self.LogFilePath
 
@@ -61,18 +64,18 @@ class ManagedPaths(metaclass=Singleton):
         :return: Screenshot path
         """
 
-        if path:
-            self.ScreenshotPath = path
-            return self.ScreenshotPath
-
         if self.ScreenshotPath != "":
             return self.ScreenshotPath
 
-        self.ScreenshotPath = self.__combineBasePathWithObjectPath(GC.PATH_SCREENSHOTS)
+        if path:
+            self.ScreenshotPath = path
+        else:
+            self.ScreenshotPath = self.__combineBasePathWithObjectPath(GC.PATH_SCREENSHOTS)
 
+        self.__makeAndCheckDir(self.ScreenshotPath)
         return self.ScreenshotPath
 
-    def getOrSetDownloadsPath(self, path=None, change=False):
+    def getOrSetDownloadsPath(self, path=None):
         """
 
         Will return path where downloaded file will be saved.
@@ -80,64 +83,61 @@ class ManagedPaths(metaclass=Singleton):
         Default path will be 1Testresults folder in current working directory.
 
         :param path: Path to be set for browser downloads if download path didn't exists.
-        :param change: True if you want to change the existing download path with the one passed in path parameter.
         :return: Download path
         """
 
-        if self.DownloadPath != "" and change is False:
+        if self.DownloadPath != "":
             return self.DownloadPath
+
         if path:
             self.DownloadPath = path
         else:
             self.DownloadPath = self.__combineBasePathWithObjectPath("1Testresults")
 
-        Path(self.DownloadPath).mkdir(exist_ok=True, parents=True)
-
+        self.__makeAndCheckDir(self.DownloadPath)
         return self.DownloadPath
 
-    def getOrSetAttachmentDownloadPath(self, path=None, change=False):
+    def getOrSetAttachmentDownloadPath(self, path=None):
         """
         Will return path where downloaded file will be saved.
 
         Default path will be TestDownloads folder in current working directory.
 
         :param path: Path to be set for browser Attachment Downloads if AttachmentDownloadPath path didn't exists.
-        :param change: True if you want to change the existing AttachmentDownloadPath with the one passed in path parameter.
         :return: Attachment Download path
         """
-        if self.AttachmentDownloadPath != "" and change is False:
+        if self.AttachmentDownloadPath != "":
             return self.AttachmentDownloadPath
+
         if path:
             self.AttachmentDownloadPath = path
         else:
             self.AttachmentDownloadPath = os.path.join(self.getOrSetDownloadsPath(), "TestDownloads")
 
-        Path(self.AttachmentDownloadPath).mkdir(exist_ok=True, parents=True)
-
+        self.__makeAndCheckDir(self.AttachmentDownloadPath)
         return self.AttachmentDownloadPath
 
-    def getOrSetDriverPath(self, path=None, change=False):
+    def getOrSetDriverPath(self, path=None):
         """
         Will return path where webdrivers are located.
 
         Default path will be browserDriver folder in current working directory.
 
         :param path: Path to be set for location where webdrivers are located or to be downloaded.
-        :param change: True if you want to change the existing DriverPath with the one passed in path parameter.
         :return: Webdriver path
         """
-        if self.DriverPath != "" and change is False:
+        if self.DriverPath != "":
             return self.DriverPath
+
         if path:
             self.DriverPath = path
         else:
             self.DriverPath = self.__combineBasePathWithObjectPath("browserDrivers")
 
-        Path(self.DriverPath).mkdir(parents=True, exist_ok=True)
-
+        self.__makeAndCheckDir(self.DriverPath)
         return self.DriverPath
 
-    def getOrSetRootPath(self, path=None, change=False):
+    def getOrSetRootPath(self, path=None):
         """
 
         Will return path for root directory.
@@ -145,11 +145,11 @@ class ManagedPaths(metaclass=Singleton):
         Default path will be current working directory.
 
         :param path: Path to be set as root directory.
-        :param change: True if you want to change root path with the one passed in path parameter.
         :return: Root path
         """
-        if self.RootPath != "" and change is False:
+        if self.RootPath != "":
             return self.RootPath
+
         if path:
             self.RootPath = path
         else:
@@ -157,44 +157,40 @@ class ManagedPaths(metaclass=Singleton):
 
         return self.RootPath
 
-    def getOrSetExportPath(self, path=None, change=False):
+    def getOrSetExportPath(self, path=None):
         """
         Will return path where output files should be save.
 
         :param path: Path to be set for Export Path.
-        :param change: True if you want to change the existing Export Path with the one passed in path parameter.
         :return: Export path
         """
-        if self.ExportPath != "" and change is False:
+        if self.ExportPath != "":
             return self.ExportPath
+
         if path:
-            if os.path.basename(path) != GC.PATH_EXPORT:
-                path = os.path.join(path, GC.PATH_EXPORT)
             self.ExportPath = path
         else:
             self.ExportPath = self.__combineBasePathWithObjectPath(GC.PATH_EXPORT)
 
-        Path(self.ExportPath).mkdir(exist_ok=True, parents=True)
-
+        self.__makeAndCheckDir(self.ExportPath)
         return self.ExportPath
 
-    def getOrSetImportPath(self, path=None, change=False):
+    def getOrSetImportPath(self, path=None):
         """
         Will return path where program will search for input files.
 
         :param path: Path to be set for location where input files are located.
-        :param change: True if you want to change the existing import path with the one passed in path parameter.
         :return: Import path
         """
-        if self.ImportPath != "" and change is False:
+        if self.ImportPath != "":
             return self.ImportPath
+
         if path:
-            if os.path.basename(path) != GC.PATH_IMPORT:
-                path = os.path.join(path, GC.PATH_IMPORT)
             self.ImportPath = path
         else:
             self.ImportPath = self.__combineBasePathWithObjectPath(GC.PATH_IMPORT)
 
+        self.__makeAndCheckDir(self.ImportPath)
         return self.ImportPath
 
     def __combineBasePathWithObjectPath(self, objectPath : str):
@@ -205,12 +201,6 @@ class ManagedPaths(metaclass=Singleton):
         """
         newPath = self.__derivePathForOSAndInstallationOption()
         newPath = newPath.joinpath(objectPath)
-
-        # Check, if Path exists already and if not, create it:
-        Path(newPath).mkdir(exist_ok=True, parents=True)
-
-        if not newPath.is_dir():
-            baangtExceptions.baangtTestStepException(f"Tried to create folder {newPath} and failed.")
 
         return newPath
 
@@ -228,3 +218,16 @@ class ManagedPaths(metaclass=Singleton):
             if os.path.exists(path):
                 return Path(path)
         return Path(os.getcwd())
+
+    def __makeAndCheckDir(self, newPath):
+        """
+
+        :param newPath: Path to be made or check existence.
+        :return: None
+        """
+        Path(newPath).mkdir(exist_ok=True, parents=True)
+
+        if not newPath.is_dir():
+            baangtExceptions.baangtTestStepException(f"Tried to create folder {newPath} and failed.")
+
+        return None
