@@ -3,6 +3,7 @@ import json
 import platform
 from pathlib import Path
 from baangt.base import GlobalConstants as GC
+from baangt.TestSteps import Exceptions as baangtExceptions
 
 class Singleton(type):
     _instances = {}
@@ -46,27 +47,28 @@ class ManagedPaths(metaclass=Singleton):
             return self.LogFilePath
 
         self.LogFilePath = self.__combineBasePathWithObjectPath("Logs")
+        Path(self.LogFilePath).mkdir(exist_ok=True, parents=True)
 
         return self.LogFilePath
 
-    def getOrSetScreenshotsPath(self, path=None, change=False):
+    def getOrSetScreenshotsPath(self, path=None):
         """
         Will return path where Screenshots taken by the browser will be saved.
 
         Default path will be Screenshots folder in current working directory.
 
-        :param path: Path to be set for browser screenshots if Screenshots path didn't exists.
-        :param change: True if you want to change the existing Screenshots path with the one passed in path parameter.
+        :param path: Path to be set for browser screenshots.
         :return: Screenshot path
         """
-        if self.ScreenshotPath != "" and change is False:
-            return self.ScreenshotPath
+
         if path:
-            if os.path.basename(path) != GC.PATH_SCREENSHOTS:
-                path = os.path.join(path, GC.PATH_SCREENSHOTS)
             self.ScreenshotPath = path
-        else:
-            self.ScreenshotPath = self.__combineBasePathWithObjectPath(GC.PATH_SCREENSHOTS)
+            return self.ScreenshotPath
+
+        if self.ScreenshotPath != "":
+            return self.ScreenshotPath
+
+        self.ScreenshotPath = self.__combineBasePathWithObjectPath(GC.PATH_SCREENSHOTS)
 
         return self.ScreenshotPath
 
@@ -81,12 +83,15 @@ class ManagedPaths(metaclass=Singleton):
         :param change: True if you want to change the existing download path with the one passed in path parameter.
         :return: Download path
         """
+
         if self.DownloadPath != "" and change is False:
             return self.DownloadPath
         if path:
             self.DownloadPath = path
         else:
             self.DownloadPath = self.__combineBasePathWithObjectPath("1Testresults")
+
+        Path(self.DownloadPath).mkdir(exist_ok=True, parents=True)
 
         return self.DownloadPath
 
@@ -107,6 +112,8 @@ class ManagedPaths(metaclass=Singleton):
         else:
             self.AttachmentDownloadPath = os.path.join(self.getOrSetDownloadsPath(), "TestDownloads")
 
+        Path(self.AttachmentDownloadPath).mkdir(exist_ok=True, parents=True)
+
         return self.AttachmentDownloadPath
 
     def getOrSetDriverPath(self, path=None, change=False):
@@ -125,6 +132,8 @@ class ManagedPaths(metaclass=Singleton):
             self.DriverPath = path
         else:
             self.DriverPath = self.__combineBasePathWithObjectPath("browserDrivers")
+
+        Path(self.DriverPath).mkdir(parents=True, exist_ok=True)
 
         return self.DriverPath
 
@@ -165,6 +174,8 @@ class ManagedPaths(metaclass=Singleton):
         else:
             self.ExportPath = self.__combineBasePathWithObjectPath(GC.PATH_EXPORT)
 
+        Path(self.ExportPath).mkdir(exist_ok=True, parents=True)
+
         return self.ExportPath
 
     def getOrSetImportPath(self, path=None, change=False):
@@ -194,6 +205,12 @@ class ManagedPaths(metaclass=Singleton):
         """
         newPath = self.__derivePathForOSAndInstallationOption()
         newPath = newPath.joinpath(objectPath)
+
+        # Check, if Path exists already and if not, create it:
+        Path(newPath).mkdir(exist_ok=True, parents=True)
+
+        if not newPath.is_dir():
+            baangtExceptions.baangtTestStepException(f"Tried to create folder {newPath} and failed.")
 
         return newPath
 

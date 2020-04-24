@@ -72,9 +72,9 @@ EXP_FIELDLIST = "Fieldlist"
 EXP_XLSX = "XLSX"
 EXP_CSV = "CSV"
 
-PATH_EXPORT = 'ExportPath'
-PATH_IMPORT = 'ImportPath'
-PATH_SCREENSHOTS = 'ScreenshotPath'
+PATH_EXPORT = '1TestResults'
+PATH_IMPORT = '0TestInput'
+PATH_SCREENSHOTS = 'Screenshots'
 PATH_ROOT = 'RootPath'
 
 ADDRESS_COUNTRYCODE = "CountryCode"

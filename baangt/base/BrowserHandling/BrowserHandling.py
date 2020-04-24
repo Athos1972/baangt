@@ -63,12 +63,7 @@ class BrowserDriver:
 
         self.takeTime = self.timing.takeTime
 
-        if screenshotPath:
-            self.screenshotPath = screenshotPath
-            Path(self.screenshotPath).mkdir(exist_ok=True)
-        else:
-            self.screenshotPath = self.managedPaths.getOrSetScreenshotsPath()
-            Path(self.screenshotPath).mkdir(exist_ok=True)
+        self.screenshotPath = self.managedPaths.getOrSetScreenshotsPath()
 
     def createNewBrowser(self, mobileType=None, mobileApp = None, desired_app = None, mobile_app_setting = None,
                          browserName=GC.BROWSER_FIREFOX,
