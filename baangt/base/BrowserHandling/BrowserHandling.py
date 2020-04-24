@@ -951,7 +951,7 @@ class BrowserDriver:
         xpath, css, id = utils.setLocatorFromLocatorType(self.locatorType, self.locator)
         foundNow = self.findBy(xpath=xpath, css=css, id=id, optional=True, timeout=timeout / 2)
         if foundNow:
-            logging.debug(f"Re-Found element {self.locatorType}: {self.locator}, will retry ")
+            logger.debug(f"Re-Found element {self.locatorType}: {self.locator}, will retry ")
             begin = time.time()
         else:
             raise Exceptions.baangtTestStepException(
@@ -975,7 +975,7 @@ class BrowserDriver:
         lStartOfWaiting = time.time()
         elapsed = 0
 
-        logging.debug("Starting")
+        logger.debug("Starting")
 
         xpath, css, id = utils.setLocatorFromLocatorType(self.locatorType, self.locator)
 
