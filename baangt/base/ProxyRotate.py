@@ -74,6 +74,8 @@ class ProxyRotate(metaclass=Singleton):
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36'
         }
         for lineCount, proxi in enumerate(self.__temp_proxies):
+            if not self.firstRun:
+                sleep(5)
             logger.debug(f"{(str(self.__temp_proxies.index(proxi) + 1))}/ {str(len(self.__temp_proxies))}: {proxi}")
             proxy = {
                 "http": f"http://{proxi['ip']}:{proxi['port']}",

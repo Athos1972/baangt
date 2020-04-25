@@ -1,6 +1,6 @@
 CUST_TOASTS = "Toasts"
 # CUST_TOASTS_ERROR = "ToastsError" --> Replaced by GC.TESTCASEERRORLOG
-VIGOGFNUMMER = "VIGOGF#"
+VIGOGFNUMMER = "GF#"
 SAPPOLNR = "SAP Polizzennr"
 PRAEMIE = "Prämie"
 POLNRHOST = "PolNR Host"
@@ -10,4 +10,4 @@ DONAU = "DON"
 WSTV = "WSTV"
 VN = "VN"
 
-CLASSES_TESTCASE = "baangtVIG.CustTestCaseMaster"
+CLASSES_TESTCASE = "baangtVIG.CustTestCaseMaster.CustTestCaseMaster"

@@ -5,6 +5,7 @@ import sys
 import os
 from pathlib import Path
 from pluggy import HookspecMarker, HookimplMarker, PluginManager
+from baangt.base.PathManagement import ManagedPaths
 
 hook_spec = HookspecMarker("baangt")
 hook_impl = HookimplMarker("baangt")
@@ -30,8 +31,8 @@ plugin_manager.register(plugin=ExportTimingHookImpl())
 
 
 # fixme: Parameter für Logfile should include stage and browser()
-logFilename:pathlib.Path = Path(os.getcwd())
-logFilename = logFilename.joinpath('logs')
+managedPaths = ManagedPaths()
+logFilename:pathlib.Path = Path(managedPaths.getLogfilePath())
 pathlib.Path(logFilename).mkdir(parents=True, exist_ok=True)
 logFilename = logFilename.joinpath(datetime.now().strftime("%Y%m%d_%H%M%S") + '.log')
 
