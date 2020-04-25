@@ -43,7 +43,7 @@ class BrowserDriver:
     """
 
     def __init__(self, timing=None, screenshotPath=None):
-        self.driver = None
+        self.driver : webdriver.firefox
         self.iFrame = None
         self.element = None
         self.locatorType = None
@@ -111,15 +111,12 @@ class BrowserDriver:
                                                             desiredCapabilities=desiredCapabilities),
                         executable_path=self.__findBrowserDriverPaths(GeckoExecutable),
                         firefox_profile=profile,
-                        service_log_path=os.path.join(self.managedPaths.getLogfilePath(), 'geckodriver.log'),
-                        log_path=os.path.join(self.managedPaths.getLogfilePath(),'firefox.log')
+                        service_log_path=os.path.join(self.managedPaths.getLogfilePath(), 'geckodriver.log')
+                        # ,
+                        # log_path=os.path.join(self.managedPaths.getLogfilePath(),'firefox.log')
                     )
                     self.__startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance,
                                                 browserProxy=browserProxy)
-
-                    # FIXME: Make it dynamic
-                    #  self.driver.set_window_position(0, 0)
-                    #  self.driver.set_window_size(2200, 1024)
 
             elif browserName == GC.BROWSER_CHROME:
                 lCurPath = lCurPath.joinpath(ChromeExecutable)
@@ -142,9 +139,6 @@ class BrowserDriver:
                     )
                     self.__startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance,
                                                 browserProxy=browserProxy)
-
-                    # FIXME: Make it dynamic
-                    #  self.driver.set_window_size(2200, 1024)
 
             elif browserName == GC.BROWSER_EDGE:
                 self.driver = browserNames[browserName](
@@ -377,6 +371,7 @@ class BrowserDriver:
         if self.driver:
             try:
                 self.driver.quit()
+                self.driver = None
             except Exceptions as ex:
                 pass  # If the driver is already dead, it's fine.
 
@@ -655,6 +650,42 @@ class BrowserDriver:
         self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
 
         self.__doSomething(GC.CMD_FORCETEXT, value=value, timeout=timeout, xpath=xpath, optional=optional)
+
+    def setBrowserWindowSize(self, browserWindowSize: str):
+        """
+        Resized the browser Window to a fixed size
+        :param browserWindowSize: String with Widht/Height or Width;Height or Width,height or width x height
+               If you want also with leading --
+        :return: False, if browser wasn't reset,
+                 size-Dict when resize worked.
+        """
+        lIntBrowserWindowSize = browserWindowSize.replace("-","").strip()
+        lIntBrowserWindowSize = lIntBrowserWindowSize.replace(";", "/")
+        lIntBrowserWindowSize = lIntBrowserWindowSize.replace(",", "/")
+        lIntBrowserWindowSize = lIntBrowserWindowSize.replace("x", "/")
+
+        try:
+            width = int(lIntBrowserWindowSize.split("/")[0])
+            height = int(lIntBrowserWindowSize.split("/")[1])
+        except KeyError as e:
+            logger.warning(f"Called with wrong setting: {browserWindowSize}. Won't resize browser "
+                           f"Can't determine Width/Height.")
+            return False
+        except ValueError as e:
+            logger.warning(f"Called with wrong setting: {browserWindowSize}. Won't resize browser "
+                           f"Something seems not numeric before conversion: {lIntBrowserWindowSize}")
+            return False
+
+        if width == 0 or height == 0:
+            logger.warning(f"Called with wrong setting: {browserWindowSize}. Won't resize browser. Can't be 0")
+            return False
+
+        self.driver.set_window_size(width, height)
+        size = self.driver.get_window_size()
+        logger.debug(f"Resized browser window to width want/is: {width}/{size['width']}, "
+                     f"height want/is: {height}/{size['height']}")
+
+        return size
 
     def findNewFiles(self):
         """
