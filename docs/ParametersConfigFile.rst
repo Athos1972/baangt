@@ -56,6 +56,9 @@ for instance to slowly retest a single testrecord or to not close the browser af
      - When set to "True", will always start a new browser after the previous test case was done.
    * - ``TC.UseRotatingProxies``
      - When set to "True", will not use your own IP-Address but will use random rotating proxy servers from a list of proxies.
+   * - ``TC.BrowserWindowSize``
+     - When set to a value of width x height, will adjust the browser window dimensions. Value format can be
+       ``<w>;<h> or <w>,<h> or <w>/<h> or <w>x<h> or --<w>,--<h>``
    * - ``TC.ReReadProxies``
      - When set to "True", the proxy-servers will be re-evaluated. Otherwise existing list of Proxy-Servers will be used
        for proxy rotation. List must be named ``proxies.json`` and contain a list of proxies.

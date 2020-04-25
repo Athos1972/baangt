@@ -143,7 +143,7 @@ class TestRun:
         return self.testRunUtils.getCompleteTestRunAttributes(self.testRunName)
 
     def getBrowser(self, browserInstance=0, browserName=None, browserAttributes=None, mobileType=None, mobileApp=None,
-                   desired_app=None, mobile_app_setting=None):
+                   desired_app=None, mobile_app_setting=None, browserWindowSize=None):
 
         return self.browserFactory.getBrowser(browserInstance=browserInstance,
                                               browserName=browserName,
@@ -151,7 +151,8 @@ class TestRun:
                                               mobileType=mobileType,
                                               mobileApp=mobileApp,
                                               desired_app=desired_app,
-                                              mobile_app_setting=mobile_app_setting)
+                                              mobile_app_setting=mobile_app_setting,
+                                              browserWindowSize=browserWindowSize)
 
     def getAPI(self):
         if not self.apiInstance:

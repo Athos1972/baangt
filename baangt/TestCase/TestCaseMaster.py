@@ -43,6 +43,7 @@ class TestCaseMaster:
         self.browserSettings = self.testCaseSettings[1][GC.BROWSER_ATTRIBUTES]
         self.mobileType = self.testCaseSettings[1].get(GC.KWARGS_MOBILE)
         self.mobileApp = self.testCaseSettings[1].get(GC.KWARGS_MOBILE_APP)
+        browserWindowSize = self.testCaseSettings[1].get(GC.BROWSER_WINDOW_SIZE)
         self.mobile_desired_app = {}
         self.mobile_app_setting = {}
         if self.mobileType:
@@ -58,7 +59,8 @@ class TestCaseMaster:
                                                        mobileType=self.mobileType,
                                                        mobileApp=self.mobileApp,
                                                        desired_app=self.mobile_desired_app,
-                                                       mobile_app_setting=self.mobile_app_setting)
+                                                       mobile_app_setting=self.mobile_app_setting,
+                                                       browserWindowSize=browserWindowSize)
         self.kwargs[GC.KWARGS_BROWSER] = self.browser
 
     def execute(self):

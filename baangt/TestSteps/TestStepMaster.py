@@ -7,6 +7,7 @@ from pkg_resources import parse_version
 import logging
 from baangt.TestSteps.Exceptions import baangtTestStepException
 from baangt.TestSteps.AddressCreation import AddressCreate
+from baangt.base.PDFCompare import PDFCompare, PDFCompareDetails
 from baangt.base.Faker import Faker as baangtFaker
 from baangt.base.Utils import utils
 
@@ -162,14 +163,27 @@ class TestStepMaster:
             # Create Random IBAN. Value1 = Input-Parameter for IBAN-Function. Value2=Fieldname
             self.__getIBAN(lValue, lValue2)
         elif lActivity == 'PDFCOMPARE':
-            lFiles = self.browserSession.findNewFiles()
-            # fixme: Implement the API-Call here
+            self.doPDFComparison(lValue)
         elif lActivity == 'CHECKLINKS':
             self.checkLinks()
         else:
             raise BaseException(f"Unknown command in TestStep {lActivity}")
 
         self.timing.takeTime(lTimingString)
+
+    def doPDFComparison(self, lValue):
+        lFiles = self.browserSession.findNewFiles()
+        if len(lFiles) > 1:
+            # fixme: Do something! There were more than 1 files since last check. Damn
+            pass
+        elif len(lFiles) == 1:
+            # Wonderful. Let's do the PDF-Comparison
+            lPDFDataClass = PDFCompareDetails()
+            lPDFDataClass.fileName = lFiles
+            lPDFDataClass.referenceID = lValue
+            lDict = {"": lPDFDataClass}
+            lPDFCompare = PDFCompare()
+            lPDFCompare.compare_multiple(lDict)
 
     def replaceAllVariables(self, lValue, lValue2):
         # Replace variables from data file
