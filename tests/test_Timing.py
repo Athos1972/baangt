@@ -17,16 +17,14 @@ def test_timing_force_new():
 def test_timing_add_attribute():
     timer = Timing()
     timer.takeTime('test')
-    # non existent name
-    with pytest.raises(ValueError) as e:
-        timer.addAttribute('key', 'value', 'test')
+    # Additional Attributes now possible:
+    timer.addAttribute('franzi', 'fritzi', 'test')
+    timer.takeTime('test')
 
-    assert e.value.args[0] == 'Invalid attribute'
-    
-    with pytest.raises(ValueError) as e:
-        timer.addAttribute('key', 'value', 'hello')
+    lResult = timer.returnTime()
+    print(lResult)
+    assert "franzi" in lResult
 
-    assert e.value.args[0] == 'Section not found'
 
 def test_timing_take_time_sum_output():
     timer = Timing()
@@ -62,7 +60,3 @@ def test_timing___format_time():
     assert Timing._Timing__format_time(60 * 60) == '01:00:00'
     assert Timing._Timing__format_time(60 * 60 * 23) == '23:00:00'
     assert Timing._Timing__format_time(60 * 60 * 24) == '00:00:00'
-    
-
-if __name__ == '__main__':
-    test_getRandomAddress()
