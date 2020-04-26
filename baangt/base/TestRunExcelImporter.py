@@ -102,6 +102,7 @@ class TestRunExcelImporter:
                                      "TestCaseNumber": 1,
                                      "TestCaseType": GC.KWARGS_API_SESSION,
                                      "TestCaseClass": GC.CLASSES_TESTCASE}}
+            # If there's no defaults in the testrun definition, we need to make some assumptions:
             else:
                 if global_settings.get('TC.Mobile'):
                     lTestCaseDict = {1: {"TestCaseSequenceNumber": 1,
@@ -125,23 +126,26 @@ class TestRunExcelImporter:
                                      "TestCaseType": GC.KWARGS_BROWSER,
                                      "TestCaseClass": GC.CLASSES_TESTCASE,
                                      GC.KWARGS_BROWSER: GC.BROWSER_FIREFOX,
-                                     GC.BROWSER_ATTRIBUTES: ""}}
+                                     GC.BROWSER_ATTRIBUTES: "",
+                                     GC.BROWSER_WINDOW_SIZE: "1900x1200"}}
+        # Now we either have data by assumptions or from the testun definition. We'll take it into internal format:
         for key, testCase in lTestCaseDict.items():
             testSequenceRoot = testrunSequence[testCase["TestCaseSequenceNumber"]][1]
             testSequenceRoot[GC.STRUCTURE_TESTCASE] = {testCase["TestCaseNumber"]: []}
             testSequenceRoot[GC.STRUCTURE_TESTCASE][testCase["TestCaseNumber"]].append(testCase["TestCaseClass"])
             testSequenceRoot[GC.STRUCTURE_TESTCASE][testCase["TestCaseNumber"]].append(
                 {"TestCaseType": testCase["TestCaseType"],
-                 GC.KWARGS_BROWSER: testCase.get("Browser"),
-                 GC.BROWSER_ATTRIBUTES: testCase.get("BrowserAttributes"),
-                 GC.KWARGS_MOBILE: testCase.get("Mobile"),
-                 GC.KWARGS_MOBILE_APP: testCase.get('MobileApp'),
-                 GC.MOBILE_PLATFORM_NAME: testCase.get('PlatformName'),
-                 GC.MOBILE_DEVICE_NAME: testCase.get('DeviceName'),
-                 GC.MOBILE_PLATFORM_VERSION: testCase.get('PlatformVersion'),
-                 GC.MOBILE_APP_URL: testCase.get('app'),
-                 GC.MOBILE_APP_PACKAGE: testCase.get('appPackage'),
-                 GC.MOBILE_APP_ACTIVITY: testCase.get('appActivity')
+                 GC.KWARGS_BROWSER: testCase.get(GC.KWARGS_BROWSER),
+                 GC.BROWSER_ATTRIBUTES: testCase.get(GC.BROWSER_ATTRIBUTES),
+                 GC.BROWSER_WINDOW_SIZE: testCase.get(GC.BROWSER_WINDOW_SIZE),
+                 GC.KWARGS_MOBILE: testCase.get(GC.KWARGS_MOBILE),
+                 GC.KWARGS_MOBILE_APP: testCase.get(GC.KWARGS_MOBILE_APP),
+                 GC.MOBILE_PLATFORM_NAME: testCase.get(GC.MOBILE_PLATFORM_NAME),
+                 GC.MOBILE_DEVICE_NAME: testCase.get(GC.MOBILE_DEVICE_NAME),
+                 GC.MOBILE_PLATFORM_VERSION: testCase.get(GC.MOBILE_PLATFORM_VERSION),
+                 GC.MOBILE_APP_URL: testCase.get(GC.MOBILE_APP_URL),
+                 GC.MOBILE_APP_PACKAGE: testCase.get(GC.MOBILE_APP_PACKAGE),
+                 GC.MOBILE_APP_ACTIVITY: testCase.get(GC.MOBILE_APP_ACTIVITY)
                  })
 
         xlsTab = self._getTab("TestStep")

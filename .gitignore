@@ -14,3 +14,5 @@ venv
 baangt_*.xlsx
 /tests/logs
 
+/.eggs/
+/baangt.egg-info/

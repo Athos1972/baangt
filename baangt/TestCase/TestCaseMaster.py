@@ -23,6 +23,7 @@ class TestCaseMaster:
         self.sequenceNumber = self.kwargs.get(GC.KWARGS_SEQUENCENUMBER)
         self.timingName = self.timing.takeTime(self.__class__.__name__, forceNew=True)
         if self.testCaseType == GC.KWARGS_BROWSER:
+            self.kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS] = GC.TESTCASESTATUS_SUCCESS   # We believe in a good outcome
             self.__getBrowserForTestCase()
 
         elif self.testCaseType == GC.KWARGS_API_SESSION:
@@ -42,6 +43,7 @@ class TestCaseMaster:
         self.browserSettings = self.testCaseSettings[1][GC.BROWSER_ATTRIBUTES]
         self.mobileType = self.testCaseSettings[1].get(GC.KWARGS_MOBILE)
         self.mobileApp = self.testCaseSettings[1].get(GC.KWARGS_MOBILE_APP)
+        browserWindowSize = self.testCaseSettings[1].get(GC.BROWSER_WINDOW_SIZE)
         self.mobile_desired_app = {}
         self.mobile_app_setting = {}
         if self.mobileType:
@@ -57,7 +59,8 @@ class TestCaseMaster:
                                                        mobileType=self.mobileType,
                                                        mobileApp=self.mobileApp,
                                                        desired_app=self.mobile_desired_app,
-                                                       mobile_app_setting=self.mobile_app_setting)
+                                                       mobile_app_setting=self.mobile_app_setting,
+                                                       browserWindowSize=browserWindowSize)
         self.kwargs[GC.KWARGS_BROWSER] = self.browser
 
     def execute(self):
@@ -96,14 +99,24 @@ class TestCaseMaster:
                 tcData[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
 
     def tearDown(self):
+
+        data = self.kwargs[GC.KWARGS_DATA]
+
+        # If TestcaseErrorlog is not empty, the testcase status should be error.
+        if data[GC.TESTCASEERRORLOG]:
+                data[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
+
         if self.kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR:
             # Try taking a Screenshot
             if self.testCaseType == GC.KWARGS_BROWSER:
-                self.kwargs[GC.KWARGS_DATA][GC.SCREENSHOTS] = self.kwargs[GC.KWARGS_DATA][GC.SCREENSHOTS] + '\n' +\
-                                                              self.browser.takeScreenshot()
+                data[GC.SCREENSHOTS] = self.kwargs[GC.KWARGS_DATA][GC.SCREENSHOTS] \
+                                       + '\n' + self.browser.takeScreenshot()
 
+        # If Testcase-Status was not set, we'll set error. Shouldn't happen anyways.
         if not self.kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS]:
-            self.kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS] = GC.TESTCASESTATUS_SUCCESS
+            data[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
+            data[GC.TESTCASEERRORLOG] += "\nTestcase had not status - setting error"
+            logger.critical("Testcase had no status - setting error")
 
         self._checkAndSetTestcaseStatusIfFailExpected()
 
