@@ -22,7 +22,6 @@ class settingUI(SettingForm):
         self.readConfigFile()
         self.drawSetting()
         self.okPushButton.clicked.connect(self.saveToFile)
-        self.savePushButton.clicked.connect(self.saveToFile)
         # self.exitPushButton.clicked.connect(self.quitApplication)
         self.saveAspushButton.clicked.connect(self.saveAsNewFile)
         self.AddMorePushButton.clicked.connect(self.addMore)
@@ -61,18 +60,41 @@ class settingUI(SettingForm):
         """
         # get total no of rows, it will be index for new row
         count = self.formLayout.rowCount()
+        all_keys = self.configInstance.globalconfig.items()
+        # get keys values from formLayout
+        formlayoutItems = self.parseFormLayout()
 
-        all_keys = self.configInstance.globalconfig.keys()
+        # convert to dict, to fix unhashable type: dict error
+        all_keys = dict(all_keys)
+        # unused keys : globalconfig keys - formlayout keys
+        keys = [d for d in all_keys.keys() if d not in formlayoutItems]
+
+        # Now prepare key and displayText pair
+        displayTextPairs = [
+                         (k, v['displayText'])
+                         for k, v in all_keys.items()
+                         if k in keys]
+
+        # to store keys for displayText list
+        shownkeys = [p[0] for p in displayTextPairs]
+        # to store displayTextList
+        shownvalues = [p[1] for p in displayTextPairs]
+
         item, okPressed = QtWidgets.QInputDialog.getItem(
                                None,
                                "New Parameter ",
                                "Parameter Name",
-                               all_keys,
+                               shownvalues,
                                0,
                                True
                                )
         if item and okPressed:
-            key = item
+            if item in shownvalues:
+                # get keys using index of item selection
+                key = shownkeys[shownvalues.index(item)]
+            else:
+                # this is the key still not added in globalSettings
+                key = item
             value = self.configInstance.globalconfig.get(
                               key,
                               GlobalSettings.transformToDict(key, ""))
@@ -121,7 +143,7 @@ class settingUI(SettingForm):
 
             data = {}
             for key, value in self.configInstance.config.items():
-                data[key] = value['default']
+                data[key] = value
 
             with open(newFile, 'w') as f:
                 json.dump(data, f, indent=4)
@@ -133,7 +155,7 @@ class settingUI(SettingForm):
         self.saveValue()
         data = {}
         for key, value in self.configInstance.config.items():
-            data[key] = value['default']
+            data[key] = value
 
         if not self.configFile:
             # Open Dialog box to save file
@@ -167,17 +189,26 @@ class settingUI(SettingForm):
 
         self.drawSetting()
 
-    @QtCore.pyqtSlot()
-    def saveValue(self):
-        """ This simple function save the data and value from
-        form layout and return dictionary data
+    def parseFormLayout(self):
+        """ This function will parse form layout
+        and return dictionary items
         """
         data = {}
         count = self.formLayout.rowCount()
         for d in range(count):
-            item = self.formLayout.takeRow(0)
-            labelItem = item.labelItem
-            fieldItem = item.fieldItem
+
+            # item = self.formLayout.takeRow(0)
+            labelItem = self.formLayout.itemAt(
+                                   d,
+                                   QtWidgets.QFormLayout.LabelRole
+                                   )
+
+            fieldItem = self.formLayout.itemAt(
+                                   d,
+                                   QtWidgets.QFormLayout.FieldRole
+                                   )
+            # print(labelItem)
+            # print(fieldItem)
             key = ""
             value = ""
             if isinstance(labelItem, QtWidgets.QWidgetItem):
@@ -196,7 +227,16 @@ class settingUI(SettingForm):
             if key:
                 data[key] = value
 
+        return data
+
+    @QtCore.pyqtSlot()
+    def saveValue(self):
+        """ This simple function call parseFormlayout to get
+        dictionary data and update the config value
+        """
         # update the data to config instance
+        data = self.parseFormLayout()
+
         if self.configInstance:
             self.configInstance.updateValue(data)
             # print(self.configInstance.config)
@@ -216,6 +256,7 @@ class settingUI(SettingForm):
             # print("Number of rows", n_rows)
             for d in range(n_rows):
                 self.formLayout.removeRow(0)
+        self.formLayout.update()
 
         # update the groupbox headlines
         if self.configFile:
@@ -233,7 +274,16 @@ class settingUI(SettingForm):
                        "Settings in {}".format(
                           os.path.basename(settingFile)
                        )))
-        settings = self.configInstance.config
+        # prepare settings here
+        settings = {}
+        for key, value in self.configInstance.config.items():
+            if key in self.configInstance.globalconfig:
+                settings[key] = self.configInstance.globalconfig[key]
+                settings[key]['default'] = value
+            else:
+                settings[key] = GlobalSettings.transformToDict(key, value)
+
+        # settings = self.configInstance.config
         count = 0
         for key, value in sorted(
                          settings.items(),
@@ -241,7 +291,6 @@ class settingUI(SettingForm):
                          ):
             self.addNewRow(count, key, value)
             count += 1
-
 
     def addNewRow(self, count, key, value):
         """ This function will add new row at

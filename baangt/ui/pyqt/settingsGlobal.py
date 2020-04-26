@@ -138,9 +138,11 @@ class GlobalSettings:
                 for key, value in parsed_data.items():
                     if key in self.globalconfig:
                         # update globalconfig and return value to config
-                        self.config[key] = self.globalconfig[key]
+                        # self.config[key] = self.globalconfig[key]
                         # update the value
-                        self.config[key]['default'] = value['default']
+                        #self.config[key]['default'] = value['default']
+                        # changes: store the default value
+                        self.config[key] = value['default']
                     else:
                         self.config[key] = value
 
@@ -150,15 +152,17 @@ class GlobalSettings:
             """
             if isinstance(dictData, dict):
                 # loop each items
-                for key in dictData:
-                    if key in self.config:
-                        # The key is present so update the value
-                        self.config[key]['default'] = dictData[key]
-                    else:
-                        # it will be user defined key, will be text
-                        self.config[key] = GlobalSettings.transformToDict(
-                                                key,
-                                                dictData[key])
+                # No need to loop just update
+                self.config.update(dictData)
+                # for key in dictData:
+                #   if key in self.config:
+                #       # The key is present so update the value
+                #       self.config[key]['default'] = dictData[key]
+                #   else:
+                #       # it will be user defined key, will be text
+                #       self.config[key] = GlobalSettings.transformToDict(
+                #                               key,
+                #                               dictData[key])
 
             # if key in self.confg not found in dictData
             # delete button is pressed, need to remove from self.config also

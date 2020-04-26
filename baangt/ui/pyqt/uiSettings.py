@@ -74,11 +74,6 @@ class Ui_Form(QtCore.QObject):
 "background-color: rgb(52, 101, 164);")
         self.okPushButton.setObjectName("okPushButton")
         self.horizontalLayout.addWidget(self.okPushButton)
-        self.savePushButton = QtWidgets.QPushButton(self.groupBox)
-        self.savePushButton.setStyleSheet("background-color: rgb(52, 101, 164);\n"
-"color: rgb(255, 255, 255);")
-        self.savePushButton.setObjectName("savePushButton")
-        self.horizontalLayout.addWidget(self.savePushButton)
         self.saveAspushButton = QtWidgets.QPushButton(self.groupBox)
         self.saveAspushButton.setStyleSheet("color: rgb(255, 255, 255);\n"
 "background-color: rgb(52, 101, 164);")
@@ -116,8 +111,6 @@ class Ui_Form(QtCore.QObject):
         self.comboBox1Label.setText(_translate("Form", "comboBox1"))
         self.okPushButton.setToolTip(_translate("Form", "Save to Current File and Close Window"))
         self.okPushButton.setText(_translate("Form", "Ok"))
-        self.savePushButton.setToolTip(_translate("Form", "Save to Current File"))
-        self.savePushButton.setText(_translate("Form", "Save"))
         self.saveAspushButton.setToolTip(_translate("Form", "Save to New File Name"))
         self.saveAspushButton.setText(_translate("Form", "Save As"))
         self.AddMorePushButton.setToolTip(_translate("Form", "Add Entry To Bottom"))
