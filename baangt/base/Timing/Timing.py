@@ -14,11 +14,6 @@ class Duration:
     end: float = None
     timestamp: float = None
 
-    def clear(self):
-        self.start = None
-        self.end = None
-        self.timestamp = None
-
 class Timing:
     def __init__(self):
         self.timing = defaultdict(Duration)
@@ -90,13 +85,13 @@ class Timing:
 
         raise ValueError('Section not found')
 
-    def resetTime(self,name):
+    def resetTime(self):
         testrun = self.timing.get(GC.TIMING_TESTRUN)
-        self.timing[name].clear()
+        self.timing.clear()
         self.counter.clear()
         if testrun:
             self.timing[GC.TIMING_TESTRUN] = testrun
-
+        
     @staticmethod
     def __format_time(elapsed_seconds: float):
         return time.strftime("%H:%M:%S", time.gmtime(elapsed_seconds))
