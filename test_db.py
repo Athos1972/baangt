@@ -36,7 +36,7 @@ def tr_log():
 	from baangt.base.DataBaseORM import TestrunLog
 
 	log = TestrunLog(
-		uuid=uuid.uuid4().bytes,
+		id=uuid.uuid4().bytes,
 		testrunName='Test Testrun',
 		logfileName='Test Filename',
 		startTime=datetime.strptime('00:00:00', '%H:%M:%S'),
@@ -96,7 +96,7 @@ def test_get_testrunlog(session_db, tr_log):
 
 	# set new UUID
 	tr_uuid = uuid.uuid4()
-	tr_log.uuid = tr_uuid.bytes
+	tr_log.id = tr_uuid.bytes
 	session_db.add(tr_log)
 	session_db.commit()
 
@@ -228,19 +228,29 @@ def test_networkinfo(session_db, tr_log):
 	assert len(tc_log.networkInfo) == 1
 
 
-def test_sample_testcases(session_db, tr_log, results_google, network_google):
+def test_sample_testcases(session_db, tr_log, global_vars, results_google, network_google):
 	#
 	# create sample TestCaseLog instances
 	#
-	from baangt.base.DataBaseORM import TestCaseSequenceLog, TestCaseLog, TestCaseField, TestCaseNetworkInfo
+	from baangt.base.DataBaseORM import TestCaseSequenceLog, TestCaseLog, TestCaseField, TestCaseNetworkInfo, GlobalAttribute
 
-	tcs_log = TestCaseSequenceLog(uuid=uuid.uuid4().bytes, testrun=tr_log)
+	# add globals
+	for key, value in global_vars.items():
+		ga = GlobalAttribute(
+			name=key,
+			value=str(value),
+			testrun=tr_log,
+		)
+		session_db.add(ga)
+	session_db.commit()
+
+	tcs_log = TestCaseSequenceLog(id=uuid.uuid4().bytes, testrun=tr_log)
 	session_db.add(tr_log)
 	session_db.add(tcs_log)
 
 	for result in results_google.values():
 		# create TestCaseLog per a record
-		tc_log = TestCaseLog(uuid=uuid.uuid4().bytes, testcase_sequence=tcs_log)
+		tc_log = TestCaseLog(id=uuid.uuid4().bytes, testcase_sequence=tcs_log)
 		session_db.add(tc_log)
 		# add TestCaseLog attributes
 		for key, value in result.items():
@@ -268,6 +278,8 @@ def test_sample_testcases(session_db, tr_log, results_google, network_google):
 			session_db.add(ni)
 
 	session_db.commit()
+
+	print(json.dumps(tr_log.to_json(), indent=2))
 
 	# assertions
 	assert len(tcs_log.testcases) == 4
