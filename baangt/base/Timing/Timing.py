@@ -97,7 +97,6 @@ class Timing:
         if testrun:
             self.timing[GC.TIMING_TESTRUN] = testrun
 
-
     @staticmethod
     def __format_time(elapsed_seconds: float):
         return time.strftime("%H:%M:%S", time.gmtime(elapsed_seconds))
