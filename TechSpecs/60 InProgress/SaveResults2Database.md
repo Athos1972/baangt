@@ -41,6 +41,7 @@ The above mentioned analytics is **not** part of this TechSpec.
            * Create columns in the header: ``<stage>``, ``<uuid>`` of the test case, ``[<fieldname>]``
            * For each entry in testDataDict write ``stage``, ``uuid``,``<fieldname>`` into the appropriate column 
              in this Excel-Tab.
+           * If there are more fields with the same ``$<objectname>``, add columns for each ``<fieldname>``.
         * Into the database:
             * look for a table ``<stage>-<objectname>``.
             * If it exsits, check if ``[<fieldname>]`` are found in the structure
@@ -48,6 +49,12 @@ The above mentioned analytics is **not** part of this TechSpec.
             * If needed, extend structure
             * Add also ``uuid`` of the test case.
             * Append entries similarly to XLSX above.
+            
+_An example_: 
+
+For instance, if we have a column ``$customer-customernumber`` and the value of ``stage`` is ``Dev``. Then create a 
+worksheet ``Dev_Customer``. The new Tab has columns ``stage``, ``UUID``, ``customernumber``. If there's another field
+``$customer-customername``, then add one more column ``customername`` to the output tab ``customer``. 
             
 This will lead to double saving of the same data, once in testDataDict (e.g. in XLSX in Tab Output) and once in a separate
 tab ``<stage>_<objectname>``. The reason for that is to provide a simpler way for users to extract such data from multiple

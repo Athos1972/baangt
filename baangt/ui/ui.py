@@ -234,9 +234,10 @@ class UI:
         Add parameters to the Config-File for this Testrun and save the file under a temporary name
         """
         self.configContents[GC.PATH_ROOT] = self.directory
-        self.configContents[GC.PATH_SCREENSHOTS] = str(Path(self.directory).joinpath("Screenshots"))
-        self.configContents[GC.PATH_EXPORT] = str(Path(self.directory).joinpath("1testoutput"))
-        self.configContents[GC.PATH_IMPORT] = str(Path(self.directory).joinpath("0testdateninput"))
+
+        # self.configContents[GC.PATH_SCREENSHOTS] = str(Path(self.directory).joinpath(GC.PATH_SCREENSHOTS))
+        # self.configContents[GC.PATH_EXPORT] = str(Path(self.directory).joinpath(GC.PATH_EXPORT))
+        # self.configContents[GC.PATH_IMPORT] = str(Path(self.directory).joinpath(GC.PATH_IMPORT))
         self.tempConfigFile = UI.__makeRandomFileName()
         self.saveContentsOfConfigFile(self.tempConfigFile)
 
