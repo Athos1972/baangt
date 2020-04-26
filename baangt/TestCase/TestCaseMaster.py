@@ -79,7 +79,7 @@ class TestCaseMaster:
 
         tcData[GC.TIMELOG] = self.timing.returnTime()
 
-        self.timing.resetTime(self.timingName)
+        self.timing.resetTime()
 
     def _checkAndSetTestcaseStatusIfFailExpected(self):
         """
