@@ -3,16 +3,24 @@ from datetime import timedelta
 import time
 import logging
 from collections import Counter, defaultdict
-from dataclasses import dataclass, fields
+from dataclasses import dataclass, field
 from typing import Optional, Tuple
 
 logger = logging.getLogger("pyC")
+
 
 @dataclass
 class Duration:
     start: float = None
     end: float = None
     timestamp: float = None
+    other: dict = field(default_factory=dict)
+
+
+    def clear(self):
+        self.start = None
+        self.end = None
+        self.timestamp = None
 
 class Timing:
     def __init__(self):
@@ -44,10 +52,15 @@ class Timing:
         if section not in self.timing:
             raise ValueError('Section not found')
 
+        # If this is not a standard attribute of the timing class, then add it to section "other"
         if attribute not in Duration.__annotations__:
-            raise ValueError('Invalid attribute')
-
-        self.timing[section][attribute] = value
+            if not self.timing[section].other.get(attribute,"nix") == "nix":
+                self.timing[section].other[attribute] = \
+                     self.timing[section].other[attribute] + value
+            else:
+                self.timing[section].other[attribute] = value
+        else:
+            self.timing[section].__setattr__(attribute, value)
 
     def takeTimeSumOutput(self) -> None:
         logger.info("Timing follows:")
@@ -67,10 +80,12 @@ class Timing:
             ret = f'{ret}\n{key}: , since last call: ' \
                     f'{Timing.__format_time(elapsed)}'
             
-            if not value.timestamp:
-                continue
-            
-            ret = f'{ret}, TS: {str(value.timestamp)}'
+            if value.timestamp:
+                ret = f'{ret}, TS: {str(value.timestamp)}'
+
+            if value.other:
+                for key, object in value.other.items():
+                    ret = f'{ret}, {key}:{object}'
 
         return ret
 
@@ -85,9 +100,14 @@ class Timing:
 
         raise ValueError('Section not found')
 
-    def resetTime(self):
+    def resetTime(self, name):
         testrun = self.timing.get(GC.TIMING_TESTRUN)
-        self.timing.clear()
+        for key in self.timing.keys():
+            if key == testrun:
+                continue
+            if "TestCaseMaster" in key and key != name:
+                continue
+            self.timing[key].clear()
         self.counter.clear()
         if testrun:
             self.timing[GC.TIMING_TESTRUN] = testrun

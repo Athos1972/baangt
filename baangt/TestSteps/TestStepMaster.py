@@ -7,6 +7,7 @@ from pkg_resources import parse_version
 import logging
 from baangt.TestSteps.Exceptions import baangtTestStepException
 from baangt.TestSteps.AddressCreation import AddressCreate
+from baangt.base.PDFCompare import PDFCompare, PDFCompareDetails
 from baangt.base.Faker import Faker as baangtFaker
 from baangt.base.Utils import utils
 
@@ -35,12 +36,16 @@ class TestStepMaster:
         self.ifIsTrue = True
         self.baangtFaker = None
 
-        if not isinstance(self.testStep[1], str) and executeDirect:
-            # This TestStepMaster-Instance should actually do something - activitites are described
-            # in the TestExecutionSteps
-            self.executeDirect(self.testStep[1][GC.STRUCTURE_TESTSTEPEXECUTION])
+        if self.testStep:
+            if not isinstance(self.testStep[1], str) and executeDirect:
+                # This TestStepMaster-Instance should actually do something - activitites are described
+                # in the TestExecutionSteps
+                self.executeDirect(self.testStep[1][GC.STRUCTURE_TESTSTEPEXECUTION])
 
-        self.teardown()
+                # Relatively !sic: Teardown makes only sense, when we actually executed something directory in here
+                # Otherwise (if it was 1 or 2 Tabs more to the left) we'd take execution time without
+                # having done anything
+                self.teardown()
 
     def executeDirect(self, executionCommands):
         """
@@ -83,6 +88,8 @@ class TestStepMaster:
         # Timeout defaults to 20 seconds, if not set otherwise.
         lTimeout = TestStepMaster.__setTimeout(command["Timeout"])
 
+        lTimingString = f"TS {commandNumber} {lActivity.lower()}"
+        self.timing.takeTime(lTimingString)
         logger.debug(f"Executing TestStep {commandNumber} with parameters: act={lActivity}, lType={lLocatorType}, loc={lLocator}, "
                      f"Val1={lValue}, comp={lComparison}, Val2={lValue2}, Optional={lOptional}, timeout={lTimeout}")
 
@@ -156,12 +163,27 @@ class TestStepMaster:
             # Create Random IBAN. Value1 = Input-Parameter for IBAN-Function. Value2=Fieldname
             self.__getIBAN(lValue, lValue2)
         elif lActivity == 'PDFCOMPARE':
-            lFiles = self.browserSession.findNewFiles()
-            # fixme: Implement the API-Call here
+            self.doPDFComparison(lValue)
         elif lActivity == 'CHECKLINKS':
             self.checkLinks()
         else:
             raise BaseException(f"Unknown command in TestStep {lActivity}")
+
+        self.timing.takeTime(lTimingString)
+
+    def doPDFComparison(self, lValue):
+        lFiles = self.browserSession.findNewFiles()
+        if len(lFiles) > 1:
+            # fixme: Do something! There were more than 1 files since last check. Damn
+            pass
+        elif len(lFiles) == 1:
+            # Wonderful. Let's do the PDF-Comparison
+            lPDFDataClass = PDFCompareDetails()
+            lPDFDataClass.fileName = lFiles
+            lPDFDataClass.referenceID = lValue
+            lDict = {"": lPDFDataClass}
+            lPDFCompare = PDFCompare()
+            lPDFCompare.compare_multiple(lDict)
 
     def replaceAllVariables(self, lValue, lValue2):
         # Replace variables from data file
