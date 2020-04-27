@@ -102,7 +102,12 @@ class Timing:
 
     def resetTime(self, name):
         testrun = self.timing.get(GC.TIMING_TESTRUN)
-        self.timing[name].clear()
+        for key in self.timing.keys():
+            if key == testrun:
+                continue
+            if "TestCaseMaster" in key and key != name:
+                continue
+            self.timing[key].clear()
         self.counter.clear()
         if testrun:
             self.timing[GC.TIMING_TESTRUN] = testrun

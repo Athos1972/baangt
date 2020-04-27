@@ -81,7 +81,6 @@ class TestCaseMaster:
         tcData[GC.TIMING_DURATION] = self.timing.takeTime(self.timingName)   # Write the End-Record for this Testcase
 
         tcData[GC.TIMELOG] = self.timing.returnTime()
-
         self.timing.resetTime(self.timingName)
 
     def _checkAndSetTestcaseStatusIfFailExpected(self):
