@@ -38,7 +38,7 @@ class TestCaseMaster:
         self.tearDown()
 
     def __getBrowserForTestCase(self):
-        logger.info(f"Settings for this TestCase: {self.testCaseSettings}")
+        logger.info(f"Settings for this TestCase: {str(self.testCaseSettings)[0:100]}")
         self.browserType = self.testCaseSettings[1][GC.KWARGS_BROWSER].upper()
         self.browserSettings = self.testCaseSettings[1][GC.BROWSER_ATTRIBUTES]
         self.mobileType = self.testCaseSettings[1].get(GC.KWARGS_MOBILE)
