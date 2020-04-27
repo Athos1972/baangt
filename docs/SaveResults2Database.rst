@@ -20,7 +20,7 @@ Table holds results of the executed Testruns: Testrun Logs
    * - Column
      - Data Type
      - Description
-   * - uuid
+   * - id
      - BINARY
      - Testrun Log UUID. Primary key for Testrun Log.
    * - testrunName
@@ -60,7 +60,7 @@ Table holds data on the executed test case sequences: TestCaseSequence Logs
    * - Column
      - Data Type
      - Description
-   * - uuid
+   * - id
      - BINARY
      - TestCaseSequence Log UUID. Primary key for TestCaseSequence Log.
    * - testrun_id
@@ -80,7 +80,7 @@ Table holds data on the executed test cases: TestCase Logs
    * - Column
      - Data Type
      - Description
-   * - uuid
+   * - id
      - BINARY
      - TestCase Log UUID. Primary key for TestCase Log.
    * - testcase_sequence_id
@@ -213,7 +213,7 @@ Provides interface with table ``testruns``
 
    * - Attribute
      - Description
-   * - uuid
+   * - id
      - Testrun Log UUID as a bianry string.
    * - testrunName
      - Name of the associated TestRun.
@@ -235,6 +235,10 @@ Provides interface with table ``testruns``
      - List of the global attributes (as ``GlobalAttribute`` instances) of the associated Testrun.
    * - testcase_sequences
      - List of the test case sequences (as ``TestCaseSequenceLog`` instances) within the associated Testrun.
+   * - __str__()
+     - Method. Returns Testrun Log UUID as a string.
+   * - to_json()
+     - Method. Returns Testrun Log as a dictionary object.
 
 
 TestCaseSequenceLog
@@ -247,12 +251,16 @@ Provides interface with table ``testCaseSequences``
 
    * - Attribute
      - Description
-   * - uuid
+   * - id
      - TestCase Sequence Log UUID as a bianry string.
    * - testrun
      - The associated Testrun (as a ``TestrunLog`` instance).
    * - testcases
      - List of the test cases (as ``TestCaseLog`` instances) within the associated Test Case Sequence.
+   * - __str__()
+     - Method. Returns TestCase Sequence Log UUID as a string.
+   * - to_json()
+     - Method. Returns TestCase Sequence Log as a dictionary object.
 
 
 TestCaseLog
@@ -265,7 +273,7 @@ Provides interface with database table ``testCases``
 
    * - Attribute
      - Description
-   * - uuid
+   * - id
      - TestCase Log UUID as a bianry string.
    * - testcase_sequence
      - The associated Test Case Sequence (as a ``TestCaseSequenceLog`` instance).
@@ -273,6 +281,10 @@ Provides interface with database table ``testCases``
      - List of the attributes (as ``TestCaseField`` instances) of the associated Test Case.
    * - networkInfo
      - List of the network requests (as ``TestCaseNetworkInfo`` instances) made while executing the associated Test Case.
+   * - __str__()
+     - Method. Returns TestCase Log UUID as a string.
+   * - to_json()
+     - Method. Returns TestCase Log as a dictionary object.
 
 
 GlobalAttribute
@@ -345,3 +357,5 @@ Provides interface with table ``networkInfo``
      - The duration of the request in ``ms``.
    * - testcase
      - The associated test case (as a ``TestCaseLog`` instance).
+   * - to_json()
+     - Method. Returns the network info as a dictionary object.

@@ -163,7 +163,7 @@ class ExportResults:
 
         # create testrun object
         tr_log = TestrunLog(
-            uuid=self.testRunInstance.uuid.bytes,
+            id=self.testRunInstance.uuid.bytes,
             testrunName=self.testRunName,
             logfileName=logger.handlers[1].baseFilename,
             startTime=datetime.strptime(start, "%H:%M:%S"),
@@ -196,7 +196,7 @@ class ExportResults:
             uuid = uuid4()
             # create TestCaseLog instances
             tc_log = TestCaseLog(
-                uuid=uuid.bytes,
+                id=uuid.bytes,
                 testcase_sequence=tcs_log
             )
             # store uuid
