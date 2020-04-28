@@ -57,6 +57,13 @@
             "options": ["True", "False" ],
             "displayText": "Export all fields"
         },
+        "TC.Stage": {
+            "hint": "Set the Stage (usually DEV, QA, PQA, FQA, PROD, etc.). It is common to have master data or settings per stage. If that doesn't apply to you, use 'other'",
+            "type": "text",
+            "default": "other",
+            "options": ["DEV", "PQA", "FQA", "PROD"],
+            "displayText": "Stage"
+        },
         "TC.Release": {
             "hint": "set particular version to test ",
             "type": "text",
