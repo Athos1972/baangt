@@ -368,12 +368,12 @@ class BrowserDriver:
         return lOptions
 
     def closeBrowser(self):
-        if self.driver:
-            try:
+        try:
+            if self.driver:
                 self.driver.quit()
                 self.driver = None
-            except Exceptions as ex:
-                pass  # If the driver is already dead, it's fine.
+        except Exceptions as ex:
+            pass  # If the driver is already dead, it's fine.
 
     def _log(self, logType, logText, noScreenShot=False, **kwargs):
         """
@@ -840,6 +840,8 @@ class BrowserDriver:
                 wasSuccessful = True
             except NoSuchElementException as e:
                 pass
+            except NoSuchWindowException as e:
+                raise Exceptions.baangtTestStepException(f"Window ceased to exist. Error: {e}")
             self.sleep(0.2)
 
     def findWaitNotVisible(self, css=None, xpath=None, id=None, timeout=90, optional=False):

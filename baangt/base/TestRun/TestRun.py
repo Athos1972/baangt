@@ -216,7 +216,7 @@ class TestRun:
                     logger.info(f"TC is already in status Error - not processing steps {counterName}: {key}, {value}"
                                 f"and everything behind this step")
                     return
-            logger.info(f"Starting {counterName}: {key}, {value} ")
+            logger.info(f"Starting {counterName}: {key}")
             kwargs[counterName] = key
 
             # Get the class reference:

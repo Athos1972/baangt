@@ -64,11 +64,16 @@ class PDFCompare:
         return files
 
     def __callService(self, file : str, details: PDFCompareDetails):
-        blobToCompare = self.__getBlobFromInput(file, details.BLOB)
+        if not file:
+            lFile = details.fileName
+        else:
+            lFile = file
+
+        blobToCompare = self.__getBlobFromInput(lFile, details.BLOB)
 
         if not blobToCompare:
             details.Status = "NOK"
-            details.StatusText = f"No input BLOB given and file {file} not there or can't be read."
+            details.StatusText = f"No input BLOB given and file {lFile} not there or can't be read."
             return details
         else:
             details.BLOB = blobToCompare
@@ -88,19 +93,17 @@ class PDFCompare:
         details = self.__callUploadService(details)
 
         if details.newUUID:
-            self.__callComparisonServiceExecution(details, details.newUUID)
+            details = self.__callComparisonServiceExecution(details)
 
         return details
 
     def __callUploadService(self, details: PDFCompareDetails, endpoint="/upload_original"):
-        params = {
-            "description": "no idea",
-            "reference_uuid": details.referenceID
-        }
         files = {
-            "original": details.BLOB
+            "original": (details.fileName, details.BLOB),
+            "reference_uuid": (None, details.referenceID),
+            "description": (None, "no idea for now")
         }
-        lResponse = self.__executeRequest(params=params, methodGetOrPost="post", endpoint=endpoint, files=files)
+        lResponse = self.__executeRequest(params=None, methodGetOrPost="post", endpoint=endpoint, files=files)
 
         if not isinstance(lResponse, requests.Response):
             details.Status = "NOK"
@@ -109,7 +112,11 @@ class PDFCompare:
 
         if lResponse.status_code == 200:
             details.Status = "OK"
-            pass
+            lJson = lResponse.json()
+            details.newUUID = lJson[0].get("uuid")
+            if not details.newUUID:
+                details.Status = "NOK"
+                details.StatusText = f"Response didn't have UUID. Here's the response: {lResponse.text}"
         else:
             details.Status = "NOK"
             details.StatusText = f"Error {lResponse.status_code} from Request to Service. " \
@@ -117,20 +124,50 @@ class PDFCompare:
 
         return details
 
-    def __callComparisonServiceExecution(self, details: PDFCompareDetails, compareFromUUID, compareToUUID):
-        pass
+    def __callComparisonServiceExecution(self, details: PDFCompareDetails):
+        # Requests Comparison of the two IDs, typically after they were uploaded
+        # UUID 1 = new ID of this file
+        # UUID 2 = Reference ID of old file (Uploaded as a reference and given as parameter in the Testcase!
+        params = {"uuid1": details.newUUID,
+                  "uuid2": details.referenceID}
+        lResponse = self.__executeRequest(endpoint='/comparison', params=params, methodGetOrPost="get")
+
+        if lResponse.status_code == 200:
+            details.Status = "OK"
+            lJson = lResponse.json()
+            if lJson["result"] == "OK":
+                details.Status = "OK"
+                details.StatusText = ""
+            else:
+                details.Status = "NOK"
+                details.StatusText = "Diff in Original: " + lJson["result"]["orig_file_diff"] + \
+                                     "\nDiff in Reference:" +  lJson["result"]["orig_file_diff"]
+        else:
+            details.Status = "NOK"
+            details.StatusText = f"Error {lResponse.status_code} from Request to Service. " \
+                                 f"Error from service was {lResponse.text}"
+
+        return details
 
     def __executeRequest(self, endpoint, params, methodGetOrPost="get", files=None):
+        lUrl = f"{self.baseURL}/{endpoint}"
         if methodGetOrPost.lower() == "post":
             try:
-                lResponse = requests.post(url=f"{self.baseURL}/{endpoint}", params=params, files=files)
+                lResponse = requests.post(url=lUrl, params=params, files=files)
             except ConnectionError as e:
                 return e
             except Exception as e:
                 logger.critical(f"New uncought exception. Should be looked into! Exception was: {e}")
+                return e
 
         elif methodGetOrPost.lower() == "get":
-            pass
+            try:
+                lResponse = requests.get(url=lUrl, params=params)
+            except ConnectionError as e:
+                return e
+            except Exception as e:
+                logger.critical(f"New uncought exception. Should be looked into! Exception was: {e}")
+                return e
         else:
             logger.critical(f"called with wrong method: {methodGetOrPost}")
 
@@ -144,7 +181,7 @@ class PDFCompare:
 
         try:
             blob = open(file, "rb").read()
-            blob = b64encode(blob)
+            # blob = b64encode(blob)
         except FileNotFoundError as e:
             logger.critical(f"File {file} not found to read current PDF for comparison")
             return None

@@ -66,6 +66,7 @@ SCREENSHOTS = "Screenshots"
 EXECUTION_DONTCLOSEBROWSER = "dontCloseBrowser"
 EXECUTION_SLOW = "slowExecution"
 EXECUTION_NETWORK_INFO = 'NetworkInfo'
+EXECUTION_STAGE = "Stage"
 
 EXPORT_FORMAT = "ExportFormat"
 EXPORT_ADDITIONAL_DATA = "AdditionalExportTabs"
