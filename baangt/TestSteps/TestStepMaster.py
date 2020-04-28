@@ -175,11 +175,12 @@ class TestStepMaster:
         lFiles = self.browserSession.findNewFiles()
         if len(lFiles) > 1:
             # fixme: Do something! There were more than 1 files since last check. Damn
-            pass
+            logger.critical(f"There were {len(lFiles)} files new since last check. Can't handle that. ")
+            raise Exception
         elif len(lFiles) == 1:
             # Wonderful. Let's do the PDF-Comparison
             lPDFDataClass = PDFCompareDetails()
-            lPDFDataClass.fileName = lFiles
+            lPDFDataClass.fileName = lFiles[0][0]
             lPDFDataClass.referenceID = lValue
             lDict = {"": lPDFDataClass}
             lPDFCompare = PDFCompare()
