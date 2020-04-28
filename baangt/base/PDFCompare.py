@@ -93,7 +93,7 @@ class PDFCompare:
         details = self.__callUploadService(details)
 
         if details.newUUID:
-            self.__callComparisonServiceExecution(details, details.newUUID)
+            details = self.__callComparisonServiceExecution(details)
 
         return details
 
@@ -126,20 +126,28 @@ class PDFCompare:
 
     def __callComparisonServiceExecution(self, details: PDFCompareDetails):
         # Requests Comparison of the two IDs, typically after they were uploaded
-        params = {"uuid1": details.referenceID,
-                  "uuid2": details.newUUID}
+        # UUID 1 = new ID of this file
+        # UUID 2 = Reference ID of old file (Uploaded as a reference and given as parameter in the Testcase!
+        params = {"uuid1": details.newUUID,
+                  "uuid2": details.referenceID}
         lResponse = self.__executeRequest(endpoint='/comparison', params=params, methodGetOrPost="get")
 
         if lResponse.status_code == 200:
             details.Status = "OK"
             lJson = lResponse.json()
-            # fixme: No idea, what is in this response. Find out!
+            if lJson["result"] == "OK":
+                details.Status = "OK"
+                details.StatusText = ""
+            else:
+                details.Status = "NOK"
+                details.StatusText = "Diff in Original: " + lJson["result"]["orig_file_diff"] + \
+                                     "\nDiff in Reference:" +  lJson["result"]["orig_file_diff"]
         else:
             details.Status = "NOK"
             details.StatusText = f"Error {lResponse.status_code} from Request to Service. " \
                                  f"Error from service was {lResponse.text}"
 
-        pass
+        return details
 
     def __executeRequest(self, endpoint, params, methodGetOrPost="get", files=None):
         lUrl = f"{self.baseURL}/{endpoint}"
@@ -173,7 +181,7 @@ class PDFCompare:
 
         try:
             blob = open(file, "rb").read()
-            blob = b64encode(blob)
+            # blob = b64encode(blob)
         except FileNotFoundError as e:
             logger.critical(f"File {file} not found to read current PDF for comparison")
             return None

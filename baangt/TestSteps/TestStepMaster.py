@@ -184,7 +184,9 @@ class TestStepMaster:
             lPDFDataClass.referenceID = lValue
             lDict = {"": lPDFDataClass}
             lPDFCompare = PDFCompare()
-            lPDFCompare.compare_multiple(lDict)
+            lDict = lPDFCompare.compare_multiple(lDict)
+            self.testcaseDataDict["DOC_Compare_Status"] = lDict[""].Status
+            self.testcaseDataDict["DOC_Compare_Results"] = lDict[""].StatusText
 
     def replaceAllVariables(self, lValue, lValue2):
         # Replace variables from data file
