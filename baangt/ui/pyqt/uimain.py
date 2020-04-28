@@ -17,16 +17,26 @@ import configparser
 import subprocess
 import sys
 from baangt.ui.pyqt import resources
-# from baangt.ui.pyqt.uiKatalonImporter import Ui_Form as KatalonForm
-# from baangt.ui.pyqt.uiSettings import Ui_Form as SettingsForm
-# from baangt.ui.ImportKatalonRecorder import ImportKatalonRecorder
-from baangt.ui.pyqt.katalonUI import KatalonUI
-from baangt.ui.pyqt.settingUI import settingUI
 from baangt.ui.pyqt.settingsGlobal import GlobalSettings
-import functools
-
+from baangt.ui.ImportKatalonRecorder import ImportKatalonRecorder
+import pyperclip
 
 logger = logging.getLogger("pyC")
+
+
+class PyqtKatalonUI(ImportKatalonRecorder):
+    """ Subclass of ImportKatalonRecorder :
+        Aim : To disable GUI created by PySimpleGui
+        and initialize everything
+    """
+    def __init__(self, directory="./"):
+        self.directory = directory
+        self.clipboardText = ""
+        self.outputText = ""
+        self.window = None
+        self.outputData = {}
+        self.outputFormatted = []
+        self.fileNameExport = None
 
 
 class MainWindow(Ui_MainWindow):
@@ -55,45 +65,47 @@ class MainWindow(Ui_MainWindow):
         # self.setupBasePath(self.directory)
         self.readConfig()
 
+        self.katalonRecorder = PyqtKatalonUI(self.directory)
         # update logo and icon
         self.updateLogoAndIcon(MainWindow)
 
         # initialize Katalon Importer and Global Setting Page
-
-
         # Add Button Signals and Slot here
-        self.browsePushButton.clicked.connect(self.browsePathSlot)
+        self.browsePushButton_4.clicked.connect(self.browsePathSlot)
         # self.executePushButton.clicked(self.executeTest)
-        # self.settingsPushButton.clicked.connect(self.settingView)
-        self.settingComboBox.activated.connect(self.updateSettings)
 
-        # When Test Run file changes
-        self.testRunComboBox.activated.connect(self.updateRunFile)
-        # settings View action
-        # self.settingsClosePushButton.clicked.connect(self.refreshNew)
-
-        # Logs View Action
-        # self.LogsClosePushButton.clicked.connect(self.refreshNew)
-        self.executePushButton.clicked.connect(self.runTestRun)
-
-        # MenuBar preferences >> Settings action clicked
-        # self.actionsettings.triggered.connect(self.displaySettings)
-
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        # Setting Page actions and triggered
+        self.settingsPushButton_4.clicked.connect(self.settingView)
+        self.okPushButton.clicked.connect(self.saveToFile)
+        self.settingComboBox_4.activated.connect(self.updateSettings)
+        self.testRunComboBox_4.activated.connect(self.updateRunFile)
+        self.exitPushButton.clicked.connect(self.mainPageView)
+        self.AddMorePushButton.clicked.connect(self.addMore)
+        self.deleteLastPushButton.clicked.connect(self.deleteLast)
+        self.saveAspushButton.clicked.connect(self.saveAsNewFile)
+        self.executePushButton_4.clicked.connect(self.runTestRun)
 
         # Quit Event
         self.actionExit.triggered.connect(self.quitApplication)
 
         # Katalon triggered
-        self.actionOpen_Studio.triggered.connect(self.show_katalon)
+        self.actionImport_Katalon.triggered.connect(self.show_katalon)
+        self.exitPushButton_3.clicked.connect(self.mainPageView)
+        self.savePushButton_2.clicked.connect(self.saveTestCase)
+        self.copyClipboard_2.clicked.connect(self.copyFromClipboard)
+        self.TextIn_2.textChanged.connect(self.importClipboard)
+
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+
 
     def saveInteractiveGuiConfig(self):
         """ Save Interactive Gui Config variables """
         config = configparser.ConfigParser()
         config["Default"] = {
                     "path": self.directory,
-                    "testrun": self.testRunComboBox.currentText(),
-                    "globals": self.settingComboBox.currentText(),
+                    "testrun": self.testRunComboBox_4.currentText(),
+                    "globals": self.settingComboBox_4.currentText(),
                     }
         with open("baangt.ini", "w" ) as configFile:
             config.write(configFile)
@@ -121,24 +133,25 @@ class MainWindow(Ui_MainWindow):
         self.configContents = configInstance.config
         if not self.configContents.get('TC.' + GC.DATABASE_LINES):
             key = 'TC.' + GC.DATABASE_LINES
-            self.configContents[key] = GlobalSettings.transformToDict(key, "")
+            self.configContents[key] = ""
         if not self.configContents.get('TC.' + GC.EXECUTION_DONTCLOSEBROWSER):
             key = 'TC.' + GC.EXECUTION_DONTCLOSEBROWSER
-            self.configContents[key] = GlobalSettings.transformToDict(key, "")
+            self.configContents[key] = ""
         if not self.configContents.get('TC.' + GC.EXECUTION_SLOW):
             key = 'TC.' + GC.EXECUTION_SLOW
-            self.configContents[key] = GlobalSettings.transformToDict(key, "")
+            self.configContents[key] = ""
 
     @QtCore.pyqtSlot()
     def show_katalon(self):
         """ Display katalon panel for Test case preparation """
+        self.stackedWidget.setCurrentIndex(2)
         self.statusMessage("Katalon Studio is triggered", 1000)
 
     def updateLogoAndIcon(self, MainWindow):
         """ This function initialize logo and icon """
         logo_pixmap = QtGui.QPixmap(":/baangt/baangtlogo")
         logo_pixmap.scaled(300, 120, QtCore.Qt.KeepAspectRatio)
-        self.logo.setPixmap(logo_pixmap)
+        self.logo_4.setPixmap(logo_pixmap)
         icon = QtGui.QIcon()
         icon.addPixmap(
                 QtGui.QPixmap(":/baangt/baangticon"),
@@ -146,6 +159,16 @@ class MainWindow(Ui_MainWindow):
                 QtGui.QIcon.Off
                 )
         MainWindow.setWindowIcon(icon)
+
+        self.settingPage.setStyleSheet(
+                 "QLineEdit { background-color: white; \n"
+                 "            color: rgb(46, 52, 54);  \n"
+                 "}"
+                 "QComboBox { background-color: white; \n"
+                 "            color: rgb(46, 52, 54);  \n"
+                 "}"
+                 )
+        MainWindow.resize(980, 480)
 
     def statusMessage(self, str, duration=1000):
         """ Display status message passed in Status Bar
@@ -167,18 +190,17 @@ class MainWindow(Ui_MainWindow):
         # get back to orig_dir
         os.chdir(orig_path)
 
-
         # update the combo box
-        self.testRunComboBox.clear()
-        self.settingComboBox.clear()
+        self.testRunComboBox_4.clear()
+        self.settingComboBox_4.clear()
         # Also, disable Execute and Details Button
-        self.executePushButton.setEnabled(False)
-        self.settingsPushButton.setEnabled(False)
+        self.executePushButton_4.setEnabled(False)
+        self.settingsPushButton_4.setEnabled(False)
         # Add files in Combo Box
-        self.testRunComboBox.addItems(
+        self.testRunComboBox_4.addItems(
                         sorted(self.testRunFiles, key=lambda x: x.lower())
                                )
-        self.settingComboBox.addItems(
+        self.settingComboBox_4.addItems(
                         sorted(self.configFiles, key=lambda x: x.lower())
                                )
 
@@ -186,33 +208,34 @@ class MainWindow(Ui_MainWindow):
 
         if len(self.testRunFiles) > 0:
             # if testrun file not in Combo box of TestRunFiles
-            index = self.testRunComboBox.findText(
+            index = self.testRunComboBox_4.findText(
                                  self.testRunFile,
                                  QtCore.Qt.MatchFixedString
                                  )
             if self.testRunFile not in self.testRunFiles:
-                self.testRunComboBox.setCurrentIndex(0)
-                self.testRunFile = self.testRunComboBox.currentText()
+                self.testRunComboBox_4.setCurrentIndex(0)
+                self.testRunFile = self.testRunComboBox_4.currentText()
             else:
-                self.testRunComboBox.setCurrentIndex(index)
+                self.testRunComboBox_4.setCurrentIndex(index)
             self.statusMessage("testrun file: {}".format(self.testRunFile))
             # Activate the Execute Button
-            self.executePushButton.setEnabled(True)
+            self.executePushButton_4.setEnabled(True)
 
         if len(self.configFiles) > 0:
             # if config file not in list of ConfigListFiles
-            index = self.settingComboBox.findText(
+            index = self.settingComboBox_4.findText(
                               self.configFile,
                               QtCore.Qt.MatchFixedString
                               )
             if self.configFile not in self.configFiles:
-                self.settingComboBox.setCurrentIndex(0)
+                self.settingComboBox_4.setCurrentIndex(0)
                 # Activate the Settings Detail Button
-                self.configFile = self.settingComboBox.currentText()
+                self.configFile = self.settingComboBox_4.currentText()
             else:
-                self.settingComboBox.setCurrentIndex(index)
-            self.statusMessage("value of self.configfile {}".format(self.configFile))
-            self.settingsPushButton.setEnabled(True)
+                self.settingComboBox_4.setCurrentIndex(index)
+            self.statusMessage("value of self.configfile {}".format(
+                               self.configFile))
+            self.settingsPushButton_4.setEnabled(True)
             self.updateSettings()
 
     def setupBasePath(self, dirPath=""):
@@ -226,9 +249,10 @@ class MainWindow(Ui_MainWindow):
                           ))
             if not dirPath:
                 dirPath = os.path.abspath(os.curdir)
-            self.pathLineEdit.insert(dirPath)
+            self.pathLineEdit_4.insert(dirPath)
+            # self.pathLineEdit.insert(dirPath)
         else:
-            self.pathLineEdit.insert(dirPath)
+            self.pathLineEdit_4.insert(dirPath)
         self.directory = dirPath
         self.getSettingsAndTestFilesInDirectory(dirPath)
         self.statusMessage("Current Path: {} ".format(dirPath), 2000)
@@ -247,30 +271,19 @@ class MainWindow(Ui_MainWindow):
         if buttonReply == QtWidgets.QMessageBox.Yes:
             QtWidgets.QApplication.exit()
 
-    # @pyqtSlot()
-    # def refreshNew(self):
-    #     """
-    #     This method will refresh ui to initial state.
-    #     Hide Bottom Settings and Logs Viewer.
-    #     Made for closeSettingsButton and closeLogsButton
-    #     """
-    #     # Bottom Left and Right splitter
-    #     self.settingsAndLogSplitter.setSizes([300, 0])
-
-    #     # Hide Log Viewer Initially
-    #     self.mainAndExtraSplitter.setSizes([300, 0])
-
-    #     # Initially Hide splitter bottom part
-    #     # self.centralwidget.resize(912, 400)
+    @pyqtSlot()
+    def mainPageView(self):
+        """ This function will redirect to main page """
+        self.stackedWidget.setCurrentIndex(0)
 
     @pyqtSlot()
     def updateRunFile(self):
         """ this file will update the testRunFile selection
         """
-        self.saveInteractiveGuiConfig()
         self.testRunFile = os.path.join(self.directory,
-                                  self.testRunComboBox.currentText())
+                                  self.testRunComboBox_4.currentText())
         self.statusMessage("Test Run Changed to: {}".format(self.testRunFile))
+        self.saveInteractiveGuiConfig()
 
     @pyqtSlot()
     def updateSettings(self):
@@ -278,7 +291,7 @@ class MainWindow(Ui_MainWindow):
         # Try to get full path
         # write changes to ini file
         self.configFile = os.path.join(self.directory,
-                                 self.settingComboBox.currentText())
+                                 self.settingComboBox_4.currentText())
 
         self.saveInteractiveGuiConfig()
         self.statusMessage("Settings changed to: {}".format(self.configFile))
@@ -297,12 +310,11 @@ class MainWindow(Ui_MainWindow):
 
         runCmd = self._getRunCommand()
 
-
         if self.configContents.get("TX.DEBUG"):
             from baangt.base.TestRun.TestRun import TestRun
 
             lTestRun = TestRun(f"{Path(self.directory).joinpath(self.testRunFile)}",
-                               globalSettingsFileNameAndPath=f'{Path(self.directory).joinpath(self.tempConfigFile)}')
+                 globalSettingsFileNameAndPath=f'{Path(self.directory).joinpath(self.tempConfigFile)}')
 
         else:
             logger.info(f"Running command: {runCmd}")
@@ -374,39 +386,15 @@ class MainWindow(Ui_MainWindow):
     def __makeRandomFileName():
         return "globals_" + utils.datetime_return() + ".json"
 
-
-    # @pyqtSlot()
-    # def settingView(self):
-    #     """
-    #     View settings Below Main Windows
-    #     """
-    #     self.mainAndExtraSplitter.setSizes([0, 300])
-    #     self.settingsAndLogSplitter.setSizes([300, 0])
-
-    # @pyqtSlot()
-    # def displaySettings(self):
-    #     """
-    #     Display and edit Current settings, via Globals.json file
-    #     Control:
-    #         make upper part of splitter to 0.
-    #         and make right part of log window to 0.
-    #     """
-    #     # Logs View to zero
-    #     self.settingsAndLogSplitter.setSizes([300, 0])
-
-    #     # main Area to zero
-    #     self.mainAndExtraSplitter.setSizes([0, 300])
-
-    # @pyqtSlot()
-    # def logsView(self):
-    #     """
-    #     View Logs Below the Main Window
-    #     """
-    #     self.mainAndExtraSplitter.setSizes([0, 300])
-    #     self.settingsAndLogSplitter.setSizes([0, 300])
-    #     # run the command
-    #     self.runTestRun()
-
+    @pyqtSlot()
+    def settingView(self):
+        """
+        View settings Below Main Windows
+        """
+        self.statusMessage("Settings Page Opened")
+        self.stackedWidget.setCurrentIndex(1)
+        self.readConfigFile()
+        self.drawSetting()
 
     @pyqtSlot()
     def browsePathSlot(self):
@@ -414,7 +402,7 @@ class MainWindow(Ui_MainWindow):
            globals.json file for Test specific settings
         """
         # get path from pathLineEdit
-        basepath = self.pathLineEdit.text()
+        basepath = self.pathLineEdit_4.text()
         if not basepath:
             basepath = "./"
         options = QtWidgets.QFileDialog.Options()
@@ -429,6 +417,391 @@ class MainWindow(Ui_MainWindow):
             # self.pathLineEdit.insert(dirName)
             self.setupBasePath(dirName)
 
+    # Settings Page
+    # All action and function related to Setting page is below
+    def readConfigFile(self):
+        """ Read the configFile and update the configInstance """
+        if self.configFile:
+            # Compute full path
+            fullpath = os.path.join(self.directory, self.configFile)
+            if os.path.isfile(fullpath):
+                self.configInstance = GlobalSettings.getInstance()
+                self.configInstance.addValue(fullpath)
+
+    @QtCore.pyqtSlot()
+    def addMore(self):
+        """ This function will popup a dialog box,
+        User input the keword and a new row is added
+        to Form Layout
+        """
+        # get total no of rows, it will be index for new row
+        count = self.formLayout.rowCount()
+        all_keys = self.configInstance.globalconfig.items()
+        # get keys values from formLayout
+        formlayoutItems = self.parseFormLayout()
+
+        # convert to dict, to fix unhashable type: dict error
+        all_keys = dict(all_keys)
+        # unused keys : globalconfig keys - formlayout keys
+        keys = [d for d in all_keys.keys() if d not in formlayoutItems]
+
+        # Now prepare key and displayText pair
+        displayTextPairs = [
+                         (k, v['displayText'])
+                         for k, v in all_keys.items()
+                         if k in keys]
+
+        # to store keys for displayText list
+        shownkeys = [p[0] for p in displayTextPairs]
+        # to store displayTextList
+        shownvalues = [p[1] for p in displayTextPairs]
+
+        item, okPressed = QtWidgets.QInputDialog.getItem(
+                               None,
+                               "New Parameter ",
+                               "Parameter Name",
+                               shownvalues,
+                               0,
+                               True
+                               )
+        if item and okPressed:
+            if item in shownvalues:
+                # get keys using index of item selection
+                key = shownkeys[shownvalues.index(item)]
+            else:
+                # this is the key still not added in globalSettings
+                key = item
+            value = self.configInstance.globalconfig.get(
+                              key,
+                              GlobalSettings.transformToDict(key, ""))
+            self.addNewRow(count, key, value)
+
+    @QtCore.pyqtSlot()
+    def deleteLast(self):
+        """ This function when call delete last row
+        from the form layout
+        """
+        # get the index of last row, equals totalrow minus one
+        count = self.formLayout.rowCount()
+
+        # delete the count - 1 th row
+        if count > 0:
+            self.formLayout.removeRow(count - 1)
+
+    @QtCore.pyqtSlot()
+    def saveAsNewFile(self):
+        """ This will ask new file to save data """
+        # save recent changes to config
+        self.saveValue()
+        # ask for fileName
+        options = QtWidgets.QFileDialog.Options()
+        options |= QtWidgets.QFileDialog.DontUseNativeDialog
+        filename = QtWidgets.QFileDialog.getSaveFileName(
+                                None,
+                                "Save Global Setting  File",
+                                self.directory,
+                                "JsonFile (*.json)",
+                                "",
+                                options=options
+                                )
+        newFile = filename[0]
+        if newFile:
+            if not os.path.basename(newFile).endswith(".json"):
+                newFile = os.path.join(
+                             os.path.dirname(newFile),
+                             os.path.basename(newFile) + ".json"
+                             )
+
+            data = {}
+            for key, value in self.configInstance.config.items():
+                data[key] = value
+
+            with open(newFile, 'w') as f:
+                json.dump(data, f, indent=4)
+
+    @QtCore.pyqtSlot()
+    def saveToFile(self):
+        """ Save the content to file"""
+        # call saveFile before saving to File
+        self.saveValue()
+        data = {}
+        for key, value in self.configInstance.config.items():
+            data[key] = value
+
+        if not self.configFile:
+            # Open Dialog box to save file
+            options = QtWidgets.QFileDialog.Options()
+            options |= QtWidgets.QFileDialog.DontUseNativeDialog
+            filename = QtWidgets.QFileDialog.getSaveFileName(
+                                    None,
+                                    "Save Global Setting  File",
+                                    self.directory,
+                                    "JsonFile (*.json)",
+                                    "",
+                                    options=options
+                                    )
+            self.configFile = filename[0]
+        if self.configFile:
+            if not os.path.basename(self.configFile).endswith(".json"):
+                self.configFile = os.path.join(
+                             os.path.dirname(self.configFile),
+                             os.path.basename(self.configFile) + ".json"
+                             )
+
+            fullpath = self.configFile
+            if not os.path.isabs(self.configFile):
+                if self.directory:
+                    fullpath = os.path.join(self.directory, self.configFile)
+                else:
+                    self.directory = os.getcwd()
+                    fullpath = os.path.join(self.directory, self.configFile)
+
+            with open(fullpath, 'w') as f:
+                json.dump(data, f, indent=4)
+
+        self.drawSetting()
+        self.mainPageView()
+
+    def parseFormLayout(self):
+        """ This function will parse form layout
+        and return dictionary items
+        """
+        data = {}
+        count = self.formLayout.rowCount()
+        for d in range(count):
+
+            # item = self.formLayout.takeRow(0)
+            labelItem = self.formLayout.itemAt(
+                                   d,
+                                   QtWidgets.QFormLayout.LabelRole
+                                   )
+
+            fieldItem = self.formLayout.itemAt(
+                                   d,
+                                   QtWidgets.QFormLayout.FieldRole
+                                   )
+            # print(labelItem)
+            # print(fieldItem)
+            key = ""
+            value = ""
+            if isinstance(labelItem, QtWidgets.QWidgetItem):
+                lablename = labelItem.widget()
+                key = lablename.objectName()
+            if isinstance(fieldItem, QtWidgets.QWidgetItem):
+                fieldname = fieldItem.widget()
+                if isinstance(fieldname, QtWidgets.QCheckBox):
+                    # get checked status
+                    value = fieldname.isChecked()
+                elif isinstance(fieldname, QtWidgets.QComboBox):
+                    # get current Text
+                    value = fieldname.currentText()
+                elif isinstance(fieldname, QtWidgets.QLineEdit):
+                    value = fieldname.text()
+            if key:
+                data[key] = value
+
+        return data
+
+    @QtCore.pyqtSlot()
+    def saveValue(self):
+        """ This simple function call parseFormlayout to get
+        dictionary data and update the config value
+        """
+        # update the data to config instance
+        data = self.parseFormLayout()
+
+        if self.configInstance:
+            self.configInstance.updateValue(data)
+            # print(self.configInstance.config)
+        else:
+            print("No config instance ")
+
+    def drawSetting(self):
+        """ This will draw Setting based on data in configInstance
+        """
+        # We will use filtered dict key only
+        # settings = self.configInstance.filterIniKey()
+        # Remove all existing data to print
+        n_rows = self.formLayout.rowCount()
+
+        if n_rows > 0:
+            # Delete all existing rows
+            # print("Number of rows", n_rows)
+            for d in range(n_rows):
+                self.formLayout.removeRow(0)
+        self.formLayout.update()
+
+        # update the groupbox headlines
+        if self.configFile:
+            settingFile = self.configFile
+            # compute full path
+            fullpath = os.path.join(self.directory, self.configFile)
+            if os.path.isfile(fullpath):
+                settingFile = fullpath
+        else:
+            settingFile = "globalSetting.json"
+        _translate = QtCore.QCoreApplication.translate
+        self.groupBox.setTitle(
+                   _translate(
+                       "Form",
+                       "Settings in {}".format(
+                          os.path.basename(settingFile)
+                       )))
+        # prepare settings here
+        settings = {}
+        for key, value in self.configInstance.config.items():
+            if key in self.configInstance.globalconfig:
+                settings[key] = self.configInstance.globalconfig[key]
+                settings[key]['default'] = value
+            else:
+                settings[key] = GlobalSettings.transformToDict(key, value)
+
+        # settings = self.configInstance.config
+        count = 0
+        for key, value in sorted(
+                         settings.items(),
+                         key=lambda x: x[1]['type']
+                         ):
+            self.addNewRow(count, key, value)
+            count += 1
+
+    def addNewRow(self, count, key, value):
+        """ This function will add new row at
+        count number with given key value pair
+        in formlayout
+        """
+        _translate = QtCore.QCoreApplication.translate
+        if value['type'] == 'bool':
+            # create check box
+            self.checkBox1Label = QtWidgets.QLabel(
+                                 self.scrollAreaWidgetContents
+                                  )
+            self.checkBox1Label.setObjectName(key)
+            self.checkBox1Label.setToolTip(value['hint'])
+            self.checkBox1Label.setText(
+                           _translate("Form", value['displayText']))
+            self.checkBox1CheckBox = QtWidgets.QCheckBox(
+                            self.scrollAreaWidgetContents)
+            # self.checkBox1CheckBox.setStyleSheet(
+            #                "color: rgb(46, 52, 54);")
+            if isinstance(value['default'], bool):
+                # its bool type
+                self.checkBox1CheckBox.setChecked(value['default'])
+
+            elif isinstance(value['default'], str):
+                # its string type
+                if value['default'].lower() == "true":
+                    self.checkBox1CheckBox.setChecked(True)
+                else:
+                    self.checkBox1CheckBox.setChecked(False)
+            else:
+                # default
+                self.checkBox1CheckBox.setChecked(False)
+            self.formLayout.setWidget(
+                              count,
+                              QtWidgets.QFormLayout.LabelRole,
+                              self.checkBox1Label)
+            self.formLayout.setWidget(
+                              count,
+                              QtWidgets.QFormLayout.FieldRole,
+                              self.checkBox1CheckBox)
+
+        elif value['type'] == 'text':
+            self.lineEdit1Label = QtWidgets.QLabel(
+                              self.scrollAreaWidgetContents)
+            self.lineEdit1Label.setToolTip(
+                               _translate("Form", value['hint']))
+            self.lineEdit1Label.setObjectName(key)
+            self.lineEdit1Label.setText(
+                               _translate("Form", value['displayText']))
+            self.lineEdit1LineEdit = QtWidgets.QLineEdit(
+                              self.scrollAreaWidgetContents)
+            # self.lineEdit1LineEdit.setStyleSheet(
+            #                 "background-color: rgb(255, 255, 255);\n"
+            #                 "color: rgb(46, 52, 54);")
+            self.lineEdit1LineEdit.setText(
+                             _translate("Form", value['default']))
+            self.formLayout.setWidget(
+                             count,
+                             QtWidgets.QFormLayout.LabelRole,
+                             self.lineEdit1Label)
+            self.formLayout.setWidget(
+                             count,
+                             QtWidgets.QFormLayout.FieldRole,
+                             self.lineEdit1LineEdit)
+
+        elif value['type'] == 'select':
+            self.comboBox1Label = QtWidgets.QLabel(
+                             self.scrollAreaWidgetContents)
+            self.comboBox1Label.setObjectName(key)
+            self.comboBox1Label.setToolTip(value['hint'])
+            self.comboBox1Label.setText(
+                             _translate("Form", value['displayText']))
+            self.formLayout.setWidget(
+                              count,
+                              QtWidgets.QFormLayout.LabelRole,
+                              self.comboBox1Label)
+            self.comboBox1ComboBox = QtWidgets.QComboBox(
+                              self.scrollAreaWidgetContents)
+            # self.comboBox1ComboBox.setStyleSheet(
+            #                  "color: rgb(46, 52, 54):\n"
+            #                  "background-color: rgb(255, 255, 255);")
+            self.comboBox1ComboBox.addItems(value['options'])
+            # set the Value
+            self.comboBox1ComboBox.setCurrentIndex(
+                            self.comboBox1ComboBox.findText(
+                                value['default'],
+                                QtCore.Qt.MatchFixedString
+                                ))
+            self.formLayout.setWidget(
+                              count,
+                              QtWidgets.QFormLayout.FieldRole,
+                              self.comboBox1ComboBox)
+
+    # Katalon Recorder Page
+    #  All setting and Action for Katalon Page is Below
+    @QtCore.pyqtSlot()
+    def saveTestCase(self):
+        """ Use Existing ImportKatalonRecorder.saveTestCase internally to
+        save test cast to XLSX
+        """
+        options = QtWidgets.QFileDialog.Options()
+        options |= QtWidgets.QFileDialog.DontUseNativeDialog
+
+        filename = QtWidgets.QFileDialog.getSaveFileName(
+                                None,
+                                "Save Test Case File",
+                                self.katalonRecorder.directory,
+                                "",
+                                "",
+                                options=options
+                                )
+        # resulted filename is in tuple, (fullpath, All Files(*))
+        if filename[0]:
+            self.katalonRecorder.directory = os.path.dirname(filename[0])
+            self.katalonRecorder.fileNameExport = os.path.basename(filename[0])
+            # save File
+            self.katalonRecorder.saveTestCase()
+
+    @QtCore.pyqtSlot()
+    def importClipboard(self):
+        """Extend: katalonRecorder.importClipboard internally """
+        # ignore last line as this will result unexpected
+        # Index out of range error
+        self.clipboardText = self.TextIn_2.toPlainText()
+        self.katalonRecorder.clipboardText = "\n".join([
+                              text for text in self.clipboardText.split("\n")
+                              if len(text.split("|")) > 2
+                              ])
+        self.katalonRecorder.importClipboard()
+        self.TextOut_2.setPlainText(self.katalonRecorder.outputText)
+
+    @QtCore.pyqtSlot()
+    def copyFromClipboard(self):
+        """ Call ImportKatalonRecorder.importClipboard internally """
+        self.TextIn_2.setPlainText(pyperclip.paste())
+        self.importClipboard()
+
 
 # Controller
 class MainController:
@@ -440,41 +813,12 @@ class MainController:
     def show_main(self):
         self.main = MainWindow()
         self.main.setupUi(self.window)
-        self.main.menuKatalon_Studio.triggered.connect(self.show_katalon)
-        self.main.actionOpen_Studio.triggered.connect(self.show_katalon)
-        self.main.settingsPushButton.clicked.connect(self.show_setting)
-        self.main.actionSettings.triggered.connect(self.show_setting)
         self.window.show()
-
-    def show_katalon(self):
-        self.widget = QtWidgets.QWidget()
-        self.katalon = KatalonUI(self.main.directory)
-        self.katalon.setupUi(self.widget)
-        self.katalon.exitPushButton.clicked.connect(self.show_main)
-        self.window.setCentralWidget(self.widget)
-
-    def show_setting(self):
-        self.widget = QtWidgets.QWidget()
-        self.setting = settingUI()
-        self.setting.setupUi(self.widget)
-        self.setting.exitPushButton.clicked.connect(self.show_main)
-        self.setting.okPushButton.clicked.connect(self.show_main)
-        self.window.setCentralWidget(self.widget)
-
-
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    # window = QtWidgets.QMainWindow()
-    # ui = MainWindow()
-    # ui.setupUi(window)
-    # katalon = KatalonUI("./")
-    # mywidget = QtWidgets.QWidget()
-    # katalon.setupUi(mywidget)
-    # window.setCentralWidget(mywidget)
-    # window.show()
     controller = MainController()
     controller.show_main()
 
