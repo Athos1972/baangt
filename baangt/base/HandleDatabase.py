@@ -17,6 +17,7 @@ class HandleDatabase:
         # FIXME: This is still not clean. GlobalSettings shouldn't be predefined in CustomConstants-Class
         self.globals = {
             CGC.CUST_TOASTS: "",
+            GC.EXECUTION_STAGE: "",
             GC.TESTCASEERRORLOG: "",
             CGC.VIGOGFNUMMER: "",
             CGC.SAPPOLNR: "",
