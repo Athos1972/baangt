@@ -42,7 +42,7 @@ class BrowserFactory:
 
     def getBrowser(self, browserInstance=0, browserName=None, browserAttributes=None,
                          mobileType=None, mobileApp=None, desired_app=None,
-                         mobile_app_setting=None):
+                         mobile_app_setting=None, browserWindowSize = None):
         """
                 This method is called whenever a browser instance (existing or new) is needed. If called without
                 parameters it will create one instance of Firefox (geckodriver).
@@ -108,9 +108,15 @@ class BrowserFactory:
                                                                randomProxy=randomProxy)
                 if self.globalSettings.get("TC." + GC.EXECUTION_SLOW):
                     self.browser[browserInstance].slowExecutionToggle()
+                if browserWindowSize:
+                    self.setBrowserWindowSize(self.browser[browserInstance], browserWindowSize)
+
             else:
                 logger.debug(f"Using existing instance of browser {browserInstance}")
             return self.browser[browserInstance]
+
+    def setBrowserWindowSize(self, lBrowserInstance: BrowserDriver, browserWindowSize):
+        lBrowserInstance.setBrowserWindowSize(browserWindowSize)
 
     def _getBrowserInstance(self, browserInstance):
         if self.testrun.classesForObjects.browserHandling:
