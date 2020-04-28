@@ -43,7 +43,7 @@ class BrowserDriver:
     """
 
     def __init__(self, timing=None, screenshotPath=None):
-        self.driver = None
+        self.driver : webdriver.firefox
         self.iFrame = None
         self.element = None
         self.locatorType = None
@@ -111,15 +111,12 @@ class BrowserDriver:
                                                             desiredCapabilities=desiredCapabilities),
                         executable_path=self.__findBrowserDriverPaths(GeckoExecutable),
                         firefox_profile=profile,
-                        service_log_path=os.path.join(self.managedPaths.getLogfilePath(), 'geckodriver.log'),
-                        log_path=os.path.join(self.managedPaths.getLogfilePath(),'firefox.log')
+                        service_log_path=os.path.join(self.managedPaths.getLogfilePath(), 'geckodriver.log')
+                        # ,
+                        # log_path=os.path.join(self.managedPaths.getLogfilePath(),'firefox.log')
                     )
                     self.__startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance,
                                                 browserProxy=browserProxy)
-
-                    # FIXME: Make it dynamic
-                    #  self.driver.set_window_position(0, 0)
-                    #  self.driver.set_window_size(2200, 1024)
 
             elif browserName == GC.BROWSER_CHROME:
                 lCurPath = lCurPath.joinpath(ChromeExecutable)
@@ -142,9 +139,6 @@ class BrowserDriver:
                     )
                     self.__startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance,
                                                 browserProxy=browserProxy)
-
-                    # FIXME: Make it dynamic
-                    #  self.driver.set_window_size(2200, 1024)
 
             elif browserName == GC.BROWSER_EDGE:
                 self.driver = browserNames[browserName](
@@ -374,11 +368,12 @@ class BrowserDriver:
         return lOptions
 
     def closeBrowser(self):
-        if self.driver:
-            try:
+        try:
+            if self.driver:
                 self.driver.quit()
-            except Exceptions as ex:
-                pass  # If the driver is already dead, it's fine.
+                self.driver = None
+        except Exceptions as ex:
+            pass  # If the driver is already dead, it's fine.
 
     def _log(self, logType, logText, noScreenShot=False, **kwargs):
         """
@@ -656,6 +651,42 @@ class BrowserDriver:
 
         self.__doSomething(GC.CMD_FORCETEXT, value=value, timeout=timeout, xpath=xpath, optional=optional)
 
+    def setBrowserWindowSize(self, browserWindowSize: str):
+        """
+        Resized the browser Window to a fixed size
+        :param browserWindowSize: String with Widht/Height or Width;Height or Width,height or width x height
+               If you want also with leading --
+        :return: False, if browser wasn't reset,
+                 size-Dict when resize worked.
+        """
+        lIntBrowserWindowSize = browserWindowSize.replace("-","").strip()
+        lIntBrowserWindowSize = lIntBrowserWindowSize.replace(";", "/")
+        lIntBrowserWindowSize = lIntBrowserWindowSize.replace(",", "/")
+        lIntBrowserWindowSize = lIntBrowserWindowSize.replace("x", "/")
+
+        try:
+            width = int(lIntBrowserWindowSize.split("/")[0])
+            height = int(lIntBrowserWindowSize.split("/")[1])
+        except KeyError as e:
+            logger.warning(f"Called with wrong setting: {browserWindowSize}. Won't resize browser "
+                           f"Can't determine Width/Height.")
+            return False
+        except ValueError as e:
+            logger.warning(f"Called with wrong setting: {browserWindowSize}. Won't resize browser "
+                           f"Something seems not numeric before conversion: {lIntBrowserWindowSize}")
+            return False
+
+        if width == 0 or height == 0:
+            logger.warning(f"Called with wrong setting: {browserWindowSize}. Won't resize browser. Can't be 0")
+            return False
+
+        self.driver.set_window_size(width, height)
+        size = self.driver.get_window_size()
+        logger.debug(f"Resized browser window to width want/is: {width}/{size['width']}, "
+                     f"height want/is: {height}/{size['height']}")
+
+        return size
+
     def findNewFiles(self):
         """
         Returns a list of new files from downloadFolderMonitoring since the last call
@@ -760,7 +791,7 @@ class BrowserDriver:
                     # 2 times with visibility, let's give it one more try with Presence of element
                     if lLoopCount > 1:
                         logger.debug("Tried 2 times to find visible element, now trying presence "
-                                                f"of element instead, XPATH = {xpath}")
+                                     "of element instead, XPATH = {xpath}")
                         self.element = driverWait.until(ec.presence_of_element_located((By.XPATH, xpath)))
                     else:
                         self.element = driverWait.until(ec.visibility_of_element_located((By.XPATH, xpath)))
@@ -809,6 +840,8 @@ class BrowserDriver:
                 wasSuccessful = True
             except NoSuchElementException as e:
                 pass
+            except NoSuchWindowException as e:
+                raise Exceptions.baangtTestStepException(f"Window ceased to exist. Error: {e}")
             self.sleep(0.2)
 
     def findWaitNotVisible(self, css=None, xpath=None, id=None, timeout=90, optional=False):
@@ -894,7 +927,7 @@ class BrowserDriver:
 
         while not didWork and elapsed < timeout:
             counter += 1
-            self._log(logging.DEBUG, f"__doSomething {command} with {value}")
+            logger.debug(f"__doSomething {command} with {value}")
             try:
                 if command.upper() == GC.CMD_SETTEXT:
                     self.element.send_keys(value)
@@ -909,10 +942,10 @@ class BrowserDriver:
                 didWork = True
                 return
             except ElementClickInterceptedException as e:
-                self._log(logging.DEBUG, "doSomething: Element intercepted - retry")
+                logger.debug("doSomething: Element intercepted - retry")
                 time.sleep(0.2)
             except StaleElementReferenceException as e:
-                self._log(logging.DEBUG, f"doSomething: Element stale - retry {self.locatorType} {self.locator}")
+                logger.debug(f"doSomething: Element stale - retry {self.locatorType} {self.locator}")
                 # If the element is stale after 2 times, try to re-locate the element
                 if counter < 2:
                     time.sleep(0.2)
@@ -921,7 +954,7 @@ class BrowserDriver:
                 else:
                     raise Exceptions.baangtTestStepException(e)
             except NoSuchElementException as e:
-                self._log(logging.DEBUG, "doSomething: Element not there yet - retry")
+                logger.debug("doSomething: Element not there yet - retry")
                 time.sleep(0.5)
             except InvalidSessionIdException as e:
                 self._log(logging.ERROR, f"Invalid Session ID Exception caught - aborting... {e} ")
@@ -1136,4 +1169,4 @@ class BrowserDriver:
 
         else:
 
-            logging.critical(f"Please download driver for {browserName} manually into folder /browserDrivers")
+            logger.critical(f"Please download driver for {browserName} manually into folder /browserDrivers")

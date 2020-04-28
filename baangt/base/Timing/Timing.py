@@ -17,6 +17,11 @@ class Duration:
     other: dict = field(default_factory=dict)
 
 
+    def clear(self):
+        self.start = None
+        self.end = None
+        self.timestamp = None
+
 class Timing:
     def __init__(self):
         self.timing = defaultdict(Duration)
@@ -95,9 +100,14 @@ class Timing:
 
         raise ValueError('Section not found')
 
-    def resetTime(self):
+    def resetTime(self, name):
         testrun = self.timing.get(GC.TIMING_TESTRUN)
-        self.timing.clear()
+        for key in self.timing.keys():
+            if key == testrun:
+                continue
+            if "TestCaseMaster" in key and key != name:
+                continue
+            self.timing[key].clear()
         self.counter.clear()
         if testrun:
             self.timing[GC.TIMING_TESTRUN] = testrun
