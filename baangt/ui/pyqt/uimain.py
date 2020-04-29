@@ -90,7 +90,7 @@ class MainWindow(Ui_MainWindow):
 
         # Katalon triggered
         self.actionImport_Katalon.triggered.connect(self.show_katalon)
-        self.exitPushButton_3.clicked.connect(self.mainPageView)
+        self.exitPushButton_3.clicked.connect(self.exitKatalon)
         self.savePushButton_2.clicked.connect(self.saveTestCase)
         self.copyClipboard_2.clicked.connect(self.copyFromClipboard)
         self.TextIn_2.textChanged.connect(self.importClipboard)
@@ -160,6 +160,19 @@ class MainWindow(Ui_MainWindow):
                 )
         MainWindow.setWindowIcon(icon)
 
+        self.mainPage.setStyleSheet(
+                 "QLineEdit { background-color: white; \n"
+                 "            color: rgb(46, 52, 54);  \n"
+                 "}"
+                 "QComboBox { background-color: white; \n"
+                 "            color: rgb(46, 52, 54);  \n"
+                 "}"
+                 "QLabel { font: 75 11pt 'Arial';\n"
+                 "}"
+                 "QButton { color: white; \n"
+                 "}"
+                 )
+
         self.settingPage.setStyleSheet(
                  "QLineEdit { background-color: white; \n"
                  "            color: rgb(46, 52, 54);  \n"
@@ -167,7 +180,16 @@ class MainWindow(Ui_MainWindow):
                  "QComboBox { background-color: white; \n"
                  "            color: rgb(46, 52, 54);  \n"
                  "}"
+                 "QLabel { font: 75 11pt 'Arial';\n"
+                 "}"
+                 "QButton { color: white; \n"
+                 "}"
                  )
+        self.katalonPage.setStyleSheet(
+                 "QButton { color: white; \n"
+                 "}"
+                 )
+
         MainWindow.resize(980, 480)
 
     def statusMessage(self, str, duration=1000):
@@ -713,9 +735,20 @@ class MainWindow(Ui_MainWindow):
                                _translate("Form", value['hint']))
             self.lineEdit1Label.setObjectName(key)
             self.lineEdit1Label.setText(
-                               _translate("Form", value['displayText']))
+                               _translate("Form", value['displayText'])
+                               )
             self.lineEdit1LineEdit = QtWidgets.QLineEdit(
                               self.scrollAreaWidgetContents)
+            sizePolicy = QtWidgets.QSizePolicy(
+                        QtWidgets.QSizePolicy.MinimumExpanding,
+                        QtWidgets.QSizePolicy.Fixed)
+            sizePolicy.setHorizontalStretch(0)
+            sizePolicy.setVerticalStretch(0)
+            sizePolicy.setHeightForWidth(
+                    self.lineEdit1LineEdit.sizePolicy().hasHeightForWidth())
+            self.lineEdit1LineEdit.setSizePolicy(sizePolicy)
+            self.lineEdit1LineEdit.setMinimumSize(QtCore.QSize(250, 0))
+
             # self.lineEdit1LineEdit.setStyleSheet(
             #                 "background-color: rgb(255, 255, 255);\n"
             #                 "color: rgb(46, 52, 54);")
@@ -761,6 +794,15 @@ class MainWindow(Ui_MainWindow):
     # Katalon Recorder Page
     #  All setting and Action for Katalon Page is Below
     @QtCore.pyqtSlot()
+    def exitKatalon(self):
+        """ this function will clear text from textIn and
+        TextOut and exit
+        """
+        self.TextIn_2.clear()
+        self.TextOut_2.clear()
+        self.stackedWidget.setCurrentIndex(0)
+
+    @QtCore.pyqtSlot()
     def saveTestCase(self):
         """ Use Existing ImportKatalonRecorder.saveTestCase internally to
         save test cast to XLSX
@@ -782,6 +824,12 @@ class MainWindow(Ui_MainWindow):
             self.katalonRecorder.fileNameExport = os.path.basename(filename[0])
             # save File
             self.katalonRecorder.saveTestCase()
+
+            # Change the testrun file to newone and change directory
+            self.testRunFile = self.katalonRecorder.fileNameExport
+            self.setupBasePath(self.katalonRecorder.directory)
+            self.exitKatalon()
+
 
     @QtCore.pyqtSlot()
     def importClipboard(self):
