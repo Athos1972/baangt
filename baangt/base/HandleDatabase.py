@@ -119,7 +119,6 @@ class HandleDatabase:
                         temp_dic[keys[col_index]] = temp_dic[keys[col_index]][:-2]
             self.dataDict.append(temp_dic)
 
-
     def readNextRecord(self):
         """
         We built self.range during init. Now we need to iterate over the range(s) in range,

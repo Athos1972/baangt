@@ -54,6 +54,7 @@ class PDFCompare:
                     files[file] = details
                     continue
 
+            logger.debug(f"Comparing PDF-Files: {lDetails.fileName} with reference {lDetails.referenceID}")
             lDetails = self.__callService(file, lDetails)
 
             if isinstance(details, PDFCompareDetails):

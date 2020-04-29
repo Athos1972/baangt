@@ -171,7 +171,7 @@ class TestStepMaster:
 
         self.timing.takeTime(lTimingString)
 
-    def doPDFComparison(self, lValue):
+    def doPDFComparison(self, lValue, lFieldnameForResults="DOC_Compare"):
         lFiles = self.browserSession.findNewFiles()
         if len(lFiles) > 1:
             # fixme: Do something! There were more than 1 files since last check. Damn
@@ -185,8 +185,8 @@ class TestStepMaster:
             lDict = {"": lPDFDataClass}
             lPDFCompare = PDFCompare()
             lDict = lPDFCompare.compare_multiple(lDict)
-            self.testcaseDataDict["DOC_Compare_Status"] = lDict[""].Status
-            self.testcaseDataDict["DOC_Compare_Results"] = lDict[""].StatusText
+            self.testcaseDataDict[lFieldnameForResults + "_Status"] = lDict[""].Status
+            self.testcaseDataDict[lFieldnameForResults + "_Results"] = lDict[""].StatusText
 
     def replaceAllVariables(self, lValue, lValue2):
         # Replace variables from data file
