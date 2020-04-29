@@ -20,6 +20,7 @@ from baangt.ui.pyqt import resources
 from baangt.ui.pyqt.settingsGlobal import GlobalSettings
 from baangt.ui.ImportKatalonRecorder import ImportKatalonRecorder
 import pyperclip
+import platform
 
 logger = logging.getLogger("pyC")
 
@@ -207,8 +208,22 @@ class MainWindow(Ui_MainWindow):
         # for getting back to original directory
         orig_path = os.getcwd()
         os.chdir(dirName)
-        self.testRunFiles = glob.glob("*.xlsx")
-        self.configFiles = glob.glob("global*.json")
+        # self.testRunFiles = glob.glob("*.xlsx")
+        # self.configFiles = glob.glob("global*.json")
+
+        fileList = glob.glob("*.json")
+        fileList.extend(glob.glob("*.xlsx"))
+        if not platform.system().lower() == 'windows':
+            # On MAC and LINUX there may be also upper/lower-Case versions
+            fileList.extend(glob.glob("*.JSON"))
+            fileList.extend(glob.glob("*.XLSX"))
+        for file in fileList:
+            if file[0:4].lower() == 'glob':      # Global Settings for Testrun must start with global_*
+                self.configFiles.append(file)
+            else:
+                self.testRunFiles.append(file)
+            pass
+
         # get back to orig_dir
         os.chdir(orig_path)
 
