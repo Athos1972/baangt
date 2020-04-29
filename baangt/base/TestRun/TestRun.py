@@ -239,21 +239,22 @@ class TestRun:
     def _initTestRun(self):
         self.loadJSONGlobals()
 
+        self.__setPathsIfNotPredefined()
+
+    def __setPathsIfNotPredefined(self):
         if not self.globalSettings.get(GC.PATH_SCREENSHOTS, None):
-            self.globalSettings[GC.PATH_SCREENSHOTS] = str(Path(self.managedPaths.getOrSetScreenshotsPath()).expanduser())
+            self.globalSettings[GC.PATH_SCREENSHOTS] = str(
+                Path(self.managedPaths.getOrSetScreenshotsPath()).expanduser())
         else:
             self.managedPaths.getOrSetScreenshotsPath(path=self.globalSettings.get(GC.PATH_SCREENSHOTS))
-
         if not self.globalSettings.get(GC.PATH_EXPORT, None):
             self.globalSettings[GC.PATH_EXPORT] = str(Path(self.managedPaths.getOrSetExportPath()).expanduser())
         else:
             self.managedPaths.getOrSetExportPath(path=self.globalSettings.get(GC.PATH_EXPORT))
-
         if not self.globalSettings.get(GC.PATH_IMPORT, None):
-                self.globalSettings[GC.PATH_IMPORT] = str(Path(self.managedPaths.getOrSetImportPath()).expanduser())
+            self.globalSettings[GC.PATH_IMPORT] = str(Path(self.managedPaths.getOrSetImportPath()).expanduser())
         else:
             self.managedPaths.getOrSetImportPath(path=self.globalSettings.get(GC.PATH_IMPORT))
-
         if not self.globalSettings.get(GC.PATH_ROOT, None):
             self.globalSettings[GC.PATH_ROOT] = str(Path(self.managedPaths.getOrSetRootPath()).parent.expanduser())
         else:
@@ -272,6 +273,11 @@ class TestRun:
             if isinstance(value, str):
                 if value.lower() in ("false", "true", "no"):
                     self.globalSettings[key] = utils.anyting2Boolean(value)
+
+            # This happens in the new UI, if a value was added manually, but is not part of the globalSetting.json
+            if isinstance(value, dict):
+                self.globalSettings[key] = value["default"]
+
 
     def _loadJSONTestRunDefinitions(self):
         if not self.testRunFileName and not self.testRunDict:  # -- API support: testRunDict --
