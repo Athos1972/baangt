@@ -250,3 +250,19 @@ class utils:
             lFileNameAndPath = Path(lFileNameAndPath)
 
         return str(lFileNameAndPath.absolute())
+
+    @staticmethod
+    def anyting2Boolean(valueIn):
+        if isinstance(valueIn, bool):
+            return valueIn
+
+        if isinstance(valueIn, int):
+            return bool(valueIn)
+
+        if isinstance(valueIn, str):
+            if valueIn.lower() in ("yes", "true", "1", "ok", "x"):
+                return True
+            else:
+                return False
+
+        raise TypeError(f"Anything2Boolean had a wrong value: {valueIn}. Don't know how to convert that to boolean")

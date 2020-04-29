@@ -225,10 +225,7 @@ class TestRun:
             else:
                 lFullQualified = value
 
-            # if "." in lFullQualified:
             l_class = TestRun.__dynamicImportClasses(lFullQualified)
-            # else:
-            #    l_class = globals()[lFullQualified]
 
             try:
                 l_class(**kwargs)  # Executes the class´es  __init__ method
@@ -270,6 +267,11 @@ class TestRun:
         for key, value in self.globalSettings.items():
             if "CL." in key:
                 self.classesForObjects.__setattr__(key.strip("CL."), value)
+
+            # Change boolean strings into boolean values.
+            if isinstance(value, str):
+                if value.lower() in ("false", "true", "no"):
+                    self.globalSettings[key] = utils.anyting2Boolean(value)
 
     def _loadJSONTestRunDefinitions(self):
         if not self.testRunFileName and not self.testRunDict:  # -- API support: testRunDict --

@@ -80,7 +80,7 @@ class TestStepMaster:
         lValue = str(command["Value"])
         lValue2 = str(command["Value2"])
         lComparison = command["Comparison"]
-        lOptional = TestStepMaster._sanitizeXField(command["Optional"])
+        lOptional = utils.anyting2Boolean(command["Optional"])
 
         # check release line
         lRelease = command["Release"]
@@ -227,23 +227,6 @@ class TestStepMaster:
                 break
 
     @staticmethod
-    def _sanitizeXField(inField):
-        """
-        When "X" or "True" is sent, then use this
-        @param inField:
-        @return:
-        """
-        lXField = True
-
-        if not inField:
-            lXField = False
-
-        if inField.upper() == 'FALSE':
-            lXField = False
-
-        return lXField
-
-    @staticmethod
     def ifQualifyForExecution(version_global, version_line):
         """ This function will test version_global and version_line
             @return True or False
@@ -301,26 +284,10 @@ class TestStepMaster:
     def __setTimeout(lTimeout):
         return 20 if not lTimeout else float(lTimeout)
 
-    @staticmethod
-    def anyting2Boolean(valueIn):
-        if isinstance(valueIn, bool):
-            return valueIn
-
-        if isinstance(valueIn, int):
-            return bool(valueIn)
-
-        if isinstance(valueIn, str):
-            if valueIn.lower() in ("yes", "true", "1", "ok"):
-                return True
-            else:
-                return False
-
-        raise TypeError(f"Anything2Boolean had a wrong value: {valueIn}. Don't know how to convert that to boolean")
-
     def __doComparisons(self, lComparison, value1, value2):
         if isinstance(value1, bool) or isinstance(value2, bool):
-            value1 = TestStepMaster.anyting2Boolean(value1)
-            value2 = TestStepMaster.anyting2Boolean(value2)
+            value1 = utils.anyting2Boolean(value1)
+            value2 = utils.anyting2Boolean(value2)
 
         if value2 == 'None':
             value2 = None

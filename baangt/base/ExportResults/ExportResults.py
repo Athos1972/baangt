@@ -361,6 +361,10 @@ class ExportResults:
 
     def __writeCell(self, line, cellNumber, testRecordDict, fieldName, strip=False):
         if fieldName in testRecordDict.keys() and testRecordDict[fieldName]:
+            # Convert boolean for Output
+            if isinstance(testRecordDict[fieldName], bool):
+                testRecordDict[fieldName] = "True" if testRecordDict[fieldName] else "False"
+
             # Remove leading New-Line:
             if '\n' in testRecordDict[fieldName][0:5] or strip:
                 testRecordDict[fieldName] = testRecordDict[fieldName].strip()
@@ -377,6 +381,7 @@ class ExportResults:
                     elif testRecordDict[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR:
                         self.worksheet.write(line, cellNumber, testRecordDict[fieldName], self.cellFormatRed)
                 elif fieldName == GC.SCREENSHOTS:
+                    # Place the screenshot images "on" the appropriate cell
                     if type(testRecordDict[fieldName]) == list:
                         self.worksheet.insert_image(line, cellNumber, testRecordDict[fieldName][-1], {'x_scale': 0.05,
                                                                                                       'y_scale': 0.05})

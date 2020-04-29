@@ -116,6 +116,18 @@
             "type": "text",
             "default": "baangt.TestCaseSequenceMaster.TestCaseSequenceMaster",
             "displayText": "Class TC-Sequence"
+        },
+        "TC.TestStepClass": {
+            "hint": "Class for TestStep, if you subclassed this by yourself. This is uncommon to be set in Globals. Are you sure about it?",
+            "type": "text",
+            "default": "",
+            "displayText": "Class for TestStep"
+        },
+        "TC.TestDataFileName": {
+            "hint": "Name and Path of the datafile, that should be used instead of the datafile, that is specified in the TestRun Definition",
+            "type": "text",
+            "default": "",
+            "displayText": "Datafile"
         }
     }
 }
