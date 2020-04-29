@@ -1,18 +1,13 @@
 # -*- mode: python ; coding: utf-8 -*-
-import sys
-sys.setrecursionlimit(5000)
 
 block_cipher = None
 
 
 a = Analysis(['baangtIA.py'],
-             pathex=['/Users/bernhardbuhl/git/baangt'],
+             pathex=['C:\\Users\\buhl\\git\\baangt'],
              binaries=[],
-             datas=[('browserDrivers/geckodriver', 'geckodriver'),
-                       ('browserDrivers/chromedriver', 'chromedriver'),
-                       ('browserDrivers/geckodriver.exe', 'geckodriver.exe'),
-                       ('browserDrivers/chromedriver.exe', 'chromedriver.exe')],
-             hiddenimports=['selenium'],
+             datas=[],
+             hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
              excludes=[],

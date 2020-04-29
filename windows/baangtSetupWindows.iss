@@ -17,7 +17,7 @@ DefaultDirName={pf}\baangt
 DefaultGroupName=baangt
 AllowNoIcons=yes
 LicenseFile=C:\Users\buhl\git\baangt\LICENSE
-OutputBaseFilename=setup
+OutputBaseFilename=baangtsetup
 Compression=lzma
 SolidCompression=yes
 
