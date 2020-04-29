@@ -8,7 +8,7 @@
 AppId={{CC5A1C52-ADE4-4579-8D7F-8B1CA5C171FF}
 AppName=baangt
 AppVersion=2020.4.0rc4
-;AppVerName=baangt 2020.4.0rc4
+;AppVerName=baangt 2020.4.7rc4
 AppPublisher=Buhl Consulting Ltd
 AppPublisherURL=https://baangt.org
 AppSupportURL=https://baangt.org
@@ -25,111 +25,156 @@ SolidCompression=yes
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
 
+
+[Icons]
+Name: "{group}\baangt"; Filename: "{app}\baangt.exe"
+Name: "{commondesktop}\baangt"; Filename: "{app}\baangt.exe"; Tasks: desktopicon
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\baangt"; Filename: "{app}\baangt.exe"; Tasks: quicklaunchicon
+
+[Run]
+Filename: "{app}\baangt.exe"; Description: "{cm:LaunchProgram,baangt}"; Flags: nowait postinstall skipifsilent
+
 [Files]
-Source: "C:\Users\buhl\git\baangt\dist\baangt\baangt.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\_bz2.pyd"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\_cffi_backend.cp37-win_amd64.pyd"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\_ctypes.pyd"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\_decimal.pyd"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\_elementtree.pyd"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\_hashlib.pyd"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\_lzma.pyd"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\_multiprocessing.pyd"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\_queue.pyd"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\_socket.pyd"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\_sqlite3.pyd"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\_ssl.pyd"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\_testcapi.pyd"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\_tkinter.pyd"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-core-console-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-core-datetime-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-core-debug-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-core-errorhandling-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-core-file-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-core-file-l1-2-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-core-file-l2-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-core-handle-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-core-heap-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-core-interlocked-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-core-libraryloader-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-core-localization-l1-2-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-core-memory-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-core-namedpipe-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-core-processenvironment-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-core-processthreads-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-core-processthreads-l1-1-1.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-core-profile-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-core-rtlsupport-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-core-string-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-core-synch-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-core-synch-l1-2-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-core-sysinfo-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-core-timezone-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-core-util-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-crt-conio-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-crt-convert-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-crt-environment-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-crt-filesystem-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-crt-heap-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-crt-locale-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-crt-math-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-crt-process-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-crt-runtime-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-crt-stdio-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-crt-string-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-crt-time-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\api-ms-win-crt-utility-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\baangt.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\base_library.zip"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\greenlet.cp37-win_amd64.pyd"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\libcrypto-1_1-x64.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\libiomp5md.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\libopenblas.PYQHXLVVQ7VESDPUVUADXEVJOBGHJPAY.gfortran-win_amd64.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\libssl-1_1-x64.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_avx.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_avx2.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_avx512.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_blacs_ilp64.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_blacs_intelmpi_ilp64.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_blacs_intelmpi_lp64.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_blacs_lp64.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_blacs_mpich2_ilp64.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_blacs_mpich2_lp64.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_blacs_msmpi_ilp64.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_blacs_msmpi_lp64.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_cdft_core.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_core.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_def.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_intel_thread.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_mc.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_mc3.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_msg.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_pgi_thread.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_rt.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_scalapack_ilp64.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_scalapack_lp64.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_sequential.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_tbb_thread.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_vml_avx.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_vml_avx2.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_vml_avx512.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_vml_cmpt.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_vml_def.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_vml_mc.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_vml_mc2.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\mkl_vml_mc3.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\MSVCP140.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\pyexpat.pyd"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\python37.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\select.pyd"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\sqlite3.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\tbb.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\tcl86t.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\tk86t.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\ucrtbase.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\unicodedata.pyd"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\buhl\git\baangt\dist\baangt\VCRUNTIME140.dll"; DestDir: "{app}"; Flags: ignoreversion
-; NOTE: Don't use "Flags: ignoreversion" on any shared system files
+Source: "..\dist\baangt\_bz2.pyd"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\_cffi_backend.cp37-win_amd64.pyd"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\_ctypes.pyd"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\_decimal.pyd"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\_elementtree.pyd"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\_hashlib.pyd"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\_lzma.pyd"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\_multiprocessing.pyd"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\_queue.pyd"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\_socket.pyd"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\_sqlite3.pyd"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\_ssl.pyd"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\_testcapi.pyd"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\_tkinter.pyd"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\_win32sysloader.pyd"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-core-console-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-core-datetime-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-core-debug-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-core-errorhandling-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-core-file-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-core-file-l1-2-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-core-file-l2-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-core-handle-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-core-heap-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-core-interlocked-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-core-libraryloader-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-core-localization-l1-2-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-core-memory-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-core-namedpipe-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-core-processenvironment-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-core-processthreads-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-core-processthreads-l1-1-1.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-core-profile-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-core-rtlsupport-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-core-string-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-core-synch-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-core-synch-l1-2-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-core-sysinfo-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-core-timezone-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-core-util-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-crt-conio-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-crt-convert-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-crt-environment-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-crt-filesystem-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-crt-heap-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-crt-locale-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-crt-math-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-crt-multibyte-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-crt-process-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-crt-runtime-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-crt-stdio-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-crt-string-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-crt-time-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\api-ms-win-crt-utility-l1-1-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\baangt.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\baangt.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\base_library.zip"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\charset.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\comerr64.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\greenlet.cp37-win_amd64.pyd"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\gssapi64.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\iconv.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\icudt58.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\icuin58.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\icuuc58.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\k5sprt64.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\krb5_64.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\libcrypto-1_1-x64.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\libexslt.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\libiomp5md.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\libjpeg.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\libpng16.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\LIBPQ.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\libssl-1_1-x64.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\libxml2.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\libxslt.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mfc140u.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_avx.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_avx2.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_avx512.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_blacs_ilp64.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_blacs_intelmpi_ilp64.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_blacs_intelmpi_lp64.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_blacs_lp64.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_blacs_mpich2_ilp64.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_blacs_mpich2_lp64.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_blacs_msmpi_ilp64.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_blacs_msmpi_lp64.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_cdft_core.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_core.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_def.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_intel_thread.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_mc.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_mc3.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_msg.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_pgi_thread.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_rt.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_scalapack_ilp64.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_scalapack_lp64.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_sequential.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_tbb_thread.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_vml_avx.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_vml_avx2.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_vml_avx512.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_vml_cmpt.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_vml_def.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_vml_mc.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_vml_mc2.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_vml_mc3.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\MSVCP140.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\opengl32sw.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\pyexpat.pyd"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\python3.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\python37.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\pythoncom37.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\pywintypes37.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\Qt5Core.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\Qt5Gui.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\Qt5Network.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\Qt5Qml.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\Qt5Quick.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\Qt5Svg.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\Qt5Widgets.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\select.pyd"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\sip.pyd"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\sqlite3.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\tbb.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\tcl86t.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\tk86t.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\ucrtbase.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\unicodedata.pyd"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\VCRUNTIME140.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\win32api.pyd"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\win32evtlog.pyd"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\win32pdh.pyd"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\win32trace.pyd"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\win32ui.pyd"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\win32wnet.pyd"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\WSHELP64.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\baangt\zlib.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\dist\baangt\browsermob-proxy\browsermob-core-2.1.4-javadoc.jar"; DestDir: "{app}\browsermob-proxy"; Flags: ignoreversion
 Source: "..\dist\baangt\browsermob-proxy\browsermob-core-2.1.4-sources.jar"; DestDir: "{app}\browsermob-proxy"; Flags: ignoreversion
 Source: "..\dist\baangt\browsermob-proxy\browsermob-rest-2.1.4-javadoc.jar"; DestDir: "{app}\browsermob-proxy"; Flags: ignoreversion
@@ -146,21 +191,18 @@ Source: "..\dist\baangt\browsermob-proxy\ssl-support\ca-certificate-rsa.cer"; De
 Source: "..\dist\baangt\browsermob-proxy\ssl-support\ca-keystore-ec.p12"; DestDir: "{app}\browsermob-proxy\ssl-support"; Flags: ignoreversion
 Source: "..\dist\baangt\browsermob-proxy\ssl-support\ca-keystore-rsa.p12"; DestDir: "{app}\browsermob-proxy\ssl-support"; Flags: ignoreversion
 Source: "..\dist\baangt\certifi\cacert.pem"; DestDir: "{app}\certifi"; Flags: ignoreversion
-Source: "..\dist\baangt\examples\BaangtDBFill.xlsx"; DestDir: "{app}\examples"; Flags: ignoreversion
-Source: "..\dist\baangt\examples\baangt_example_googleImages.xlsx_20200319_081336.xlsx"; DestDir: "{app}\examples"; Flags: ignoreversion
-Source: "..\dist\baangt\examples\baangt_example_googleImages.xlsx_20200319_081510.xlsx"; DestDir: "{app}\examples"; Flags: ignoreversion
-Source: "..\dist\baangt\examples\DropsTestExample.xlsx"; DestDir: "{app}\examples"; Flags: ignoreversion
-Source: "..\dist\baangt\examples\DropsTestRunDefinition.xlsx"; DestDir: "{app}\examples"; Flags: ignoreversion
-Source: "..\dist\baangt\examples\example_googleImages.xlsx"; DestDir: "{app}\examples"; Flags: ignoreversion
-Source: "..\dist\baangt\examples\globals.json"; DestDir: "{app}\examples"; Flags: ignoreversion
-Source: "..\dist\baangt\examples\globals2parallel.json"; DestDir: "{app}\examples"; Flags: ignoreversion
-Source: "..\dist\baangt\examples\globalsAPI.json"; DestDir: "{app}\examples"; Flags: ignoreversion
-Source: "..\dist\baangt\examples\globals_grid4.json"; DestDir: "{app}\examples"; Flags: ignoreversion
-Source: "..\dist\baangt\examples\MovieSimpleApi.xlsx"; DestDir: "{app}\examples"; Flags: ignoreversion
-Source: "..\dist\baangt\examples\paypal_secondform2.xlsx"; DestDir: "{app}\examples"; Flags: ignoreversion
-Source: "..\dist\baangt\examples\Random.xlsx"; DestDir: "{app}\examples"; Flags: ignoreversion
-Source: "..\dist\baangt\examples\simpleAutomationpractice.xlsx"; DestDir: "{app}\examples"; Flags: ignoreversion
-Source: "..\dist\baangt\examples\SimpleTheInternet.xlsx"; DestDir: "{app}\examples"; Flags: ignoreversion
+Source: "..\dist\baangt\cryptography\hazmat\bindings\_constant_time.cp37-win_amd64.pyd"; DestDir: "{app}\cryptography\hazmat\bindings"; Flags: ignoreversion
+Source: "..\dist\baangt\cryptography\hazmat\bindings\_openssl.cp37-win_amd64.pyd"; DestDir: "{app}\cryptography\hazmat\bindings"; Flags: ignoreversion
+Source: "..\dist\baangt\cryptography-2.7-py3.7.egg-info\AUTHORS.rst"; DestDir: "{app}\cryptography-2.7-py3.7.egg-info"; Flags: ignoreversion
+Source: "..\dist\baangt\cryptography-2.7-py3.7.egg-info\INSTALLER"; DestDir: "{app}\cryptography-2.7-py3.7.egg-info"; Flags: ignoreversion
+Source: "..\dist\baangt\cryptography-2.7-py3.7.egg-info\LICENSE"; DestDir: "{app}\cryptography-2.7-py3.7.egg-info"; Flags: ignoreversion
+Source: "..\dist\baangt\cryptography-2.7-py3.7.egg-info\LICENSE.APACHE"; DestDir: "{app}\cryptography-2.7-py3.7.egg-info"; Flags: ignoreversion
+Source: "..\dist\baangt\cryptography-2.7-py3.7.egg-info\LICENSE.BSD"; DestDir: "{app}\cryptography-2.7-py3.7.egg-info"; Flags: ignoreversion
+Source: "..\dist\baangt\cryptography-2.7-py3.7.egg-info\LICENSE.PSF"; DestDir: "{app}\cryptography-2.7-py3.7.egg-info"; Flags: ignoreversion
+Source: "..\dist\baangt\cryptography-2.7-py3.7.egg-info\METADATA"; DestDir: "{app}\cryptography-2.7-py3.7.egg-info"; Flags: ignoreversion
+Source: "..\dist\baangt\cryptography-2.7-py3.7.egg-info\RECORD"; DestDir: "{app}\cryptography-2.7-py3.7.egg-info"; Flags: ignoreversion
+Source: "..\dist\baangt\cryptography-2.7-py3.7.egg-info\top_level.txt"; DestDir: "{app}\cryptography-2.7-py3.7.egg-info"; Flags: ignoreversion
+Source: "..\dist\baangt\cryptography-2.7-py3.7.egg-info\WHEEL"; DestDir: "{app}\cryptography-2.7-py3.7.egg-info"; Flags: ignoreversion
 Source: "..\dist\baangt\gevent\ares.py"; DestDir: "{app}\gevent"; Flags: ignoreversion
 Source: "..\dist\baangt\gevent\backdoor.py"; DestDir: "{app}\gevent"; Flags: ignoreversion
 Source: "..\dist\baangt\gevent\baseserver.py"; DestDir: "{app}\gevent"; Flags: ignoreversion
@@ -715,696 +757,82 @@ Source: "..\dist\baangt\gevent\__pycache__\_util.cpython-37.pyc"; DestDir: "{app
 Source: "..\dist\baangt\gevent\__pycache__\_util_py2.cpython-37.pyc"; DestDir: "{app}\gevent\__pycache__"; Flags: ignoreversion
 Source: "..\dist\baangt\gevent\__pycache__\_waiter.cpython-37.pyc"; DestDir: "{app}\gevent\__pycache__"; Flags: ignoreversion
 Source: "..\dist\baangt\gevent\__pycache__\__init__.cpython-37.pyc"; DestDir: "{app}\gevent\__pycache__"; Flags: ignoreversion
-Source: "..\dist\baangt\gevent-1.4.0-py3.7.egg-info\AUTHORS"; DestDir: "{app}\gevent-1.4.0-py3.7.egg-info"; Flags: ignoreversion
+Source: "..\dist\baangt\gevent-1.4.0-py3.7.egg-info\dependency_links.txt"; DestDir: "{app}\gevent-1.4.0-py3.7.egg-info"; Flags: ignoreversion
 Source: "..\dist\baangt\gevent-1.4.0-py3.7.egg-info\entry_points.txt"; DestDir: "{app}\gevent-1.4.0-py3.7.egg-info"; Flags: ignoreversion
-Source: "..\dist\baangt\gevent-1.4.0-py3.7.egg-info\INSTALLER"; DestDir: "{app}\gevent-1.4.0-py3.7.egg-info"; Flags: ignoreversion
-Source: "..\dist\baangt\gevent-1.4.0-py3.7.egg-info\LICENSE"; DestDir: "{app}\gevent-1.4.0-py3.7.egg-info"; Flags: ignoreversion
-Source: "..\dist\baangt\gevent-1.4.0-py3.7.egg-info\METADATA"; DestDir: "{app}\gevent-1.4.0-py3.7.egg-info"; Flags: ignoreversion
-Source: "..\dist\baangt\gevent-1.4.0-py3.7.egg-info\NOTICE"; DestDir: "{app}\gevent-1.4.0-py3.7.egg-info"; Flags: ignoreversion
-Source: "..\dist\baangt\gevent-1.4.0-py3.7.egg-info\RECORD"; DestDir: "{app}\gevent-1.4.0-py3.7.egg-info"; Flags: ignoreversion
+Source: "..\dist\baangt\gevent-1.4.0-py3.7.egg-info\not-zip-safe"; DestDir: "{app}\gevent-1.4.0-py3.7.egg-info"; Flags: ignoreversion
+Source: "..\dist\baangt\gevent-1.4.0-py3.7.egg-info\PKG-INFO"; DestDir: "{app}\gevent-1.4.0-py3.7.egg-info"; Flags: ignoreversion
+Source: "..\dist\baangt\gevent-1.4.0-py3.7.egg-info\requires.txt"; DestDir: "{app}\gevent-1.4.0-py3.7.egg-info"; Flags: ignoreversion
+Source: "..\dist\baangt\gevent-1.4.0-py3.7.egg-info\SOURCES.txt"; DestDir: "{app}\gevent-1.4.0-py3.7.egg-info"; Flags: ignoreversion
 Source: "..\dist\baangt\gevent-1.4.0-py3.7.egg-info\top_level.txt"; DestDir: "{app}\gevent-1.4.0-py3.7.egg-info"; Flags: ignoreversion
-Source: "..\dist\baangt\gevent-1.4.0-py3.7.egg-info\WHEEL"; DestDir: "{app}\gevent-1.4.0-py3.7.egg-info"; Flags: ignoreversion
-Source: "..\dist\baangt\importlib_metadata-1.3.0-py3.7.egg-info\INSTALLER"; DestDir: "{app}\importlib_metadata-1.3.0-py3.7.egg-info"; Flags: ignoreversion
-Source: "..\dist\baangt\importlib_metadata-1.3.0-py3.7.egg-info\LICENSE"; DestDir: "{app}\importlib_metadata-1.3.0-py3.7.egg-info"; Flags: ignoreversion
-Source: "..\dist\baangt\importlib_metadata-1.3.0-py3.7.egg-info\METADATA"; DestDir: "{app}\importlib_metadata-1.3.0-py3.7.egg-info"; Flags: ignoreversion
-Source: "..\dist\baangt\importlib_metadata-1.3.0-py3.7.egg-info\RECORD"; DestDir: "{app}\importlib_metadata-1.3.0-py3.7.egg-info"; Flags: ignoreversion
-Source: "..\dist\baangt\importlib_metadata-1.3.0-py3.7.egg-info\top_level.txt"; DestDir: "{app}\importlib_metadata-1.3.0-py3.7.egg-info"; Flags: ignoreversion
-Source: "..\dist\baangt\importlib_metadata-1.3.0-py3.7.egg-info\WHEEL"; DestDir: "{app}\importlib_metadata-1.3.0-py3.7.egg-info"; Flags: ignoreversion
 Source: "..\dist\baangt\Include\pyconfig.h"; DestDir: "{app}\Include"; Flags: ignoreversion
-Source: "..\dist\baangt\lxml\etree.cp37-win_amd64.pyd"; DestDir: "{app}\lxml"; Flags: ignoreversion
-Source: "..\dist\baangt\lxml\_elementpath.cp37-win_amd64.pyd"; DestDir: "{app}\lxml"; Flags: ignoreversion
 Source: "..\dist\baangt\lib2to3\Grammar.txt"; DestDir: "{app}\lib2to3"; Flags: ignoreversion
 Source: "..\dist\baangt\lib2to3\Grammar3.7.4.final.0.pickle"; DestDir: "{app}\lib2to3"; Flags: ignoreversion
 Source: "..\dist\baangt\lib2to3\PatternGrammar.txt"; DestDir: "{app}\lib2to3"; Flags: ignoreversion
 Source: "..\dist\baangt\lib2to3\PatternGrammar3.7.4.final.0.pickle"; DestDir: "{app}\lib2to3"; Flags: ignoreversion
+Source: "..\dist\baangt\numpy\_mklinit.cp37-win_amd64.pyd"; DestDir: "{app}\numpy"; Flags: ignoreversion
 Source: "..\dist\baangt\numpy\core\_multiarray_tests.cp37-win_amd64.pyd"; DestDir: "{app}\numpy\core"; Flags: ignoreversion
 Source: "..\dist\baangt\numpy\core\_multiarray_umath.cp37-win_amd64.pyd"; DestDir: "{app}\numpy\core"; Flags: ignoreversion
-Source: "..\dist\baangt\numpy\fft\_pocketfft_internal.cp37-win_amd64.pyd"; DestDir: "{app}\numpy\fft"; Flags: ignoreversion
+Source: "..\dist\baangt\numpy\fft\fftpack_lite.cp37-win_amd64.pyd"; DestDir: "{app}\numpy\fft"; Flags: ignoreversion
 Source: "..\dist\baangt\numpy\linalg\lapack_lite.cp37-win_amd64.pyd"; DestDir: "{app}\numpy\linalg"; Flags: ignoreversion
 Source: "..\dist\baangt\numpy\linalg\_umath_linalg.cp37-win_amd64.pyd"; DestDir: "{app}\numpy\linalg"; Flags: ignoreversion
-Source: "..\dist\baangt\numpy\random\bit_generator.cp37-win_amd64.pyd"; DestDir: "{app}\numpy\random"; Flags: ignoreversion
-Source: "..\dist\baangt\numpy\random\bounded_integers.cp37-win_amd64.pyd"; DestDir: "{app}\numpy\random"; Flags: ignoreversion
-Source: "..\dist\baangt\numpy\random\common.cp37-win_amd64.pyd"; DestDir: "{app}\numpy\random"; Flags: ignoreversion
-Source: "..\dist\baangt\numpy\random\generator.cp37-win_amd64.pyd"; DestDir: "{app}\numpy\random"; Flags: ignoreversion
-Source: "..\dist\baangt\numpy\random\mt19937.cp37-win_amd64.pyd"; DestDir: "{app}\numpy\random"; Flags: ignoreversion
 Source: "..\dist\baangt\numpy\random\mtrand.cp37-win_amd64.pyd"; DestDir: "{app}\numpy\random"; Flags: ignoreversion
-Source: "..\dist\baangt\numpy\random\pcg64.cp37-win_amd64.pyd"; DestDir: "{app}\numpy\random"; Flags: ignoreversion
-Source: "..\dist\baangt\numpy\random\philox.cp37-win_amd64.pyd"; DestDir: "{app}\numpy\random"; Flags: ignoreversion
-Source: "..\dist\baangt\numpy\random\sfc64.cp37-win_amd64.pyd"; DestDir: "{app}\numpy\random"; Flags: ignoreversion
-Source: "..\dist\baangt\openpyxl\.constants.json"; DestDir: "{app}\openpyxl"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\io\msgpack\_packer.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\io\msgpack"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\io\msgpack\_unpacker.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\io\msgpack"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\io\sas\_sas.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\io\sas"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\util\_move.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\util"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\algos.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\groupby.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\hashing.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\hashtable.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\index.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\indexing.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\internals.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\interval.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\join.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\json.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\lib.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\missing.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\ops.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\parsers.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\properties.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\reduction.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\reshape.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\skiplist.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\sparse.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\testing.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\tslib.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\window.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\writers.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\tslibs\ccalendar.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs\tslibs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\tslibs\conversion.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs\tslibs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\tslibs\c_timestamp.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs\tslibs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\tslibs\fields.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs\tslibs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\tslibs\frequencies.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs\tslibs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\tslibs\nattype.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs\tslibs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\tslibs\np_datetime.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs\tslibs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\tslibs\offsets.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs\tslibs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\tslibs\parsing.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs\tslibs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\tslibs\period.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs\tslibs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\tslibs\resolution.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs\tslibs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\tslibs\strptime.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs\tslibs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\tslibs\timedeltas.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs\tslibs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\tslibs\timestamps.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs\tslibs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\tslibs\timezones.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs\tslibs"; Flags: ignoreversion
-Source: "..\dist\baangt\pandas\_libs\tslibs\tzconversion.cp37-win_amd64.pyd"; DestDir: "{app}\pandas\_libs\tslibs"; Flags: ignoreversion
-Source: "..\dist\baangt\PIL\_imaging.cp37-win_amd64.pyd"; DestDir: "{app}\PIL"; Flags: ignoreversion
-Source: "..\dist\baangt\PIL\_imagingft.cp37-win_amd64.pyd"; DestDir: "{app}\PIL"; Flags: ignoreversion
-Source: "..\dist\baangt\PIL\_imagingtk.cp37-win_amd64.pyd"; DestDir: "{app}\PIL"; Flags: ignoreversion
-Source: "..\dist\baangt\PIL\_webp.cp37-win_amd64.pyd"; DestDir: "{app}\PIL"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\CET"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\CST6CDT"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Cuba"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\EET"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Egypt"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Eire"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\EST"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\EST5EDT"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Factory"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\GB"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\GB-Eire"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\GMT"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\GMT+0"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\GMT-0"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\GMT0"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Greenwich"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Hongkong"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\HST"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Iceland"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Iran"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\iso3166.tab"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Israel"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Jamaica"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Japan"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Kwajalein"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\leapseconds"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Libya"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\MET"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\MST"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\MST7MDT"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Navajo"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\NZ"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\NZ-CHAT"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Poland"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Portugal"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\posixrules"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\PRC"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\PST8PDT"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\ROC"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\ROK"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Singapore"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Turkey"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\tzdata.zi"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\UCT"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Universal"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\UTC"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\W-SU"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\WET"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\zone.tab"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\zone1970.tab"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Zulu"; DestDir: "{app}\pytz\zoneinfo"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Abidjan"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Accra"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Addis_Ababa"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Algiers"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Asmara"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Asmera"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Bamako"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Bangui"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Banjul"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Bissau"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Blantyre"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Brazzaville"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Bujumbura"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Cairo"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Casablanca"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Ceuta"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Conakry"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Dakar"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Dar_es_Salaam"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Djibouti"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Douala"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\El_Aaiun"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Freetown"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Gaborone"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Harare"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Johannesburg"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Juba"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Kampala"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Khartoum"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Kigali"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Kinshasa"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Lagos"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Libreville"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Lome"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Luanda"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Lubumbashi"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Lusaka"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Malabo"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Maputo"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Maseru"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Mbabane"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Mogadishu"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Monrovia"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Nairobi"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Ndjamena"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Niamey"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Nouakchott"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Ouagadougou"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Porto-Novo"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Sao_Tome"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Timbuktu"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Tripoli"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Tunis"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Africa\Windhoek"; DestDir: "{app}\pytz\zoneinfo\Africa"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Adak"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Anchorage"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Anguilla"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Antigua"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Araguaina"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Aruba"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Asuncion"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Atikokan"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Atka"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Bahia"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Bahia_Banderas"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Barbados"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Belem"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Belize"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Blanc-Sablon"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Boa_Vista"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Bogota"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Boise"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Buenos_Aires"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Cambridge_Bay"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Campo_Grande"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Cancun"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Caracas"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Catamarca"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Cayenne"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Cayman"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Chicago"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Chihuahua"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Coral_Harbour"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Cordoba"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Costa_Rica"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Creston"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Cuiaba"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Curacao"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Danmarkshavn"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Dawson"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Dawson_Creek"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Denver"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Detroit"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Dominica"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Edmonton"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Eirunepe"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\El_Salvador"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Ensenada"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Fortaleza"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Fort_Nelson"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Fort_Wayne"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Glace_Bay"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Godthab"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Goose_Bay"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Grand_Turk"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Grenada"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Guadeloupe"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Guatemala"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Guayaquil"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Guyana"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Halifax"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Havana"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Hermosillo"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Indianapolis"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Inuvik"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Iqaluit"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Jamaica"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Jujuy"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Juneau"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Knox_IN"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Kralendijk"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\La_Paz"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Lima"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Los_Angeles"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Louisville"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Lower_Princes"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Maceio"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Managua"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Manaus"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Marigot"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Martinique"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Matamoros"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Mazatlan"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Mendoza"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Menominee"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Merida"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Metlakatla"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Mexico_City"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Miquelon"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Moncton"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Monterrey"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Montevideo"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Montreal"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Montserrat"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Nassau"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\New_York"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Nipigon"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Nome"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Noronha"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Ojinaga"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Panama"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Pangnirtung"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Paramaribo"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Phoenix"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Port-au-Prince"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Porto_Acre"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Porto_Velho"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Port_of_Spain"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Puerto_Rico"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Punta_Arenas"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Rainy_River"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Rankin_Inlet"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Recife"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Regina"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Resolute"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Rio_Branco"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Rosario"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Santarem"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Santa_Isabel"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Santiago"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Santo_Domingo"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Sao_Paulo"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Scoresbysund"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Shiprock"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Sitka"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\St_Barthelemy"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\St_Johns"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\St_Kitts"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\St_Lucia"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\St_Thomas"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\St_Vincent"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Swift_Current"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Tegucigalpa"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Thule"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Thunder_Bay"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Tijuana"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Toronto"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Tortola"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Vancouver"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Virgin"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Whitehorse"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Winnipeg"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Yakutat"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Yellowknife"; DestDir: "{app}\pytz\zoneinfo\America"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Argentina\Buenos_Aires"; DestDir: "{app}\pytz\zoneinfo\America\Argentina"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Argentina\Catamarca"; DestDir: "{app}\pytz\zoneinfo\America\Argentina"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Argentina\ComodRivadavia"; DestDir: "{app}\pytz\zoneinfo\America\Argentina"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Argentina\Cordoba"; DestDir: "{app}\pytz\zoneinfo\America\Argentina"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Argentina\Jujuy"; DestDir: "{app}\pytz\zoneinfo\America\Argentina"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Argentina\La_Rioja"; DestDir: "{app}\pytz\zoneinfo\America\Argentina"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Argentina\Mendoza"; DestDir: "{app}\pytz\zoneinfo\America\Argentina"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Argentina\Rio_Gallegos"; DestDir: "{app}\pytz\zoneinfo\America\Argentina"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Argentina\Salta"; DestDir: "{app}\pytz\zoneinfo\America\Argentina"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Argentina\San_Juan"; DestDir: "{app}\pytz\zoneinfo\America\Argentina"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Argentina\San_Luis"; DestDir: "{app}\pytz\zoneinfo\America\Argentina"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Argentina\Tucuman"; DestDir: "{app}\pytz\zoneinfo\America\Argentina"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Argentina\Ushuaia"; DestDir: "{app}\pytz\zoneinfo\America\Argentina"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Indiana\Indianapolis"; DestDir: "{app}\pytz\zoneinfo\America\Indiana"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Indiana\Knox"; DestDir: "{app}\pytz\zoneinfo\America\Indiana"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Indiana\Marengo"; DestDir: "{app}\pytz\zoneinfo\America\Indiana"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Indiana\Petersburg"; DestDir: "{app}\pytz\zoneinfo\America\Indiana"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Indiana\Tell_City"; DestDir: "{app}\pytz\zoneinfo\America\Indiana"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Indiana\Vevay"; DestDir: "{app}\pytz\zoneinfo\America\Indiana"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Indiana\Vincennes"; DestDir: "{app}\pytz\zoneinfo\America\Indiana"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Indiana\Winamac"; DestDir: "{app}\pytz\zoneinfo\America\Indiana"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Kentucky\Louisville"; DestDir: "{app}\pytz\zoneinfo\America\Kentucky"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\Kentucky\Monticello"; DestDir: "{app}\pytz\zoneinfo\America\Kentucky"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\North_Dakota\Beulah"; DestDir: "{app}\pytz\zoneinfo\America\North_Dakota"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\North_Dakota\Center"; DestDir: "{app}\pytz\zoneinfo\America\North_Dakota"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\America\North_Dakota\New_Salem"; DestDir: "{app}\pytz\zoneinfo\America\North_Dakota"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Antarctica\Casey"; DestDir: "{app}\pytz\zoneinfo\Antarctica"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Antarctica\Davis"; DestDir: "{app}\pytz\zoneinfo\Antarctica"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Antarctica\DumontDUrville"; DestDir: "{app}\pytz\zoneinfo\Antarctica"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Antarctica\Macquarie"; DestDir: "{app}\pytz\zoneinfo\Antarctica"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Antarctica\Mawson"; DestDir: "{app}\pytz\zoneinfo\Antarctica"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Antarctica\McMurdo"; DestDir: "{app}\pytz\zoneinfo\Antarctica"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Antarctica\Palmer"; DestDir: "{app}\pytz\zoneinfo\Antarctica"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Antarctica\Rothera"; DestDir: "{app}\pytz\zoneinfo\Antarctica"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Antarctica\South_Pole"; DestDir: "{app}\pytz\zoneinfo\Antarctica"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Antarctica\Syowa"; DestDir: "{app}\pytz\zoneinfo\Antarctica"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Antarctica\Troll"; DestDir: "{app}\pytz\zoneinfo\Antarctica"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Antarctica\Vostok"; DestDir: "{app}\pytz\zoneinfo\Antarctica"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Arctic\Longyearbyen"; DestDir: "{app}\pytz\zoneinfo\Arctic"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Aden"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Almaty"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Amman"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Anadyr"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Aqtau"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Aqtobe"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Ashgabat"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Ashkhabad"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Atyrau"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Baghdad"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Bahrain"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Baku"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Bangkok"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Barnaul"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Beirut"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Bishkek"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Brunei"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Calcutta"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Chita"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Choibalsan"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Chongqing"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Chungking"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Colombo"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Dacca"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Damascus"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Dhaka"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Dili"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Dubai"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Dushanbe"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Famagusta"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Gaza"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Harbin"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Hebron"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Hong_Kong"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Hovd"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Ho_Chi_Minh"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Irkutsk"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Istanbul"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Jakarta"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Jayapura"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Jerusalem"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Kabul"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Kamchatka"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Karachi"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Kashgar"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Kathmandu"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Katmandu"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Khandyga"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Kolkata"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Krasnoyarsk"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Kuala_Lumpur"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Kuching"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Kuwait"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Macao"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Macau"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Magadan"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Makassar"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Manila"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Muscat"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Nicosia"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Novokuznetsk"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Novosibirsk"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Omsk"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Oral"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Phnom_Penh"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Pontianak"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Pyongyang"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Qatar"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Qostanay"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Qyzylorda"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Rangoon"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Riyadh"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Saigon"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Sakhalin"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Samarkand"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Seoul"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Shanghai"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Singapore"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Srednekolymsk"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Taipei"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Tashkent"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Tbilisi"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Tehran"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Tel_Aviv"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Thimbu"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Thimphu"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Tokyo"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Tomsk"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Ujung_Pandang"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Ulaanbaatar"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Ulan_Bator"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Urumqi"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Ust-Nera"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Vientiane"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Vladivostok"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Yakutsk"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Yangon"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Yekaterinburg"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Asia\Yerevan"; DestDir: "{app}\pytz\zoneinfo\Asia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Atlantic\Azores"; DestDir: "{app}\pytz\zoneinfo\Atlantic"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Atlantic\Bermuda"; DestDir: "{app}\pytz\zoneinfo\Atlantic"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Atlantic\Canary"; DestDir: "{app}\pytz\zoneinfo\Atlantic"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Atlantic\Cape_Verde"; DestDir: "{app}\pytz\zoneinfo\Atlantic"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Atlantic\Faeroe"; DestDir: "{app}\pytz\zoneinfo\Atlantic"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Atlantic\Faroe"; DestDir: "{app}\pytz\zoneinfo\Atlantic"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Atlantic\Jan_Mayen"; DestDir: "{app}\pytz\zoneinfo\Atlantic"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Atlantic\Madeira"; DestDir: "{app}\pytz\zoneinfo\Atlantic"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Atlantic\Reykjavik"; DestDir: "{app}\pytz\zoneinfo\Atlantic"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Atlantic\South_Georgia"; DestDir: "{app}\pytz\zoneinfo\Atlantic"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Atlantic\Stanley"; DestDir: "{app}\pytz\zoneinfo\Atlantic"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Atlantic\St_Helena"; DestDir: "{app}\pytz\zoneinfo\Atlantic"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Australia\ACT"; DestDir: "{app}\pytz\zoneinfo\Australia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Australia\Adelaide"; DestDir: "{app}\pytz\zoneinfo\Australia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Australia\Brisbane"; DestDir: "{app}\pytz\zoneinfo\Australia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Australia\Broken_Hill"; DestDir: "{app}\pytz\zoneinfo\Australia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Australia\Canberra"; DestDir: "{app}\pytz\zoneinfo\Australia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Australia\Currie"; DestDir: "{app}\pytz\zoneinfo\Australia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Australia\Darwin"; DestDir: "{app}\pytz\zoneinfo\Australia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Australia\Eucla"; DestDir: "{app}\pytz\zoneinfo\Australia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Australia\Hobart"; DestDir: "{app}\pytz\zoneinfo\Australia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Australia\LHI"; DestDir: "{app}\pytz\zoneinfo\Australia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Australia\Lindeman"; DestDir: "{app}\pytz\zoneinfo\Australia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Australia\Lord_Howe"; DestDir: "{app}\pytz\zoneinfo\Australia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Australia\Melbourne"; DestDir: "{app}\pytz\zoneinfo\Australia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Australia\North"; DestDir: "{app}\pytz\zoneinfo\Australia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Australia\NSW"; DestDir: "{app}\pytz\zoneinfo\Australia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Australia\Perth"; DestDir: "{app}\pytz\zoneinfo\Australia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Australia\Queensland"; DestDir: "{app}\pytz\zoneinfo\Australia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Australia\South"; DestDir: "{app}\pytz\zoneinfo\Australia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Australia\Sydney"; DestDir: "{app}\pytz\zoneinfo\Australia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Australia\Tasmania"; DestDir: "{app}\pytz\zoneinfo\Australia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Australia\Victoria"; DestDir: "{app}\pytz\zoneinfo\Australia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Australia\West"; DestDir: "{app}\pytz\zoneinfo\Australia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Australia\Yancowinna"; DestDir: "{app}\pytz\zoneinfo\Australia"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Brazil\Acre"; DestDir: "{app}\pytz\zoneinfo\Brazil"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Brazil\DeNoronha"; DestDir: "{app}\pytz\zoneinfo\Brazil"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Brazil\East"; DestDir: "{app}\pytz\zoneinfo\Brazil"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Brazil\West"; DestDir: "{app}\pytz\zoneinfo\Brazil"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Canada\Atlantic"; DestDir: "{app}\pytz\zoneinfo\Canada"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Canada\Central"; DestDir: "{app}\pytz\zoneinfo\Canada"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Canada\Eastern"; DestDir: "{app}\pytz\zoneinfo\Canada"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Canada\Mountain"; DestDir: "{app}\pytz\zoneinfo\Canada"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Canada\Newfoundland"; DestDir: "{app}\pytz\zoneinfo\Canada"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Canada\Pacific"; DestDir: "{app}\pytz\zoneinfo\Canada"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Canada\Saskatchewan"; DestDir: "{app}\pytz\zoneinfo\Canada"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Canada\Yukon"; DestDir: "{app}\pytz\zoneinfo\Canada"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Chile\Continental"; DestDir: "{app}\pytz\zoneinfo\Chile"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Chile\EasterIsland"; DestDir: "{app}\pytz\zoneinfo\Chile"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT+0"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT+1"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT+10"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT+11"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT+12"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT+2"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT+3"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT+4"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT+5"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT+6"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT+7"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT+8"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT+9"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT-0"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT-1"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT-10"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT-11"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT-12"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT-13"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT-14"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT-2"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT-3"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT-4"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT-5"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT-6"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT-7"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT-8"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT-9"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\GMT0"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\Greenwich"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\UCT"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\Universal"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\UTC"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Etc\Zulu"; DestDir: "{app}\pytz\zoneinfo\Etc"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Amsterdam"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Andorra"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Astrakhan"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Athens"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Belfast"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Belgrade"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Berlin"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Bratislava"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Brussels"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Bucharest"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Budapest"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Busingen"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Chisinau"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Copenhagen"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Dublin"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Gibraltar"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Guernsey"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Helsinki"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Isle_of_Man"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Istanbul"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Jersey"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Kaliningrad"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Kiev"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Kirov"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Lisbon"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Ljubljana"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\London"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Luxembourg"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Madrid"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Malta"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Mariehamn"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Minsk"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Monaco"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Moscow"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Nicosia"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Oslo"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Paris"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Podgorica"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Prague"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Riga"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Rome"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Samara"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\San_Marino"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Sarajevo"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Saratov"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Simferopol"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Skopje"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Sofia"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Stockholm"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Tallinn"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Tirane"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Tiraspol"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Ulyanovsk"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Uzhgorod"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Vaduz"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Vatican"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Vienna"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Vilnius"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Volgograd"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Warsaw"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Zagreb"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Zaporozhye"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Europe\Zurich"; DestDir: "{app}\pytz\zoneinfo\Europe"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Indian\Antananarivo"; DestDir: "{app}\pytz\zoneinfo\Indian"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Indian\Chagos"; DestDir: "{app}\pytz\zoneinfo\Indian"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Indian\Christmas"; DestDir: "{app}\pytz\zoneinfo\Indian"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Indian\Cocos"; DestDir: "{app}\pytz\zoneinfo\Indian"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Indian\Comoro"; DestDir: "{app}\pytz\zoneinfo\Indian"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Indian\Kerguelen"; DestDir: "{app}\pytz\zoneinfo\Indian"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Indian\Mahe"; DestDir: "{app}\pytz\zoneinfo\Indian"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Indian\Maldives"; DestDir: "{app}\pytz\zoneinfo\Indian"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Indian\Mauritius"; DestDir: "{app}\pytz\zoneinfo\Indian"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Indian\Mayotte"; DestDir: "{app}\pytz\zoneinfo\Indian"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Indian\Reunion"; DestDir: "{app}\pytz\zoneinfo\Indian"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Mexico\BajaNorte"; DestDir: "{app}\pytz\zoneinfo\Mexico"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Mexico\BajaSur"; DestDir: "{app}\pytz\zoneinfo\Mexico"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Mexico\General"; DestDir: "{app}\pytz\zoneinfo\Mexico"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Apia"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Auckland"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Bougainville"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Chatham"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Chuuk"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Easter"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Efate"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Enderbury"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Fakaofo"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Fiji"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Funafuti"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Galapagos"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Gambier"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Guadalcanal"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Guam"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Honolulu"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Johnston"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Kiritimati"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Kosrae"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Kwajalein"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Majuro"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Marquesas"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Midway"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Nauru"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Niue"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Norfolk"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Noumea"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Pago_Pago"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Palau"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Pitcairn"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Pohnpei"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Ponape"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Port_Moresby"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Rarotonga"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Saipan"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Samoa"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Tahiti"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Tarawa"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Tongatapu"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Truk"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Wake"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Wallis"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\Pacific\Yap"; DestDir: "{app}\pytz\zoneinfo\Pacific"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\US\Alaska"; DestDir: "{app}\pytz\zoneinfo\US"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\US\Aleutian"; DestDir: "{app}\pytz\zoneinfo\US"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\US\Arizona"; DestDir: "{app}\pytz\zoneinfo\US"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\US\Central"; DestDir: "{app}\pytz\zoneinfo\US"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\US\East-Indiana"; DestDir: "{app}\pytz\zoneinfo\US"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\US\Eastern"; DestDir: "{app}\pytz\zoneinfo\US"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\US\Hawaii"; DestDir: "{app}\pytz\zoneinfo\US"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\US\Indiana-Starke"; DestDir: "{app}\pytz\zoneinfo\US"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\US\Michigan"; DestDir: "{app}\pytz\zoneinfo\US"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\US\Mountain"; DestDir: "{app}\pytz\zoneinfo\US"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\US\Pacific"; DestDir: "{app}\pytz\zoneinfo\US"; Flags: ignoreversion
-Source: "..\dist\baangt\pytz\zoneinfo\US\Samoa"; DestDir: "{app}\pytz\zoneinfo\US"; Flags: ignoreversion
+Source: "..\dist\baangt\lxml\etree.cp37-win_amd64.pyd"; DestDir: "{app}\lxml"; Flags: ignoreversion
+Source: "..\dist\baangt\lxml\_elementpath.cp37-win_amd64.pyd"; DestDir: "{app}\lxml"; Flags: ignoreversion
+Source: "..\dist\baangt\mkl_fft\_pydfti.cp37-win_amd64.pyd"; DestDir: "{app}\mkl_fft"; Flags: ignoreversion
+Source: "..\dist\baangt\psutil\_psutil_windows.cp37-win_amd64.pyd"; DestDir: "{app}\psutil"; Flags: ignoreversion
+Source: "..\dist\baangt\psycopg2\_psycopg.cp37-win_amd64.pyd"; DestDir: "{app}\psycopg2"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\QtCore.pyd"; DestDir: "{app}\PyQt5"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\QtGui.pyd"; DestDir: "{app}\PyQt5"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\QtWidgets.pyd"; DestDir: "{app}\PyQt5"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Library\bin\qt.conf"; DestDir: "{app}\PyQt5\Library\bin"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\plugins\iconengines\qsvgicon.dll"; DestDir: "{app}\PyQt5\Qt\plugins\iconengines"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\plugins\imageformats\qgif.dll"; DestDir: "{app}\PyQt5\Qt\plugins\imageformats"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\plugins\imageformats\qicns.dll"; DestDir: "{app}\PyQt5\Qt\plugins\imageformats"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\plugins\imageformats\qico.dll"; DestDir: "{app}\PyQt5\Qt\plugins\imageformats"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\plugins\imageformats\qjpeg.dll"; DestDir: "{app}\PyQt5\Qt\plugins\imageformats"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\plugins\imageformats\qsvg.dll"; DestDir: "{app}\PyQt5\Qt\plugins\imageformats"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\plugins\imageformats\qtga.dll"; DestDir: "{app}\PyQt5\Qt\plugins\imageformats"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\plugins\imageformats\qtiff.dll"; DestDir: "{app}\PyQt5\Qt\plugins\imageformats"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\plugins\imageformats\qwbmp.dll"; DestDir: "{app}\PyQt5\Qt\plugins\imageformats"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\plugins\imageformats\qwebp.dll"; DestDir: "{app}\PyQt5\Qt\plugins\imageformats"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\plugins\platforminputcontexts\qtvirtualkeyboardplugin.dll"; DestDir: "{app}\PyQt5\Qt\plugins\platforminputcontexts"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\plugins\platforms\qminimal.dll"; DestDir: "{app}\PyQt5\Qt\plugins\platforms"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\plugins\platforms\qoffscreen.dll"; DestDir: "{app}\PyQt5\Qt\plugins\platforms"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\plugins\platforms\qwindows.dll"; DestDir: "{app}\PyQt5\Qt\plugins\platforms"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\translations\qtbase_ar.qm"; DestDir: "{app}\PyQt5\Qt\translations"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\translations\qtbase_bg.qm"; DestDir: "{app}\PyQt5\Qt\translations"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\translations\qtbase_ca.qm"; DestDir: "{app}\PyQt5\Qt\translations"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\translations\qtbase_cs.qm"; DestDir: "{app}\PyQt5\Qt\translations"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\translations\qtbase_da.qm"; DestDir: "{app}\PyQt5\Qt\translations"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\translations\qtbase_de.qm"; DestDir: "{app}\PyQt5\Qt\translations"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\translations\qtbase_en.qm"; DestDir: "{app}\PyQt5\Qt\translations"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\translations\qtbase_es.qm"; DestDir: "{app}\PyQt5\Qt\translations"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\translations\qtbase_fi.qm"; DestDir: "{app}\PyQt5\Qt\translations"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\translations\qtbase_fr.qm"; DestDir: "{app}\PyQt5\Qt\translations"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\translations\qtbase_gd.qm"; DestDir: "{app}\PyQt5\Qt\translations"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\translations\qtbase_he.qm"; DestDir: "{app}\PyQt5\Qt\translations"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\translations\qtbase_hu.qm"; DestDir: "{app}\PyQt5\Qt\translations"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\translations\qtbase_it.qm"; DestDir: "{app}\PyQt5\Qt\translations"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\translations\qtbase_ja.qm"; DestDir: "{app}\PyQt5\Qt\translations"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\translations\qtbase_ko.qm"; DestDir: "{app}\PyQt5\Qt\translations"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\translations\qtbase_lv.qm"; DestDir: "{app}\PyQt5\Qt\translations"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\translations\qtbase_pl.qm"; DestDir: "{app}\PyQt5\Qt\translations"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\translations\qtbase_ru.qm"; DestDir: "{app}\PyQt5\Qt\translations"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\translations\qtbase_sk.qm"; DestDir: "{app}\PyQt5\Qt\translations"; Flags: ignoreversion
+Source: "..\dist\baangt\PyQt5\Qt\translations\qtbase_uk.qm"; DestDir: "{app}\PyQt5\Qt\translations"; Flags: ignoreversion
 Source: "..\dist\baangt\ressources\baangtLogo2020Small.png"; DestDir: "{app}\ressources"; Flags: ignoreversion
+Source: "..\dist\baangt\scipy\_lib\messagestream.cp37-win_amd64.pyd"; DestDir: "{app}\scipy\_lib"; Flags: ignoreversion
+Source: "..\dist\baangt\scipy\_lib\_ccallback_c.cp37-win_amd64.pyd"; DestDir: "{app}\scipy\_lib"; Flags: ignoreversion
+Source: "..\dist\baangt\scipy\_lib\_fpumode.cp37-win_amd64.pyd"; DestDir: "{app}\scipy\_lib"; Flags: ignoreversion
 Source: "..\dist\baangt\selenium\webdriver\firefox\webdriver.xpi"; DestDir: "{app}\selenium\webdriver\firefox"; Flags: ignoreversion
 Source: "..\dist\baangt\selenium\webdriver\firefox\webdriver_prefs.json"; DestDir: "{app}\selenium\webdriver\firefox"; Flags: ignoreversion
 Source: "..\dist\baangt\selenium\webdriver\firefox\amd64\x_ignore_nofocus.so"; DestDir: "{app}\selenium\webdriver\firefox\amd64"; Flags: ignoreversion
 Source: "..\dist\baangt\selenium\webdriver\firefox\x86\x_ignore_nofocus.so"; DestDir: "{app}\selenium\webdriver\firefox\x86"; Flags: ignoreversion
 Source: "..\dist\baangt\selenium\webdriver\remote\getAttribute.js"; DestDir: "{app}\selenium\webdriver\remote"; Flags: ignoreversion
 Source: "..\dist\baangt\selenium\webdriver\remote\isDisplayed.js"; DestDir: "{app}\selenium\webdriver\remote"; Flags: ignoreversion
+Source: "..\dist\baangt\sqlalchemy\cprocessors.cp37-win_amd64.pyd"; DestDir: "{app}\sqlalchemy"; Flags: ignoreversion
+Source: "..\dist\baangt\sqlalchemy\cresultproxy.cp37-win_amd64.pyd"; DestDir: "{app}\sqlalchemy"; Flags: ignoreversion
+Source: "..\dist\baangt\sqlalchemy\cutils.cp37-win_amd64.pyd"; DestDir: "{app}\sqlalchemy"; Flags: ignoreversion
 Source: "..\dist\baangt\tcl\auto.tcl"; DestDir: "{app}\tcl"; Flags: ignoreversion
 Source: "..\dist\baangt\tcl\clock.tcl"; DestDir: "{app}\tcl"; Flags: ignoreversion
 Source: "..\dist\baangt\tcl\history.tcl"; DestDir: "{app}\tcl"; Flags: ignoreversion
@@ -2317,14 +1745,7 @@ Source: "..\dist\baangt\tk\ttk\utils.tcl"; DestDir: "{app}\tk\ttk"; Flags: ignor
 Source: "..\dist\baangt\tk\ttk\vistaTheme.tcl"; DestDir: "{app}\tk\ttk"; Flags: ignoreversion
 Source: "..\dist\baangt\tk\ttk\winTheme.tcl"; DestDir: "{app}\tk\ttk"; Flags: ignoreversion
 Source: "..\dist\baangt\tk\ttk\xpTheme.tcl"; DestDir: "{app}\tk\ttk"; Flags: ignoreversion
-
-[Icons]
-Name: "{group}\baangt"; Filename: "{app}\baangt.exe"
-Name: "{commondesktop}\baangt"; Filename: "{app}\baangt.exe"; Tasks: desktopicon
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\baangt"; Filename: "{app}\baangt.exe"; Tasks: quicklaunchicon
-
-[Run]
-Filename: "{app}\baangt.exe"; Description: "{cm:LaunchProgram,baangt}"; Flags: nowait postinstall skipifsilent
+Source: "..\dist\baangt\win32com\shell\shell.pyd"; DestDir: "{app}\win32com\shell"; Flags: ignoreversion
 
 [Dirs]
 Name: "{app}\browsermob-proxy"
@@ -2333,7 +1754,10 @@ Name: "{app}\browsermob-proxy\bin\conf"
 Name: "{app}\browsermob-proxy\lib"
 Name: "{app}\browsermob-proxy\ssl-support"
 Name: "{app}\certifi"
-Name: "{app}\examples"
+Name: "{app}\cryptography"
+Name: "{app}\cryptography\hazmat"
+Name: "{app}\cryptography\hazmat\bindings"
+Name: "{app}\cryptography-2.7-py3.7.egg-info"
 Name: "{app}\gevent"
 Name: "{app}\gevent\libev"
 Name: "{app}\gevent\libev\__pycache__"
@@ -2352,54 +1776,37 @@ Name: "{app}\gevent\tests\__pycache__"
 Name: "{app}\gevent\_ffi"
 Name: "{app}\gevent\_ffi\__pycache__"
 Name: "{app}\gevent\__pycache__"
-Name: "{app}\gevent-1.4.0-py3.7.egg-info"
-Name: "{app}\importlib_metadata-1.3.0-py3.7.egg-info"
 Name: "{app}\Include"
-Name: "{app}\lxml"
 Name: "{app}\lib2to3"
 Name: "{app}\numpy"
 Name: "{app}\numpy\core"
 Name: "{app}\numpy\fft"
 Name: "{app}\numpy\linalg"
 Name: "{app}\numpy\random"
-Name: "{app}\openpyxl"
-Name: "{app}\pandas"
-Name: "{app}\pandas\io"
-Name: "{app}\pandas\io\msgpack"
-Name: "{app}\pandas\io\sas"
-Name: "{app}\pandas\util"
-Name: "{app}\pandas\_libs"
-Name: "{app}\pandas\_libs\tslibs"
-Name: "{app}\PIL"
-Name: "{app}\pytz"
-Name: "{app}\pytz\zoneinfo"
-Name: "{app}\pytz\zoneinfo\Africa"
-Name: "{app}\pytz\zoneinfo\America"
-Name: "{app}\pytz\zoneinfo\America\Argentina"
-Name: "{app}\pytz\zoneinfo\America\Indiana"
-Name: "{app}\pytz\zoneinfo\America\Kentucky"
-Name: "{app}\pytz\zoneinfo\America\North_Dakota"
-Name: "{app}\pytz\zoneinfo\Antarctica"
-Name: "{app}\pytz\zoneinfo\Arctic"
-Name: "{app}\pytz\zoneinfo\Asia"
-Name: "{app}\pytz\zoneinfo\Atlantic"
-Name: "{app}\pytz\zoneinfo\Australia"
-Name: "{app}\pytz\zoneinfo\Brazil"
-Name: "{app}\pytz\zoneinfo\Canada"
-Name: "{app}\pytz\zoneinfo\Chile"
-Name: "{app}\pytz\zoneinfo\Etc"
-Name: "{app}\pytz\zoneinfo\Europe"
-Name: "{app}\pytz\zoneinfo\Indian"
-Name: "{app}\pytz\zoneinfo\Mexico"
-Name: "{app}\pytz\zoneinfo\Pacific"
-Name: "{app}\pytz\zoneinfo\US"
+Name: "{app}\lxml"
+Name: "{app}\mkl_fft"
+Name: "{app}\psutil"
+Name: "{app}\psycopg2"
+Name: "{app}\PyQt5"
+Name: "{app}\PyQt5\Library"
+Name: "{app}\PyQt5\Library\bin"
+Name: "{app}\PyQt5\Qt"
+Name: "{app}\PyQt5\Qt\plugins"
+Name: "{app}\PyQt5\Qt\plugins\iconengines"
+Name: "{app}\PyQt5\Qt\plugins\imageformats"
+Name: "{app}\PyQt5\Qt\plugins\platforminputcontexts"
+Name: "{app}\PyQt5\Qt\plugins\platforms"
+Name: "{app}\PyQt5\Qt\translations"
 Name: "{app}\ressources"
+Name: "{app}\scipy"
+Name: "{app}\scipy\_lib"
 Name: "{app}\selenium"
 Name: "{app}\selenium\webdriver"
 Name: "{app}\selenium\webdriver\firefox"
 Name: "{app}\selenium\webdriver\firefox\amd64"
 Name: "{app}\selenium\webdriver\firefox\x86"
 Name: "{app}\selenium\webdriver\remote"
+Name: "{app}\sqlalchemy"
 Name: "{app}\tcl"
 Name: "{app}\tcl\encoding"
 Name: "{app}\tcl\http1.0"
@@ -2431,3 +1838,5 @@ Name: "{app}\tk"
 Name: "{app}\tk\images"
 Name: "{app}\tk\msgs"
 Name: "{app}\tk\ttk"
+Name: "{app}\win32com"
+Name: "{app}\win32com\shell"

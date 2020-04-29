@@ -89,7 +89,17 @@ Building Executables
 Windows bundle executables:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* Install innosetup-qsp (QuickStartPack) Versoin 6 from https://jrsoftware.org/isdl.php
+* Install innosetup-qsp (QuickStartPack) Version 6 from https://jrsoftware.org/isdl.php
 * Open Inno Setup
 * Use Script ``/windows/baangtSetupWindows.iss``
 
+If the Script doesn't work, it's mostly due to outdated dependencies. In this case it seems to be fastest to re-create
+the script from scratch:
+* Create new Script in Inno Setup with Wizard
+* Fill in mandatory Info (Version, ProgramName, etc.) in first screen
+* Find exe in Path baangt/dist/baangt/baangt.exe
+* Click "Add files" and select all files in the same folder (/baangt/dist/baangt)
+* Click "Add Folder" for each folder in /baangt/dist/baangt
+    * When asked, whether sub-folders should be included click on "Yes"
+* Save the Script in ``/windows/baangtSetupWindows.iss``
+* Execute Inno Setup as described above
