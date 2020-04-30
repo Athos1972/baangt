@@ -1,6 +1,7 @@
 openpyxl==2.3.5
 pytest
 pydispatch
+pyqt5>=5.1.14
 faker>=4.0.2
 Appium-Python-Client==0.50
 alabaster==0.7.12
@@ -56,4 +57,5 @@ webencodings==0.5.1
 xlrd==1.2.0
 XlsxWriter==1.2.7
 zipp==0.6.0
+coverage==5.0.4
 gevent>=1.5.0

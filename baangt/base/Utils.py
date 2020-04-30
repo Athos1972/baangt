@@ -1,11 +1,13 @@
 from datetime import datetime
 import baangt.base.GlobalConstants as GC
 import baangt.base.CustGlobalConstants as CGC
+import inspect
 import ntpath
 import logging
 import json
 import sys
 from pathlib import Path
+from baangt.base.PathManagement import ManagedPaths
 
 logger = logging.getLogger("pyC")
 
@@ -141,6 +143,61 @@ class utils:
         return xpath, css, lId
 
     @staticmethod
+    def dynamicImportOfClasses(modulePath=None, className=None, fullQualifiedImportName=None):
+        """
+        Will import a class from a module and return the class reference
+
+        @param fullQualifiedImportName: Full name of Module and Class. Alternatively:
+        @param modulePath: Path to module and:
+        @param className: Name of the class inside the module
+        @return: The class instance. If no class instance can be found the TestRun aborts hard with sys.exit
+        """
+
+        if fullQualifiedImportName:
+            moduleToImport = ".".join(fullQualifiedImportName.split(".")[0:-1])
+            importClass = fullQualifiedImportName.split(".")[-1]
+        else:
+            importClass = className
+            moduleToImport = modulePath
+
+        # The above works well for classes "franzi" and "baangt.base.franzi". Not for ".franzi"
+        if not moduleToImport:
+            moduleToImport = importClass
+
+        if globals().get(importClass):
+            # FIXME: Here he seems to return the module instead of the class.
+            x = 1 # This never happened ever. The breakpoint didn't ever halt.
+            return getattr(globals()[importClass], importClass)  # Class already imported
+
+        try:
+            mod = __import__(moduleToImport, fromlist=importClass)
+            logger.debug(f"Imported class {moduleToImport}.{importClass}, result was {str(mod)}")
+            retClass = getattr(mod, importClass)
+        except AttributeError as e:
+            logger.debug("Import didn't work. Trying something else:")
+            # This was not successful. Try again with adding the class-name to the Module
+            mod = __import__(moduleToImport + "." + importClass, fromlist=importClass)
+            logger.debug(f"Imported class {moduleToImport}.{importClass}.{importClass}, result was {str(mod)}")
+            retClass = getattr(mod, importClass)
+
+        # If this is a class, all is good.
+        if inspect.isclass(retClass):
+            pass
+        else:
+            # Try to find the class within the module:
+            for name, obj in inspect.getmembers(retClass):
+                if name == importClass:
+                    retClass = getattr(retClass, importClass)
+                    return retClass
+
+        if not retClass:
+            logger.critical(f"Can't import module: {modulePath}.{moduleToImport}")
+            sys.exit("Critical Error in Class import - can't continue. "
+                     "Please maintain proper classnames in Testrundefinition.")
+
+        return retClass
+
+    @staticmethod
     def findFileAndPathFromPath(fileNameAndPath, basePath=None):
         """
         Tries different approaches to locate a file
@@ -164,6 +221,8 @@ class utils:
                 logger.debug(f"New Main Path to search for files: {lBasePath}")
 
         if not Path(lFileNameAndPath).exists():
+            managedPaths = ManagedPaths()
+            root_dir = managedPaths.getOrSetRootPath()
             if "~" in lFileNameAndPath:
                 lFileNameAndPath = Path(lFileNameAndPath).expanduser()
             elif Path(lBasePath).joinpath(fileNameAndPath).exists():
@@ -177,6 +236,12 @@ class utils:
                     lFileNameAndPath = Path(utils.__file__).parent.joinpath(lFileNameAndPath)
                 elif Path(utils.__file__).parent.parent.joinpath(lFileNameAndPath).exists:
                     lFileNameAndPath = Path(utils.__file__).parent.parent.joinpath(lFileNameAndPath)
+                elif Path(root_dir).joinpath(lFileNameAndPath).exists:
+                    lFileNameAndPath = Path(root_dir).joinpath(lFileNameAndPath)
+                elif Path(root_dir).joinpath("baangt").joinpath(lFileNameAndPath).exists:
+                    lFileNameAndPath = Path(root_dir).joinpath("baangt").joinpath(lFileNameAndPath)
+                elif Path(root_dir).joinpath("baangt").joinpath("base").joinpath(lFileNameAndPath).exists:
+                    lFileNameAndPath = Path(root_dir).joinpath("baangt").joinpath("base").joinpath(lFileNameAndPath)
                 else:
                     raise Exception(f"Can't find file {fileNameAndPath}")
             else:
@@ -185,3 +250,19 @@ class utils:
             lFileNameAndPath = Path(lFileNameAndPath)
 
         return str(lFileNameAndPath.absolute())
+
+    @staticmethod
+    def anyting2Boolean(valueIn):
+        if isinstance(valueIn, bool):
+            return valueIn
+
+        if isinstance(valueIn, int):
+            return bool(valueIn)
+
+        if isinstance(valueIn, str):
+            if valueIn.lower() in ("yes", "true", "1", "ok", "x"):
+                return True
+            else:
+                return False
+
+        raise TypeError(f"Anything2Boolean had a wrong value: {valueIn}. Don't know how to convert that to boolean")

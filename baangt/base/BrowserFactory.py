@@ -1,5 +1,6 @@
 from baangt.base.BrowserHandling.BrowserHandling import BrowserDriver
 from baangt.base.ProxyRotate import ProxyRotate
+from baangt.base.Utils import utils
 import baangt.base.GlobalConstants as GC
 
 import logging
@@ -15,10 +16,12 @@ class BrowserFactory:
 
     """
     def __init__(self, testrun):
+        self.testrun = testrun
+
         self.rotatingProxiesService = None
         self.browser = {}
         self.browserInstances = {}
-        self.testrun = testrun
+
         self.timing = self.testrun.timing
         self.globalSettings = testrun.globalSettings
         self.browserServer = BrowserFactory.__getBrowserServer() \
@@ -29,17 +32,16 @@ class BrowserFactory:
 
     def __startRotatingProxies(self):
         if self.globalSettings.get("TC.UseRotatingProxies"):
-            if self.globalSettings.get("TC.ReReadProxies").strip() == "True":
+            reReadProxies = False
+            if self.globalSettings.get("TC.ReReadProxies") == "True":
                 reReadProxies = True
-            elif self.globalSettings.get("TC.ReReadProxies").strip() == "False":
-                reReadProxies = False
             self.rotatingProxiesService = ProxyRotate(reReadProxies=reReadProxies)
             if self.globalSettings.get("TC.ReReadProxies") == "True":
                 self.rotatingProxiesService.recheckProxies(forever=True)
 
     def getBrowser(self, browserInstance=0, browserName=None, browserAttributes=None,
                          mobileType=None, mobileApp=None, desired_app=None,
-                         mobile_app_setting=None):
+                         mobile_app_setting=None, browserWindowSize = None):
         """
                 This method is called whenever a browser instance (existing or new) is needed. If called without
                 parameters it will create one instance of Firefox (geckodriver).
@@ -105,13 +107,24 @@ class BrowserFactory:
                                                                randomProxy=randomProxy)
                 if self.globalSettings.get("TC." + GC.EXECUTION_SLOW):
                     self.browser[browserInstance].slowExecutionToggle()
+                if browserWindowSize:
+                    self.setBrowserWindowSize(self.browser[browserInstance], browserWindowSize)
+
             else:
                 logger.debug(f"Using existing instance of browser {browserInstance}")
             return self.browser[browserInstance]
 
+    def setBrowserWindowSize(self, lBrowserInstance: BrowserDriver, browserWindowSize):
+        lBrowserInstance.setBrowserWindowSize(browserWindowSize)
+
     def _getBrowserInstance(self, browserInstance):
-        self.browser[browserInstance] = BrowserDriver(timing=self.timing,
-                                                      screenshotPath=self.globalSettings[GC.PATH_SCREENSHOTS])
+        if self.testrun.classesForObjects.browserHandling:
+            lClass = utils.dynamicImportOfClasses(fullQualifiedImportName=self.testrun.classesForObjects.browserHandling)
+
+            self.browser[browserInstance] = lClass(timing=self.timing)
+        else:
+            # !Sic: code duplication for convenince reasons. Pure Duck-Typing would prevent where-used-list to work.
+            self.browser[browserInstance] = BrowserDriver(timing=self.timing)
 
     @staticmethod
     def __getBrowserServer():

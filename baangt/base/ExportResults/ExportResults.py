@@ -13,6 +13,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from baangt.base.DataBaseORM import DATABASE_URL, TestrunLog, TestCaseSequenceLog
 from baangt.base.DataBaseORM import TestCaseLog, TestCaseField, GlobalAttribute, TestCaseNetworkInfo
+from baangt.base.PathManagement import ManagedPaths
 from datetime import datetime
 import time
 from baangt import plugin_manager
@@ -379,18 +380,7 @@ class ExportResults:
             self.summarySheet.write(self.summaryRow, 1, lineText, format)
 
     def __getOutputFileName(self):
-        if self.testRunInstance.globalSettings[GC.PATH_ROOT]:
-            basePath = Path(self.testRunInstance.globalSettings[GC.PATH_ROOT])
-        elif "/" not in self.testRunInstance.globalSettings[GC.DATABASE_EXPORTFILENAMEANDPATH][0:1]:
-            basePath = Path(sys.modules['__main__'].__file__).parent
-        else:
-            basePath = ""
-        l_file: Path = Path(basePath).joinpath(self.testRunInstance.globalSettings[GC.DATABASE_EXPORTFILENAMEANDPATH])
-        if "~" in str(l_file.absolute()):
-            l_file = l_file.expanduser()
-        if not Path(l_file).is_dir():
-            logger.info(f"Create directory {l_file}")
-            Path(l_file).mkdir(parents=True, exist_ok=True)
+        l_file = Path(self.testRunInstance.managedPaths.getOrSetExportPath())
 
         if self.exportFormat == GC.EXP_XLSX:
             lExtension = '.xlsx'
@@ -466,6 +456,10 @@ class ExportResults:
 
     def __writeCell(self, line, cellNumber, testRecordDict, fieldName, strip=False):
         if fieldName in testRecordDict.keys() and testRecordDict[fieldName]:
+            # Convert boolean for Output
+            if isinstance(testRecordDict[fieldName], bool):
+                testRecordDict[fieldName] = "True" if testRecordDict[fieldName] else "False"
+
             # Remove leading New-Line:
             if '\n' in testRecordDict[fieldName][0:5] or strip:
                 testRecordDict[fieldName] = testRecordDict[fieldName].strip()
@@ -482,6 +476,7 @@ class ExportResults:
                     elif testRecordDict[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR:
                         self.worksheet.write(line, cellNumber, testRecordDict[fieldName], self.cellFormatRed)
                 elif fieldName == GC.SCREENSHOTS:
+                    # Place the screenshot images "on" the appropriate cell
                     if type(testRecordDict[fieldName]) == list:
                         self.worksheet.insert_image(line, cellNumber, testRecordDict[fieldName][-1], {'x_scale': 0.05,
                                                                                                       'y_scale': 0.05})

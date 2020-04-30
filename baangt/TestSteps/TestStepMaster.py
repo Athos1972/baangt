@@ -7,6 +7,7 @@ from pkg_resources import parse_version
 import logging
 from baangt.TestSteps.Exceptions import baangtTestStepException
 from baangt.TestSteps.AddressCreation import AddressCreate
+from baangt.base.PDFCompare import PDFCompare, PDFCompareDetails
 from baangt.base.Faker import Faker as baangtFaker
 from baangt.base.Utils import utils
 
@@ -35,12 +36,16 @@ class TestStepMaster:
         self.ifIsTrue = True
         self.baangtFaker = None
 
-        if not isinstance(self.testStep[1], str) and executeDirect:
-            # This TestStepMaster-Instance should actually do something - activitites are described
-            # in the TestExecutionSteps
-            self.executeDirect(self.testStep[1][GC.STRUCTURE_TESTSTEPEXECUTION])
+        if self.testStep:
+            if not isinstance(self.testStep[1], str) and executeDirect:
+                # This TestStepMaster-Instance should actually do something - activitites are described
+                # in the TestExecutionSteps
+                self.executeDirect(self.testStep[1][GC.STRUCTURE_TESTSTEPEXECUTION])
 
-        self.teardown()
+                # Relatively !sic: Teardown makes only sense, when we actually executed something directory in here
+                # Otherwise (if it was 1 or 2 Tabs more to the left) we'd take execution time without
+                # having done anything
+                self.teardown()
 
     def executeDirect(self, executionCommands):
         """
@@ -75,7 +80,7 @@ class TestStepMaster:
         lValue = str(command["Value"])
         lValue2 = str(command["Value2"])
         lComparison = command["Comparison"]
-        lOptional = TestStepMaster._sanitizeXField(command["Optional"])
+        lOptional = utils.anyting2Boolean(command["Optional"])
 
         # check release line
         lRelease = command["Release"]
@@ -83,6 +88,8 @@ class TestStepMaster:
         # Timeout defaults to 20 seconds, if not set otherwise.
         lTimeout = TestStepMaster.__setTimeout(command["Timeout"])
 
+        lTimingString = f"TS {commandNumber} {lActivity.lower()}"
+        self.timing.takeTime(lTimingString)
         logger.debug(f"Executing TestStep {commandNumber} with parameters: act={lActivity}, lType={lLocatorType}, loc={lLocator}, "
                      f"Val1={lValue}, comp={lComparison}, Val2={lValue2}, Optional={lOptional}, timeout={lTimeout}")
 
@@ -156,12 +163,30 @@ class TestStepMaster:
             # Create Random IBAN. Value1 = Input-Parameter for IBAN-Function. Value2=Fieldname
             self.__getIBAN(lValue, lValue2)
         elif lActivity == 'PDFCOMPARE':
-            lFiles = self.browserSession.findNewFiles()
-            # fixme: Implement the API-Call here
+            self.doPDFComparison(lValue)
         elif lActivity == 'CHECKLINKS':
             self.checkLinks()
         else:
             raise BaseException(f"Unknown command in TestStep {lActivity}")
+
+        self.timing.takeTime(lTimingString)
+
+    def doPDFComparison(self, lValue, lFieldnameForResults="DOC_Compare"):
+        lFiles = self.browserSession.findNewFiles()
+        if len(lFiles) > 1:
+            # fixme: Do something! There were more than 1 files since last check. Damn
+            logger.critical(f"There were {len(lFiles)} files new since last check. Can't handle that. ")
+            raise Exception
+        elif len(lFiles) == 1:
+            # Wonderful. Let's do the PDF-Comparison
+            lPDFDataClass = PDFCompareDetails()
+            lPDFDataClass.fileName = lFiles[0][0]
+            lPDFDataClass.referenceID = lValue
+            lDict = {"": lPDFDataClass}
+            lPDFCompare = PDFCompare()
+            lDict = lPDFCompare.compare_multiple(lDict)
+            self.testcaseDataDict[lFieldnameForResults + "_Status"] = lDict[""].Status
+            self.testcaseDataDict[lFieldnameForResults + "_Results"] = lDict[""].StatusText
 
     def replaceAllVariables(self, lValue, lValue2):
         # Replace variables from data file
@@ -200,23 +225,6 @@ class TestStepMaster:
                 self.testcaseDataDict[GC.TESTCASEERRORLOG] = self.testcaseDataDict.get(GC.TESTCASEERRORLOG,"")\
                                                              + "URL-Checker error"
                 break
-
-    @staticmethod
-    def _sanitizeXField(inField):
-        """
-        When "X" or "True" is sent, then use this
-        @param inField:
-        @return:
-        """
-        lXField = True
-
-        if not inField:
-            lXField = False
-
-        if inField.upper() == 'FALSE':
-            lXField = False
-
-        return lXField
 
     @staticmethod
     def ifQualifyForExecution(version_global, version_line):
@@ -276,26 +284,10 @@ class TestStepMaster:
     def __setTimeout(lTimeout):
         return 20 if not lTimeout else float(lTimeout)
 
-    @staticmethod
-    def anyting2Boolean(valueIn):
-        if isinstance(valueIn, bool):
-            return valueIn
-
-        if isinstance(valueIn, int):
-            return bool(valueIn)
-
-        if isinstance(valueIn, str):
-            if valueIn.lower() in ("yes", "true", "1", "ok"):
-                return True
-            else:
-                return False
-
-        raise TypeError(f"Anything2Boolean had a wrong value: {valueIn}. Don't know how to convert that to boolean")
-
     def __doComparisons(self, lComparison, value1, value2):
         if isinstance(value1, bool) or isinstance(value2, bool):
-            value1 = TestStepMaster.anyting2Boolean(value1)
-            value2 = TestStepMaster.anyting2Boolean(value2)
+            value1 = utils.anyting2Boolean(value1)
+            value2 = utils.anyting2Boolean(value2)
 
         if value2 == 'None':
             value2 = None

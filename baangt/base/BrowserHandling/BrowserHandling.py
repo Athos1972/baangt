@@ -25,6 +25,7 @@ from urllib.request import urlretrieve
 import tarfile
 import zipfile
 import requests
+from baangt.base.PathManagement import ManagedPaths
 
 logger = logging.getLogger("pyC")
 
@@ -42,7 +43,7 @@ class BrowserDriver:
     """
 
     def __init__(self, timing=None, screenshotPath=None):
-        self.driver = None
+        self.driver : webdriver.firefox
         self.iFrame = None
         self.element = None
         self.locatorType = None
@@ -53,6 +54,7 @@ class BrowserDriver:
         self.downloadFolderMonitoring = None
         # Reference to Selenium "HTML" in order to track page changes. It is set on every interaction with the page
         self.html = None
+        self.managedPaths = ManagedPaths()
 
         if timing:
             self.timing = timing
@@ -61,11 +63,7 @@ class BrowserDriver:
 
         self.takeTime = self.timing.takeTime
 
-        if screenshotPath:
-            self.screenshotPath = screenshotPath
-            Path(self.screenshotPath).mkdir(exist_ok=True)
-        else:
-            self.screenshotPath = os.getcwd()
+        self.screenshotPath = self.managedPaths.getOrSetScreenshotsPath()
 
     def createNewBrowser(self, mobileType=None, mobileApp = None, desired_app = None, mobile_app_setting = None,
                          browserName=GC.BROWSER_FIREFOX,
@@ -87,8 +85,7 @@ class BrowserDriver:
 
         ChromeExecutable, GeckoExecutable = BrowserDriver.__getBrowserExecutableNames()
 
-        lCurPath = Path(os.getcwd())
-        lCurPath = lCurPath.joinpath("browserDrivers")
+        lCurPath = Path(self.managedPaths.getOrSetDriverPath())
 
         if browserName in browserNames:
 
@@ -112,8 +109,12 @@ class BrowserDriver:
                     self.driver = browserNames[browserName](
                         options=self.__createBrowserOptions(browserName=browserName,
                                                             desiredCapabilities=desiredCapabilities),
-                                                            executable_path=self.__findBrowserDriverPaths(GeckoExecutable),
-                                                            firefox_profile=profile)
+                        executable_path=self.__findBrowserDriverPaths(GeckoExecutable),
+                        firefox_profile=profile,
+                        service_log_path=os.path.join(self.managedPaths.getLogfilePath(), 'geckodriver.log')
+                        # ,
+                        # log_path=os.path.join(self.managedPaths.getLogfilePath(),'firefox.log')
+                    )
                     self.__startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance,
                                                 browserProxy=browserProxy)
 
@@ -133,9 +134,12 @@ class BrowserDriver:
                                                                    desiredCapabilities=desiredCapabilities,
                                                                    browserMobProxy=browserProxy,
                                                                    randomProxy=randomProxy),
-                                                                   executable_path=self.__findBrowserDriverPaths(ChromeExecutable))
+                        executable_path=self.__findBrowserDriverPaths(ChromeExecutable),
+                        service_log_path=os.path.join(self.managedPaths.getLogfilePath(), 'chromedriver.log')
+                    )
                     self.__startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance,
                                                 browserProxy=browserProxy)
+
             elif browserName == GC.BROWSER_EDGE:
                 self.driver = browserNames[browserName](
                     executable_path=self.__findBrowserDriverPaths("msedgedriver.exe"))
@@ -246,8 +250,7 @@ class BrowserDriver:
         :return:
         """
         randomValue = str(uuid.uuid4())
-
-        self.downloadFolder = str(Path(os.getcwd()).joinpath("TestDownloads").joinpath(randomValue))
+        self.downloadFolder = str(Path(self.managedPaths.getOrSetAttachmentDownloadPath()).joinpath(randomValue))
         Path(self.downloadFolder).mkdir(parents=True, exist_ok=True)
 
         logger.debug(f"Directory for download {self.downloadFolder}")
@@ -290,8 +293,7 @@ class BrowserDriver:
 
     def __findBrowserDriverPaths(self, filename):
 
-        lCurPath = Path(os.getcwd())
-        lCurPath = lCurPath.joinpath("browserDrivers")
+        lCurPath = Path(self.managedPaths.getOrSetDriverPath())
         lCurPath = lCurPath.joinpath(filename)
 
         logger.debug(f"Path for BrowserDrivers: {lCurPath}")
@@ -349,7 +351,6 @@ class BrowserDriver:
             elif browserMobProxy:
                 lOptions.add_argument('--proxy-server={0}'.format(browserMobProxy.proxy))
 
-
         if not desiredCapabilities and not browserMobProxy:
             return None
 
@@ -363,16 +364,16 @@ class BrowserDriver:
         if isinstance(desiredCapabilities, dict) and desiredCapabilities.get(GC.BROWSER_MODE_HEADLESS):
             logger.debug("Starting in Headless mode")
             lOptions.headless = True
-            lOptions.add_argument("--window-size=1920,1080")
 
         return lOptions
 
     def closeBrowser(self):
-        if self.driver:
-            try:
+        try:
+            if self.driver:
                 self.driver.quit()
-            except Exceptions as ex:
-                pass  # If the driver is already dead, it's fine.
+                self.driver = None
+        except Exceptions as ex:
+            pass  # If the driver is already dead, it's fine.
 
     def _log(self, logType, logText, noScreenShot=False, **kwargs):
         """
@@ -411,6 +412,9 @@ class BrowserDriver:
         else:
             print(f"Unknown call to Logger: {logType}")
             self._log(logging.CRITICAL, f"Unknown type in call to logger: {logType}")
+
+    def refresh(self):
+        self.driver.execute_script("window.location.reload()")
 
     def takeScreenshot(self, screenShotPath=None):
         driver = self.driver
@@ -474,8 +478,13 @@ class BrowserDriver:
                 exceptHandles = int(exceptHandles.strip()) - 1
                 totalWindows = len(self.driver.window_handles)
                 for windowHandle in self.driver.window_handles[-1:exceptHandles:-1]:
-                    self.driver.switch_to.window(windowHandle)
-                    self.driver.close()
+                    try:
+                        self.driver.switch_to.window(windowHandle)
+                        self.driver.close()
+                    except NoSuchWindowException as e:
+                        # If the window is already closed, it's fine. Don't do anything
+                        pass
+
                 self.driver.switch_to.window(self.driver.window_handles[exceptHandles])
         else:
             try:
@@ -642,6 +651,42 @@ class BrowserDriver:
 
         self.__doSomething(GC.CMD_FORCETEXT, value=value, timeout=timeout, xpath=xpath, optional=optional)
 
+    def setBrowserWindowSize(self, browserWindowSize: str):
+        """
+        Resized the browser Window to a fixed size
+        :param browserWindowSize: String with Widht/Height or Width;Height or Width,height or width x height
+               If you want also with leading --
+        :return: False, if browser wasn't reset,
+                 size-Dict when resize worked.
+        """
+        lIntBrowserWindowSize = browserWindowSize.replace("-","").strip()
+        lIntBrowserWindowSize = lIntBrowserWindowSize.replace(";", "/")
+        lIntBrowserWindowSize = lIntBrowserWindowSize.replace(",", "/")
+        lIntBrowserWindowSize = lIntBrowserWindowSize.replace("x", "/")
+
+        try:
+            width = int(lIntBrowserWindowSize.split("/")[0])
+            height = int(lIntBrowserWindowSize.split("/")[1])
+        except KeyError as e:
+            logger.warning(f"Called with wrong setting: {browserWindowSize}. Won't resize browser "
+                           f"Can't determine Width/Height.")
+            return False
+        except ValueError as e:
+            logger.warning(f"Called with wrong setting: {browserWindowSize}. Won't resize browser "
+                           f"Something seems not numeric before conversion: {lIntBrowserWindowSize}")
+            return False
+
+        if width == 0 or height == 0:
+            logger.warning(f"Called with wrong setting: {browserWindowSize}. Won't resize browser. Can't be 0")
+            return False
+
+        self.driver.set_window_size(width, height)
+        size = self.driver.get_window_size()
+        logger.debug(f"Resized browser window to width want/is: {width}/{size['width']}, "
+                     f"height want/is: {height}/{size['height']}")
+
+        return size
+
     def findNewFiles(self):
         """
         Returns a list of new files from downloadFolderMonitoring since the last call
@@ -728,11 +773,11 @@ class BrowserDriver:
 
         lLoopCount = 0
 
+        self.__getCurrentHTMLReference()
+
         while not wasSuccessful and elapsed < timeout:
             lLoopCount += 1
             try:
-                self.html = self.driver.find_element_by_tag_name('html')   # This is for waitForPageLoadAfterButton
-
                 driverWait = WebDriverWait(self.driver, timeout=internalTimeout, poll_frequency=pollFrequency)
 
                 if id:
@@ -746,7 +791,7 @@ class BrowserDriver:
                     # 2 times with visibility, let's give it one more try with Presence of element
                     if lLoopCount > 1:
                         logger.debug("Tried 2 times to find visible element, now trying presence "
-                                                f"of element instead, XPATH = {xpath}")
+                                     "of element instead, XPATH = {xpath}")
                         self.element = driverWait.until(ec.presence_of_element_located((By.XPATH, xpath)))
                     else:
                         self.element = driverWait.until(ec.visibility_of_element_located((By.XPATH, xpath)))
@@ -772,6 +817,7 @@ class BrowserDriver:
                 raise Exceptions.baangtTestStepException
             except ElementNotInteractableException as e:
                 logger.debug("Most probably timeout exception - retrying: " + str(e))
+                time.sleep(pollFrequency)
             except WebDriverException as e:
                 self._log(logging.ERROR, "Retrying WebDriver Exception: " + str(e))
                 time.sleep(2)
@@ -779,6 +825,24 @@ class BrowserDriver:
             elapsed = time.time() - begin
 
         return wasSuccessful
+
+    def __getCurrentHTMLReference(self):
+        """
+        Get a reference of the current HTML-Tag into self.html. We need that for stale check
+        "waitForPageLoadAfterButtonClick"
+        :return:
+        """
+        retryCount = 0
+        wasSuccessful = False
+        while retryCount < 5 and not wasSuccessful:
+            try:
+                self.html = self.driver.find_element_by_tag_name('html')  # This is for waitForPageLoadAfterButton
+                wasSuccessful = True
+            except NoSuchElementException as e:
+                pass
+            except NoSuchWindowException as e:
+                raise Exceptions.baangtTestStepException(f"Window ceased to exist. Error: {e}")
+            self.sleep(0.2)
 
     def findWaitNotVisible(self, css=None, xpath=None, id=None, timeout=90, optional=False):
         """
@@ -859,10 +923,12 @@ class BrowserDriver:
         didWork = False
         elapsed = 0
         begin = time.time()
+        counter = 0
 
         while not didWork and elapsed < timeout:
+            counter += 1
+            logger.debug(f"__doSomething {command} with {value}")
             try:
-                self._log(logging.DEBUG, f"__doSomething {command} with {value}")
                 if command.upper() == GC.CMD_SETTEXT:
                     self.element.send_keys(value)
                 elif command.upper() == GC.CMD_CLICK:
@@ -876,22 +942,33 @@ class BrowserDriver:
                 didWork = True
                 return
             except ElementClickInterceptedException as e:
-                self._log(logging.DEBUG, "doSomething: Element intercepted - retry")
+                logger.debug("doSomething: Element intercepted - retry")
                 time.sleep(0.2)
             except StaleElementReferenceException as e:
-                self._log(logging.DEBUG, "doSomething: Element stale - retry")
+                logger.debug(f"doSomething: Element stale - retry {self.locatorType} {self.locator}")
                 # If the element is stale after 2 times, try to re-locate the element
-                time.sleep(0.2)
+                if counter < 2:
+                    time.sleep(0.2)
+                elif counter < 4:
+                    begin = self.refindElementAfterError(timeout)
+                else:
+                    raise Exceptions.baangtTestStepException(e)
             except NoSuchElementException as e:
-                self._log(logging.DEBUG, "doSomething: Element not there yet - retry")
+                logger.debug("doSomething: Element not there yet - retry")
                 time.sleep(0.5)
             except InvalidSessionIdException as e:
                 self._log(logging.ERROR, f"Invalid Session ID Exception caught - aborting... {e} ")
                 raise Exceptions.baangtTestStepException(e)
             except ElementNotInteractableException as e:
-                self._log(logging.ERROR, f"Element not interactable {e}")
-                time.sleep(0.2)
-                # raise Exceptions.baangtTestStepException(e)
+                if counter < 2:
+                    logger.debug(f"Element not interactable {self.locatorType} {self.locator}, retrying")
+                    time.sleep(0.2)
+                elif counter < 5:
+                    logger.debug(f"Element not interactable {self.locatorType} {self.locator}, re-finding element")
+                    begin = self.refindElementAfterError(timeout)
+                else:
+                    self._log(logging.ERROR, f"Element not interactable {e}")
+                    raise Exceptions.baangtTestStepException(e)
             except NoSuchWindowException as e:
                 raise Exceptions.baangtTestStepException(e)
             elapsed = time.time() - begin
@@ -903,8 +980,19 @@ class BrowserDriver:
             raise Exceptions.baangtTestStepException(
                 f"Action not possible after {timeout} s, Locator: {self.locatorType}: {self.locator}")
 
+    def refindElementAfterError(self, timeout):
+        xpath, css, id = utils.setLocatorFromLocatorType(self.locatorType, self.locator)
+        foundNow = self.findBy(xpath=xpath, css=css, id=id, optional=True, timeout=timeout / 2)
+        if foundNow:
+            logger.debug(f"Re-Found element {self.locatorType}: {self.locator}, will retry ")
+            begin = time.time()
+        else:
+            raise Exceptions.baangtTestStepException(
+                f"Element {self.locatorType} {self.locator} couldn't be found. "
+                f"Tried to re-find it, but not element was not found")
+        return begin
 
-    def waitForElementChangeAfterButtonClick(self, timeout=3):
+    def waitForElementChangeAfterButtonClick(self, timeout=5):
         """
         Wait for a stale element (in a good way). Stale means, that the object has changed.
 
@@ -934,12 +1022,12 @@ class BrowserDriver:
                 logger.debug("Old element is stale, save to continue")
                 return True
 
-            time.sleep(0.1)
+            time.sleep(0.2)
             elapsed = time.time() - lStartOfWaiting
 
         logger.debug("Old element equal to new element after timeout. Staleness not detected using this method")
 
-    def waitForPageLoadAfterButtonClick(self, timeout=3):
+    def waitForPageLoadAfterButtonClick(self, timeout=5):
         """
         Problem: If the same XPATH/CSS/ID exists on both pages (the current one, where a button is clicked
                  and the next one, where we now want to interact, then it happens very often, that the element
@@ -962,7 +1050,7 @@ class BrowserDriver:
                 logger.debug("Page was reloaded")
                 return True
 
-            time.sleep(0.1)
+            time.sleep(0.2)
 
             elapsed = time.time() - lStartOfWaiting
 
@@ -992,15 +1080,14 @@ class BrowserDriver:
         except Exception as e:
             self._log(logging.WARNING, f"Tried to go back in history, didn't work with error {e}")
 
-    def javaScript(self, jsText):
+    def javaScript(self, jsText, *args):
         """Execute a given JavaScript in the current Session"""
-        self.driver.execute_script(jsText)
+        self.driver.execute_script(jsText, *args)
 
     def downloadDriver(self, browserName):
-        path = Path(os.getcwd())
-        logger.debug(f"Trying to download browserDriver for {browserName} into {path.joinpath('browserDrivers')}")
-        path.joinpath("browserDrivers").mkdir(parents=True, exist_ok=True)
-        path = path.joinpath("browserDrivers")
+        path = Path(self.managedPaths.getOrSetDriverPath())
+        logger.debug(f"Trying to download browserDriver for {browserName} into {path}")
+        path.mkdir(parents=True, exist_ok=True)
         tar_url = ''
         url = ''
         if str(browserName) == GC.BROWSER_FIREFOX:
@@ -1082,4 +1169,4 @@ class BrowserDriver:
 
         else:
 
-            logging.critical(f"Please download driver for {browserName} manually into folder /browserDrivers")
+            logger.critical(f"Please download driver for {browserName} manually into folder /browserDrivers")

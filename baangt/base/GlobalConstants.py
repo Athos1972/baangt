@@ -10,12 +10,12 @@ KWARGS_TESTRUNINSTANCE = "TESTRUNINSTANCE"
 KWARGS_TIMING = "TimingClassInstance"
 KWARGS_SEQUENCENUMBER = "SequenceNumberOfThisTestCase"
 
-CLASSES_TESTCASESEQUENCE_OLD = "baangt.TestCaseSequence.TestCaseSequenceMaster.TestCaseSequenceMaster"
-CLASSES_TESTCASESEQUENCE = "TestCaseSequenceMaster"
-CLASSES_TESTCASE_OLD = "baangt.TestCase.TestCaseMaster.TestCaseMaster"
-CLASSES_TESTCASE = 'TestCaseMaster'
-CLASSES_TESTSTEPMASTER_OLD = 'baangt.TestSteps.TestStepMaster'
-CLASSES_TESTSTEPMASTER = 'TestStepMaster'
+CLASSES_TESTCASESEQUENCE = "baangt.TestCaseSequence.TestCaseSequenceMaster.TestCaseSequenceMaster"
+CLASSES_TESTCASESEQUENCE_new = "TestCaseSequenceMaster"
+CLASSES_TESTCASE = "baangt.TestCase.TestCaseMaster.TestCaseMaster"
+CLASSES_TESTCASE_new = 'TestCaseMaster'
+CLASSES_TESTSTEPMASTER = 'baangt.TestSteps.TestStepMaster.TestStepMaster'
+CLASSES_TESTSTEPMASTER_new = 'TestStepMaster'
 
 EXECUTION_STAGE = 'Stage'
 EXECUTION_STAGE_TEST = 'Test'
@@ -42,6 +42,7 @@ BROWSER_REMOTE_V4 = 'REMOTE_V4'
 BROWSER_APPIUM = 'APPIUM'
 BROWSER_MODE_HEADLESS = "HEADLESS"
 BROWSER_ATTRIBUTES = "BrowserAttributes"
+BROWSER_WINDOW_SIZE = "BrowserWindowSize"
 
 CMD_CLICK = "CLICK"
 CMD_SETTEXT = "SETTEXT"
@@ -71,6 +72,7 @@ SCREENSHOTS = "Screenshots"
 EXECUTION_DONTCLOSEBROWSER = "dontCloseBrowser"
 EXECUTION_SLOW = "slowExecution"
 EXECUTION_NETWORK_INFO = 'NetworkInfo'
+EXECUTION_STAGE = "Stage"
 
 EXPORT_FORMAT = "ExportFormat"
 EXPORT_ADDITIONAL_DATA = "AdditionalExportTabs"
@@ -78,9 +80,9 @@ EXP_FIELDLIST = "Fieldlist"
 EXP_XLSX = "XLSX"
 EXP_CSV = "CSV"
 
-PATH_EXPORT = 'ExportPath'
-PATH_IMPORT = 'ImportPath'
-PATH_SCREENSHOTS = 'ScreenshotPath'
+PATH_EXPORT = '1TestResults'
+PATH_IMPORT = '0TestInput'
+PATH_SCREENSHOTS = 'Screenshots'
 PATH_ROOT = 'RootPath'
 
 ADDRESS_COUNTRYCODE = "CountryCode"
