@@ -21,16 +21,19 @@ from baangt.ui.pyqt.settingsGlobal import GlobalSettings
 from baangt.ui.ImportKatalonRecorder import ImportKatalonRecorder
 import pyperclip
 import platform
+from baangt.base.PathManagement import ManagedPaths
 
 logger = logging.getLogger("pyC")
-
 
 class PyqtKatalonUI(ImportKatalonRecorder):
     """ Subclass of ImportKatalonRecorder :
         Aim : To disable GUI created by PySimpleGui
         and initialize everything
     """
-    def __init__(self, directory="./"):
+    def __init__(self, directory=None):
+        self.managedPaths = ManagedPaths()
+        if directory == None:
+            directory = self.managedPaths.derivePathForOSAndInstallationOption()
         self.directory = directory
         self.clipboardText = ""
         self.outputText = ""
@@ -50,11 +53,14 @@ class MainWindow(Ui_MainWindow):
         ''' Init the super class '''
         super().__init__()
 
-    def setupUi(self, MainWindow, directory="./"):
+    def setupUi(self, MainWindow, directory=None):
         ''' Setup the UI for super class and Implement the
         logic here we want to do with User Interface
         '''
         super().setupUi(MainWindow)
+        self.managedPaths = ManagedPaths()
+        if directory == None:
+            directory = self.managedPaths.derivePathForOSAndInstallationOption()
         self.directory = directory
         self.configFile = None
         self.configFiles = []
@@ -108,14 +114,14 @@ class MainWindow(Ui_MainWindow):
                     "testrun": self.testRunComboBox_4.currentText(),
                     "globals": self.settingComboBox_4.currentText(),
                     }
-        with open("baangt.ini", "w" ) as configFile:
+        with open(self.managedPaths.getOrSetIni().joinpath("baangt.ini"), "w" ) as configFile:
             config.write(configFile)
 
     def readConfig(self):
         """ Read existing baangt.ini file """
         config = configparser.ConfigParser()
         try:
-            config.read("baangt.ini")
+            config.read(self.managedPaths.getOrSetIni().joinpath("baangt.ini"))
             self.directory = config["Default"]['path']
             self.testRunFile = config["Default"]['testrun']
             self.configFile  = config["Default"]['globals']
@@ -123,7 +129,7 @@ class MainWindow(Ui_MainWindow):
             self.readContentofGlobals()
         except Exception as e:
             print("Exception in Main readConfig", e)
-            self.directory = os.getcwd()
+            self.directory = self.managedPaths.derivePathForOSAndInstallationOption()#os.getcwd()
             self.setupBasePath(self.directory)
             pass
 
@@ -590,7 +596,7 @@ class MainWindow(Ui_MainWindow):
                 if self.directory:
                     fullpath = os.path.join(self.directory, self.configFile)
                 else:
-                    self.directory = os.getcwd()
+                    self.directory = os.getcwd()#.managedPaths.derivePathForOSAndInstallationOption()
                     fullpath = os.path.join(self.directory, self.configFile)
 
             with open(fullpath, 'w') as f:

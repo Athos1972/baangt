@@ -11,6 +11,7 @@ from baangt.ui.ImportKatalonRecorder import ImportKatalonRecorder
 import logging
 import json
 from pathlib import Path
+from baangt.base.PathManagement import ManagedPaths
 
 logger = logging.getLogger("pyC")
 
@@ -32,11 +33,12 @@ class UI:
         self.iconFileWindow = b"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"
         self.directory = None
         self.mainWindowPosition = (None, None)
+        self.managedPaths = ManagedPaths()
 
         self.readConfig()
 
         if not self.directory:
-            self.directory = os.getcwd()
+            self.directory = self.managedPaths.derivePathForOSAndInstallationOption()#.getcwd()
 
         self.getConfigFilesInDirectory()
 
@@ -341,7 +343,7 @@ class UI:
                              "testrun": UI.__nonEmptyString(self.testRunFile),
                              "globals": UI.__nonEmptyString(self.configFile),
                              "position": self.mainWindowPosition}
-        with open("baangt.ini", "w") as configFile:
+        with open(self.managedPaths.getOrSetIni().joinpath("baangt.ini"), "w") as configFile:
             config.write(configFile)
 
     @staticmethod
@@ -354,7 +356,7 @@ class UI:
     def readConfig(self):
         config = configparser.ConfigParser()
         try:
-            config.read("baangt.ini")
+            config.read(self.managedPaths.getOrSetIni().joinpath("baangt.ini"))
             self.directory = config["DEFAULT"]['path']
             self.testRunFile = config["DEFAULT"]['testrun']
             self.configFile = config["DEFAULT"]['globals']
