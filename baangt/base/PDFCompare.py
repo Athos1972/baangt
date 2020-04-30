@@ -16,7 +16,8 @@ class PDFCompareDetails:
     Status: str = field(default="")
     StatusText: str = field(default="")
     BLOB_OUT: str = field(default="")
-    ResultText: str =field(default="")
+    ResultText: str = field(default="")
+    Description: str = field(default="No description available from calling functionality")
     newUUID: str = field(default="")
 
 
@@ -64,7 +65,17 @@ class PDFCompare:
 
         return files
 
-    def __callService(self, file : str, details: PDFCompareDetails):
+    def uploadNewReferenceFile(self, details: PDFCompareDetails):
+        """
+        Will upload the file specified in details.Filename and receive the new UUID
+        :param details: filled in dataclass PDFCompareDetails
+        :return: same structure. If everything went right, with a newUUID of the uploaded file.
+        """
+
+        details = self.__callService(file=None, details=details, typeOfService="createOriginal")
+        return details
+
+    def __callService(self, file : str, details: PDFCompareDetails, typeOfService="compare"):
         if not file:
             lFile = details.fileName
         else:
@@ -79,7 +90,13 @@ class PDFCompare:
         else:
             details.BLOB = blobToCompare
 
-        details = self.__callComparisonService(details=details)
+        if typeOfService == 'compare':
+            details = self.__callComparisonService(details=details)
+        elif typeOfService == 'createOriginal':
+            details = self.__callUploadService(details=details, endpoint="/upload_reference")
+        else:
+            details.Status = "NOK"
+            details.StatusText = f"Unknown typeOfService specified: {typeOfService}"
 
         return details
 
@@ -99,11 +116,18 @@ class PDFCompare:
         return details
 
     def __callUploadService(self, details: PDFCompareDetails, endpoint="/upload_original"):
-        files = {
-            "original": (details.fileName, details.BLOB),
-            "reference_uuid": (None, details.referenceID),
-            "description": (None, "no idea for now")
-        }
+        if endpoint == '/upload_original':
+            files = {
+                "original": (details.fileName, details.BLOB),
+                "reference_uuid": (None, details.referenceID),
+                "description": (None, details.Description)
+            }
+        elif endpoint == '/upload_reference':
+            files = {
+                "reference": (details.fileName, details.BLOB),
+                "description": (None, details.Description)
+            }
+
         lResponse = self.__executeRequest(params=None, methodGetOrPost="post", endpoint=endpoint, files=files)
 
         if not isinstance(lResponse, requests.Response):

@@ -26,7 +26,7 @@ class HandleDatabase:
             GC.TESTCASESTATUS: "",
             GC.TIMING_DURATION: "",
             GC.SCREENSHOTS: "",
-            GC.TIMELOG: ""
+            GC.TIMELOG: "",
         }
         if globalSettings:
             for setting, value in globalSettings.items():
