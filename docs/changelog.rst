@@ -9,6 +9,15 @@ A huge step closer to release 1. Some minor functionalities still need fixing. M
 
 New features
 ++++++++++++
+
+* Brandnew UI! The pySimpleGui was great during the beginning of the project. As we mature, we switched to QT5, which
+  looks really great.
+
+    * No need to remember technical field names! Yeah!
+    * All settings to customize a test run execution are now nicely arranged in the details screen
+    * Katalon-Importer added a few usability changes (e.g. when you save, you'll see this TestRun selected as default).
+    * Browsers, Selenium Grid, etc. can be selected via Dropdown-Menu
+    * Common BrowserAttributes (e.g. Headless) can be selected via Droddown-Menu
 * SimpleFormat: New command ``iban`` will create a random IBAN. Powered by Schwifty library.
 * SimpleFormat: New command ``pdfcompare`` compares a downloaded PDF-File with a reference PDF-File and
   reports differences. Works also well with parallel sessions.
@@ -21,6 +30,15 @@ New features
 * All: CL.* in Globals-File to overwrite standard classes (e.g. BrowserDriver) to custom classes.
 * Appium integration for Android and iOS App tests using Appium Webdriver (see in /examples/App* and globalsApp.json)
 * Subclassing: New commands to identify stale objects on page (HTML-Reload and SPA-Support)
+* Additional way to export data to Excel-Result (can be used for results of scraping) GC.EXPORT_ADDITIONAL_DATA in
+  TestRun.additionalExportTabs. For each Tab you want created set up one dict with {<tabname>:<ExportDictContent>}.
+  Headers = Fieldnames.
+* New flag to export all fields of TestDataDict to result file: ``TC.ExportAllFields`` = ``True``
+* Web-Testcases: Screenshots automatically embedded to result file, not only as a link. Makes it easier to share results
+  on a communication channel.
+* Windows Installer: baangt now works without admin rights on Windows10
+* Support of Proxies and rotating Proxies (``TC.UseRotatingProxies`` and ``TC.ReReadProxies``)
+* Support of restarting browser-sessions after each TestCase execution (``TC.RestartBrowser`` = ``True``)
 * Subclassing: Additional way to export data to Excel-Result (can be used for results of scraping) GC.EXPORT_ADDITIONAL_DATA in
   TestRun.additionalExportTabs create one dict with <tabname>:<ExportDictContent>. Headers = Fieldnames.
 
@@ -34,6 +52,7 @@ Changes
 * Improved reaction to common errors on Webpages (Stale element, not accessable, etc.)
 * Improved handling of closed windows and tabs (when e.g. PDF-Download was activated)
 * Support to supply webelement in driver.javaScript() as *args
+* Added many unit tests, but still not full coverage
 
 2020.03
 ^^^^^^^
