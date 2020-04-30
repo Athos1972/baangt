@@ -5,6 +5,7 @@ from pathlib import Path
 from baangt.base import GlobalConstants as GC
 from baangt.TestSteps import Exceptions as baangtExceptions
 
+
 class Singleton(type):
     _instances = {}
 
@@ -12,8 +13,8 @@ class Singleton(type):
         if cls not in cls._instances:
             cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
         return cls._instances[cls]
-    
-    
+
+
 class ManagedPaths(metaclass=Singleton):
     """
     The class to manage paths for different task.
@@ -26,9 +27,11 @@ class ManagedPaths(metaclass=Singleton):
     - getOrSetImportPath: Will return path were input files are located. You can also set path.
     - getOrSetExportPath: Will return path were files will be save. You can also set path.
     - getOrSetRootPath: Will return root directory path. You can also set path.
+    - getOrSetIni: Will return path of directory where ini files are managed.
     """
+
     def __init__(self):
-        self.LogFilePath = None
+        self.LogFilePath = ""
         self.LogFilePath = self.getLogfilePath()
         self.ScreenshotPath = ""
         self.DownloadPath = ""
@@ -37,6 +40,7 @@ class ManagedPaths(metaclass=Singleton):
         self.RootPath = ""
         self.ExportPath = ""
         self.ImportPath = ""
+        self.IniPath = ""
 
     def getLogfilePath(self):
         """
@@ -46,6 +50,7 @@ class ManagedPaths(metaclass=Singleton):
 
         :return: Logfile path
         """
+
         if self.LogFilePath:
             return self.LogFilePath
 
@@ -193,18 +198,18 @@ class ManagedPaths(metaclass=Singleton):
         self.__makeAndCheckDir(self.ImportPath)
         return self.ImportPath
 
-    def __combineBasePathWithObjectPath(self, objectPath : str):
+    def __combineBasePathWithObjectPath(self, objectPath: str):
         """
 
         :param objectPath:
         :return:
         """
-        newPath = self.__derivePathForOSAndInstallationOption()
+        newPath = Path(self.derivePathForOSAndInstallationOption())
         newPath = newPath.joinpath(objectPath)
 
         return newPath
 
-    def __derivePathForOSAndInstallationOption(self):
+    def derivePathForOSAndInstallationOption(self):
         """
         Will provide different **base paths** depending on each OS and install-version (e.g. Windows Repository, Windows
         ZIP-file with Executable, Windows Installer vs. MacOS-Installer vs. MacOS Repository.
@@ -217,7 +222,7 @@ class ManagedPaths(metaclass=Singleton):
             path = os.path.join(os.path.expanduser("~"), "baangt")
             if os.path.exists(path):
                 return Path(path)
-        return Path(os.getcwd())
+        return os.getcwd()
 
     def __makeAndCheckDir(self, newPath):
         """
@@ -231,3 +236,21 @@ class ManagedPaths(metaclass=Singleton):
             baangtExceptions.baangtTestStepException(f"Tried to create folder {newPath} and failed.")
 
         return None
+
+    def getOrSetIni(self, path=None):
+        """
+                Will return path where program will search for ini files.
+
+                :param path: Path to be set for location where ini files are located.
+                :return: Ini path
+                """
+        if self.IniPath != "":
+            return self.IniPath
+
+        if path:
+            self.IniPath = path
+        else:
+            self.IniPath = self.__combineBasePathWithObjectPath('ini')
+
+        self.__makeAndCheckDir(self.IniPath)
+        return self.IniPath
