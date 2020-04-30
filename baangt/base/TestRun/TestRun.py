@@ -18,6 +18,7 @@ from baangt.base.TestRunUtils import TestRunUtils
 import time
 from baangt.base.PathManagement import ManagedPaths
 from dataclasses import dataclass
+from uuid import uuid4
 
 logger = logging.getLogger("pyC")
 
@@ -36,7 +37,7 @@ class TestRun:
     """
 
     def __init__(self, testRunName, globalSettingsFileNameAndPath=None,
-                 testRunDict=None):  # -- API support: testRunDict --
+                 testRunDict=None, uuid=uuid4()):  # -- API support: testRunDict --
         """
         @param testRunName: The name of the TestRun to be executed.
         @param globalSettingsFileNameAndPath: from where to read the <globals>.json
@@ -57,6 +58,7 @@ class TestRun:
         # results
         self.results = None
         self.testRunDict = testRunDict
+        self.uuid = uuid
         # -- END of API support
 
         # New way to export additional Tabs to Excel
@@ -216,7 +218,7 @@ class TestRun:
                     logger.info(f"TC is already in status Error - not processing steps {counterName}: {key}, {value}"
                                 f"and everything behind this step")
                     return
-            logger.info(f"Starting {counterName}: {key}, {value} ")
+            logger.info(f"Starting {counterName}: {key}")
             kwargs[counterName] = key
 
             # Get the class reference:
@@ -225,10 +227,7 @@ class TestRun:
             else:
                 lFullQualified = value
 
-            # if "." in lFullQualified:
             l_class = TestRun.__dynamicImportClasses(lFullQualified)
-            # else:
-            #    l_class = globals()[lFullQualified]
 
             try:
                 l_class(**kwargs)  # Executes the class´es  __init__ method
@@ -242,21 +241,22 @@ class TestRun:
     def _initTestRun(self):
         self.loadJSONGlobals()
 
+        self.__setPathsIfNotPredefined()
+
+    def __setPathsIfNotPredefined(self):
         if not self.globalSettings.get(GC.PATH_SCREENSHOTS, None):
-            self.globalSettings[GC.PATH_SCREENSHOTS] = str(Path(self.managedPaths.getOrSetScreenshotsPath()).expanduser())
+            self.globalSettings[GC.PATH_SCREENSHOTS] = str(
+                Path(self.managedPaths.getOrSetScreenshotsPath()).expanduser())
         else:
             self.managedPaths.getOrSetScreenshotsPath(path=self.globalSettings.get(GC.PATH_SCREENSHOTS))
-
         if not self.globalSettings.get(GC.PATH_EXPORT, None):
             self.globalSettings[GC.PATH_EXPORT] = str(Path(self.managedPaths.getOrSetExportPath()).expanduser())
         else:
             self.managedPaths.getOrSetExportPath(path=self.globalSettings.get(GC.PATH_EXPORT))
-
         if not self.globalSettings.get(GC.PATH_IMPORT, None):
-                self.globalSettings[GC.PATH_IMPORT] = str(Path(self.managedPaths.getOrSetImportPath()).expanduser())
+            self.globalSettings[GC.PATH_IMPORT] = str(Path(self.managedPaths.getOrSetImportPath()).expanduser())
         else:
             self.managedPaths.getOrSetImportPath(path=self.globalSettings.get(GC.PATH_IMPORT))
-
         if not self.globalSettings.get(GC.PATH_ROOT, None):
             self.globalSettings[GC.PATH_ROOT] = str(Path(self.managedPaths.getOrSetRootPath()).parent.expanduser())
         else:
@@ -270,6 +270,16 @@ class TestRun:
         for key, value in self.globalSettings.items():
             if "CL." in key:
                 self.classesForObjects.__setattr__(key.strip("CL."), value)
+
+            # Change boolean strings into boolean values.
+            if isinstance(value, str):
+                if value.lower() in ("false", "true", "no"):
+                    self.globalSettings[key] = utils.anyting2Boolean(value)
+
+            # This happens in the new UI, if a value was added manually, but is not part of the globalSetting.json
+            if isinstance(value, dict):
+                self.globalSettings[key] = value["default"]
+
 
     def _loadJSONTestRunDefinitions(self):
         if not self.testRunFileName and not self.testRunDict:  # -- API support: testRunDict --

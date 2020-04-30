@@ -1,5 +1,6 @@
 {
     "exportFilesBasePath": "",
+    "TC.Stage": "Test",
     "TC.Lines": "",
     "TC.dontCloseBrowser": "True",
     "TC.BrowserAttributes": {"HEADLESS": "True"},

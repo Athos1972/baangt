@@ -21,6 +21,7 @@ import re
 import csv
 from dateutil.parser import parse
 import os
+from uuid import uuid4
 
 logger = logging.getLogger("pyC")
 
@@ -30,11 +31,12 @@ class ExportResults:
         self.kwargs = kwargs
         self.testList = []
         self.testRunInstance = kwargs.get(GC.KWARGS_TESTRUNINSTANCE)
-        self.networkInfo = kwargs.get('networkInfo')
         self.testCasesEndDateTimes_1D = kwargs.get('testCasesEndDateTimes_1D')
         self.testCasesEndDateTimes_2D = kwargs.get('testCasesEndDateTimes_2D')
+        self.networkInfo = self._get_network_info(kwargs.get('networkInfo'))
         self.testRunName = self.testRunInstance.testRunName
         self.dataRecords = self.testRunInstance.dataRecords
+        self.stage = self.testRunInstance.globalSettings.get('TC.Stage')
 
         try:
             self.exportFormat = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.EXPORT_FORMAT)[GC.EXPORT_FORMAT]
@@ -43,14 +45,20 @@ class ExportResults:
         except KeyError:
             self.exportFormat = GC.EXP_XLSX
 
+
         self.fileName = self.__getOutputFileName()
         logger.info("Export-Sheet for results: " + self.fileName)
+
+        # export results to DB
+        self.testcase_uuids = []
+        self.exportToDataBase()
 
         if self.exportFormat == GC.EXP_XLSX:
             self.fieldListExport = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.EXPORT_FORMAT)["Fieldlist"]
             self.workbook = xlsxwriter.Workbook(self.fileName)
             self.summarySheet = self.workbook.add_worksheet("Summary")
             self.worksheet = self.workbook.add_worksheet("Output")
+            self.jsonSheet = self.workbook.add_worksheet(f"{self.stage}_JSON")
             self.timingSheet = self.workbook.add_worksheet("Timing")
             self.cellFormatGreen = self.workbook.add_format()
             self.cellFormatGreen.set_bg_color('green')
@@ -62,6 +70,7 @@ class ExportResults:
             self.__setHeaderDetailSheetExcel()
             self.makeSummaryExcel()
             self.exportResultExcel()
+            self.exportJsonExcel()
             self.exportAdditionalData()
             self.exportTiming = ExportTiming(self.dataRecords,
                                              self.timingSheet)
@@ -75,7 +84,7 @@ class ExportResults:
             self.closeExcel()
         elif self.exportFormat == GC.EXP_CSV:
             self.export2CSV()
-        self.exportToDataBase()
+        #self.exportToDataBase()
 
     def exportAdditionalData(self):
         # Runs only, when KWARGS-Parameter is set.
@@ -127,7 +136,8 @@ class ExportResults:
         #
         # writes results to DB
         #
-        engine = create_engine(f'sqlite:///{DATABASE_URL}')
+        logger.info(f'Export results to database at: {DATABASE_URL}')
+        engine = create_engine(DATABASE_URL)
 
         # create a Session
         Session = sessionmaker(bind=engine)
@@ -154,6 +164,7 @@ class ExportResults:
 
         # create testrun object
         tr_log = TestrunLog(
+            id=self.testRunInstance.uuid.bytes,
             testrunName=self.testRunName,
             logfileName=logger.handlers[1].baseFilename,
             startTime=datetime.strptime(start, "%H:%M:%S"),
@@ -182,8 +193,15 @@ class ExportResults:
 
         # create testcases
         for tc in self.dataRecords.values():
+            # get uuid
+            uuid = uuid4()
             # create TestCaseLog instances
-            tc_log = TestCaseLog(testcase_sequence=tcs_log)
+            tc_log = TestCaseLog(
+                id=uuid.bytes,
+                testcase_sequence=tcs_log
+            )
+            # store uuid
+            self.testcase_uuids.append(uuid)
             session.add(tc_log)
             # add TestCase fields
             for key, value in tc.items():
@@ -194,34 +212,102 @@ class ExportResults:
 
         # network info
         if self.networkInfo:
-            for info in self.networkInfo:
-                for entry in info['log']['entries']:
-                    # get TestCase number
-                    test_case_num = self.exportNetWork._get_test_case_num(entry['startedDateTime'], entry['pageref'])
-                    # check if number is int
-                    if type(test_case_num) == type(1):
-                        test_case_num -= 1
-
-                        nw_info = TestCaseNetworkInfo(
-                            testcase=tcs_log.testcases[test_case_num],
-                            browserName=entry.get('pageref'),
-                            status=entry['response'].get('status'),
-                            method=entry['request'].get('method'),
-                            url=entry['request'].get('url'),
-                            contentType=entry['response']['content'].get('mimeType'),
-                            contentSize=entry['response']['content'].get('size'),
-                            headers=str(entry['response']['headers']),
-                            params=str(entry['request']['queryString']),
-                            response=entry['response']['content'].get('text'),
-                            startDateTime=datetime.strptime(entry['startedDateTime'][:19], '%Y-%m-%dT%H:%M:%S'),
-                            duration=entry.get('time'),
-                        )
-                        session.add(nw_info)
+            for entry in self.networkInfo:
+                if type(entry.get('testcase')) == type(1):
+                    nw_info = TestCaseNetworkInfo(
+                        testcase=tcs_log.testcases[entry.get('testcase')-1],
+                        browserName=entry.get('browserName'),
+                        status=entry.get('status'),
+                        method=entry.get('method'),
+                        url=entry.get('url'),
+                        contentType=entry.get('contentType'),
+                        contentSize=entry.get('contentSize'),
+                        headers=str(entry.get('headers')),
+                        params=str(entry.get('params')),
+                        response=entry.get('response'),
+                        startDateTime=datetime.strptime(entry.get('startDateTime')[:19], '%Y-%m-%dT%H:%M:%S'),
+                        duration=entry.get('duration'),
+                    )
+                    session.add(nw_info)
 
         session.commit()
 
+    def _get_test_case_num(self, start_date_time, browser_name):
+        d_t = parse(start_date_time)
+        d_t = d_t.replace(tzinfo=None)
+        if self.testCasesEndDateTimes_1D:
+            for index, dt_end in enumerate(self.testCasesEndDateTimes_1D):
+                if d_t < dt_end:
+                    return index + 1
+        elif self.testCasesEndDateTimes_2D:
+            browser_num = re.findall(r"\d+\.?\d*", str(browser_name))[-1] \
+                if re.findall(r"\d+\.?\d*", str(browser_name)) else 0
+            dt_list_index = int(browser_num) if int(browser_num) > 0 else 0
+            for i, tcAndDtEnd in enumerate(self.testCasesEndDateTimes_2D[dt_list_index]):
+                if d_t < tcAndDtEnd[1]:
+                    return tcAndDtEnd[0] + 1
+        return 'unknown'
+
+    def _get_network_info(self, networkInfoDict):
+        #
+        # extracts network info data from the given dict 
+        #
+        if networkInfoDict:
+            extractedNetworkInfo = []
+            for info in networkInfoDict:
+                #extractedEntry = {}
+                for entry in info['log']['entries']:
+                    # extract the current entry
+                    extractedNetworkInfo.append({
+                        'testcase': self._get_test_case_num(entry['startedDateTime'], entry['pageref']),
+                        'browserName': entry.get('pageref'),
+                        'status': entry['response'].get('status'),
+                        'method': entry['request'].get('method'),
+                        'url': entry['request'].get('url'),
+                        'contentType': entry['response']['content'].get('mimeType'),
+                        'contentSize': entry['response']['content'].get('size'),
+                        'headers': entry['response']['headers'],
+                        'params': entry['request']['queryString'],
+                        'response': entry['response']['content'].get('text'),
+                        'startDateTime': entry['startedDateTime'],
+                        'duration': entry.get('time'),
+                    })
+            return extractedNetworkInfo
+
+        return None
+
+
     def exportResultExcel(self, **kwargs):
         self._exportData()
+
+    def exportJsonExcel(self):
+        # headers
+        headers = [
+            'Stage',
+            'UUID',
+            'Attribute',
+            'Value',
+        ]
+        # header style
+        header_style = self.workbook.add_format()
+        header_style.set_bold()
+        # write header
+        for index in range(len(headers)):
+            self.jsonSheet.write(0, index, headers[index], header_style)
+        # write data
+        row = 0
+        for index, testcase in self.dataRecords.items():
+            # add TestCase fields
+            for key, value in testcase.items():
+                row += 1
+                self.jsonSheet.write(row, 0, self.stage)
+                self.jsonSheet.write(row, 1, str(self.testcase_uuids[index]))
+                self.jsonSheet.write(row, 2, key)
+                self.jsonSheet.write(row, 3, str(value))
+        # Autowidth
+        for n in range(len(headers)):
+            ExcelSheetHelperFunctions.set_column_autowidth(self.jsonSheet, n)
+
 
     def makeSummaryExcel(self):
 
@@ -251,10 +337,12 @@ class ExportResults:
         self.__writeSummaryCell("Logfile", logger.handlers[1].baseFilename, row=7)
         # get logfilename for database my
         self.testList.append(logger.handlers[1].baseFilename)
+        # database id
+        self.__writeSummaryCell("Testrun UUID", str(self.testRunInstance.uuid), row=8)
         # Timing
         timing: Timing = self.testRunInstance.timing
         start, end, duration = timing.returnTimeSegment(GC.TIMING_TESTRUN)
-        self.__writeSummaryCell("Starttime", start, row=9)
+        self.__writeSummaryCell("Starttime", start, row=10)
         # get start end during time my
         self.testList.append(start)
         self.testList.append(end)
@@ -263,14 +351,14 @@ class ExportResults:
         self.__writeSummaryCell("Duration", duration, format=self.cellFormatBold)
         self.__writeSummaryCell("Avg. Dur", "")
         # Globals:
-        self.__writeSummaryCell("Global settings for this testrun", "", format=self.cellFormatBold, row=14)
+        self.__writeSummaryCell("Global settings for this testrun", "", format=self.cellFormatBold, row=15)
         for key, value in self.testRunInstance.globalSettings.items():
             self.__writeSummaryCell(key, str(value))
             # get global data my
             self.testList.append(str(value))
         # Testcase and Testsequence setting
-        self.__writeSummaryCell("TestSequence settings follow:", "", row=16 + len(self.testRunInstance.globalSettings),
-                                format=self.cellFormatBold)
+        self.summaryRow += 1
+        self.__writeSummaryCell("TestSequence settings follow:", "", format=self.cellFormatBold)
         lSequence = self.testRunInstance.testRunUtils.getSequenceByNumber(testRunName=self.testRunName, sequence="1")
         if lSequence:
             for key, value in lSequence[1].items():
@@ -292,20 +380,7 @@ class ExportResults:
             self.summarySheet.write(self.summaryRow, 1, lineText, format)
 
     def __getOutputFileName(self):
-        lManagedPaths = ManagedPaths()
-        l_file = lManagedPaths.getOrSetExportPath()
-        # if self.testRunInstance.globalSettings[GC.PATH_ROOT]:
-        #     basePath = Path(self.testRunInstance.globalSettings[GC.PATH_ROOT])
-        # elif "/" not in self.testRunInstance.globalSettings[GC.DATABASE_EXPORTFILENAMEANDPATH][0:1]:
-        #     basePath = Path(sys.modules['__main__'].__file__).parent
-        # else:
-        #     basePath = ""
-        # l_file: Path = Path(basePath).joinpath(self.testRunInstance.globalSettings[GC.DATABASE_EXPORTFILENAMEANDPATH])
-        # if "~" in str(l_file.absolute()):
-        #   l_file = l_file.expanduser()
-        # if not Path(l_file).is_dir():
-        #     logger.info(f"Create directory {l_file}")
-        #    Path(l_file).mkdir(parents=True, exist_ok=True)
+        l_file = Path(self.testRunInstance.managedPaths.getOrSetExportPath())
 
         if self.exportFormat == GC.EXP_XLSX:
             lExtension = '.xlsx'
@@ -320,12 +395,16 @@ class ExportResults:
         return str(l_file)
 
     def __setHeaderDetailSheetExcel(self):
-        i = 0
-        self.__extendFieldList()  # Add fields with name "RESULT_*" to output fields.
+        # the 1st column is DB UUID
+        self.worksheet.write(0, 0, 'UUID')
+        # Add fields with name "RESULT_*" to output fields.
+        i = 1
+        self.__extendFieldList()
         for column in self.fieldListExport:
             self.worksheet.write(0, i, column)
             i += 1
-        self.worksheet.write(0, len(self.fieldListExport), "JSON")
+        # add JSON field
+        self.worksheet.write(0, len(self.fieldListExport)+1, "JSON")
 
     def __extendFieldList(self):
         """
@@ -360,13 +439,16 @@ class ExportResults:
 
     def _exportData(self):
         for key, value in self.dataRecords.items():
+            # write DB UUID
+            self.worksheet.write(key + 1, 0, str(self.testcase_uuids[key]))
+            # write RESULT fields
             for (n, column) in enumerate(self.fieldListExport):
-                self.__writeCell(key + 1, n, value, column)
+                self.__writeCell(key + 1, n + 1, value, column)
             # Also write everything as JSON-String into the last column
-            self.worksheet.write(key + 1, len(self.fieldListExport), json.dumps(value))
+            self.worksheet.write(key + 1, len(self.fieldListExport) + 1, json.dumps(value))
 
         # Create autofilter
-        self.worksheet.autofilter(0, 0, len(self.dataRecords.items()), len(self.fieldListExport) - 1)
+        self.worksheet.autofilter(0, 0, len(self.dataRecords.items()), len(self.fieldListExport))
 
         # Make cells wide enough
         for n in range(0, len(self.fieldListExport)):
@@ -374,6 +456,10 @@ class ExportResults:
 
     def __writeCell(self, line, cellNumber, testRecordDict, fieldName, strip=False):
         if fieldName in testRecordDict.keys() and testRecordDict[fieldName]:
+            # Convert boolean for Output
+            if isinstance(testRecordDict[fieldName], bool):
+                testRecordDict[fieldName] = "True" if testRecordDict[fieldName] else "False"
+
             # Remove leading New-Line:
             if '\n' in testRecordDict[fieldName][0:5] or strip:
                 testRecordDict[fieldName] = testRecordDict[fieldName].strip()
@@ -390,6 +476,7 @@ class ExportResults:
                     elif testRecordDict[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR:
                         self.worksheet.write(line, cellNumber, testRecordDict[fieldName], self.cellFormatRed)
                 elif fieldName == GC.SCREENSHOTS:
+                    # Place the screenshot images "on" the appropriate cell
                     if type(testRecordDict[fieldName]) == list:
                         self.worksheet.insert_image(line, cellNumber, testRecordDict[fieldName][-1], {'x_scale': 0.05,
                                                                                                       'y_scale': 0.05})
@@ -488,8 +575,8 @@ class ExportNetWork:
                  testCasesEndDateTimes_2D: list, workbook: xlsxwriter.Workbook, sheet: xlsxwriter.worksheet):
 
         self.networkInfo = networkInfo
-        self.testCasesEndDateTimes_1D = testCasesEndDateTimes_1D
-        self.testCasesEndDateTimes_2D = testCasesEndDateTimes_2D
+        #self.testCasesEndDateTimes_1D = testCasesEndDateTimes_1D
+        #self.testCasesEndDateTimes_2D = testCasesEndDateTimes_2D
         self.workbook = workbook
         self.sheet = sheet
         header_style = self.get_header_style()
@@ -550,30 +637,26 @@ class ExportNetWork:
         if not self.networkInfo:
             return
 
-        partition_index = 0
+        #partition_index = 0
 
-        for info in self.networkInfo:
-            for index, entry in enumerate(info['log']['entries']):
-                browser_name = entry['pageref']
-                status = entry['response']['status']
-                method = entry['request']['method']
-                url = entry['request']['url']
-                content_type = entry['response']['content']['mimeType']
-                content_size = entry['response']['content']['size']
-                headers = entry['response']['headers']
-                params = entry['request']['queryString']
-                response = entry['response']['content']['text'] if 'text' in entry['response']['content'] else ''
-                start_date_time = entry['startedDateTime']
-                duration = entry['time']
-                test_case_num = self._get_test_case_num(start_date_time, browser_name)
+        for index in range(len(self.networkInfo)):
+            data_list = [
+                self.networkInfo[index]['browserName'],
+                self.networkInfo[index]['testcase'],
+                self.networkInfo[index]['status'],
+                self.networkInfo[index]['method'],
+                self.networkInfo[index]['url'],
+                self.networkInfo[index]['contentType'],
+                self.networkInfo[index]['contentSize'],
+                self.networkInfo[index]['headers'],
+                self.networkInfo[index]['params'],
+                self.networkInfo[index]['response'],
+                self.networkInfo[index]['startDateTime'],
+                self.networkInfo[index]['duration'],
+            ]
 
-                data_list = [browser_name, test_case_num, status, method, url, content_type, content_size,
-                             headers, params, response, start_date_time, duration]
-
-                [self.sheet.write(index + partition_index + 1, i, str(data_list[i]) or 'null')
-                 for i in range(len(data_list))]
-
-            partition_index += len(info['log']['entries'])
+            for i in range(len(data_list)):
+                self.sheet.write(index + 1, i, str(data_list[i]) or 'null')
 
 
 class ExportTiming:

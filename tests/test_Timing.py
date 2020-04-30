@@ -48,7 +48,7 @@ def test_timing_reset_time():
     for name in names:
         timer.takeTime(name)
 
-    timer.resetTime()
+    timer.resetTime('test')
     assert timer.returnTime() == ''
 
 def test_timing___format_time():

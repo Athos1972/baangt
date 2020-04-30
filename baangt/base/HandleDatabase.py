@@ -17,6 +17,7 @@ class HandleDatabase:
         # FIXME: This is still not clean. GlobalSettings shouldn't be predefined in CustomConstants-Class
         self.globals = {
             CGC.CUST_TOASTS: "",
+            GC.EXECUTION_STAGE: "",
             GC.TESTCASEERRORLOG: "",
             CGC.VIGOGFNUMMER: "",
             CGC.SAPPOLNR: "",
@@ -25,7 +26,7 @@ class HandleDatabase:
             GC.TESTCASESTATUS: "",
             GC.TIMING_DURATION: "",
             GC.SCREENSHOTS: "",
-            GC.TIMELOG: ""
+            GC.TIMELOG: "",
         }
         if globalSettings:
             for setting, value in globalSettings.items():
@@ -73,6 +74,12 @@ class HandleDatabase:
 
     @staticmethod
     def __sanitizeNumbers(numberIn):
+        if isinstance(numberIn, dict):
+            numberIn = numberIn['default']
+            try:
+                  return int(numberIn.strip())
+            except:
+                  return 0
         numberIn = numberIn.strip()
         return int(numberIn)
 
@@ -111,7 +118,6 @@ class HandleDatabase:
                     if temp_dic[keys[col_index]][-2:]==".0":
                         temp_dic[keys[col_index]] = temp_dic[keys[col_index]][:-2]
             self.dataDict.append(temp_dic)
-
 
     def readNextRecord(self):
         """

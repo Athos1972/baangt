@@ -68,7 +68,7 @@ class ManagedPaths(metaclass=Singleton):
             return self.ScreenshotPath
 
         if path:
-            self.ScreenshotPath = path
+            self.ScreenshotPath = Path(path)
         else:
             self.ScreenshotPath = self.__combineBasePathWithObjectPath(GC.PATH_SCREENSHOTS)
 

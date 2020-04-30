@@ -19,7 +19,8 @@ class TestCaseMaster:
         self.testSteps = self.testCaseSettings[2][GC.STRUCTURE_TESTSTEP]
         self.testCaseType = self.testCaseSettings[1][GC.KWARGS_TESTCASETYPE]
         self.kwargs = kwargs
-        self.timing : Timing = self.kwargs.get(GC.KWARGS_TIMING)
+        # self.timing : Timing = self.kwargs.get(GC.KWARGS_TIMING)
+        self.timing = Timing()
         self.sequenceNumber = self.kwargs.get(GC.KWARGS_SEQUENCENUMBER)
         self.timingName = self.timing.takeTime(self.__class__.__name__, forceNew=True)
         if self.testCaseType == GC.KWARGS_BROWSER:
@@ -38,7 +39,7 @@ class TestCaseMaster:
         self.tearDown()
 
     def __getBrowserForTestCase(self):
-        logger.info(f"Settings for this TestCase: {self.testCaseSettings}")
+        logger.info(f"Settings for this TestCase: {str(self.testCaseSettings)[0:100]}")
         self.browserType = self.testCaseSettings[1][GC.KWARGS_BROWSER].upper()
         self.browserSettings = self.testCaseSettings[1][GC.BROWSER_ATTRIBUTES]
         self.mobileType = self.testCaseSettings[1].get(GC.KWARGS_MOBILE)
@@ -64,9 +65,16 @@ class TestCaseMaster:
         self.kwargs[GC.KWARGS_BROWSER] = self.browser
 
     def execute(self):
+        # Save timing Class from Testrun for later:
+        lTestRunTiming = self.kwargs[GC.KWARGS_TIMING]
+        # Replace Timing class with current, local timing class:
+        self.kwargs[GC.KWARGS_TIMING] = self.timing
+
+        # Get all the TestSteps for the global loop, that are kept within this TestCase:
         lTestStepClasses = {}
         for testStepSequenceNumer, testStep in enumerate(self.testSteps.keys(),start=1):
             lTestStepClasses[testStepSequenceNumer] = self.testSteps[testStep][0]["TestStepClass"]
+
         try:
             self.testRunInstance.executeDictSequenceOfClasses(lTestStepClasses, GC.STRUCTURE_TESTSTEP, **self.kwargs)
         except baangtTestStepException as e:
@@ -75,14 +83,15 @@ class TestCaseMaster:
             self.kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
         finally:
             self._finalizeTestCase()
+            # Switch back to global Timing class:
+            self.kwargs[GC.KWARGS_TIMING] = lTestRunTiming
 
     def _finalizeTestCase(self):
         tcData = self.kwargs[GC.KWARGS_DATA]
         tcData[GC.TIMING_DURATION] = self.timing.takeTime(self.timingName)   # Write the End-Record for this Testcase
 
         tcData[GC.TIMELOG] = self.timing.returnTime()
-
-        self.timing.resetTime()
+        self.timing.resetTime(self.timingName)
 
     def _checkAndSetTestcaseStatusIfFailExpected(self):
         """

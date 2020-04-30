@@ -1,18 +1,14 @@
 # -*- mode: python ; coding: utf-8 -*-
-import sys
-sys.setrecursionlimit(5000)
 
 block_cipher = None
 
-
-a = Analysis(['baangtIA.py'],
-             pathex=['/Users/bernhardbuhl/git/baangt'],
+a = Analysis(['..\\baangtIA.py'],
+             pathex=['windows'],
              binaries=[],
-             datas=[('browserDrivers/geckodriver', 'geckodriver'),
-                       ('browserDrivers/chromedriver', 'chromedriver'),
-                       ('browserDrivers/geckodriver.exe', 'geckodriver.exe'),
-                       ('browserDrivers/chromedriver.exe', 'chromedriver.exe')],
-             hiddenimports=['selenium'],
+             datas=[('../baangt/ressources/baangtLogo2020Small.png', 'ressources'),
+                    ('../examples/', 'examples'),
+                    ('../browsermob-proxy','browsermob-proxy')],
+             hiddenimports=["cffi", "pyQT5"],
              hookspath=[],
              runtime_hooks=[],
              excludes=[],
@@ -24,10 +20,12 @@ pyz = PYZ(a.pure, a.zipped_data,
              cipher=block_cipher)
 exe = EXE(pyz,
           a.scripts,
+          a.binaries,
           [],
           exclude_binaries=True,
-          name='baangtIA',
-          debug=False,
+          windowed=True,
+          name='baangt',
+          debug=all,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
@@ -39,4 +37,4 @@ coll = COLLECT(exe,
                strip=False,
                upx=True,
                upx_exclude=[],
-               name='baangtIA')
+               name='baangt')
