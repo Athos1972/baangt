@@ -75,10 +75,6 @@ def run():
         print("Latest versions of drivers for Firefox and Chrome were downloaded")
     else:
         app = QtWidgets.QApplication(sys.argv)
-        # window = QtWidgets.QMainWindow()
-        # ui = MainWindow()
-        # ui.setupUi(window)
-        # window.show()
         controller = MainController()
         controller.show_main()
         sys.exit(app.exec_())
