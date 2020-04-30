@@ -129,7 +129,7 @@ class MainWindow(Ui_MainWindow):
             self.readContentofGlobals()
         except Exception as e:
             print("Exception in Main readConfig", e)
-            self.directory = self.managedPaths.derivePathForOSAndInstallationOption()#os.getcwd()
+            self.directory = str(self.managedPaths.derivePathForOSAndInstallationOption())
             self.setupBasePath(self.directory)
             pass
 
