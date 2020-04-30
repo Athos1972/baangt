@@ -16,7 +16,7 @@ AppUpdatesURL=https://baangt.org
 DefaultDirName={pf}\baangt
 DefaultGroupName=baangt
 AllowNoIcons=yes
-LicenseFile=C:\Users\buhl\git\baangt\LICENSE
+LicenseFile=C:\Users\Akash\PycharmProjects\baangt\LICENSE
 OutputBaseFilename=baangtsetup
 Compression=lzma
 SolidCompression=yes
@@ -36,3 +36,7 @@ Filename: "{app}\baangt.exe"; Description: "{cm:LaunchProgram,baangt}"; Flags: n
 
 [Files]
 Source: "..\dist\baangt\*"; DestDir: "{app}"; Flags: ignoreversion createallsubdirs recursesubdirs
+Source: "..\examples\*.*"; DestDir: "{%USERPROFILE}\baangt\examples"; Flags: ignoreversion createallsubdirs recursesubdirs
+
+[Dirs]
+Name: "{%USERPROFILE}\baangt"
