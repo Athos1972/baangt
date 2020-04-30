@@ -6,6 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 import os
 import uuid
 
+
 DATABASE_URL = os.getenv('BAANGT_RESULTS_DATABASE_URL') or 'sqlite:///testrun.db'
 
 engine = create_engine(DATABASE_URL)
