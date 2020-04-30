@@ -15,6 +15,7 @@ from baangt.base.DataBaseORM import DATABASE_URL, TestrunLog, TestCaseSequenceLo
 from baangt.base.DataBaseORM import TestCaseLog, TestCaseField, GlobalAttribute, TestCaseNetworkInfo
 from baangt.base.PathManagement import ManagedPaths
 from datetime import datetime
+from sqlite3 import IntegrityError
 import time
 from baangt import plugin_manager
 import re
@@ -186,7 +187,7 @@ class ExportResults:
             )
             session.add(globalVar)
 
-        session.commit()
+        self.__save_commit(session)
 
         # create testcase sequence instance
         tcs_log = TestCaseSequenceLog(testrun=tr_log)
@@ -208,7 +209,7 @@ class ExportResults:
                 field = TestCaseField(name=key, value=str(value), testcase=tc_log)
                 session.add(field)
 
-        session.commit()
+        self.__save_commit(session)
 
         # network info
         if self.networkInfo:
@@ -230,7 +231,15 @@ class ExportResults:
                     )
                     session.add(nw_info)
 
-        session.commit()
+        self.__save_commit(session)
+
+    def __save_commit(self, session):
+        try:
+            session.commit
+        except IntegrityError as e:
+            logger.critical(f"Integrity Error during commit to database: {e}")
+        except Exception as e:
+            logger.critical(f"Unknown error during database commit: {e}")
 
     def _get_test_case_num(self, start_date_time, browser_name):
         d_t = parse(start_date_time)
