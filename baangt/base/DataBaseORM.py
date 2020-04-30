@@ -8,7 +8,6 @@ import uuid
 from baangt.base.PathManagement import ManagedPaths
 
 #DATABASE_URL = os.getenv('BAANGT_RESULTS_DATABASE_URL') or 'sqlite:///testrun.db'
-
 #engine = create_engine(DATABASE_URL)
 managedPaths = ManagedPaths()
 DATABASE_URL = str(managedPaths.derivePathForOSAndInstallationOption().joinpath('testrun.db'))
