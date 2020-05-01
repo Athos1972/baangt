@@ -76,7 +76,9 @@ Building Executables
 ^^^^^^^^^^^^^^^^^^^^
 
 * Checkout ``https://github.com/Athos1972/baangt-executables``
-* On a Windows computer: ``execWindow.bat``
+* Checkout ``https://gogs.earthsquad.global/athos/baangt``
+* Change to /baangt directory
+* On a Windows computer: ``execWindow.bat`` (Takes about 5 Minutes)
 * Move ``/executables/baangt_windows_executable.zip`` to checked out ``baangt-executables`` ideally with this line:
 
     ``mv executables/baangt_mac_executable.zip ../baangt-executables``
@@ -92,14 +94,11 @@ Windows bundle executables:
 * Install innosetup-qsp (QuickStartPack) Version 6 from https://jrsoftware.org/isdl.php
 * Open Inno Setup
 * Use Script ``/windows/baangtSetupWindows.iss``
+* Check that the path for the LICENSE is correct on your computer (most probably it isn't!)
+* Execute the script using the "Compile"-Button (takes about 3-5 Minutes)
+* Copy the file from ``/baangt/windows/output/baangtsetup.exe`` to ``baangt-executables`` folder
+* ``git add .`` in the folder ``baangt-executables``
+* ``git commit -m <version>``
+* ``git push``
 
-If the Script doesn't work, it's mostly due to outdated dependencies. In this case it seems to be fastest to re-create
-the script from scratch:
-* Create new Script in Inno Setup with Wizard
-* Fill in mandatory Info (Version, ProgramName, etc.) in first screen
-* Find exe in Path baangt/dist/baangt/baangt.exe
-* Click "Add files" and select all files in the same folder (/baangt/dist/baangt)
-* Click "Add Folder" for each folder in /baangt/dist/baangt
-    * When asked, whether sub-folders should be included click on "Yes"
-* Save the Script in ``/windows/baangtSetupWindows.iss``
-* Execute Inno Setup as described above
+

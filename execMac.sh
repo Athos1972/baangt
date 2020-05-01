@@ -1,5 +1,8 @@
 #!/bin/sh
 
+rm -r dist
+rm -r build
+
 pyinstaller --clean --onedir \
 	--distpath exec_mac/ \
 	--workpath exec_mac/build \
@@ -15,6 +18,7 @@ pyinstaller --clean --onedir \
 # Remove Screenshots and Logs
 rm -r exec_mac/baangt/examples/Screenshots
 rm -r exec_mac/baangt/examples/Logs
+rm -r exec_mac/baangt/examples/1testoutput
 
 # Create ZIP-file
 mkdir executables

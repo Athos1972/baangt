@@ -285,10 +285,15 @@ class TestRun:
                 if value.lower() in ("false", "true", "no"):
                     self.globalSettings[key] = utils.anyting2Boolean(value)
 
-            # This happens in the new UI, if a value was added manually, but is not part of the globalSetting.json
             if isinstance(value, dict):
-                self.globalSettings[key] = value["default"]
-
+                if "default" in value:
+                    # This happens in the new UI, if a value was added manually,
+                    # but is not part of the globalSetting.json. In this case there's the whole shebang in a dict. We
+                    # are only interested in the actual value, which is stored in "default":
+                    self.globalSettings[key] = value["default"]
+                else:
+                    # This could be the "old" way of the globals-file (with {"HEADLESS":"True"})
+                    self.globalSettings[key] = value
 
     def _loadJSONTestRunDefinitions(self):
         if not self.testRunFileName and not self.testRunDict:  # -- API support: testRunDict --
