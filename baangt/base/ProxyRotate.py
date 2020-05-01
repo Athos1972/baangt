@@ -51,7 +51,7 @@ class ProxyRotate(metaclass=Singleton):
             response = requests.get(self.proxy_gather_link, timeout=15)
         except Exception as ex:
             print(ex)
-            logger.error("No proxies read. Maybe Internet-connection is down. Please check and retry...")
+            logger.error(f"No proxies read. Maybe Internet-connection is down. Please check and retry. Error was {ex}")
             return None
         soup = bs(response.content, 'html.parser')
         table = soup.find('tbody')
