@@ -5,10 +5,14 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 import os
 import uuid
+from baangt.base.PathManagement import ManagedPaths
 
-DATABASE_URL = os.getenv('BAANGT_RESULTS_DATABASE_URL') or 'sqlite:///testrun.db'
+
+managedPaths = ManagedPaths()
+DATABASE_URL = 'sqlite:///'+str(managedPaths.derivePathForOSAndInstallationOption().joinpath('testrun.db'))
 
 engine = create_engine(DATABASE_URL)
+
 base = declarative_base()
 
 #
@@ -23,7 +27,7 @@ def uuidAsBytes():
 
 class TestrunLog(base):
 	#
-	# summary on Testrun results 
+	# summary on Testrun results
 	#
 	__tablename__ = "testruns"
 	# columns
@@ -51,7 +55,7 @@ class TestrunLog(base):
 				'TestRecords': sum((self.statusOk, self.statusPaused, self.statusFailed)),
 				'Successful': self.statusOk,
 				'Paused': self.statusPaused,
-				'Error': self.statusFailed, 
+				'Error': self.statusFailed,
 				'LogFile': self.logfileName,
 				'StartTime': self.startTime.strftime('%H:%M:%S'),
 				'EndTime': self.endTime.strftime('%H:%M:%S'),
@@ -134,7 +138,7 @@ class TestCaseLog(base):
 
 class TestCaseField(base):
 	#
-	# field for a TestCase results 
+	# field for a TestCase results
 	#
 	__tablename__ = 'testCaseFields'
 	# columns
