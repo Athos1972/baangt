@@ -15,21 +15,21 @@ In baangt UI (pyQT5) create a new action button "Proxies".
     * Button "Exit" - don't save.
 * Load contents of proxies.json.
     * The columns should arrange themselves dynamically according to the attributes in the JSON-Entries. 
-      Currently those attributes are:
+      Currently those attributes (all string unless otherwise mentioned) are:
          * IP
          * Port
+         * Type (either SOCKS or HTTPS - but UI shall not check validity)
          * User
          * Password
-         * UsedCount
-         * ErrorCount
+         * UsedCount (int)
+         * ErrorCount (int)
     * Next to each line, there shall be a button "Test". Alternatively a marked line from the grid shall be used and
       Test-Button shall be on the bottom of the window.
          * If the button is clicked, call method "testProxy" of class "ProxyRotate". If result is ```true``` display
-           "Proxy test successful". If result is not boolean display f"Proxy not reached: {result_from_call}"      
-           
+           "Proxy test successful". If result is not boolean display f"Proxy not reached: {result_from_call}"          
              
- # DoD
+# DoD
  
 * Part of the UI delivered in a separate branch to gig repository on Gogs-Server
-* Unit-Test coverage (in folder /tests) of 80% (for all committed/changed methods) (2 hours)
-* no critical linter errors or warnings (PEP-8 conformity of the code) (no additional effort)
+* Unit-Test coverage (in folder /tests) of 80% (for all committed/changed methods) 
+* no critical linter errors or warnings (PEP-8 conformity of the code)
