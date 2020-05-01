@@ -558,9 +558,6 @@ class MainWindow(Ui_MainWindow):
         for key, value in self.configInstance.config.items():
             data[key] = value
 
-        # update the configContent
-        self.configContents.update(data)
-
         if not self.configFile:
             # Open Dialog box to save file
             options = QtWidgets.QFileDialog.Options()
@@ -593,6 +590,7 @@ class MainWindow(Ui_MainWindow):
                 json.dump(data, f, indent=4)
 
         self.drawSetting()
+        self.readContentofGlobals()
         self.mainPageView()
 
     def parseFormLayout(self):
@@ -650,7 +648,6 @@ class MainWindow(Ui_MainWindow):
             print("No config instance ")
             self.configInstance = GlobalSettings.getInstance()
             self.configInstance.updateValue(data)
-
 
     def drawSetting(self):
         """ This will draw Setting based on data in configInstance
