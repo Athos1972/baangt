@@ -167,8 +167,6 @@ class MainWindow(Ui_MainWindow):
                  "QComboBox { background-color: white; \n"
                  "            color: rgb(46, 52, 54);  \n"
                  "}"
-                 "QLabel { font: 75 11pt 'Arial';\n"
-                 "}"
                  "QButton { color: white; \n"
                  "}"
                  )
@@ -550,6 +548,9 @@ class MainWindow(Ui_MainWindow):
         for key, value in self.configInstance.config.items():
             data[key] = value
 
+        # update the configContent
+        self.configContents.update(data)
+
         if not self.configFile:
             # Open Dialog box to save file
             options = QtWidgets.QFileDialog.Options()
@@ -637,6 +638,9 @@ class MainWindow(Ui_MainWindow):
             # print(self.configInstance.config)
         else:
             print("No config instance ")
+            self.configInstance = GlobalSettings.getInstance()
+            self.configInstance.updateValue(data)
+
 
     def drawSetting(self):
         """ This will draw Setting based on data in configInstance
