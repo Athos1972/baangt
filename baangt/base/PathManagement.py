@@ -222,7 +222,7 @@ class ManagedPaths(metaclass=Singleton):
             path = os.path.join(os.path.expanduser("~"), "baangt")
             if os.path.exists(path):
                 return Path(path)
-        return os.getcwd()
+        return Path(os.getcwd())
 
     def __makeAndCheckDir(self, newPath):
         """
