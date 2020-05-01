@@ -3,7 +3,7 @@
     "TC.Stage": "Test",
     "TC.Lines": "",
     "TC.dontCloseBrowser": "True",
-    "TC.BrowserAttributes": {"HEADLESS": "True"},
+    "TC.BrowserAttributes": "{'HEADLESS': 'True'}",
     "TC.slowExecution": "True",
     "TC.NetworkInfo": "True",
     "TX.DEBUG": "True"

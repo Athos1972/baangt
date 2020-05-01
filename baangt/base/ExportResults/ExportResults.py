@@ -235,7 +235,7 @@ class ExportResults:
 
     def __save_commit(self, session):
         try:
-            session.commit
+            session.commit()
         except IntegrityError as e:
             logger.critical(f"Integrity Error during commit to database: {e}")
         except Exception as e:

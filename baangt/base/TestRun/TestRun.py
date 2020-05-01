@@ -80,15 +80,6 @@ class TestRun:
 
         self.browserFactory = BrowserFactory(self)
 
-        # DEBUG
-        '''
-        print(self.testRunUtils.testRunAttributes)
-        import json
-        with open ('testrun.json', 'w') as f:
-            json.dump(list(self.testRunUtils.testRunAttributes.values())[0], f)
-        exit()
-        '''
-
         self.executeTestRun()
         self.tearDown()
 
@@ -274,6 +265,10 @@ class TestRun:
     def loadJSONGlobals(self):
         if self.globalSettingsFileNameAndPath:
             self.globalSettings = utils.openJson(self.globalSettingsFileNameAndPath)
+
+        # Set default execution STAGE
+        if self.globalSettings.get(GC.EXECUTION_STAGE, None) is None:
+            self.globalSettings[GC.EXECUTION_STAGE] = GC.EXECUTION_STAGE_TEST
 
         # Support for new dataClass to load different Classes
         for key, value in self.globalSettings.items():
