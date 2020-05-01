@@ -80,6 +80,15 @@ class TestRun:
 
         self.browserFactory = BrowserFactory(self)
 
+        # DEBUG
+        '''
+        print(self.testRunUtils.testRunAttributes)
+        import json
+        with open ('testrun.json', 'w') as f:
+            json.dump(list(self.testRunUtils.testRunAttributes.values())[0], f)
+        exit()
+        '''
+
         self.executeTestRun()
         self.tearDown()
 
