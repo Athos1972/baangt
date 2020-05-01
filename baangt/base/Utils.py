@@ -230,17 +230,17 @@ class utils:
                 logger.debug(f"Found file via BasePath {str(lFileNameAndPath)}")
             elif len(Path(lFileNameAndPath).parents) == 0:
                 # This is only the filename. Try with current path and a bit up
-                if Path(utils.__file__).joinpath(lFileNameAndPath).exists:
+                if Path(utils.__file__).joinpath(lFileNameAndPath).exists():
                     lFileNameAndPath = Path(utils.__file__).joinpath(lFileNameAndPath)
-                elif Path(utils.__file__).parent.joinpath(lFileNameAndPath).exists:
+                elif Path(utils.__file__).parent.joinpath(lFileNameAndPath).exists():
                     lFileNameAndPath = Path(utils.__file__).parent.joinpath(lFileNameAndPath)
-                elif Path(utils.__file__).parent.parent.joinpath(lFileNameAndPath).exists:
+                elif Path(utils.__file__).parent.parent.joinpath(lFileNameAndPath).exists():
                     lFileNameAndPath = Path(utils.__file__).parent.parent.joinpath(lFileNameAndPath)
-                elif Path(root_dir).joinpath(lFileNameAndPath).exists:
+                elif Path(root_dir).joinpath(lFileNameAndPath).exists():
                     lFileNameAndPath = Path(root_dir).joinpath(lFileNameAndPath)
-                elif Path(root_dir).joinpath("baangt").joinpath(lFileNameAndPath).exists:
+                elif Path(root_dir).joinpath("baangt").joinpath(lFileNameAndPath).exists():
                     lFileNameAndPath = Path(root_dir).joinpath("baangt").joinpath(lFileNameAndPath)
-                elif Path(root_dir).joinpath("baangt").joinpath("base").joinpath(lFileNameAndPath).exists:
+                elif Path(root_dir).joinpath("baangt").joinpath("base").joinpath(lFileNameAndPath).exists():
                     lFileNameAndPath = Path(root_dir).joinpath("baangt").joinpath("base").joinpath(lFileNameAndPath)
                 else:
                     raise Exception(f"Can't find file {fileNameAndPath}")
