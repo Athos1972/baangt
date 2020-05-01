@@ -14,7 +14,7 @@ import baangt.base.GlobalConstants as GC
 from baangt.base.Utils import utils
 import logging
 import configparser
-import subprocess
+# import subprocess
 import sys
 from baangt.ui.pyqt import resources
 from baangt.ui.pyqt.settingsGlobal import GlobalSettings
@@ -325,10 +325,11 @@ class MainWindow(Ui_MainWindow):
         if not self.testRunFile:
             self.statusMessage("No test Run File selected", 2000)
 
-        # show status in status bar
-        self.statusMessage("Executing.....", 4000)
 
         runCmd = self._getRunCommand()
+
+        # show status in status bar
+        self.statusMessage("Executing.....", 4000)
 
         if self.configContents.get("TX.DEBUG"):
             from baangt.base.TestRun.TestRun import TestRun
@@ -338,10 +339,19 @@ class MainWindow(Ui_MainWindow):
 
         else:
             logger.info(f"Running command: {runCmd}")
-            p = subprocess.run(runCmd, shell=True, close_fds=True)
-
+            self.run_process = QtCore.QProcess()
+            self.run_process.execute(runCmd)
+            # p = subprocess.run(runCmd, shell=True, close_fds=True)
             # Set status to show Execution is complete
-            self.statusMessage("Completed !!!", 3000)
+            buttonReply = QtWidgets.QMessageBox.question(
+                                self.centralwidget,
+                                "Baangt Interactive Starter ",
+                                "Test Run finished !!",
+                                QtWidgets.QMessageBox.Ok,
+                                QtWidgets.QMessageBox.Ok
+                                 )
+            self.statusMessage(f"Completed ", 3000)
+
 
         # Remove temporary Configfile, that was created only for this run:
         try:
@@ -614,7 +624,7 @@ class MainWindow(Ui_MainWindow):
                 fieldname = fieldItem.widget()
                 if isinstance(fieldname, QtWidgets.QCheckBox):
                     # get checked status
-                    value = fieldname.isChecked()
+                    value = str(fieldname.isChecked())
                 elif isinstance(fieldname, QtWidgets.QComboBox):
                     # get current Text
                     value = fieldname.currentText()
