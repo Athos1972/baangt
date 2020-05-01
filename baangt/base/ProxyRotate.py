@@ -150,6 +150,8 @@ class ProxyRotate(metaclass=Singleton):
         self.proxies.remove({"ip": ip, "port": str(port)})
         logger.debug(f"Ip {ip} - Port {port} removed successfully.")
 
+    def testProxy(self,type, ip, port, user, password):
+        return "Method not yet implemented"
 
 if __name__ == '__main__':
     lProxyRotate = ProxyRotate(reReadProxies=False)
