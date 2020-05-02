@@ -4,12 +4,18 @@ from baangt.TestSteps.Exceptions import *
 
 
 class TestCaseMaster:
-    def __init__(self, **kwargs):
+    def __init__(self, executeDirect=True, **kwargs):
         self.name = None
         self.description = None
         self.testSteps = {}
         self.apiInstance = None
         self.numberOfParallelRuns = None
+
+        self.kwargs = kwargs
+
+        self.timing = Timing()   # Use own instance of the timing class, so that we can record timing also in
+                                 # parallel runs.
+
         self.testRunInstance = kwargs.get(GC.KWARGS_TESTRUNINSTANCE)
         self.testRunUtils = self.testRunInstance.testRunUtils
         self.testSequence = self.testRunUtils.getSequenceByNumber(testRunName=self.testRunInstance.testRunName,
@@ -18,13 +24,18 @@ class TestCaseMaster:
                                                                       kwargs.get(GC.STRUCTURE_TESTCASE))
         self.testSteps = self.testCaseSettings[2][GC.STRUCTURE_TESTSTEP]
         self.testCaseType = self.testCaseSettings[1][GC.KWARGS_TESTCASETYPE]
-        self.kwargs = kwargs
-        # self.timing : Timing = self.kwargs.get(GC.KWARGS_TIMING)
-        self.timing = Timing()
+
         self.sequenceNumber = self.kwargs.get(GC.KWARGS_SEQUENCENUMBER)
+
+        # In Unit-Tests this is a problem. When we run within the main loop of TestRun we are expected to directly
+        # execute on __init__.
+        if executeDirect:
+            self.executeTestCase()
+
+    def executeTestCase(self):
         self.timingName = self.timing.takeTime(self.__class__.__name__, forceNew=True)
         if self.testCaseType == GC.KWARGS_BROWSER:
-            self.kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS] = GC.TESTCASESTATUS_SUCCESS   # We believe in a good outcome
+            self.kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS] = GC.TESTCASESTATUS_SUCCESS  # We believe in a good outcome
             self.__getBrowserForTestCase()
 
         elif self.testCaseType == GC.KWARGS_API_SESSION:
@@ -78,7 +89,6 @@ class TestCaseMaster:
         try:
             self.testRunInstance.executeDictSequenceOfClasses(lTestStepClasses, GC.STRUCTURE_TESTSTEP, **self.kwargs)
         except baangtTestStepException as e:
-            logger.info(f"Testcase {self.kwargs.get(GC.STRUCTURE_TESTSTEP,'')} failed")
             self.kwargs[GC.KWARGS_DATA][GC.TESTCASEERRORLOG] += '\n' + "Exception-Text: " + str(e)
             self.kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
         finally:
@@ -128,4 +138,6 @@ class TestCaseMaster:
             logger.critical("Testcase had no status - setting error")
 
         self._checkAndSetTestcaseStatusIfFailExpected()
+
+        logger.info(f"Testcase {self.kwargs.get(GC.STRUCTURE_TESTSTEP,'')} finished with status: {data[GC.TESTCASESTATUS]}")
 

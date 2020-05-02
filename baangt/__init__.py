@@ -21,14 +21,12 @@ from baangt.base.Timing.hookImpls import TimingHookImpl
 from baangt.base.ExportResults.hookImpls import \
     (ExportResultsHookImpl, ExcelSheetHelperFunctionsHookImpl, ExportTimingHookImpl)
 
-
 plugin_manager.register(plugin=TestRunHookImpl())
 plugin_manager.register(plugin=BrowserDriverHookImpl())
 plugin_manager.register(plugin=TimingHookImpl())
 plugin_manager.register(plugin=ExportResultsHookImpl())
 plugin_manager.register(plugin=ExcelSheetHelperFunctionsHookImpl())
 plugin_manager.register(plugin=ExportTimingHookImpl())
-
 
 # fixme: Parameter für Logfile should include stage and browser()
 managedPaths = ManagedPaths()

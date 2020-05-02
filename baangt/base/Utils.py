@@ -90,6 +90,15 @@ class utils:
         return data
 
     @staticmethod
+    def setLogLevel(level):
+        logger.info(f"Changing Loglevel from {logger.level} to {level}")
+
+        for logHandler in logger.handlers:
+            logHandler.setLevel(level=level.upper())
+
+        logger.setLevel(level=level.upper())
+
+    @staticmethod
     def listToString(completeList):
         """
         Returns a concatenated string from a list-object
