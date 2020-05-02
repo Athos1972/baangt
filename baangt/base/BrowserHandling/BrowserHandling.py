@@ -460,7 +460,7 @@ class BrowserDriver:
             self.driver.switch_to.default_content()
             self.iFrame = None
 
-    def handleWindow(self, windowNumber=None, function=None):
+    def handleWindow(self, windowNumber=None, function=None, timeout=20):
         """
         Interations with Windows (=BrowserTabs).
 
@@ -487,11 +487,20 @@ class BrowserDriver:
 
                 self.driver.switch_to.window(self.driver.window_handles[exceptHandles])
         else:
-            try:
-                self.driver.switch_to.window(self.driver.window_handles[windowNumber])
-            except Exception as e:
-                logger.critical(f"Tried to switch to Window {windowNumber} but it's not there")
-                raise Exceptions.baangtTestStepException(f"Window {windowNumber} doesn't exist")
+            success = False
+            duration = 0
+            while not success and duration < timeout:
+                try:
+                    self.driver.switch_to.window(self.driver.window_handles[windowNumber])
+                    success = True
+                except Exception as e:
+                    logger.debug(f"Tried to switch to Window {windowNumber} but it's not there yet")
+
+                self.sleep(1)
+                duration += 1
+
+            if not success:
+                raise Exceptions.baangtTestStepException(f"Window {windowNumber} doesn't exist after timeout {timeout}")
 
     def findByAndWaitForValue(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=20,
                               optional=False):

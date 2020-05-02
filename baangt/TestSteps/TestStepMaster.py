@@ -106,6 +106,8 @@ class TestStepMaster:
             self.browserSession.findByAndForceText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout)
         elif lActivity == 'HANDLEIFRAME':
             self.browserSession.handleIframe(lLocator)
+        elif lActivity == 'SWITCHWINDOW':
+            self.browserSession.handleWindow(windowNumber=lValue)
         elif lActivity == "CLICK":
             self.browserSession.findByAndClick(xpath=xpath, css=css, id=id, timeout=lTimeout)
         elif lActivity == "PAUSE":
