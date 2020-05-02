@@ -129,7 +129,7 @@
             "default": "",
             "displayText": "Datafile"
         },
-        "TC.ExecutionLogLevel": {
+        "TC.LogLevel": {
             "hint": "Set the level of logging. Standard = 'debug'. For production you might want to change to another value",
             "type": "select",
             "default": "Debug",

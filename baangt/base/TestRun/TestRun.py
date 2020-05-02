@@ -308,8 +308,8 @@ class TestRun:
                     # This could be the "old" way of the globals-file (with {"HEADLESS":"True"})
                     self.globalSettings[key] = value
 
-        if self.globalSettings.get("TC.LogLevel"):
-            utils.setLogLevel(self.globalSettings.get("TC.LogLevel"))
+        if self.globalSettings.get("TC." + GC.EXECUTION_LOGLEVEL):
+            utils.setLogLevel(self.globalSettings.get("TC." + GC.EXECUTION_LOGLEVEL))
 
     def _loadJSONTestRunDefinitions(self):
         if not self.testRunFileName and not self.testRunDict:  # -- API support: testRunDict --

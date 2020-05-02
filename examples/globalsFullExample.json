@@ -18,5 +18,5 @@
     "CL.testCaseSequenceMaster": "baangt.TestCaseSequenceMaster.TestCaseSequenceMaster",
     "TC.TestStepClass": "",
     "TC.TestDataFileName": "",
-    "TC.ExecutionLogLevel": "Info"
+    "TC.LogLevel": "Info"
 }
