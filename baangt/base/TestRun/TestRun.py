@@ -37,50 +37,57 @@ class TestRun:
     """
 
     def __init__(self, testRunName, globalSettingsFileNameAndPath=None,
-                 testRunDict=None, uuid=uuid4()):  # -- API support: testRunDict --
+                 testRunDict=None, uuid=uuid4(), executeDirect=True):  # -- API support: testRunDict --
         """
         @param testRunName: The name of the TestRun to be executed.
         @param globalSettingsFileNameAndPath: from where to read the <globals>.json
         """
-        logger.info('init Testrun, id is {}'.format(id(self)))
 
+        # Take over importing parameters:
+        self.uuid = uuid
+        logger.info(f'Init Testrun, uuid is {self.uuid}')
+        self.testRunDict = testRunDict
+        self.globalSettingsFileNameAndPath = globalSettingsFileNameAndPath
+        self.testRunName, self.testRunFileName = \
+            self._sanitizeTestRunNameAndFileName(testRunName)
+
+        # Initialize everything else
         self.apiInstance = None
         self.testType = None
         self.networkInfo = None
+        self.results = None
+        self.browserFactory = None
         self.kwargs = {}
         self.dataRecords = {}
-        self.globalSettingsFileNameAndPath = globalSettingsFileNameAndPath
         self.globalSettings = {}
         self.managedPaths = ManagedPaths()
         self.classesForObjects = ClassesForObjects()         # Dynamically loaded classes
-
-        # -- API support --
-        # results
-        self.results = None
-        self.testRunDict = testRunDict
-        self.uuid = uuid
-        # -- END of API support
-
+        self.timing = Timing()
+        self.testRunUtils = TestRunUtils()
+        self.testCasesEndDateTimes_1D = []                   # refer to single execution
+        self.testCasesEndDateTimes_2D = [[]]                 # refer to parallel execution
         # New way to export additional Tabs to Excel
         # If you want to export additional data, place a Dict with Tabname + Datafields in additionalExportTabs
         # from anywhere within your custom code base.
         self.additionalExportTabs = {}
 
-        self.testRunName, self.testRunFileName = \
-            self._sanitizeTestRunNameAndFileName(testRunName)
-        self.timing = Timing()
-        self.timing.takeTime(GC.TIMING_TESTRUN)  # Initialize Testrun Duration
-        self.testRunUtils = TestRunUtils()
-        self._initTestRun()  # Loads the globals*.json file
+        # Initialize other values
+        self.timing.takeTime(GC.TIMING_TESTRUN)               # Initialize Testrun Duration
 
-        self.testCasesEndDateTimes_1D = []  # refer to single execution
-        self.testCasesEndDateTimes_2D = [[]]  # refer to parallel execution
+        # Usually the Testrun is called without the parameter executeDirect, meaning it default to "Execute"
+        # during Unit-Tests we don't want this behaviour:
+        if executeDirect:
+            self.executeTestRun()
+
+    def executeTestRun(self):
+        self._initTestRunSettingsFromFile()  # Loads the globals*.json file
+
         self._loadJSONTestRunDefinitions()
         self._loadExcelTestRunDefinitions()
 
         self.browserFactory = BrowserFactory(self)
 
-        self.executeTestRun()
+        self.executeTestSequence()
         self.tearDown()
 
     def append1DTestCaseEndDateTimes(self, dt):
@@ -165,7 +172,7 @@ class TestRun:
         logger.debug(f"Received new result for Testrecord {recordNumber}")
         self.dataRecords[recordNumber] = dataRecordResult
 
-    def executeTestRun(self):
+    def executeTestSequence(self):
         """
         Start TestcaseSequence
 
@@ -238,9 +245,9 @@ class TestRun:
 
         self.kwargs = kwargs
 
-    def _initTestRun(self):
-        self.loadJSONGlobals()
-
+    def _initTestRunSettingsFromFile(self):
+        self.__loadJSONGlobals()
+        self.__sanitizeGlobalsValues()
         self.__setPathsIfNotPredefined()
 
     def __setPathsIfNotPredefined(self):
@@ -262,10 +269,11 @@ class TestRun:
         else:
             self.managedPaths.getOrSetRootPath(path=self.globalSettings.get(GC.PATH_ROOT))
 
-    def loadJSONGlobals(self):
+    def __loadJSONGlobals(self):
         if self.globalSettingsFileNameAndPath:
             self.globalSettings = utils.openJson(self.globalSettingsFileNameAndPath)
 
+    def __sanitizeGlobalsValues(self):
         # Support for new dataClass to load different Classes
         for key, value in self.globalSettings.items():
             if "CL." in key:
@@ -273,7 +281,7 @@ class TestRun:
 
             # Change boolean strings into boolean values.
             if isinstance(value, str):
-                if value.lower() in ("false", "true", "no"):
+                if value.lower() in ("false", "true", "no", "x"):
                     self.globalSettings[key] = utils.anyting2Boolean(value)
 
             if isinstance(value, dict):

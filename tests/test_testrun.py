@@ -6,9 +6,7 @@ def testrun_obj():
         which will be used by other test methods
     """
     from baangt.base.TestRun.TestRun import TestRun
-    with pytest.raises(Exception) as e:
-        return TestRun("SimpleTheInternet.xlsx","globals.json")
-
+    return TestRun("SimpleTheInternet.xlsx","globals.json", executeDirect=False)
 
 
 def test_filenotfound():
@@ -16,12 +14,14 @@ def test_filenotfound():
     with pytest.raises(Exception) as e:
         TestRun("SimpleTheInternet.xlsx","global.json")
 
+
 def test_objectreturned(testrun_obj):
     """ Returns number of successful and number of error test cases of
          the current test run
     """
     from baangt.base.TestRun.TestRun import TestRun
     assert TestRun.__instancecheck__(testrun_obj)
+
 
 def test_checkattribute(testrun_obj):
     """ check if has attribute """
