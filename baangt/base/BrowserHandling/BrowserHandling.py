@@ -452,6 +452,7 @@ class BrowserDriver:
                 except WebDriverException as e:
                     self._log(logging.DEBUG, f"IFrame {iframe} not there yet - waiting 1 second")
                     time.sleep(1)
+
             if time.time() > mustEnd:
                 raise TimeoutError
 
@@ -493,6 +494,7 @@ class BrowserDriver:
                 try:
                     self.driver.switch_to.window(self.driver.window_handles[windowNumber])
                     success = True
+                    continue
                 except Exception as e:
                     logger.debug(f"Tried to switch to Window {windowNumber} but it's not there yet")
 
