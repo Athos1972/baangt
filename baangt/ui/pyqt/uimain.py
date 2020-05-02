@@ -14,23 +14,26 @@ import baangt.base.GlobalConstants as GC
 from baangt.base.Utils import utils
 import logging
 import configparser
-import subprocess
+# import subprocess
 import sys
 from baangt.ui.pyqt import resources
 from baangt.ui.pyqt.settingsGlobal import GlobalSettings
 from baangt.ui.ImportKatalonRecorder import ImportKatalonRecorder
 import pyperclip
 import platform
+from baangt.base.PathManagement import ManagedPaths
 
 logger = logging.getLogger("pyC")
-
 
 class PyqtKatalonUI(ImportKatalonRecorder):
     """ Subclass of ImportKatalonRecorder :
         Aim : To disable GUI created by PySimpleGui
         and initialize everything
     """
-    def __init__(self, directory="./"):
+    def __init__(self, directory=None):
+        self.managedPaths = ManagedPaths()
+        if directory == None:
+            directory = self.managedPaths.derivePathForOSAndInstallationOption()
         self.directory = directory
         self.clipboardText = ""
         self.outputText = ""
@@ -50,11 +53,14 @@ class MainWindow(Ui_MainWindow):
         ''' Init the super class '''
         super().__init__()
 
-    def setupUi(self, MainWindow, directory="./"):
+    def setupUi(self, MainWindow, directory=None):
         ''' Setup the UI for super class and Implement the
         logic here we want to do with User Interface
         '''
         super().setupUi(MainWindow)
+        self.managedPaths = ManagedPaths()
+        if directory == None:
+            directory = self.managedPaths.derivePathForOSAndInstallationOption()
         self.directory = directory
         self.configFile = None
         self.configFiles = []
@@ -108,14 +114,14 @@ class MainWindow(Ui_MainWindow):
                     "testrun": self.testRunComboBox_4.currentText(),
                     "globals": self.settingComboBox_4.currentText(),
                     }
-        with open("baangt.ini", "w" ) as configFile:
+        with open(self.managedPaths.getOrSetIni().joinpath("baangt.ini"), "w" ) as configFile:
             config.write(configFile)
 
     def readConfig(self):
         """ Read existing baangt.ini file """
         config = configparser.ConfigParser()
         try:
-            config.read("baangt.ini")
+            config.read(self.managedPaths.getOrSetIni().joinpath("baangt.ini"))
             self.directory = config["Default"]['path']
             self.testRunFile = config["Default"]['testrun']
             self.configFile  = config["Default"]['globals']
@@ -123,7 +129,7 @@ class MainWindow(Ui_MainWindow):
             self.readContentofGlobals()
         except Exception as e:
             print("Exception in Main readConfig", e)
-            self.directory = os.getcwd()
+            self.directory = str(self.managedPaths.derivePathForOSAndInstallationOption())
             self.setupBasePath(self.directory)
             pass
 
@@ -167,8 +173,6 @@ class MainWindow(Ui_MainWindow):
                  "}"
                  "QComboBox { background-color: white; \n"
                  "            color: rgb(46, 52, 54);  \n"
-                 "}"
-                 "QLabel { font: 75 11pt 'Arial';\n"
                  "}"
                  "QButton { color: white; \n"
                  "}"
@@ -342,10 +346,11 @@ class MainWindow(Ui_MainWindow):
         if not self.testRunFile:
             self.statusMessage("No test Run File selected", 2000)
 
-        # show status in status bar
-        self.statusMessage("Executing.....", 4000)
 
         runCmd = self._getRunCommand()
+
+        # show status in status bar
+        self.statusMessage("Executing.....", 4000)
 
         if self.configContents.get("TX.DEBUG"):
             from baangt.base.TestRun.TestRun import TestRun
@@ -355,10 +360,19 @@ class MainWindow(Ui_MainWindow):
 
         else:
             logger.info(f"Running command: {runCmd}")
-            p = subprocess.run(runCmd, shell=True, close_fds=True)
-
+            self.run_process = QtCore.QProcess()
+            self.run_process.execute(runCmd)
+            # p = subprocess.run(runCmd, shell=True, close_fds=True)
             # Set status to show Execution is complete
-            self.statusMessage("Completed !!!", 3000)
+            buttonReply = QtWidgets.QMessageBox.question(
+                                self.centralwidget,
+                                "Baangt Interactive Starter ",
+                                "Test Run finished !!",
+                                QtWidgets.QMessageBox.Ok,
+                                QtWidgets.QMessageBox.Ok
+                                 )
+            self.statusMessage(f"Completed ", 3000)
+
 
         # Remove temporary Configfile, that was created only for this run:
         try:
@@ -590,13 +604,14 @@ class MainWindow(Ui_MainWindow):
                 if self.directory:
                     fullpath = os.path.join(self.directory, self.configFile)
                 else:
-                    self.directory = os.getcwd()
+                    self.directory = os.getcwd()#.managedPaths.derivePathForOSAndInstallationOption()
                     fullpath = os.path.join(self.directory, self.configFile)
 
             with open(fullpath, 'w') as f:
                 json.dump(data, f, indent=4)
 
         self.drawSetting()
+        self.readContentofGlobals()
         self.mainPageView()
 
     def parseFormLayout(self):
@@ -628,7 +643,7 @@ class MainWindow(Ui_MainWindow):
                 fieldname = fieldItem.widget()
                 if isinstance(fieldname, QtWidgets.QCheckBox):
                     # get checked status
-                    value = fieldname.isChecked()
+                    value = str(fieldname.isChecked())
                 elif isinstance(fieldname, QtWidgets.QComboBox):
                     # get current Text
                     value = fieldname.currentText()
@@ -652,6 +667,8 @@ class MainWindow(Ui_MainWindow):
             # print(self.configInstance.config)
         else:
             print("No config instance ")
+            self.configInstance = GlobalSettings.getInstance()
+            self.configInstance.updateValue(data)
 
     def drawSetting(self):
         """ This will draw Setting based on data in configInstance

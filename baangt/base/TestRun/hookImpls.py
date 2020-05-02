@@ -35,7 +35,7 @@ class TestRunHookImpl(object):
 
     @baangt.hook_impl
     def testRun_executeTestRun(self, testRunObject):
-        return testRunObject.executeTestRun()
+        return testRunObject.executeTestSequence()
 
     @baangt.hook_impl
     def testRun_executeDictSequenceOfClasses(self, testRunObject, dictSequenceOfClasses, counterName, **kwargs):

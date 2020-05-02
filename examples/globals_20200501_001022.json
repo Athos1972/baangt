@@ -1,0 +1,11 @@
+{
+    "TC.Lines": "",
+    "TC.dontCloseBrowser": "",
+    "TC.slowExecution": "",
+    "TC.NetworkInfo": "",
+    "TX.DEBUG": "True",
+    "RootPath": "/home/aguryev/freelancer/baangt/examples",
+    "Screenshots": "/home/aguryev/freelancer/baangt/examples/Screenshots",
+    "1TestResults": "/home/aguryev/freelancer/baangt/examples/1testoutput",
+    "0TestInput": "/home/aguryev/freelancer/baangt/examples/0testdateninput"
+}

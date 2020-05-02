@@ -1,0 +1,22 @@
+{
+    "TC.Lines": "",
+    "TC.dontCloseBrowser": "False",
+    "TC.slowExecution": "False",
+    "TC.NetworkInfo": "False",
+    "TX.DEBUG": "True",
+    "TC.Browser": "FF",
+    "TC.BrowserAttributes": "{'HEADLESS':'True'}",
+    "TC.ParallelRuns": "",
+    "TC.ExportAllFields": "False",
+    "TC.Stage": "other",
+    "TC.Release": "",
+    "TC.RestartBrowser": "False",
+    "TC.UseRotatingProxies": "False",
+    "TC.ReReadProxies": "False",
+    "CL.browserFactory": "baangt.base.BrowserFactory.BrowserFactory",
+    "CL.browserHandling": "baangt.base.BrowserHandling.BrowserHandling.BrowserDriver",
+    "CL.testCaseSequenceMaster": "baangt.TestCaseSequenceMaster.TestCaseSequenceMaster",
+    "TC.TestStepClass": "",
+    "TC.TestDataFileName": "",
+    "TC.LogLevel": "Info"
+}

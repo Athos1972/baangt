@@ -36,3 +36,7 @@ Filename: "{app}\baangt.exe"; Description: "{cm:LaunchProgram,baangt}"; Flags: n
 
 [Files]
 Source: "..\dist\baangt\*"; DestDir: "{app}"; Flags: ignoreversion createallsubdirs recursesubdirs
+Source: "..\examples\*.*"; DestDir: "{%USERPROFILE}\baangt\examples"; Flags: ignoreversion createallsubdirs recursesubdirs
+
+[Dirs]
+Name: "{%USERPROFILE}\baangt"

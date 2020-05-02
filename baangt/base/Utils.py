@@ -90,6 +90,15 @@ class utils:
         return data
 
     @staticmethod
+    def setLogLevel(level):
+        logger.info(f"Changing Loglevel from {logger.level} to {level}")
+
+        for logHandler in logger.handlers:
+            logHandler.setLevel(level=level.upper())
+
+        logger.setLevel(level=level.upper())
+
+    @staticmethod
     def listToString(completeList):
         """
         Returns a concatenated string from a list-object
@@ -230,17 +239,17 @@ class utils:
                 logger.debug(f"Found file via BasePath {str(lFileNameAndPath)}")
             elif len(Path(lFileNameAndPath).parents) == 0:
                 # This is only the filename. Try with current path and a bit up
-                if Path(utils.__file__).joinpath(lFileNameAndPath).exists:
+                if Path(utils.__file__).joinpath(lFileNameAndPath).exists():
                     lFileNameAndPath = Path(utils.__file__).joinpath(lFileNameAndPath)
-                elif Path(utils.__file__).parent.joinpath(lFileNameAndPath).exists:
+                elif Path(utils.__file__).parent.joinpath(lFileNameAndPath).exists():
                     lFileNameAndPath = Path(utils.__file__).parent.joinpath(lFileNameAndPath)
-                elif Path(utils.__file__).parent.parent.joinpath(lFileNameAndPath).exists:
+                elif Path(utils.__file__).parent.parent.joinpath(lFileNameAndPath).exists():
                     lFileNameAndPath = Path(utils.__file__).parent.parent.joinpath(lFileNameAndPath)
-                elif Path(root_dir).joinpath(lFileNameAndPath).exists:
+                elif Path(root_dir).joinpath(lFileNameAndPath).exists():
                     lFileNameAndPath = Path(root_dir).joinpath(lFileNameAndPath)
-                elif Path(root_dir).joinpath("baangt").joinpath(lFileNameAndPath).exists:
+                elif Path(root_dir).joinpath("baangt").joinpath(lFileNameAndPath).exists():
                     lFileNameAndPath = Path(root_dir).joinpath("baangt").joinpath(lFileNameAndPath)
-                elif Path(root_dir).joinpath("baangt").joinpath("base").joinpath(lFileNameAndPath).exists:
+                elif Path(root_dir).joinpath("baangt").joinpath("base").joinpath(lFileNameAndPath).exists():
                     lFileNameAndPath = Path(root_dir).joinpath("baangt").joinpath("base").joinpath(lFileNameAndPath)
                 else:
                     raise Exception(f"Can't find file {fileNameAndPath}")

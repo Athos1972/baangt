@@ -51,7 +51,7 @@ class ProxyRotate(metaclass=Singleton):
             response = requests.get(self.proxy_gather_link, timeout=15)
         except Exception as ex:
             print(ex)
-            logger.error("No proxies read. Maybe Internet-connection is down. Please check and retry...")
+            logger.error(f"No proxies read. Maybe Internet-connection is down. Please check and retry. Error was {ex}")
             return None
         soup = bs(response.content, 'html.parser')
         table = soup.find('tbody')
@@ -150,6 +150,8 @@ class ProxyRotate(metaclass=Singleton):
         self.proxies.remove({"ip": ip, "port": str(port)})
         logger.debug(f"Ip {ip} - Port {port} removed successfully.")
 
+    def testProxy(self,type, ip, port, user, password):
+        return "Method not yet implemented"
 
 if __name__ == '__main__':
     lProxyRotate = ProxyRotate(reReadProxies=False)
