@@ -225,6 +225,20 @@ class TestRun:
                     logger.info(f"TC is already in status Error - not processing steps {counterName}: {key}, {value}"
                                 f"and everything behind this step")
                     return
+                if kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS_STOP]:
+                    logger.info(f"TC wanted to stop. Not processing steps {counterName}: {key}, {value}"
+                                f"and everything behind this step. TC-Status is "
+                                f"{kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS]}")
+                    return
+                if kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS_STOPERROR]:
+                    kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
+                    if not kwargs[GC.KWARGS_DATA].get(GC.TESTCASEERRORLOG):
+                        kwargs[GC.KWARGS_DATA][GC.TESTCASEERRORLOG] = "Aborted by command 'TCStopTestCaseError'"
+                    else:
+                        kwargs[GC.KWARGS_DATA][GC.TESTCASEERRORLOG] = kwargs[GC.KWARGS_DATA][GC.TESTCASEERRORLOG] \
+                                                                      + "\nAborted by command 'TCStopTestCaseError'"
+                    return
+
             logger.info(f"Starting {counterName}: {key}")
             kwargs[counterName] = key
 
