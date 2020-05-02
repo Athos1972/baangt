@@ -17,5 +17,6 @@
     "CL.browserHandling": "baangt.base.BrowserHandling.BrowserHandling.BrowserDriver",
     "CL.testCaseSequenceMaster": "baangt.TestCaseSequenceMaster.TestCaseSequenceMaster",
     "TC.TestStepClass": "",
-    "TC.TestDataFileName": ""
+    "TC.TestDataFileName": "",
+    "TC.ExecutionLogLevel": "Info"
 }
