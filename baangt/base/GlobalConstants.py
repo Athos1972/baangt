@@ -11,17 +11,11 @@ KWARGS_TIMING = "TimingClassInstance"
 KWARGS_SEQUENCENUMBER = "SequenceNumberOfThisTestCase"
 
 CLASSES_TESTCASESEQUENCE = "baangt.TestCaseSequence.TestCaseSequenceMaster.TestCaseSequenceMaster"
-CLASSES_TESTCASESEQUENCE_new = "TestCaseSequenceMaster"
+# CLASSES_TESTCASESEQUENCE_new = "TestCaseSequenceMaster"
 CLASSES_TESTCASE = "baangt.TestCase.TestCaseMaster.TestCaseMaster"
-CLASSES_TESTCASE_new = 'TestCaseMaster'
+# CLASSES_TESTCASE_new = 'TestCaseMaster'
 CLASSES_TESTSTEPMASTER = 'baangt.TestSteps.TestStepMaster.TestStepMaster'
-CLASSES_TESTSTEPMASTER_new = 'TestStepMaster'
-
-EXECUTION_STAGE = 'Stage'
-EXECUTION_STAGE_TEST = 'Test'
-EXECUTION_STAGE_DEVELOPMENT = 'Development'
-EXECUTION_STAGE_PRODUCTION = 'Production'
-EXECUTION_STAGE_QA = 'Quality Assurance'
+# CLASSES_TESTSTEPMASTER_new = 'TestStepMaster'
 
 TIMING_END = "end"
 TIMING_START = "start"
@@ -72,7 +66,12 @@ SCREENSHOTS = "Screenshots"
 EXECUTION_DONTCLOSEBROWSER = "dontCloseBrowser"
 EXECUTION_SLOW = "slowExecution"
 EXECUTION_NETWORK_INFO = 'NetworkInfo'
-EXECUTION_STAGE = "Stage"
+
+EXECUTION_STAGE = 'Stage'
+EXECUTION_STAGE_TEST = 'Test'
+EXECUTION_STAGE_DEVELOPMENT = 'Development'
+EXECUTION_STAGE_PRODUCTION = 'Production'
+EXECUTION_STAGE_QA = 'Quality Assurance'
 
 EXPORT_FORMAT = "ExportFormat"
 EXPORT_ADDITIONAL_DATA = "AdditionalExportTabs"
