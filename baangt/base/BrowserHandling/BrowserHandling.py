@@ -557,7 +557,7 @@ class BrowserDriver:
         self.__doSomething(GC.CMD_SETTEXT, value=value, timeout=timeout, xpath=xpath, optional=optional)
 
     def findByAndSetTextIf(self, id=None, css=None, xpath=None, class_name=None, value=None, iframe=None,
-                           timeout=60):
+                           timeout=60, optional=False):
         """
         Helper function to not have to write:
         If <condition>:
@@ -576,7 +576,7 @@ class BrowserDriver:
             return
 
         return self.findByAndSetText(id=id, css=css, xpath=xpath, class_name=class_name, value=value, iframe=iframe,
-                                     timeout=timeout)
+                                     timeout=timeout, optional=optional)
 
     def findByAndSetTextValidated(self, id=None,
                                   css=None,
