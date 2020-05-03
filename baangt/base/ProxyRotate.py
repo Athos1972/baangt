@@ -20,7 +20,7 @@ class proxy_data:
     port: str = ""
     username: str = ""
     password: str = ""
-    typ: str = "http"
+    type: str = "http"
     called: int = 0
     failed: int = 0
 
@@ -176,7 +176,7 @@ class ProxyRotate(metaclass=Singleton):
         return response
 
     def __set_proxy(self, proxi):
-        if proxi.typ == "socks5":
+        if proxi.type == "socks5":
             if proxi.username != "" and proxi.password != "":
                 proxy = {
                     "http": f"socks5://{proxi.username}:{proxi.password}@{proxi.ip}:{proxi.port}",
@@ -228,11 +228,11 @@ class ProxyRotate(metaclass=Singleton):
         proxy = self.proxies[list(self.proxies.keys())[randint(0, len(self.proxies) - 1)]]
         proxy.Called()
         if proxy.username == "" and proxy.password == "":
-            return {"ip": proxy.ip, "port": proxy.port, "type": proxy.typ}
+            return {"ip": proxy.ip, "port": proxy.port, "type": proxy.type}
         else:
             return {
                 "ip": proxy.ip, "port": proxy.port,
-                "username": proxy.username, "password": proxy.password, "type": proxy.typ
+                "username": proxy.username, "password": proxy.password, "type": proxy.type
             }
 
     def random_proxy(self):
