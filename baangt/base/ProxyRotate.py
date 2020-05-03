@@ -148,6 +148,8 @@ class ProxyRotate(metaclass=Singleton):
                     self.proxies[proxy.ip] = proxy
                 else:
                     self.__temp_proxies.remove(proxy)
+            logger.info(f"Total proxies in list currently = {str(len(self.proxies))}")
+            logger.info(f"Identified {len(self.proxies)} working proxies")
             return None
 
         for rm in removable:
@@ -167,7 +169,7 @@ class ProxyRotate(metaclass=Singleton):
 
     def __get_response(self, link, proxy, headers):
         try:
-            response = requests.get(link, proxies=proxy, headers=headers, timeout=15)
+            response = requests.get(link, proxies=proxy, headers=headers, timeout=20)
         except Exception as ex:
             logger.debug(f"Proxy not reacting: {proxy}")
             return False
