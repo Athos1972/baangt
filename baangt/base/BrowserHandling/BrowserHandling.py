@@ -452,6 +452,7 @@ class BrowserDriver:
                 except WebDriverException as e:
                     self._log(logging.DEBUG, f"IFrame {iframe} not there yet - waiting 1 second")
                     time.sleep(1)
+
             if time.time() > mustEnd:
                 raise TimeoutError
 
@@ -460,7 +461,7 @@ class BrowserDriver:
             self.driver.switch_to.default_content()
             self.iFrame = None
 
-    def handleWindow(self, windowNumber=None, function=None):
+    def handleWindow(self, windowNumber=None, function=None, timeout=20):
         """
         Interations with Windows (=BrowserTabs).
 
@@ -487,11 +488,21 @@ class BrowserDriver:
 
                 self.driver.switch_to.window(self.driver.window_handles[exceptHandles])
         else:
-            try:
-                self.driver.switch_to.window(self.driver.window_handles[windowNumber])
-            except Exception as e:
-                logger.critical(f"Tried to switch to Window {windowNumber} but it's not there")
-                raise Exceptions.baangtTestStepException(f"Window {windowNumber} doesn't exist")
+            success = False
+            duration = 0
+            while not success and duration < timeout:
+                try:
+                    self.driver.switch_to.window(self.driver.window_handles[windowNumber])
+                    success = True
+                    continue
+                except Exception as e:
+                    logger.debug(f"Tried to switch to Window {windowNumber} but it's not there yet")
+
+                self.sleep(1)
+                duration += 1
+
+            if not success:
+                raise Exceptions.baangtTestStepException(f"Window {windowNumber} doesn't exist after timeout {timeout}")
 
     def findByAndWaitForValue(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=20,
                               optional=False):
@@ -546,7 +557,7 @@ class BrowserDriver:
         self.__doSomething(GC.CMD_SETTEXT, value=value, timeout=timeout, xpath=xpath, optional=optional)
 
     def findByAndSetTextIf(self, id=None, css=None, xpath=None, class_name=None, value=None, iframe=None,
-                           timeout=60):
+                           timeout=60, optional=False):
         """
         Helper function to not have to write:
         If <condition>:
@@ -565,7 +576,7 @@ class BrowserDriver:
             return
 
         return self.findByAndSetText(id=id, css=css, xpath=xpath, class_name=class_name, value=value, iframe=iframe,
-                                     timeout=timeout)
+                                     timeout=timeout, optional=optional)
 
     def findByAndSetTextValidated(self, id=None,
                                   css=None,

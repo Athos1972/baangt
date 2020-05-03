@@ -238,6 +238,8 @@ More details on Activities
    * - clear
      - ``Value`` must have the variable or column name, that should be cleared (without ``$(columnName)``,
        just ``columnName``
+   * - switchwindow
+     - Switches to a browser window. ``Value`` is the number of the window, that you want to switch to.
    * - address_create
      - provide an easy and easily extendable way to generate address data for a test case
        The following fields variable are stored in testcaseDataDict:

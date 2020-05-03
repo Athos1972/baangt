@@ -24,7 +24,7 @@ class TestStepMaster:
         self.browserSession: BrowserDriver = kwargs.get(GC.KWARGS_BROWSER)
         self.apiSession: ApiHandling = kwargs.get(GC.KWARGS_API_SESSION)
         self.testCaseStatus = None
-        self.testStepNumber = kwargs.get(GC.STRUCTURE_TESTSTEP)    # Set in TestRunData by TestCaseMaster
+        self.testStepNumber = kwargs.get(GC.STRUCTURE_TESTSTEP)  # Set in TestRunData by TestCaseMaster
         self.testRunUtil = self.testRunInstance.testRunUtils
         # check, if this TestStep has additional Parameters and if so, execute
         lSequence = self.testRunUtil.getSequenceByNumber(testRunName=self.testRunInstance.testRunName,
@@ -67,12 +67,12 @@ class TestStepMaster:
             return
         lActivity = command["Activity"].upper()
         if lActivity == "COMMENT":
-            return     # Comment's are ignored
+            return  # Comment's are ignored
 
         lLocatorType = command["LocatorType"].upper()
         lLocator = self.replaceVariables(command["Locator"])
 
-        if lLocator and not lLocatorType:   # If locatorType is empty, default it to XPATH
+        if lLocator and not lLocatorType:  # If locatorType is empty, default it to XPATH
             lLocatorType = 'XPATH'
 
         xpath, css, id = self.__setLocator(lLocatorType, lLocator)
@@ -90,8 +90,9 @@ class TestStepMaster:
 
         lTimingString = f"TS {commandNumber} {lActivity.lower()}"
         self.timing.takeTime(lTimingString)
-        logger.debug(f"Executing TestStep {commandNumber} with parameters: act={lActivity}, lType={lLocatorType}, loc={lLocator}, "
-                     f"Val1={lValue}, comp={lComparison}, Val2={lValue2}, Optional={lOptional}, timeout={lTimeout}")
+        logger.debug(
+            f"Executing TestStep {commandNumber} with parameters: act={lActivity}, lType={lLocatorType}, loc={lLocator}, "
+            f"Val1={lValue}, comp={lComparison}, Val2={lValue2}, Optional={lOptional}, timeout={lTimeout}")
 
         lValue, lValue2 = self.replaceAllVariables(lValue, lValue2)
 
@@ -102,12 +103,22 @@ class TestStepMaster:
             self.browserSession.goToUrl(lValue)
         elif lActivity == "SETTEXT":
             self.browserSession.findByAndSetText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout)
+        elif lActivity == "SETTEXTIF":
+            self.browserSession.findByAndSetTextIf(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout,
+                                                   optional=lOptional)
         elif lActivity == "FORCETEXT":
             self.browserSession.findByAndForceText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout)
         elif lActivity == 'HANDLEIFRAME':
             self.browserSession.handleIframe(lLocator)
+        elif lActivity == 'SWITCHWINDOW':
+            lWindow = lValue
+            if lWindow.isnumeric():
+                lWindow = int(lWindow)
+            self.browserSession.handleWindow(windowNumber=lWindow, timeout=lTimeout)
         elif lActivity == "CLICK":
             self.browserSession.findByAndClick(xpath=xpath, css=css, id=id, timeout=lTimeout)
+        elif lActivity == "CLICKIF":
+            self.browserSession.findByAndClickIf(xpath=xpath, css=css, id=id, timeout=lTimeout, value=lValue)
         elif lActivity == "PAUSE":
             self.browserSession.sleep(sleepTimeinSeconds=float(lValue))
         elif lActivity == "IF":
@@ -150,13 +161,13 @@ class TestStepMaster:
             self.browserSession.submit()
         elif lActivity == "ADDRESS_CREATE":
             # Create Address with option lValue and lValue2
-            AddressCreate(lValue,lValue2)
+            AddressCreate(lValue, lValue2)
             # Update testcaseDataDict with addressDict returned from
             AddressCreate.returnAddress()
             self.testcaseDataDict.update(AddressCreate.returnAddress())
         elif lActivity == 'ASSERT':
             value_found = self.browserSession.findByAndWaitForValue(xpath=xpath, css=css, id=id, optional=lOptional,
-                                                    timeout=lTimeout)
+                                                                    timeout=lTimeout)
             if not self.__doComparisons(lComparison=lComparison, value1=value_found, value2=lValue):
                 raise baangtTestStepException(f"Expected Value: {lValue}, Value found :{value_found} ")
         elif lActivity == 'IBAN':
@@ -222,7 +233,7 @@ class TestStepMaster:
         for entry in self.testcaseDataDict["Result_CheckedLinks"]:
             if entry[0] > 400:
                 self.testcaseDataDict[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
-                self.testcaseDataDict[GC.TESTCASEERRORLOG] = self.testcaseDataDict.get(GC.TESTCASEERRORLOG,"")\
+                self.testcaseDataDict[GC.TESTCASEERRORLOG] = self.testcaseDataDict.get(GC.TESTCASEERRORLOG, "") \
                                                              + "URL-Checker error"
                 break
 
@@ -309,7 +320,7 @@ class TestStepMaster:
                 self.ifIsTrue = True
             else:
                 self.ifIsTrue = False
-        elif not lComparison:   # Check only, if Value1 has a value.
+        elif not lComparison:  # Check only, if Value1 has a value.
             self.ifIsTrue = True if value1 else False
         else:
             raise BaseException(f"Comparison Operator not supported/unknown {lComparison}")
@@ -356,31 +367,35 @@ class TestStepMaster:
             else:
                 left_part = expression.split("$(")[0]
 
-            center = expression[len(left_part)+2:]
+            center = expression[len(left_part) + 2:]
             center = center.split(")")[0]
 
-            right_part = expression[len(left_part)+len(center)+3:]
+            right_part = expression[len(left_part) + len(center) + 3:]
 
             if "." not in center:
                 # Replace the variable with the value from data structure
-                center = self.testcaseDataDict.get(center)
+                centerValue = self.testcaseDataDict.get(center)
             else:
                 # This is a reference to a DICT with ".": for instance APIHandling.AnswerContent("<bla>")
                 dictVariable = center.split(".")[0]
                 dictValue = center.split(".")[1]
 
                 if dictVariable == 'ANSWER_CONTENT':
-                    center = self.apiSession.session[1].answerJSON.get(dictValue, "Empty")
+                    centerValue = self.apiSession.session[1].answerJSON.get(dictValue, "Empty")
                 elif dictVariable == 'FAKER':
                     # This is to call Faker Module with the Method, that is given after the .
-                    center = self.__getFakerData(dictValue)
+                    centerValue = self.__getFakerData(dictValue)
                 else:
                     raise BaseException(f"Missing code to replace value for: {center}")
 
-            if not center:
-                raise BaseException(f"Variable not found: {center}, input parameter was: {expression}")
+            if not centerValue:
+                if center in self.testcaseDataDict.keys():
+                    # The variable exists, but has no value.
+                    return None
+                else:
+                    raise BaseException(f"Variable not found: {center}, input parameter was: {expression}")
 
-            expression = "".join([left_part, center, right_part])
+            expression = "".join([left_part, centerValue, right_part])
         return expression
 
     def __getFakerData(self, fakerMethod):
