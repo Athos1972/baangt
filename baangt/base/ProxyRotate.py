@@ -1,4 +1,3 @@
-import json
 import requests
 from time import sleep
 from random import randint
@@ -6,7 +5,6 @@ from threading import Thread
 from bs4 import BeautifulSoup as bs
 from dataclasses import dataclass
 import logging
-import sys
 import csv
 import baangt.base.GlobalConstants as GC
 from dataclasses_json import dataclass_json
@@ -222,20 +220,20 @@ class ProxyRotate(metaclass=Singleton):
         logger.debug(f"Wrote list of {len(self.proxies)} proxies to CSV-File")
 
     def __getProxy(self):
-        if len(self.proxies) > 0:
-            logger.critical(f"Proxies count: {len(self.proxies)}")
-            proxy =  self.proxies[list(self.proxies.keys())[randint(0, len(self.proxies) - 1)]]
-            proxy.Called()
-            if proxy.username == "" and proxy.password == "":
-                return {"ip": proxy.ip, "port": proxy.port, "type": proxy.typ}
-            else:
-                return {
-                    "ip": proxy.ip, "port": proxy.port,
-                    "username": proxy.username, "password": proxy.password, "type": proxy.typ
-                }
+        if len(self.proxies) == 0:
+            logger.info("Waiting for a working proxy.")
+        while len(self.proxies) == 0:
+            sleep(1)
+        logger.critical(f"Proxies count: {len(self.proxies)}")
+        proxy = self.proxies[list(self.proxies.keys())[randint(0, len(self.proxies) - 1)]]
+        proxy.Called()
+        if proxy.username == "" and proxy.password == "":
+            return {"ip": proxy.ip, "port": proxy.port, "type": proxy.typ}
         else:
-            logger.critical("Sorry there is no working proxy!")
-            sys.exit("No working proxy identified - can't continue")
+            return {
+                "ip": proxy.ip, "port": proxy.port,
+                "username": proxy.username, "password": proxy.password, "type": proxy.typ
+            }
 
     def random_proxy(self):
         return self.__getProxy()
