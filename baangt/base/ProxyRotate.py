@@ -59,13 +59,13 @@ class ProxyRotate(metaclass=Singleton):
         self.proxy_gather_link = "https://www.sslproxies.org/"
         self.proxies = {}
         self.all_proxies = {}
+        self.__temp_proxies = []
         self.__read_proxies()
         self.firstRun = True
-        self.__temp_proxies = []
 
     def recheckProxies(self, forever=False):
-        self.__verify_proxies([self.proxies[proxy] for proxy in self.proxies])
-        self.__gather_proxy()
+        self.__verify_proxies(self.__temp_proxies)
+        self.__gather_proxy(self.__temp_proxies)
         if forever:
             t = Thread(target=self.__threaded_proxy)
             t.daemon = True
@@ -80,8 +80,11 @@ class ProxyRotate(metaclass=Singleton):
             else:
                 sleep(5)
 
-    def __gather_proxy(self):
-        self.__temp_proxies = [self.proxies[p] for p in self.proxies]
+    def __gather_proxy(self, proxy=None):
+        if proxy == None:
+            self.__temp_proxies = [self.proxies[p] for p in self.proxies]
+        else:
+            self.__temp_proxies = proxy
         logger.debug("Checking for new proxies...")
         try:
             response = requests.get(self.proxy_gather_link, timeout=15)
@@ -132,8 +135,20 @@ class ProxyRotate(metaclass=Singleton):
                 logger.debug(f"Proxy not usable for Youtube: {proxi}, Exception: {ex}")
                 removable.append(proxi)
 
-        if len(removable)<len(proxy_lis):
+            # Check, if we have at least 4 proxies in the first run of the function.
+            # If yes, exit, as the function will re-run soon.
+            goodProxies = lineCount - len(removable) - 1   # Because enum starts with 0, LEN starts with 1
+            if goodProxies >= 2 and self.firstRun:
+                break
+
+        if len(removable)<len(proxy_lis) and self.firstRun:
             self.firstRun = False
+            for proxy in proxy_lis[:lineCount]:
+                if proxy not in removable:
+                    self.proxies[proxy.ip] = proxy
+                else:
+                    self.__temp_proxies.remove(proxy)
+            return None
 
         for rm in removable:
             if rm.ip in self.proxies:
@@ -191,7 +206,7 @@ class ProxyRotate(metaclass=Singleton):
                 for data in raw_data:
                     if int(data['failed']) < GC.PROXY_FAILCOUNTER:
                         proxy = proxy_data().from_dict(dict(data))
-                        self.proxies[data["ip"]] = proxy
+                        self.__temp_proxies.append(proxy)
                     self.all_proxies[data["ip"]] = proxy
         except Exception as ex:
             logger.debug(str(ex))
