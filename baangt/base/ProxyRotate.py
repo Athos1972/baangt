@@ -119,6 +119,7 @@ class ProxyRotate(metaclass=Singleton):
                 responses.append(res)
             if False in responses:
                 logger.debug(f"Error code 400 or greater in {proxi}")
+                removable.append(proxi)
                 continue
 
             soup1 = bs(responses[0].content, 'html.parser')
@@ -130,16 +131,6 @@ class ProxyRotate(metaclass=Singleton):
             except Exception as ex:
                 logger.debug(f"Proxy not usable for Youtube: {proxi}, Exception: {ex}")
                 removable.append(proxi)
-
-            # Check, if we have at least 4 proxies in the first run of the function.
-            # If yes, exit, as the function will re-run soon.
-            goodProxies = lineCount - len(removable) - 1   # Because enum starts with 0, LEN starts with 1
-            if goodProxies >= 2 and self.firstRun:
-                # Remove all proxies above our current lineCount
-                for index, (lDictEntry) in enumerate(proxy_lis):
-                    if index > lineCount:
-                        removable.append(lDictEntry)
-                break
 
         if len(removable)<len(proxy_lis):
             self.firstRun = False
