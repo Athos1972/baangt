@@ -78,7 +78,7 @@ class ProxyRotate(metaclass=Singleton):
             else:
                 sleep(5)
 
-    def __gather_proxy(self, proxy=None):
+    def __gather_proxy(self, proxy=None, test=False):
         if proxy == None:
             self.__temp_proxies = [self.proxies[p] for p in self.proxies]
         else:
@@ -100,10 +100,12 @@ class ProxyRotate(metaclass=Singleton):
             if proxy not in self.__temp_proxies:
                 logger.debug(f"Added {proxy} to be checked ")
                 self.__temp_proxies.append(proxy)
+        if test:
+            return self.__temp_proxies
         self.__verify_proxies(self.__temp_proxies)
         self.__write_proxies()
 
-    def __verify_proxies(self, proxy_lis):
+    def __verify_proxies(self, proxy_lis, test=False):
         removable = []
         links = ["https://www.youtube.com/watch?v=FghBQsZJg4U", "https://gogs.earthsquad.global"]
         headers = {
@@ -121,6 +123,8 @@ class ProxyRotate(metaclass=Singleton):
             if False in responses:
                 logger.debug(f"Error code 400 or greater in {proxi}")
                 removable.append(proxi)
+                if test:
+                    return f"Error code 400 or greater in {proxi}"
                 continue
 
             soup1 = bs(responses[0].content, 'html.parser')
@@ -129,8 +133,12 @@ class ProxyRotate(metaclass=Singleton):
                 name = soup1.find('meta', {'property': 'og:title'}).get('content')
                 logo = soup2.find('div', class_='logo')
                 logger.debug(f"Proxy can be used for Youtube: {proxi}")
+                if test:
+                    return f"Proxy can be used for Youtube: {proxi}"
             except Exception as ex:
                 logger.debug(f"Proxy not usable for Youtube: {proxi}, Exception: {ex}")
+                if test:
+                    return f"Proxy not usable for Youtube: {proxi}, Exception: {ex}"
                 removable.append(proxi)
 
             # Check, if we have at least 4 proxies in the first run of the function.
@@ -250,6 +258,19 @@ class ProxyRotate(metaclass=Singleton):
 
     def testProxy(self,type, ip, port, user, password):
         return "Method not yet implemented"
+
+    def testGatherProxy(self):
+        proxies = self.__gather_proxy(test=True)
+        print(f"Total gathered untested proxies = {str(len(proxies))}")
+        return proxies
+
+    def testVerifyProxy(self):
+        if len(self.__temp_proxies)<2:
+            proxies = self.testGatherProxy()
+        else:
+            proxies = self.__temp_proxies
+        result = self.__verify_proxies([proxies[0]], test=True)
+        return result
 
 if __name__ == '__main__':
     lProxyRotate = ProxyRotate(reReadProxies=False)

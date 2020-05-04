@@ -16,6 +16,14 @@ logger = logging.getLogger("pyC")
 
 class TestStepMaster:
     def __init__(self, executeDirect=True, **kwargs):
+        self.anchor = None
+        self.anchorLocator = None
+        self.anchorLocatorType = None
+        self.testCaseStatus = None
+        self.ifActive = False
+        self.ifIsTrue = True
+        self.baangtFaker = None
+
         self.kwargs = kwargs
         self.testRunInstance = kwargs.get(GC.KWARGS_TESTRUNINSTANCE)
         self.testcaseDataDict = kwargs.get(GC.KWARGS_DATA)
@@ -23,18 +31,18 @@ class TestStepMaster:
         self.timingName = self.timing.takeTime(self.__class__.__name__, forceNew=True)
         self.browserSession: BrowserDriver = kwargs.get(GC.KWARGS_BROWSER)
         self.apiSession: ApiHandling = kwargs.get(GC.KWARGS_API_SESSION)
-        self.testCaseStatus = None
+
         self.testStepNumber = kwargs.get(GC.STRUCTURE_TESTSTEP)  # Set in TestRunData by TestCaseMaster
         self.testRunUtil = self.testRunInstance.testRunUtils
+
+        # Get the release from testrun-customizing if set: (will influence, whether or not elements will be executed)
+        self.globalRelease = self.testRunInstance.globalSettings.get("Release", "")
+
         # check, if this TestStep has additional Parameters and if so, execute
         lSequence = self.testRunUtil.getSequenceByNumber(testRunName=self.testRunInstance.testRunName,
                                                          sequence=kwargs.get(GC.STRUCTURE_TESTCASESEQUENCE))
         self.testCase = self.testRunUtil.getTestCaseByNumber(lSequence, kwargs.get(GC.STRUCTURE_TESTCASE))
         self.testStep = self.testRunUtil.getTestStepByNumber(self.testCase, self.testStepNumber)
-        self.globalRelease = self.testRunInstance.globalSettings.get("Release", "")
-        self.ifActive = False
-        self.ifIsTrue = True
-        self.baangtFaker = None
 
         if self.testStep:
             if not isinstance(self.testStep[1], str) and executeDirect:
@@ -42,8 +50,8 @@ class TestStepMaster:
                 # in the TestExecutionSteps
                 self.executeDirect(self.testStep[1][GC.STRUCTURE_TESTSTEPEXECUTION])
 
-                # Relatively !sic: Teardown makes only sense, when we actually executed something directory in here
-                # Otherwise (if it was 1 or 2 Tabs more to the left) we'd take execution time without
+                # Teardown makes only sense, when we actually executed something directory in here
+                # Otherwise (if it was 1 or 2 Tab-stops more to the left) we'd take execution time without
                 # having done anything
                 self.teardown()
 
@@ -77,6 +85,9 @@ class TestStepMaster:
 
         xpath, css, id = self.__setLocator(lLocatorType, lLocator)
 
+        if self.anchor:
+            xpath = self.anchorLocator + xpath
+
         lValue = str(command["Value"])
         lValue2 = str(command["Value2"])
         lComparison = command["Comparison"]
@@ -108,6 +119,20 @@ class TestStepMaster:
                                                    optional=lOptional)
         elif lActivity == "FORCETEXT":
             self.browserSession.findByAndForceText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout)
+        elif lActivity == "SETANCHOR":
+            if not lLocator:
+                self.anchor = None
+                self.anchorLocator = None
+                self.anchorLocatorType = None
+            else:
+                found = self.browserSession.findBy(xpath=xpath, css=css, id=id, timeout=lTimeout)
+                if found:
+                    self.anchor = self.browserSession.element
+                    self.anchorLocator = lLocator
+                    self.anchorLocatorType = lLocatorType
+                else:
+                    logger.error(f"Anchor should be set, but can't be found in the current page: {lLocatorType}, {lLocator}")
+                    raise ValueError(f"Anchor should be set, but can't be found in the current page: {lLocatorType}, {lLocator}")
         elif lActivity == 'HANDLEIFRAME':
             self.browserSession.handleIframe(lLocator)
         elif lActivity == 'SWITCHWINDOW':
