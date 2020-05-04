@@ -261,11 +261,13 @@ class ProxyRotate(metaclass=Singleton):
         return proxies
 
     def testVerifyProxy(self):
-        if len(self.__temp_proxies)<2:
-            proxies = self.testGatherProxy()
-        else:
-            proxies = self.__temp_proxies
-        result = self.__verify_proxies([proxies[0]], test=True)
+        proxies_lis = []
+        if len(self.__temp_proxies) > 0:
+            proxies_lis = [x for x in self.__temp_proxies if not x.failed > GC.PROXY_FAILCOUNTER]
+        if len(proxies_lis) < 1:
+            proxies_lis = [self.testGatherProxy()]
+        proxies_lis = [proxies_lis[randint(0, len(proxies_lis)-1)]]
+        result = self.__verify_proxies(proxies_lis, test=True)
         return result
 
 if __name__ == '__main__':
