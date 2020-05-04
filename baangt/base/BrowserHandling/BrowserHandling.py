@@ -13,6 +13,7 @@ from baangt.base.Timing.Timing import Timing
 from baangt.TestSteps import Exceptions
 from baangt.base.DownloadFolderMonitoring import DownloadFolderMonitoring
 from baangt.base.Utils import utils
+from baangt.base.ProxyRotate import ProxyRotate
 import uuid
 import time
 import logging
@@ -52,6 +53,7 @@ class BrowserDriver:
         self.slowExecutionTimeoutInSeconds = 1
         self.downloadFolder = None
         self.downloadFolderMonitoring = None
+        self.randomProxy = None
         # Reference to Selenium "HTML" in order to track page changes. It is set on every interaction with the page
         self.html = None
         self.managedPaths = ManagedPaths()
@@ -76,6 +78,7 @@ class BrowserDriver:
         @param kwargs: Currently (Jan2020) not used
         """
         self.takeTime("Browser Start")
+        self.randomProxy = randomProxy
         browserNames = {
             GC.BROWSER_FIREFOX: webdriver.Firefox,
             GC.BROWSER_CHROME: webdriver.Chrome,
@@ -103,7 +106,7 @@ class BrowserDriver:
                         self.downloadDriver(browserName)
 
                     profile = webdriver.FirefoxProfile()
-                    profile = self.__setFirefoxProfile(browserProxy, profile, randomProxy)
+                    profile = self.__setFirefoxProfile(browserProxy, profile, self.randomProxy)
                     logger.debug(f"Firefox Profile as follows:{profile.userPrefs}")
 
                     self.driver = browserNames[browserName](
@@ -133,7 +136,7 @@ class BrowserDriver:
                         chrome_options=self.__createBrowserOptions(browserName=browserName,
                                                                    desiredCapabilities=desiredCapabilities,
                                                                    browserMobProxy=browserProxy,
-                                                                   randomProxy=randomProxy),
+                                                                   randomProxy=self.randomProxy),
                         executable_path=self.__findBrowserDriverPaths(ChromeExecutable),
                         service_log_path=os.path.join(self.managedPaths.getLogfilePath(), 'chromedriver.log')
                     )
@@ -1075,11 +1078,24 @@ class BrowserDriver:
         except WebDriverException as e:
             # Use noScreenshot-Parameter as otherwise we'll try on a dead browser to create a screenshot
             self._log(logging.ERROR, f"Webpage {url} not reached. Error was: {e}", noScreenShot=True)
+            self.__setProxyError()
             raise Exceptions.baangtTestStepException
         except Exceptions as e:
             # Use noScreenshot-Parameter as otherwise we'll try on a dead browser to create a screenshot
             self._log(logging.ERROR, f"Webpage {url} throws error {e}", noScreenShot=True)
+            self.__setProxyError()
             raise Exceptions.baangtTestStepException(url, e)
+
+    def __setProxyError(self):
+        """
+        Inform the central proxy service, that there was an error. OK, it might have been the page itself, that has
+        an error and we'll never know. But more likely it's from the Proxy.
+        :return:
+        """
+        if self.randomProxy:
+            lProxyService = ProxyRotate()
+            lProxyService.remove_proxy(ip=self.randomProxy["ip"], port=self.randomProxy["port"],
+                                       type=self.randomProxy.get("type"))
 
     def goBack(self):
         """

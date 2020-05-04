@@ -220,9 +220,12 @@ class ProxyRotate(metaclass=Singleton):
         logger.debug(f"Wrote list of {len(self.proxies)} proxies to CSV-File")
 
     def __getProxy(self):
+        lMaxCount = 600
+        lCount = 0
         if len(self.proxies) == 0:
             logger.info("Waiting for a working proxy.")
-        while len(self.proxies) == 0:
+        while len(self.proxies) == 0 and lCount <= lMaxCount:
+            lCount += 1
             sleep(1)
         logger.critical(f"Proxies count: {len(self.proxies)}")
         proxy = self.proxies[list(self.proxies.keys())[randint(0, len(self.proxies) - 1)]]
@@ -238,7 +241,8 @@ class ProxyRotate(metaclass=Singleton):
     def random_proxy(self):
         return self.__getProxy()
 
-    def remove_proxy(self, ip):
+    def remove_proxy(self, ip, port=None, type=None):
+        logger.debug(f"Increase fail count on Proxy with type {type}: {ip}:{port}")
         self.proxies[ip].Failed()
         if self.proxies[ip].failed >= GC.PROXY_FAILCOUNTER:
             del self.proxies[ip]
