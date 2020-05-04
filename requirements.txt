@@ -59,4 +59,4 @@ XlsxWriter==1.2.7
 zipp==0.6.0
 coverage==5.0.4
 gevent>=1.5.0
-dataclasses>=0.7
+dataclasses>=0.6
