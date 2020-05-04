@@ -240,6 +240,14 @@ More details on Activities
        just ``columnName``
    * - switchwindow
      - Switches to a browser window. ``Value`` is the number of the window, that you want to switch to.
+   * - setanchor
+     - There are pages, where you'll not find good unique IDs or no nice way to locate elements. Setting an anchor can
+       help in these cases. An anchor is an element, that can be located by CSS, ID or XPATH. After the anchor is set
+       all future tries to locate an element will happen within the children of the anchor.
+
+       To unset an anchor use setanchor without locator.
+
+       setanchor can also improve the location performance, if you're dealing with really large pages.
    * - address_create
      - provide an easy and easily extendable way to generate address data for a test case
        The following fields variable are stored in testcaseDataDict:
