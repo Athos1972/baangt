@@ -118,3 +118,5 @@ CHROME_URL = 'https://chromedriver.storage.googleapis.com/LATEST_RELEASE'
 
 BROWSER_PROXY_PATH = '/browsermob-proxy/bin/browsermob-proxy'
 BROWSER_PROXY_URL = 'https://github.com/lightbody/browsermob-proxy/releases/download/browsermob-proxy/browsermob-proxy-bin.zip'
+
+PROXY_FAILCOUNTER = 3

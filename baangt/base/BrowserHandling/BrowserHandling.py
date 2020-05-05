@@ -13,6 +13,7 @@ from baangt.base.Timing.Timing import Timing
 from baangt.TestSteps import Exceptions
 from baangt.base.DownloadFolderMonitoring import DownloadFolderMonitoring
 from baangt.base.Utils import utils
+from baangt.base.ProxyRotate import ProxyRotate
 import uuid
 import time
 import logging
@@ -52,6 +53,7 @@ class BrowserDriver:
         self.slowExecutionTimeoutInSeconds = 1
         self.downloadFolder = None
         self.downloadFolderMonitoring = None
+        self.randomProxy = None
         # Reference to Selenium "HTML" in order to track page changes. It is set on every interaction with the page
         self.html = None
         self.managedPaths = ManagedPaths()
@@ -76,6 +78,7 @@ class BrowserDriver:
         @param kwargs: Currently (Jan2020) not used
         """
         self.takeTime("Browser Start")
+        self.randomProxy = randomProxy
         browserNames = {
             GC.BROWSER_FIREFOX: webdriver.Firefox,
             GC.BROWSER_CHROME: webdriver.Chrome,
@@ -103,7 +106,7 @@ class BrowserDriver:
                         self.downloadDriver(browserName)
 
                     profile = webdriver.FirefoxProfile()
-                    profile = self.__setFirefoxProfile(browserProxy, profile, randomProxy)
+                    profile = self.__setFirefoxProfile(browserProxy, profile, self.randomProxy)
                     logger.debug(f"Firefox Profile as follows:{profile.userPrefs}")
 
                     self.driver = browserNames[browserName](
@@ -133,7 +136,7 @@ class BrowserDriver:
                         chrome_options=self.__createBrowserOptions(browserName=browserName,
                                                                    desiredCapabilities=desiredCapabilities,
                                                                    browserMobProxy=browserProxy,
-                                                                   randomProxy=randomProxy),
+                                                                   randomProxy=self.randomProxy),
                         executable_path=self.__findBrowserDriverPaths(ChromeExecutable),
                         service_log_path=os.path.join(self.managedPaths.getLogfilePath(), 'chromedriver.log')
                     )
@@ -452,6 +455,7 @@ class BrowserDriver:
                 except WebDriverException as e:
                     self._log(logging.DEBUG, f"IFrame {iframe} not there yet - waiting 1 second")
                     time.sleep(1)
+
             if time.time() > mustEnd:
                 raise TimeoutError
 
@@ -460,7 +464,7 @@ class BrowserDriver:
             self.driver.switch_to.default_content()
             self.iFrame = None
 
-    def handleWindow(self, windowNumber=None, function=None):
+    def handleWindow(self, windowNumber=None, function=None, timeout=20):
         """
         Interations with Windows (=BrowserTabs).
 
@@ -487,11 +491,21 @@ class BrowserDriver:
 
                 self.driver.switch_to.window(self.driver.window_handles[exceptHandles])
         else:
-            try:
-                self.driver.switch_to.window(self.driver.window_handles[windowNumber])
-            except Exception as e:
-                logger.critical(f"Tried to switch to Window {windowNumber} but it's not there")
-                raise Exceptions.baangtTestStepException(f"Window {windowNumber} doesn't exist")
+            success = False
+            duration = 0
+            while not success and duration < timeout:
+                try:
+                    self.driver.switch_to.window(self.driver.window_handles[windowNumber])
+                    success = True
+                    continue
+                except Exception as e:
+                    logger.debug(f"Tried to switch to Window {windowNumber} but it's not there yet")
+
+                self.sleep(1)
+                duration += 1
+
+            if not success:
+                raise Exceptions.baangtTestStepException(f"Window {windowNumber} doesn't exist after timeout {timeout}")
 
     def findByAndWaitForValue(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=20,
                               optional=False):
@@ -546,7 +560,7 @@ class BrowserDriver:
         self.__doSomething(GC.CMD_SETTEXT, value=value, timeout=timeout, xpath=xpath, optional=optional)
 
     def findByAndSetTextIf(self, id=None, css=None, xpath=None, class_name=None, value=None, iframe=None,
-                           timeout=60):
+                           timeout=60, optional=False):
         """
         Helper function to not have to write:
         If <condition>:
@@ -565,7 +579,7 @@ class BrowserDriver:
             return
 
         return self.findByAndSetText(id=id, css=css, xpath=xpath, class_name=class_name, value=value, iframe=iframe,
-                                     timeout=timeout)
+                                     timeout=timeout, optional=optional)
 
     def findByAndSetTextValidated(self, id=None,
                                   css=None,
@@ -790,8 +804,8 @@ class BrowserDriver:
                     # visibility of element sometimes not true, but still clickable. If we tried already
                     # 2 times with visibility, let's give it one more try with Presence of element
                     if lLoopCount > 1:
-                        logger.debug("Tried 2 times to find visible element, now trying presence "
-                                     "of element instead, XPATH = {xpath}")
+                        logger.debug(f"Tried 2 times to find visible element, now trying presence "
+                                     f"of element instead, XPATH = {xpath}")
                         self.element = driverWait.until(ec.presence_of_element_located((By.XPATH, xpath)))
                     else:
                         self.element = driverWait.until(ec.visibility_of_element_located((By.XPATH, xpath)))
@@ -1064,11 +1078,24 @@ class BrowserDriver:
         except WebDriverException as e:
             # Use noScreenshot-Parameter as otherwise we'll try on a dead browser to create a screenshot
             self._log(logging.ERROR, f"Webpage {url} not reached. Error was: {e}", noScreenShot=True)
+            self.__setProxyError()
             raise Exceptions.baangtTestStepException
         except Exceptions as e:
             # Use noScreenshot-Parameter as otherwise we'll try on a dead browser to create a screenshot
             self._log(logging.ERROR, f"Webpage {url} throws error {e}", noScreenShot=True)
+            self.__setProxyError()
             raise Exceptions.baangtTestStepException(url, e)
+
+    def __setProxyError(self):
+        """
+        Inform the central proxy service, that there was an error. OK, it might have been the page itself, that has
+        an error and we'll never know. But more likely it's from the Proxy.
+        :return:
+        """
+        if self.randomProxy:
+            lProxyService = ProxyRotate()
+            lProxyService.remove_proxy(ip=self.randomProxy["ip"], port=self.randomProxy["port"],
+                                       type=self.randomProxy.get("type"))
 
     def goBack(self):
         """

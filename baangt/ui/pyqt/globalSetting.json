@@ -128,6 +128,13 @@
             "type": "text",
             "default": "",
             "displayText": "Datafile"
+        },
+        "TC.LogLevel": {
+            "hint": "Set the level of logging. Standard = 'debug'. For production you might want to change to another value",
+            "type": "select",
+            "default": "Debug",
+            "options": ["Debug", "Info", "Warning", "Error"],
+            "displayText": "LogLevel"
         }
     }
 }
