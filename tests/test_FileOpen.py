@@ -19,20 +19,24 @@ def test_Open_LOGFILE():
     lResult = FilesOpen.open(lLogFile)
     assert lResult
 
+
 def test_with_class_resultFile():
     lFilesOpen = FilesOpen.FilesOpen()
     lResult = lFilesOpen.openResultFile(lXLSXFile)
     assert lResult
+
 
 def test_with_class_LogFile():
     lFilesOpen = FilesOpen.FilesOpen()
     lResult = lFilesOpen.openLogFile(lLogFile)
     assert lResult
 
+
 def test_with_class_TestRunDefinitionFile():
     lFilesOpen = FilesOpen.FilesOpen()
     lResult = lFilesOpen.openTestRunDefinition(lXLSXFile)
     assert lResult
+
 
 def test_with_class_invalidFile():
     lFilesOpen = FilesOpen.FilesOpen()
