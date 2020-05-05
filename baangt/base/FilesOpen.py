@@ -20,8 +20,13 @@ def open(filenameAndPath: str):
         try:
             os.startfile(filenameAndPath)
             return True
-        except:
-            return False
+        except Exception as errorcode:
+            if errorcode.errno == 22:
+                os.popen(r"Rundll32.exe SHELL32.DLL, OpenAs_RunDLL "+filenameAndPath)
+                return True
+            else:
+                return False
+
     elif platform.system() == "Linux":
         status = subprocess.call(["xdg-open", str(filenameAndPath)])
         if status == 0:
