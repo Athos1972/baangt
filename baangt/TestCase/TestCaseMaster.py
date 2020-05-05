@@ -84,7 +84,8 @@ class TestCaseMaster:
         # Get all the TestSteps for the global loop, that are kept within this TestCase:
         lTestStepClasses = {}
         for testStepSequenceNumer, testStep in enumerate(self.testSteps.keys(),start=1):
-            lTestStepClasses[testStepSequenceNumer] = self.testSteps[testStep][0]["TestStepClass"]
+            if self.testSteps[testStep][0]["TestStepClass"]:
+                lTestStepClasses[testStepSequenceNumer] = self.testSteps[testStep][0]["TestStepClass"]
 
         try:
             self.testRunInstance.executeDictSequenceOfClasses(lTestStepClasses, GC.STRUCTURE_TESTSTEP, **self.kwargs)

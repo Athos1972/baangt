@@ -102,7 +102,7 @@ class TestStepMaster:
         lTimingString = f"TS {commandNumber} {lActivity.lower()}"
         self.timing.takeTime(lTimingString)
         logger.debug(
-            f"Executing TestStep {commandNumber} with parameters: act={lActivity}, lType={lLocatorType}, loc={lLocator}, "
+            f"Executing TestStepDetail {commandNumber} with parameters: act={lActivity}, lType={lLocatorType}, loc={lLocator}, "
             f"Val1={lValue}, comp={lComparison}, Val2={lValue2}, Optional={lOptional}, timeout={lTimeout}")
 
         lValue, lValue2 = self.replaceAllVariables(lValue, lValue2)
