@@ -38,6 +38,11 @@ def test_proxy_full_run():
     assert isinstance(result["type"], str)
 
     result = proxyRotate.remove_proxy(ip=proxyRotate.random_proxy()["ip"])
-    assert 1==1
+    assert 1 == 1
+
+def test_proxy_remove_invalidIP():
+    proxyRotate = ProxyRotate(reReadProxies=False)
+    proxyRotate.remove_proxy("Franzi")   # Invalid Proxy call shall not cause any troubles.
+    assert 1 == 1
 
 

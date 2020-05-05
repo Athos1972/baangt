@@ -294,6 +294,9 @@ class ProxyRotate(metaclass=Singleton):
 
     def remove_proxy(self, ip, port=None, type=None):
         logger.debug(f"Increase fail count on Proxy with type {type}: {ip}:{port}")
+        if not ip in self.proxies:
+            logger.debug(f"Proxy {ip} was already removed due to failcounter.")
+            return
         self.proxies[ip].Failed()
         if self.proxies[ip].failed >= GC.PROXY_FAILCOUNTER:
             del self.proxies[ip]
