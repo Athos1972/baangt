@@ -1,6 +1,7 @@
 import platform
 import os
 import subprocess
+import xl2dict
 
 def open(filenameAndPath: str):
     """Will open the given file with the Operating system default program.
@@ -13,6 +14,8 @@ def open(filenameAndPath: str):
 
     if not isinstance(filenameAndPath, str):
         filenameAndPath = str(filenameAndPath)
+
+    filenameAndPath = os.path.abspath(filenameAndPath)
 
     if not os.path.exists(filenameAndPath):
         return False
@@ -50,6 +53,16 @@ class FilesOpen:
 
     @staticmethod
     def openTestRunDefinition(filenameAndPath):
+        try:
+            xl_object = xl2dict.XlToDict()
+            xl_dict = xl_object.fetch_data_by_column_by_sheet_name(filenameAndPath, sheet_name="TestCaseSequence")
+            for data in xl_dict:
+                file_path = data["TestDataFileName"]
+                if not os.path.exists(file_path):
+                    file_path = os.path.join(os.path.dirname(filenameAndPath), file_path)
+                status = open(file_path)
+        except:
+            pass
         return open(filenameAndPath=filenameAndPath)
 
     @staticmethod
