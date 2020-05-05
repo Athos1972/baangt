@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup as bs
 from dataclasses import dataclass
 import logging
 import csv
+import sys
 import baangt.base.GlobalConstants as GC
 from dataclasses_json import dataclass_json
 
@@ -51,19 +52,49 @@ class Singleton(type):
 
 
 class ProxyRotate(metaclass=Singleton):
+    """
+    In ProxyRotate class we combine all functionalities related to proxy server handling.
+
+    If the class is called with "reReadProxies"=True, we'll scrape and test new proxy servers
+    If the class is called without reReadProxies we'll read existing proxies from the list.
+
+    There are 3 states, that a proxy can have:
+    * New (we just gathered this proxy from a page. We don't know whether it works or not.
+    * Failed (we tried this proxy before. It didn't work)
+    * Working (Fail-Count < GlobalConstants.Proxy_failcount)
+
+    External interface are methods:
+      random_proxy to retrieve a proxy
+      remove_proxy to report an error
+      recheckProxies to scrape for new proxies
+
+    """
+
     def __init__(self, reReadProxies=True):
         self.reReadProxies = reReadProxies
-        self.proxy_file = "proxies.json"
         self.proxy_gather_link = "https://www.sslproxies.org/"
-        self.proxies = {}
-        self.all_proxies = {}
-        self.__temp_proxies = []
+        self.proxies = {}                     # Currently usable proxies
+        self.all_proxies = {}                 # List of all Proxies ever discovered, including failed ones
+        self.__temp_proxies = []              # List of newly gathered Proxies, that still need to be checked
         self.__read_proxies()
         self.firstRun = True
+        self.MIN_PROXIES_FOR_FIRST_RUN = 3
 
     def recheckProxies(self, forever=False):
+        # Save firstRun locally because it will be changed in __verify_proxies:
+        lFirst = self.firstRun
         self.__verify_proxies(self.__temp_proxies)
-        self.__gather_proxy(self.__temp_proxies)
+        if not self.reReadProxies:
+            logger.info("recheckProxies was called, but reReadProxies is not set. " + \
+                        "A bit of a strange combination of parameters.")
+            return
+
+        # If we're in first run and we found already the minimum amount of working proxies, return to calling
+        # program
+        if lFirst and len(self.proxies) >= self.MIN_PROXIES_FOR_FIRST_RUN:
+            return
+
+        self.__gather_proxies(self.__temp_proxies)
         if forever:
             t = Thread(target=self.__threaded_proxy)
             t.daemon = True
@@ -73,12 +104,15 @@ class ProxyRotate(metaclass=Singleton):
 
     def __threaded_proxy(self):
         while True:
-            if self.reReadProxies == True:
-                self.__gather_proxy()
+            if self.reReadProxies:
+                self.__gather_proxies()
             else:
-                sleep(5)
+                msg = "This thread quits now, as reReadProxies is set to false - nothing to do. Most probably " + \
+                      "shouldn't  have been a thread in the first place."
+                logger.critical(msg)
+                sys.exit(msg)
 
-    def __gather_proxy(self, proxy=None, test=False):
+    def __gather_proxies(self, proxy=None, test=False):
         if proxy == None:
             self.__temp_proxies = [self.proxies[p] for p in self.proxies]
         else:
@@ -97,11 +131,15 @@ class ProxyRotate(metaclass=Singleton):
             ip = tr.find_all('td')[0].text
             port = tr.find_all('td')[1].text
             proxy = proxy_data().from_dict({"ip": ip, "port": port})
+            # Take over only new proxies.
             if proxy not in self.__temp_proxies:
                 logger.debug(f"Added {proxy} to be checked ")
                 self.__temp_proxies.append(proxy)
+            else:
+                logger.debug(f"{proxy} gathered was already known")
         if test:
             return self.__temp_proxies
+
         self.__verify_proxies(self.__temp_proxies)
         self.__write_proxies()
 
@@ -114,6 +152,9 @@ class ProxyRotate(metaclass=Singleton):
         for lineCount, proxi in enumerate(proxy_lis):
             responses = []
             if not self.firstRun:
+                # When the firstRun is over and we're continuously re-reading and checking proxies we don't want to
+                # consume too much bandwidth. The execution will run in a separate thread, but still 5 Seconds brea
+                # sounds good.
                 sleep(5)
             logger.debug(f"{(str(proxy_lis.index(proxi) + 1))}/ {str(len(proxy_lis))}: {proxi}")
             proxy = self.__set_proxy(proxi)
@@ -143,8 +184,8 @@ class ProxyRotate(metaclass=Singleton):
 
             # Check, if we have at least 4 proxies in the first run of the function.
             # If yes, exit, as the function will re-run soon.
-            goodProxies = lineCount - len(removable) - 1   # Because enum starts with 0, LEN starts with 1
-            if goodProxies >= 2 and self.firstRun:
+            goodProxies = lineCount - len(removable)
+            if goodProxies >= self.MIN_PROXIES_FOR_FIRST_RUN and self.firstRun:
                 break
 
         if len(removable)<len(proxy_lis) and self.firstRun:
@@ -154,7 +195,7 @@ class ProxyRotate(metaclass=Singleton):
                     self.proxies[proxy.ip] = proxy
                 else:
                     self.__temp_proxies.remove(proxy)
-            logger.info(f"Total proxies in list currently = {str(len(self.proxies))}")
+            logger.info(f"Total proxies in list currently = {str(len(self.all_proxies))}")
             logger.info(f"Identified {len(self.proxies)} working proxies")
             return None
 
@@ -167,10 +208,10 @@ class ProxyRotate(metaclass=Singleton):
                 self.proxies[proxy.ip] = proxy
                 if proxy.ip not in self.all_proxies:
                     self.all_proxies[proxy.ip] = proxy
-            elif proxy.failed>=GC.PROXY_FAILCOUNTER:
+            elif proxy.failed<=GC.PROXY_FAILCOUNTER:
                 self.proxies[proxy.ip] = proxy
 
-        logger.info(f"Total proxies in list currently = {str(len(self.proxies))}")
+        logger.info(f"Total proxies in list currently = {str(len(self.all_proxies))}")
         logger.info(f"Identified {len(self.proxies)} working proxies")
 
     def __get_response(self, link, proxy, headers):
@@ -212,8 +253,10 @@ class ProxyRotate(metaclass=Singleton):
             with open('proxies.csv','r') as csv_file:
                 raw_data = csv.DictReader(csv_file)
                 for data in raw_data:
+                    # Take over all proxies from the file:
+                    proxy = proxy_data().from_dict(dict(data))
+                    # Take over only proxies, that used to work into __temp_proxies:
                     if int(data['failed']) < GC.PROXY_FAILCOUNTER:
-                        proxy = proxy_data().from_dict(dict(data))
                         self.__temp_proxies.append(proxy)
                     self.all_proxies[data["ip"]] = proxy
         except Exception as ex:
@@ -228,9 +271,12 @@ class ProxyRotate(metaclass=Singleton):
         logger.debug(f"Wrote list of {len(self.proxies)} proxies to CSV-File")
 
     def __getProxy(self):
+        lMaxCount = 600
+        lCount = 0
         if len(self.proxies) == 0:
             logger.info("Waiting for a working proxy.")
-        while len(self.proxies) == 0:
+        while len(self.proxies) == 0 and lCount <= lMaxCount:
+            lCount += 1
             sleep(1)
         logger.critical(f"Proxies count: {len(self.proxies)}")
         proxy = self.proxies[list(self.proxies.keys())[randint(0, len(self.proxies) - 1)]]
@@ -246,7 +292,8 @@ class ProxyRotate(metaclass=Singleton):
     def random_proxy(self):
         return self.__getProxy()
 
-    def remove_proxy(self, ip):
+    def remove_proxy(self, ip, port=None, type=None):
+        logger.debug(f"Increase fail count on Proxy with type {type}: {ip}:{port}")
         self.proxies[ip].Failed()
         if self.proxies[ip].failed >= GC.PROXY_FAILCOUNTER:
             del self.proxies[ip]
@@ -256,7 +303,7 @@ class ProxyRotate(metaclass=Singleton):
         return "Method not yet implemented"
 
     def testGatherProxy(self):
-        proxies = self.__gather_proxy(test=True)
+        proxies = self.__gather_proxies(test=True)
         print(f"Total gathered untested proxies = {str(len(proxies))}")
         return proxies
 
@@ -270,7 +317,4 @@ class ProxyRotate(metaclass=Singleton):
         result = self.__verify_proxies(proxies_lis, test=True)
         return result
 
-if __name__ == '__main__':
-    lProxyRotate = ProxyRotate(reReadProxies=False)
-    lProxyRotate.recheckProxies()
-    print(lProxyRotate.random_proxy())
+
