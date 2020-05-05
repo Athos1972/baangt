@@ -1,0 +1,17 @@
+2020-05-02 10:09:44,141 _ DEBUG _ __init__ _ <module> : Value of sys._MEIPASS None
+2020-05-02 10:09:44,141 _ DEBUG _ __init__ _ <module> : Value of __file__: /Users/bernhardbuhl/git/baangt/baangt/__init__.py
+2020-05-02 10:09:44,141 _ DEBUG _ __init__ _ <module> : Value of sys.executable: /Users/bernhardbuhl/.conda/envs/pyFETest/bin/python
+2020-05-02 10:09:44,141 _ DEBUG _ __init__ _ <module> : Value of sys.argv[0]: /Applications/PyCharm CE with Anaconda plugin.app/Contents/plugins/python-ce/helpers/pycharm/_jb_pytest_runner.py
+2020-05-02 10:09:44,141 _ DEBUG _ __init__ _ <module> : Value of sys.path: ['/Users/bernhardbuhl/git/baangt/tests', '/Users/bernhardbuhl/git/baangt', '/Users/bernhardbuhl/git/baangt-PDFComparison', '/Users/bernhardbuhl/git/baangt-aami', '/Users/bernhardbuhl/git/baangtVIG', '/Users/bernhardbuhl/git/baangt-service', '/Applications/PyCharm CE with Anaconda plugin.app/Contents/plugins/python-ce/helpers/pycharm', '/Users/bernhardbuhl/.conda/envs/pyFETest/lib/python37.zip', '/Users/bernhardbuhl/.conda/envs/pyFETest/lib/python3.7', '/Users/bernhardbuhl/.conda/envs/pyFETest/lib/python3.7/lib-dynload', '/Users/bernhardbuhl/.local/lib/python3.7/site-packages', '/Users/bernhardbuhl/.conda/envs/pyFETest/lib/python3.7/site-packages', '/Users/bernhardbuhl/.conda/envs/pyFETest/lib/python3.7/site-packages/baangt-2020.4.7rc4-py3.7.egg']
+2020-05-02 10:09:44,141 _ DEBUG _ __init__ _ <module> : Value of os.path: <module 'posixpath' from '/Users/bernhardbuhl/.conda/envs/pyFETest/lib/python3.7/posixpath.py'>
+2020-05-02 10:09:44,141 _ DEBUG _ __init__ _ <module> : Value of os.getcwd(): /Users/bernhardbuhl/git/baangt/tests
+2020-05-02 10:09:44,141 _ DEBUG _ __init__ _ <module> : Value of Path.cwd(): /Users/bernhardbuhl/git/baangt/tests
+2020-05-02 10:09:44,141 _ DEBUG _ __init__ _ <module> : running in a normal Python process
+2020-05-02 10:09:44,145 _ INFO _ TestRun _ __init__ : Init Testrun, id is 140511074872592
+2020-05-02 10:09:44,145 _ INFO _ TestRun _ __init__ : Init Testrun, id is 140511074871760
+2020-05-02 10:09:44,146 _ INFO _ Utils _ openJson : Reading Definition from /Users/bernhardbuhl/git/baangt/tests/jsons/globals_headless.json
+2020-05-02 10:09:44,146 _ DEBUG _ Utils _ findFileAndPathFromPath : Main Path to search for files: /Applications/PyCharm CE with Anaconda plugin.app/Contents/plugins/python-ce/helpers/pycharm
+2020-05-02 10:09:44,147 _ INFO _ TestRun _ __init__ : Init Testrun, id is 140511074872208
+2020-05-02 10:09:44,148 _ INFO _ TestRun _ __init__ : Init Testrun, id is 140511074870224
+2020-05-02 10:09:44,148 _ INFO _ Utils _ openJson : Reading Definition from /Users/bernhardbuhl/git/baangt/tests/jsons/globals_headless.json
+2020-05-02 10:09:44,148 _ DEBUG _ Utils _ findFileAndPathFromPath : Main Path to search for files: /Applications/PyCharm CE with Anaconda plugin.app/Contents/plugins/python-ce/helpers/pycharm
