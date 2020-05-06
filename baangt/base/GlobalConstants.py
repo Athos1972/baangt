@@ -120,3 +120,8 @@ BROWSER_PROXY_PATH = '/browsermob-proxy/bin/browsermob-proxy'
 BROWSER_PROXY_URL = 'https://github.com/lightbody/browsermob-proxy/releases/download/browsermob-proxy/browsermob-proxy-bin.zip'
 
 PROXY_FAILCOUNTER = 3
+
+TESTDATAGENERATOR_OUTPUT_FORMAT = "xlsx"
+TESTDATAGENERATOR_INPUTFILE = "RawTestData.xlsx"
+TESTDATAGENERATOR_OUTPUTFILE_XLSX = "output.xlsx"
+TESTDATAGENERATOR_OUTPUTFILE_CSV = "output.csv"

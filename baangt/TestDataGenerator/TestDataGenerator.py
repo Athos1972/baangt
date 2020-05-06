@@ -1,11 +1,14 @@
 import csv
-import os
 import itertools
 import xlsxwriter
 import xl2dict
 import errno
 import os
+import logging
 from random import sample
+import baangt.base.GlobalConstants as GC
+
+logger = logging.getLogger("pyC")
 
 
 class TestDataGenerator:
@@ -17,7 +20,7 @@ class TestDataGenerator:
     :method write_excel: Will write the final processed data in excel file.
     :method write_csv: Will write the final processed data in csv file.
     """
-    def __init__(self, rawExcelPath: str="RawTestData.xlsx"):
+    def __init__(self, rawExcelPath=GC.TESTDATAGENERATOR_INPUTFILE):
         self.path = os.path.abspath(rawExcelPath)
         if not os.path.isfile(self.path):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), self.path)
@@ -26,7 +29,16 @@ class TestDataGenerator:
         self.headers = list(self.processed_datas[0].keys())
         self.final_data = self.__generateFinalData(self.processed_datas)
 
-    def write_excel(self, outputfile: str="output.xlsx", batch_size=5000, random=True):
+    def write(self, OutputFormat=GC.TESTDATAGENERATOR_OUTPUT_FORMAT, batch_size=0):
+        if OutputFormat == "xlsx":
+            self.__write_excel(batch_size=batch_size)
+        elif OutputFormat == "csv":
+            self.__write_csv(batch_size=batch_size)
+        else:
+            logger.debug("Incorrect file format")
+
+
+    def __write_excel(self, outputfile=GC.TESTDATAGENERATOR_OUTPUTFILE_XLSX, batch_size=0):
         """
         Writes TestData file with final processsed data.
         :param outputfile: Name and path for output file.
@@ -34,7 +46,7 @@ class TestDataGenerator:
         :param random: If false all data will be written else random data of selected batch size will be written.
         :return: None
         """
-        if random:
+        if batch_size:
             data_lis = sample(self.final_data, batch_size)
         else:
             data_lis = self.final_data
@@ -44,17 +56,20 @@ class TestDataGenerator:
             for row_num, data in enumerate(data_lis):
                 worksheet.write_row(row_num+1, 0, data)
 
-    def write_csv(self, outputfile: str="output.csv"):
+    def __write_csv(self, outputfile=GC.TESTDATAGENERATOR_OUTPUTFILE_CSV, batch_size=0):
         """
         Writes final data in csv
         :param outputfile: Name and path of output file
         :return:
         """
-
+        if batch_size:
+            data_lis = sample(self.final_data, batch_size)
+        else:
+            data_lis = self.final_data
         with open(outputfile, 'w', newline='\n')as file:
             fl = csv.writer(file)
             fl.writerow(self.headers)
-            for dt in self.final_data:
+            for dt in data_lis:
                 fl.writerow(list(dt))
 
     def __generateFinalData(self, processed_data):
@@ -75,7 +90,7 @@ class TestDataGenerator:
             datas = itertools.product(*data_lis)
             for dtt in datas:
                 final_data.append(dtt)
-        print(f"Total generated data = {len(final_data)}")
+        logger.info(f"Total generated data = {len(final_data)}")
         return final_data
 
 
@@ -131,9 +146,8 @@ class TestDataGenerator:
         """
         xl_obj = xl2dict.XlToDict()
         sheet = xl_obj.fetch_data_by_column_by_sheet_index(path,sheet_index=0)
-        print(sheet)
         return sheet
 
 if __name__=="__main__":
     lTestDataGenerator = TestDataGenerator()
-    lTestDataGenerator.write_excel()
+    lTestDataGenerator.write(batch_size=1000)
