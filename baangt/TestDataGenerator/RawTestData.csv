@@ -1,0 +1,4 @@
+Type,Seats,Usage,Frequency,Cov. Sum,Value,Excess,Cov. Type1,"[Cov. Type2, Cov. Type3, Cov. Type4]"
+Car,"[2,4,5,7,9]","[Taxi, Private, Corporate]","[annual, quarterly, monthly]","500000-1000000,25000","10000-50000,5000","100-1000,200","[0,1]","[0,1]"
+Bus,"[20,40,60]","[Taxi, Private, Corporate]","[annual, quarterly, monthly]","500000-1000000,25000","25000-200000,10000","[1000,300,500]",0,"[0,1]"
+Truck,"[1,2,3,5]","[Taxi, Private, Corporate]","[annual, quarterly, monthly]","500000-1000000,25000","30000-2500000,20000","[500,700,1000]",0,"[0,1]"
