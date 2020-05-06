@@ -5,7 +5,7 @@ import csv
 import baangt.base.GlobalConstants as GC
 
 # Create an instance of TestDataGenerator object with sample input file
-testDataGenerator = TestDataGenerator("../baangt/TestDataGenerator/RawTestData.xlsx")
+testDataGenerator = TestDataGenerator("0TestInput/RawTestData.xlsx")
 
 
 def test_write_excel_1000():
