@@ -2,18 +2,24 @@ import csv
 import os
 import itertools
 import xlsxwriter
+import errno
+import os
 from random import sample
 
 
 class TestDataGenerator:
     """
     TestDataGenerator Class is to used to create a TestData file from raw csv file containing all possible values.
+
+    :param rawCsvPath: Takes input path for raw csv file.
+
     :method write_excel: Will write the final processed data in excel file.
     :method write_csv: Will write the final processed data in csv file.
     """
-    def __init__(self, rawCsvPath: str="RawTestData.csv"):
-        self.path = rawCsvPath
-        assert os.path.isfile(self.path)
+    def __init__(self, rawCsvPath: str="RawTestdData.csv"):
+        self.path = os.path.abspath(rawCsvPath)
+        if not os.path.isfile(self.path):
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), self.path)
         self.raw_data_json = self.__read_csv(self.path)
         self.processed_datas = self.__process_data(self.raw_data_json)
         self.headers = list(self.processed_datas[0].keys())
