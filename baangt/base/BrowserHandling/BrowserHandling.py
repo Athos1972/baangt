@@ -375,7 +375,7 @@ class BrowserDriver:
             if self.driver:
                 self.driver.quit()
                 self.driver = None
-        except Exceptions as ex:
+        except Exception as ex:
             pass  # If the driver is already dead, it's fine.
 
     def _log(self, logType, logText, noScreenShot=False, **kwargs):
