@@ -29,11 +29,11 @@ class TestDataGenerator:
         self.headers = list(self.processed_datas[0].keys())
         self.final_data = self.__generateFinalData(self.processed_datas)
 
-    def write(self, OutputFormat=GC.TESTDATAGENERATOR_OUTPUT_FORMAT, batch_size=0):
+    def write(self, OutputFormat=GC.TESTDATAGENERATOR_OUTPUT_FORMAT, batch_size=0, outputfile=None):
         if OutputFormat == "xlsx":
-            self.__write_excel(batch_size=batch_size)
+            self.__write_excel(batch_size=batch_size, outputfile=outputfile)
         elif OutputFormat == "csv":
-            self.__write_csv(batch_size=batch_size)
+            self.__write_csv(batch_size=batch_size, outputfile=outputfile)
         else:
             logger.debug("Incorrect file format")
 
