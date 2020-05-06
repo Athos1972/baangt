@@ -4,7 +4,7 @@ import os
 import csv
 
 # Create an instance of TestDataGenerator object with sample input file
-testDataGenerator = TestDataGenerator("../baangt/TestDataGenerator/RawTestData.csv")
+testDataGenerator = TestDataGenerator("../baangt/TestDataGenerator/RawTestData.xlsx")
 
 
 def test_write_excel_5000():

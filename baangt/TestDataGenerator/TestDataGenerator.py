@@ -2,6 +2,7 @@ import csv
 import os
 import itertools
 import xlsxwriter
+import xl2dict
 import errno
 import os
 from random import sample
@@ -9,18 +10,18 @@ from random import sample
 
 class TestDataGenerator:
     """
-    TestDataGenerator Class is to used to create a TestData file from raw csv file containing all possible values.
+    TestDataGenerator Class is to used to create a TestData file from raw excel file containing all possible values.
 
-    :param rawCsvPath: Takes input path for raw csv file.
+    :param rawExcelPath: Takes input path for raw xlsx file.
 
     :method write_excel: Will write the final processed data in excel file.
     :method write_csv: Will write the final processed data in csv file.
     """
-    def __init__(self, rawCsvPath: str="RawTestdData.csv"):
-        self.path = os.path.abspath(rawCsvPath)
+    def __init__(self, rawExcelPath: str="RawTestData.xlsx"):
+        self.path = os.path.abspath(rawExcelPath)
         if not os.path.isfile(self.path):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), self.path)
-        self.raw_data_json = self.__read_csv(self.path)
+        self.raw_data_json = self.__read_excel(self.path)
         self.processed_datas = self.__process_data(self.raw_data_json)
         self.headers = list(self.processed_datas[0].keys())
         self.final_data = self.__generateFinalData(self.processed_datas)
@@ -100,6 +101,9 @@ class TestDataGenerator:
         :param raw_data:
         :return:
         """
+        if type(raw_data)==float:
+            raw_data = int(raw_data)
+        raw_data = str(raw_data)
         if raw_data[0] == "[" and raw_data[-1] == "]":
             proccesed_datas = [data.strip() for data in raw_data[1:-1].split(",")]
 
@@ -120,17 +124,15 @@ class TestDataGenerator:
 
 
 
-    def __read_csv(self, path):
+    def __read_excel(self, path):
         """
-        :param path: Path to raw data csv file.
+        :param path: Path to raw data xlsx file.
         :return: json of raw data
         """
-        raw_list = []
-        with open(os.path.abspath(path), 'r')as csv_file:
-            csv_data = csv.DictReader(csv_file)
-            for data in csv_data:
-                raw_list.append(data)
-        return raw_list
+        xl_obj = xl2dict.XlToDict()
+        sheet = xl_obj.fetch_data_by_column_by_sheet_index(path,sheet_index=0)
+        print(sheet)
+        return sheet
 
 if __name__=="__main__":
     lTestDataGenerator = TestDataGenerator()
