@@ -3,6 +3,11 @@ from os import getcwd
 from pathlib import Path
 from baangt.base.PDFCompare import PDFCompare, PDFCompareDetails
 
+#####################
+### Attention #######
+#####################
+# Before you run these tests, you'll have to run **flask run** in PDF-Comparison service on local host, or these
+# Tests will fail.
 
 newOriginalFile1_UUID = None     # UUID of new example file 1
 
