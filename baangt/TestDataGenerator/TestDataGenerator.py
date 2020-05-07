@@ -30,9 +30,9 @@ class TestDataGenerator:
         self.final_data = self.__generateFinalData(self.processed_datas)
 
     def write(self, OutputFormat=GC.TESTDATAGENERATOR_OUTPUT_FORMAT, batch_size=0, outputfile=None):
-        if OutputFormat == "xlsx":
+        if OutputFormat.lower() == "xlsx":
             self.__write_excel(batch_size=batch_size, outputfile=outputfile)
-        elif OutputFormat == "csv":
+        elif OutputFormat.lower() == "csv":
             self.__write_csv(batch_size=batch_size, outputfile=outputfile)
         else:
             logger.debug("Incorrect file format")
@@ -102,6 +102,8 @@ class TestDataGenerator:
         """
         processed_datas = []
         for raw_data in raw_json:
+            if not list(raw_data.values())[0]:
+                continue
             processed_data = {}
             for key in raw_data:
                 keys = self.__data_generators(key)
@@ -118,7 +120,7 @@ class TestDataGenerator:
         """
         if type(raw_data)==float:
             raw_data = int(raw_data)
-        raw_data = str(raw_data)
+        raw_data = str(raw_data).strip()
         if raw_data[0] == "[" and raw_data[-1] == "]":
             proccesed_datas = [data.strip() for data in raw_data[1:-1].split(",")]
 
