@@ -35,13 +35,13 @@ def test_write_excel_100():
 def test_write_csv_300():
     # Tests write method of TestDataGenerator object with 300 random data in csv.
     removeFile(testOutput300csv)
-    testDataGenerator.write(OutputFormat="csv", batch_size=300, outputfile=testOutput300csv)
+    testDataGenerator.write(OutputFormat="csv", batch_size=250, outputfile=testOutput300csv)
     data = []
     with open(testOutput300csv, 'r') as raw_file:
         raw = csv.reader(raw_file)
         for row in raw:
             data.append(row)
-    assert len(data) == 301
+    assert len(data) == 251
     print("Test 300 random data successful.")
 
 
