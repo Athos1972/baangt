@@ -375,7 +375,7 @@ class BrowserDriver:
             if self.driver:
                 self.driver.quit()
                 self.driver = None
-        except Exceptions as ex:
+        except Exception as ex:
             pass  # If the driver is already dead, it's fine.
 
     def _log(self, logType, logText, noScreenShot=False, **kwargs):
@@ -573,10 +573,13 @@ class BrowserDriver:
 
         """
         if not value:
-            return True
+            return False
 
         if len(value) == 0:
-            return
+            return False
+
+        if str(value) == "0":
+            return False
 
         return self.findByAndSetText(id=id, css=css, xpath=xpath, class_name=class_name, value=value, iframe=iframe,
                                      timeout=timeout, optional=optional)
@@ -646,10 +649,13 @@ class BrowserDriver:
         If value is evaluated to "True", the click-event is executed.
         """
         if not value:
-            return True
+            return False
 
         if len(value) == 0:
-            return True
+            return False
+
+        if str(value) == "0":
+            return False
 
         return self.findByAndClick(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout,
                                    optional=optional)

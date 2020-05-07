@@ -1,5 +1,5 @@
 import requests
-from time import sleep
+import time 
 from random import randint
 from threading import Thread
 from bs4 import BeautifulSoup as bs
@@ -124,19 +124,27 @@ class ProxyRotate(metaclass=Singleton):
             print(ex)
             logger.error(f"No proxies read. Maybe Internet-connection is down. Please check and retry. Error was {ex}")
             return None
-        soup = bs(response.content, 'html.parser')
-        table = soup.find('tbody')
-        tr_list = table.find_all('tr')
-        for tr in tr_list:
-            ip = tr.find_all('td')[0].text
-            port = tr.find_all('td')[1].text
-            proxy = proxy_data().from_dict({"ip": ip, "port": port})
-            # Take over only new proxies.
-            if proxy not in self.__temp_proxies:
-                logger.debug(f"Added {proxy} to be checked ")
-                self.__temp_proxies.append(proxy)
+
+        try:
+            if response.status_code < 400:
+                soup = bs(response.content, 'html.parser')
+                table = soup.find('tbody')
+                tr_list = table.find_all('tr')
+                for tr in tr_list:
+                    ip = tr.find_all('td')[0].text
+                    port = tr.find_all('td')[1].text
+                    proxy = proxy_data().from_dict({"ip": ip, "port": port})
+                    # Take over only new proxies.
+                    if proxy not in self.__temp_proxies:
+                        logger.debug(f"Added {proxy} to be checked ")
+                        self.__temp_proxies.append(proxy)
+                    else:
+                        logger.debug(f"{proxy} gathered was already known")
             else:
-                logger.debug(f"{proxy} gathered was already known")
+                logger.debug("Error code 400 or greater in proxy link request")
+
+        except Exception as ex:
+            logger.error(f"Unable to parse html response. Error was {ex}")
         if test:
             return self.__temp_proxies
 
@@ -155,7 +163,7 @@ class ProxyRotate(metaclass=Singleton):
                 # When the firstRun is over and we're continuously re-reading and checking proxies we don't want to
                 # consume too much bandwidth. The execution will run in a separate thread, but still 5 Seconds brea
                 # sounds good.
-                sleep(5)
+                time.sleep(5)
             logger.debug(f"{(str(proxy_lis.index(proxi) + 1))}/ {str(len(proxy_lis))}: {proxi}")
             proxy = self.__set_proxy(proxi)
             for link in links:
@@ -168,11 +176,14 @@ class ProxyRotate(metaclass=Singleton):
                     return f"Error code 400 or greater in {proxi}"
                 continue
 
-            soup1 = bs(responses[0].content, 'html.parser')
-            soup2 = bs(responses[1].content, 'html.parser')
             try:
+                soup1 = bs(responses[0].content, 'html.parser')
+                soup2 = bs(responses[1].content, 'html.parser')
                 name = soup1.find('meta', {'property': 'og:title'}).get('content')
                 logo = soup2.find('div', class_='logo')
+                if name == None or logo == None:
+                    raise ValueError('Unable to parse html response.')
+
                 logger.debug(f"Proxy can be used for Youtube: {proxi}")
                 if test:
                     return f"Proxy can be used for Youtube: {proxi}"
@@ -184,13 +195,13 @@ class ProxyRotate(metaclass=Singleton):
 
             # Check, if we have at least 4 proxies in the first run of the function.
             # If yes, exit, as the function will re-run soon.
-            goodProxies = lineCount - len(removable)
+            goodProxies = lineCount + 1- len(removable) 
             if goodProxies >= self.MIN_PROXIES_FOR_FIRST_RUN and self.firstRun:
                 break
 
         if len(removable)<len(proxy_lis) and self.firstRun:
             self.firstRun = False
-            for proxy in proxy_lis[:lineCount]:
+            for proxy in proxy_lis[:(lineCount + 1)]: 
                 if proxy not in removable:
                     self.proxies[proxy.ip] = proxy
                 else:
@@ -277,7 +288,7 @@ class ProxyRotate(metaclass=Singleton):
             logger.info("Waiting for a working proxy.")
         while len(self.proxies) == 0 and lCount <= lMaxCount:
             lCount += 1
-            sleep(1)
+            time.sleep(1)
         logger.critical(f"Proxies count: {len(self.proxies)}")
         proxy = self.proxies[list(self.proxies.keys())[randint(0, len(self.proxies) - 1)]]
         proxy.Called()
@@ -293,15 +304,21 @@ class ProxyRotate(metaclass=Singleton):
         return self.__getProxy()
 
     def remove_proxy(self, ip, port=None, type=None):
-        logger.debug(f"Increase fail count on Proxy with type {type}: {ip}:{port}")
-        self.proxies[ip].Failed()
-        if self.proxies[ip].failed >= GC.PROXY_FAILCOUNTER:
-            del self.proxies[ip]
-            logger.debug(f"Ip {ip} removed successfully.")
+        try:
+            logger.debug(f"Increase fail count on Proxy with type {type}: {ip}:{port}")
+            self.proxies[ip].Failed()
+            if self.proxies[ip].failed >= GC.PROXY_FAILCOUNTER:
+                del self.proxies[ip]
+                logger.debug(f"Ip {ip} removed successfully.")
+        except Exception as ex:
+            logger.error(str(ex))
+
 
     def testProxy(self,type, ip, port, user, password):
         return "Method not yet implemented"
 
+    """
+    # TODO Functions needed for integration test?
     def testGatherProxy(self):
         proxies = self.__gather_proxies(test=True)
         print(f"Total gathered untested proxies = {str(len(proxies))}")
@@ -316,5 +333,5 @@ class ProxyRotate(metaclass=Singleton):
         proxies_lis = [proxies_lis[randint(0, len(proxies_lis)-1)]]
         result = self.__verify_proxies(proxies_lis, test=True)
         return result
-
+    """
 

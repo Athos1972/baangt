@@ -248,6 +248,9 @@ More details on Activities
        To unset an anchor use setanchor without locator.
 
        setanchor can also improve the location performance, if you're dealing with really large pages.
+
+            While an anchor is set, ALL location attempts of elements happen within the anchor's children. If you want
+            to avoid that, use ```///``` (= 3 slashes instead of 2) to signal the logic to ignore the anchor.
    * - address_create
      - provide an easy and easily extendable way to generate address data for a test case
        The following fields variable are stored in testcaseDataDict:

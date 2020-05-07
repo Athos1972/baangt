@@ -85,8 +85,13 @@ class TestStepMaster:
 
         xpath, css, id = self.__setLocator(lLocatorType, lLocator)
 
-        if self.anchor:
-            xpath = self.anchorLocator + xpath
+        if self.anchor and xpath:
+            if xpath[0:3] == '///':         # Xpath doesn't want to use Anchor
+                xpath = xpath[1:]
+                logger.debug(f"Anchor active, but escaped. Using pure xpath: {xpath}")
+            else:
+                logger.debug(f"Anchor active. combining {self.anchorLocator} with {xpath}")
+                xpath = self.anchorLocator + xpath
 
         lValue = str(command["Value"])
         lValue2 = str(command["Value2"])
@@ -101,15 +106,15 @@ class TestStepMaster:
 
         lTimingString = f"TS {commandNumber} {lActivity.lower()}"
         self.timing.takeTime(lTimingString)
-        logger.debug(
-            f"Executing TestStep {commandNumber} with parameters: act={lActivity}, lType={lLocatorType}, loc={lLocator}, "
+        logger.info(
+            f"Executing TestStepDetail {commandNumber} with parameters: act={lActivity}, lType={lLocatorType}, loc={lLocator}, "
             f"Val1={lValue}, comp={lComparison}, Val2={lValue2}, Optional={lOptional}, timeout={lTimeout}")
 
         lValue, lValue2 = self.replaceAllVariables(lValue, lValue2)
 
         if not TestStepMaster.ifQualifyForExecution(self.globalRelease, lRelease):
             logger.debug(f"we skipped this line due to {lRelease} disqualifies according to {self.globalRelease} ")
-            return  # We ignored the steps as it doesn't qualify
+            return
         if lActivity == "GOTOURL":
             self.browserSession.goToUrl(lValue)
         elif lActivity == "SETTEXT":
@@ -130,6 +135,7 @@ class TestStepMaster:
                     self.anchor = self.browserSession.element
                     self.anchorLocator = lLocator
                     self.anchorLocatorType = lLocatorType
+                    logger.debug(f"Anchor set: {lLocatorType} {lLocator}")
                 else:
                     logger.error(f"Anchor should be set, but can't be found in the current page: {lLocatorType}, {lLocator}")
                     raise ValueError(f"Anchor should be set, but can't be found in the current page: {lLocatorType}, {lLocator}")
@@ -156,6 +162,7 @@ class TestStepMaster:
                                                     timeout=lTimeout)
 
             self.__doComparisons(lComparison=lComparison, value1=lValue, value2=lValue2)
+            logger.debug(f"IF-condition {lValue} {lComparison} {lValue2} evaluated to: {self.ifIsTrue} ")
         elif lActivity == "ENDIF":
             if not self.ifActive:
                 raise BaseException("ENDIF without IF")
