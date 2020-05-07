@@ -88,7 +88,7 @@ class TestCaseSequenceMaster:
         # Create and runconcurrent threads
         threads = gevent.joinall([
             gevent.spawn(single_thread, num) for num in range(parallelInstances)
-        ])
+        ], timeout=1200)
 
         # after joining all threads
         while not results.empty():
