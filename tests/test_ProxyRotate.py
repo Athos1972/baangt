@@ -255,10 +255,12 @@ def test_recheckProxies_proxy_list_failed_html_body(mock_csv_DictReader, mock_ti
 
 @patch('time.sleep', return_value = None) 
 @patch("csv.DictReader")
-@pytest.mark.parametrize("proxyInitLength", [0, 10, 700])
+@pytest.mark.parametrize("proxyInitLength", [10, 700, 0])
 def test_random_proxy(mock_csv_DictReader, mock_time_sleep, proxyInitLength):
     """ 
     Test random proxy return function
+
+    When called with "value=0" it will not be able to provide a Proxy-Server as no Proxy servers can be found.
     """
     # Initialize proxy list 
     proxyRotate = init_ProxyRotate(mock_csv_DictReader, proxyInitLength)
