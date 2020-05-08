@@ -22,6 +22,7 @@ from baangt.ui.ImportKatalonRecorder import ImportKatalonRecorder
 import pyperclip
 import platform
 from baangt.base.PathManagement import ManagedPaths
+from uuid import uuid4
 
 logger = logging.getLogger("pyC")
 
@@ -346,7 +347,6 @@ class MainWindow(Ui_MainWindow):
         if not self.testRunFile:
             self.statusMessage("No test Run File selected", 2000)
 
-
         runCmd = self._getRunCommand()
 
         # show status in status bar
@@ -355,8 +355,9 @@ class MainWindow(Ui_MainWindow):
         if self.configContents.get("TX.DEBUG"):
             from baangt.base.TestRun.TestRun import TestRun
 
+            lUUID = uuid4()
             lTestRun = TestRun(f"{Path(self.directory).joinpath(self.testRunFile)}",
-                 globalSettingsFileNameAndPath=f'{Path(self.directory).joinpath(self.tempConfigFile)}')
+                 globalSettingsFileNameAndPath=f'{Path(self.directory).joinpath(self.tempConfigFile)}', uuid=lUUID)
 
         else:
             logger.info(f"Running command: {runCmd}")
@@ -371,8 +372,8 @@ class MainWindow(Ui_MainWindow):
                                 QtWidgets.QMessageBox.Ok,
                                 QtWidgets.QMessageBox.Ok
                                  )
-            self.statusMessage(f"Completed ", 3000)
 
+        self.statusMessage(f"Completed ", 3000)
 
         # Remove temporary Configfile, that was created only for this run:
         try:
