@@ -129,8 +129,10 @@ class TestCaseMaster:
         if self.kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR:
             # Try taking a Screenshot
             if self.testCaseType == GC.KWARGS_BROWSER:
-                data[GC.SCREENSHOTS] = self.kwargs[GC.KWARGS_DATA][GC.SCREENSHOTS] \
-                                       + '\n' + self.browser.takeScreenshot()
+                if data[GC.SCREENSHOTS]:
+                    data[GC.SCREENSHOTS].append(self.browser.takeScreenshot())
+                else:
+                    data[GC.SCREENSHOTS] = [self.browser.takeScreenshot()]
 
         # If Testcase-Status was not set, we'll set error. Shouldn't happen anyways.
         if not self.kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS]:

@@ -476,8 +476,11 @@ class ExportResults:
             if isinstance(testRecordDict[fieldName], dict):
                 self.worksheet.write(line, cellNumber, testRecordDict[fieldName])
             elif isinstance(testRecordDict[fieldName], list):
-                self.worksheet.write(line, cellNumber,
-                                     utils.listToString(testRecordDict[fieldName]))
+                if fieldName == GC.SCREENSHOTS:
+                    self.__attachScreenshotsToExcelCells(cellNumber, fieldName, line, testRecordDict)
+                else:
+                    self.worksheet.write(line, cellNumber,
+                                         utils.listToString(testRecordDict[fieldName]))
             else:
                 if fieldName == GC.TESTCASESTATUS:
                     if testRecordDict[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_SUCCESS:
@@ -485,20 +488,23 @@ class ExportResults:
                     elif testRecordDict[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR:
                         self.worksheet.write(line, cellNumber, testRecordDict[fieldName], self.cellFormatRed)
                 elif fieldName == GC.SCREENSHOTS:
-                    # Place the screenshot images "on" the appropriate cell
-                    if type(testRecordDict[fieldName]) == list:
-                        self.worksheet.insert_image(line, cellNumber, testRecordDict[fieldName][-1], {'x_scale': 0.05,
-                                                                                                      'y_scale': 0.05})
-                        for nm in range(len(testRecordDict[fieldName]) - 1):
-                            self.worksheet.insert_image(line, len(self.fieldListExport) + nm + 1,
-                                                        testRecordDict[fieldName][nm],
-                                                        {'x_scale': 0.05, 'y_scale': 0.05})
-                    else:
-                        self.worksheet.insert_image(line, cellNumber, testRecordDict[fieldName], {'x_scale': 0.05,
-                                                                                                  'y_scale': 0.05})
-                    self.worksheet.set_row(line, 35)
+                    self.__attachScreenshotsToExcelCells(cellNumber, fieldName, line, testRecordDict)
                 else:
                     self.worksheet.write(line, cellNumber, testRecordDict[fieldName])
+
+    def __attachScreenshotsToExcelCells(self, cellNumber, fieldName, line, testRecordDict):
+        # Place the screenshot images "on" the appropriate cell
+        if type(testRecordDict[fieldName]) == list:
+            self.worksheet.insert_image(line, cellNumber, testRecordDict[fieldName][-1], {'x_scale': 0.05,
+                                                                                          'y_scale': 0.05})
+            for nextScreenshotNumber in range(len(testRecordDict[fieldName]) - 1):
+                self.worksheet.insert_image(line, len(self.fieldListExport) + nextScreenshotNumber + 1,
+                                            testRecordDict[fieldName][nextScreenshotNumber],
+                                            {'x_scale': 0.05, 'y_scale': 0.05})
+        else:
+            self.worksheet.insert_image(line, cellNumber, testRecordDict[fieldName], {'x_scale': 0.05,
+                                                                                      'y_scale': 0.05})
+        self.worksheet.set_row(line, 35)
 
     def closeExcel(self):
         self.workbook.close()
