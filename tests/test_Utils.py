@@ -9,6 +9,13 @@ def test_datetime_return():
     datetime_now = datetime.now().strftime("%Y%m%d_%H%M%S")
     assert utils.datetime_return() == datetime_now
 
+def test_sanitizeFileName():
+    file_name = "'text.py'"
+    sanitize_file_name = "test.py"
+
+    assert utils.sanitizeFileName(file_name) == sanitize_file_name
+    
+
 def test_anyting2Boolean_raise():
     # todo
     pass
