@@ -861,8 +861,13 @@ class BrowserDriver:
             except NoSuchElementException as e:
                 pass
             except NoSuchWindowException as e:
-                raise Exceptions.baangtTestStepException(f"Window ceased to exist. Error: {e}")
-            self.sleep(0.2)
+                pass
+
+            self.sleep(0.5)
+
+        if retryCount == 5:
+            raise Exceptions.baangtTestStepException(f"Couldn't locate HTML element in Page. "
+                                                     f"No idea what's going on. This was the last error: {e}")
 
     def findWaitNotVisible(self, css=None, xpath=None, id=None, timeout=90, optional=False):
         """
