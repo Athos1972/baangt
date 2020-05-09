@@ -41,12 +41,31 @@ def test_listToString_number_list():
     assert utils.listToString(numbers) == '1, 2, 3'
 
 def test_listToString_string_list():
-    letter = ['a', 'b', 'c']
-    assert utils.listToString(letter) == 'a, b, c'
+    letters = ['a', 'b', 'c']
+    assert utils.listToString(letters) == 'a, b, c'
 
 def test_listToString_object_list():
-    persons = [{'name': 'Andrea', 'age': 18}, {'name': 'Jhon', 'age': 25}]
-    assert utils.listToString(persons) == "{'name': 'Andrea', 'age': 18}, {'name': 'Jhon', 'age': 25}"
+    users = [{'name': 'Andrea', 'age': 18}, {'name': 'Jhon', 'age': 25}]
+    assert utils.listToString(users) == "{'name': 'Andrea', 'age': 18}, {'name': 'Jhon', 'age': 25}"
+
+def test___listChildToString_number_list():
+    numbers = [1, 2, 3]
+    print("***********************************")
+    print(utils._utils__listChildToString(numbers))
+    print("***********************************")
+    assert utils.listToString(numbers) == '1, 2, 3'
+
+def test___listChildToString_string_list():
+    letters = ['a', 'b', 'c']
+    assert utils.listToString(letters) == 'a, b, c'
+
+def test___listChildToString_object_list():
+    users = [{'name': 'Andrea', 'age': 18}, {'name': 'Jhon', 'age': 25}]
+    assert utils.listToString(users) == "{'name': 'Andrea', 'age': 18}, {'name': 'Jhon', 'age': 25}"
+
+def test___listChildToString_lists_list():
+    lists = [[1, 2, 3], ['a', 'b', 'c']]
+    assert utils.listToString(lists) == "1, 2, 3\na, b, c"
 
 def test_anyting2Boolean_raise():
     # todo
