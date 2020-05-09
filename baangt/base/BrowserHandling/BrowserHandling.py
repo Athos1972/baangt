@@ -793,7 +793,10 @@ class BrowserDriver:
 
         lLoopCount = 0
 
-        self.__getCurrentHTMLReference()
+        try:
+            self.__getCurrentHTMLReference()
+        except BaseException as e:
+            raise Exceptions.baangtTestStepException(f"__getCurrentHTMLReference was not successful: {e}")
 
         while not wasSuccessful and elapsed < timeout:
             lLoopCount += 1
@@ -868,6 +871,7 @@ class BrowserDriver:
                 logger.warning(f"had an unknown exception (should be checked): {e}")
                 pass
 
+            retryCount += 1
             self.sleep(0.5)
 
         if retryCount == 5:
