@@ -1,10 +1,13 @@
 import pytest
+from datetime import datetime
 import baangt.base.GlobalConstants as GC
 import baangt.base.CustGlobalConstants as CGC
 
 from baangt.base.Utils import utils
 
-
+def test_datetime_return():
+    datetime_now = datetime.now().strftime("%Y%m%d_%H%M%S")
+    assert utils.datetime_return() == datetime_now
 
 def test_anyting2Boolean_raise():
     # todo
