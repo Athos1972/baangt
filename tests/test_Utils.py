@@ -67,6 +67,34 @@ def test___listChildToString_lists_list():
     lists = [[1, 2, 3], ['a', 'b', 'c']]
     assert utils.listToString(lists) == "1, 2, 3\na, b, c"
 
+def test_setLocatorFromLocatorType_xpath():
+    locatorType = 'XPATH'
+    locator = '/library/book/author'
+    
+    xpath, css, id = utils.setLocatorFromLocatorType(locatorType, locator)
+    assert xpath == locator
+    assert css == None
+    assert id == None
+
+def test_setLocatorFromLocatorType_css():
+    locatorType = 'CSS'
+    locator = 'fa-trash'
+    
+    xpath, css, id = utils.setLocatorFromLocatorType(locatorType, locator)
+    assert xpath == None
+    assert css == locator
+    assert id == None
+
+def test_setLocatorFromLocatorType_id():
+    locatorType = 'ID'
+    locator = 'library'
+    
+    xpath, css, id = utils.setLocatorFromLocatorType(locatorType, locator)
+    assert xpath == None
+    assert css == None
+    assert id == locator
+
+
 def test_anyting2Boolean_raise():
     # todo
     pass
