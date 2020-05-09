@@ -1,9 +1,12 @@
 import os
 import pytest
+import logging
 from pathlib import Path
 from datetime import datetime
 import baangt.base.GlobalConstants as GC
 import baangt.base.CustGlobalConstants as CGC
+
+logger = logging.getLogger("pyC")
 
 from baangt.base.Utils import utils
 
@@ -26,6 +29,12 @@ def test_openJson():
     assert json_globals["TC.slowExecution"] == ""
     assert json_globals["TC.NetworkInfo"] == ""
     assert json_globals["TX.DEBUG"] == "True"
+
+def test_setLogLevel():
+    level = "Info"
+    utils.setLogLevel(level)
+
+    assert logger.isEnabledFor(20)
 
 def test_anyting2Boolean_raise():
     # todo
