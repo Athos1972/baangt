@@ -36,6 +36,18 @@ def test_setLogLevel():
 
     assert logger.isEnabledFor(20)
 
+def test_listToString_number_list():
+    numbers = [1, 2, 3]
+    assert utils.listToString(numbers) == '1, 2, 3'
+
+def test_listToString_string_list():
+    letter = ['a', 'b', 'c']
+    assert utils.listToString(letter) == 'a, b, c'
+
+def test_listToString_object_list():
+    persons = [{'name': 'Andrea', 'age': 18}, {'name': 'Jhon', 'age': 25}]
+    assert utils.listToString(persons) == "{'name': 'Andrea', 'age': 18}, {'name': 'Jhon', 'age': 25}"
+
 def test_anyting2Boolean_raise():
     # todo
     pass
