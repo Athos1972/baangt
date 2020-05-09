@@ -480,7 +480,12 @@ class BrowserDriver:
                 exceptHandles = exceptHandles.replace("-", "")
                 # WindowHandles based on 0.. Value "let 2 windows open" means to close everything except 0 and 1:
                 exceptHandles = int(exceptHandles.strip()) - 1
-                totalWindows = len(self.driver.window_handles)
+                try:
+                    totalWindows = len(self.driver.window_handles)
+                except BaseException as e:
+                    logger.error(f"Tried to get amount of windows. Threw error {e}. Most probably browser crashed")
+                    raise Exceptions.baangtTestStepException(f"Tried to get amount of windows. "
+                                                             f"Threw error {e}. Most probably browser crashed")
                 for windowHandle in self.driver.window_handles[-1:exceptHandles:-1]:
                     try:
                         self.driver.switch_to.window(windowHandle)
