@@ -855,6 +855,7 @@ class BrowserDriver:
         "waitForPageLoadAfterButtonClick"
         :return:
         """
+        e = None
         retryCount = 0
         wasSuccessful = False
         while retryCount < 5 and not wasSuccessful:
@@ -869,14 +870,14 @@ class BrowserDriver:
                 logger.debug(f"had a WebDriverException: {e}")
             except BaseException as e:
                 logger.warning(f"had an unknown exception (should be checked): {e}")
-                pass
 
             retryCount += 1
             self.sleep(0.5)
 
         if retryCount == 5:
             raise Exceptions.baangtTestStepException(f"Couldn't locate HTML element in Page. "
-                                                     f"No idea what's going on. This was the last error: {e}")
+                                                     f"No idea what's going on. This was the last error"
+                                                     f" (check logs for more): {e}")
 
     def findWaitNotVisible(self, css=None, xpath=None, id=None, timeout=90, optional=False):
         """
