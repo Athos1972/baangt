@@ -1,4 +1,6 @@
+import os
 import pytest
+from pathlib import Path
 from datetime import datetime
 import baangt.base.GlobalConstants as GC
 import baangt.base.CustGlobalConstants as CGC
@@ -10,11 +12,20 @@ def test_datetime_return():
     assert utils.datetime_return() == datetime_now
 
 def test_sanitizeFileName():
-    file_name = "'text.py'"
+    file_name = "'test.py'"
     sanitize_file_name = "test.py"
 
     assert utils.sanitizeFileName(file_name) == sanitize_file_name
     
+
+def test_openJson():
+    directory = Path(os.getcwd()).joinpath("examples")
+    json_globals = utils.openJson(Path(directory).joinpath('globals.json'))
+    assert json_globals["TC.Lines"] == ""
+    assert json_globals["TC.dontCloseBrowser"] == ""
+    assert json_globals["TC.slowExecution"] == ""
+    assert json_globals["TC.NetworkInfo"] == ""
+    assert json_globals["TX.DEBUG"] == "True"
 
 def test_anyting2Boolean_raise():
     # todo
