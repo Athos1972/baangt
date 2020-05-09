@@ -16,7 +16,7 @@ if __name__ == '__main__':
         packages=setuptools.find_packages(),
         data_files=[('baangt', ["baangt/ressources/baangtLogo.png", "baangt/ressources/baangtLogo2020Small.png"])],
         package_data={"baangt.ressources": ['*.png',]},
-        install_requires=["pandas", "numpy", "pySimpleGui", "beautifulsoup4", "schwifty","pytest","requests","xlsxwriter",
+        install_requires=["beautifulsoup4", "schwifty","pytest","requests","xlsxwriter",
                           "sqlalchemy","xlrd","selenium","pyperclip", "Appium-Python-Client", "pyQT5", "browsermob-proxy"],
         classifiers=[
             "Programming Language :: Python :: 3",

@@ -1,5 +1,5 @@
 openpyxl>=3.0.3
-pyqt5>=5.1.14
+PyQt5>=5.1.14
 faker>=4.0.2
 Appium-Python-Client>=0.50
 beautifulsoup4==4.8.2
