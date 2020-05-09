@@ -6,7 +6,7 @@ if __name__ == '__main__':
 
     setuptools.setup(
         name="baangt",
-        version="2020.4.7rc4",
+        version="2020.5.0rc5",
         author="Bernhard Buhl",
         author_email="info@baangt.org",
         description="Open source Test Automation Suite for MacOS, Windows, Linux",
@@ -17,7 +17,7 @@ if __name__ == '__main__':
         data_files=[('baangt', ["baangt/ressources/baangtLogo.png", "baangt/ressources/baangtLogo2020Small.png"])],
         package_data={"baangt.ressources": ['*.png',]},
         install_requires=["pandas", "numpy", "pySimpleGui", "beautifulsoup4", "schwifty","pytest","requests","xlsxwriter",
-                          "sqlalchemy","xlrd","selenium","pyperclip", "Appium-Python-Client"],
+                          "sqlalchemy","xlrd","selenium","pyperclip", "Appium-Python-Client", "pyQT5", "browsermob-proxy"],
         classifiers=[
             "Programming Language :: Python :: 3",
             "License :: OSI Approved :: MIT License",
