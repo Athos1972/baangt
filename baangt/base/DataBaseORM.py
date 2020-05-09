@@ -9,7 +9,7 @@ from baangt.base.PathManagement import ManagedPaths
 
 
 managedPaths = ManagedPaths()
-DATABASE_URL = 'sqlite:///'+str(managedPaths.derivePathForOSAndInstallationOption().joinpath('testrun.db'))
+DATABASE_URL = os.getenv('DATABASE_URL') or 'sqlite:///'+str(managedPaths.derivePathForOSAndInstallationOption().joinpath('testrun.db'))
 
 engine = create_engine(DATABASE_URL)
 
