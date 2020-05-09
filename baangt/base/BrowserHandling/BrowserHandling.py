@@ -859,8 +859,13 @@ class BrowserDriver:
                 self.html = self.driver.find_element_by_tag_name('html')  # This is for waitForPageLoadAfterButton
                 wasSuccessful = True
             except NoSuchElementException as e:
-                pass
+                logger.debug(f"had a NoSuchElementException: {e}")
             except NoSuchWindowException as e:
+                logger.debug(f"had a noSuchWindowException: {e}")
+            except WebDriverException as e:
+                logger.debug(f"had a WebDriverException: {e}")
+            except BaseException as e:
+                logger.warning(f"had an unknown exception (should be checked): {e}")
                 pass
 
             self.sleep(0.5)
