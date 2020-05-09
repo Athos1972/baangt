@@ -215,6 +215,8 @@ class MainWindow(Ui_MainWindow):
         os.chdir(dirName)
         # self.testRunFiles = glob.glob("*.xlsx")
         # self.configFiles = glob.glob("global*.json")
+        self.testRunFiles = []
+        self.configFiles = []
 
         fileList = glob.glob("*.json")
         fileList.extend(glob.glob("*.xlsx"))
@@ -223,7 +225,7 @@ class MainWindow(Ui_MainWindow):
             fileList.extend(glob.glob("*.JSON"))
             fileList.extend(glob.glob("*.XLSX"))
         for file in fileList:
-            if file[0:4].lower() == 'glob':      # Global Settings for Testrun must start with global_*
+            if file[0:6].lower() == 'global':      # Global Settings for Testrun must start with global_*
                 self.configFiles.append(file)
             else:
                 self.testRunFiles.append(file)
@@ -292,9 +294,8 @@ class MainWindow(Ui_MainWindow):
             if not dirPath:
                 dirPath = os.path.abspath(os.curdir)
             self.pathLineEdit_4.insert(dirPath)
-            # self.pathLineEdit.insert(dirPath)
         else:
-            self.pathLineEdit_4.insert(dirPath)
+            self.pathLineEdit_4.setText(dirPath)
         self.directory = dirPath
         self.getSettingsAndTestFilesInDirectory(dirPath)
         self.statusMessage("Current Path: {} ".format(dirPath), 2000)

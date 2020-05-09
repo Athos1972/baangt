@@ -1,4 +1,4 @@
-import PySimpleGUI as sg
+# import PySimpleGUI as sg
 import os
 import xlsxwriter
 from pathlib import Path
@@ -41,37 +41,37 @@ Alternatively copy + paste manually
 into this side of the window.
 """
         self.outputFormatted = []
-        self.startWindow()
+    #    self.startWindow()
 
-    def startWindow(self):
-        self.getLayout()
-        sg.theme("TanBlue")
-
-        self.window = sg.Window("Baangt interactive Starter", layout=self.getLayout())
-
-        lWindow = self.window
-        lWindow.finalize()
-
-        while True:
-            lEvent, lValues = lWindow.read()
-            if lEvent == "Exit":
-                break
-
-            if lEvent == 'Save':
-                self.fileNameExport = sg.popup_get_text("Name of new Testcase:")
-                if self.fileNameExport:
-                    self.saveTestCase()
-                    break
-
-            if lEvent == "TextIn":  # Textinput in TextIn
-                self.__importTranslateAndUpdate(lWindow=lWindow)
-
-            if lEvent == 'Import from Clipboard':
-                self.clipboardText = pyperclip.paste()
-                self.window["TextIn"].update(value=self.clipboardText)
-                self.__importTranslateAndUpdate(lWindow=lWindow)
-
-        lWindow.close()
+    # def startWindow(self):
+    #     self.getLayout()
+    #     sg.theme("TanBlue")
+    #
+    #     self.window = sg.Window("Baangt interactive Starter", layout=self.getLayout())
+    #
+    #     lWindow = self.window
+    #     lWindow.finalize()
+    #
+    #     while True:
+    #         lEvent, lValues = lWindow.read()
+    #         if lEvent == "Exit":
+    #             break
+    #
+    #         if lEvent == 'Save':
+    #             self.fileNameExport = sg.popup_get_text("Name of new Testcase:")
+    #             if self.fileNameExport:
+    #                 self.saveTestCase()
+    #                 break
+    #
+    #         if lEvent == "TextIn":  # Textinput in TextIn
+    #             self.__importTranslateAndUpdate(lWindow=lWindow)
+    #
+    #         if lEvent == 'Import from Clipboard':
+    #             self.clipboardText = pyperclip.paste()
+    #             self.window["TextIn"].update(value=self.clipboardText)
+    #             self.__importTranslateAndUpdate(lWindow=lWindow)
+    #
+    #     lWindow.close()
 
     def __importTranslateAndUpdate(self, lWindow):
         self.importClipboard()
@@ -123,18 +123,18 @@ into this side of the window.
     def writeCell(self, sheet, cellRow, cellCol, value, format=None):
         sheet.write(cellRow, cellCol, value)
 
-    def getLayout(self):
-        lLayout = []
-        lLayout.append([sg.Multiline(default_text=self.clipboardText, size=(50, 30), key='TextIn', change_submits=True),
-                        sg.Multiline(default_text=self.outputText, size=(50, 30), key='TextOut')])
-        lLayout.append([sg.Text("Select Directory, Testrun and Global settings to use:")])
-        lLayout.append([sg.Text("Directory", size=(15, 1)),
-                        sg.In(key="-directory-", size=(30, 1), enable_events=True, default_text=self.directory),
-                        sg.FolderBrowse(initial_folder=os.getcwd(), enable_events=True)])
-
-        lLayout.append([sg.Button('Save'), sg.Button('Exit'), sg.Button("Import from Clipboard")])
-
-        return lLayout
+    # def getLayout(self):
+    #     lLayout = []
+    #     lLayout.append([sg.Multiline(default_text=self.clipboardText, size=(50, 30), key='TextIn', change_submits=True),
+    #                     sg.Multiline(default_text=self.outputText, size=(50, 30), key='TextOut')])
+    #     lLayout.append([sg.Text("Select Directory, Testrun and Global settings to use:")])
+    #     lLayout.append([sg.Text("Directory", size=(15, 1)),
+    #                     sg.In(key="-directory-", size=(30, 1), enable_events=True, default_text=self.directory),
+    #                     sg.FolderBrowse(initial_folder=os.getcwd(), enable_events=True)])
+    #
+    #     lLayout.append([sg.Button('Save'), sg.Button('Exit'), sg.Button("Import from Clipboard")])
+    #
+    #     return lLayout
 
     def importClipboard(self):
         lineOut = []

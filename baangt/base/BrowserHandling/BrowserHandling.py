@@ -480,7 +480,12 @@ class BrowserDriver:
                 exceptHandles = exceptHandles.replace("-", "")
                 # WindowHandles based on 0.. Value "let 2 windows open" means to close everything except 0 and 1:
                 exceptHandles = int(exceptHandles.strip()) - 1
-                totalWindows = len(self.driver.window_handles)
+                try:
+                    totalWindows = len(self.driver.window_handles)
+                except BaseException as e:
+                    logger.error(f"Tried to get amount of windows. Threw error {e}. Most probably browser crashed")
+                    raise Exceptions.baangtTestStepException(f"Tried to get amount of windows. "
+                                                             f"Threw error {e}. Most probably browser crashed")
                 for windowHandle in self.driver.window_handles[-1:exceptHandles:-1]:
                     try:
                         self.driver.switch_to.window(windowHandle)
@@ -793,7 +798,10 @@ class BrowserDriver:
 
         lLoopCount = 0
 
-        self.__getCurrentHTMLReference()
+        try:
+            self.__getCurrentHTMLReference()
+        except BaseException as e:
+            raise Exceptions.baangtTestStepException(f"__getCurrentHTMLReference was not successful: {e}")
 
         while not wasSuccessful and elapsed < timeout:
             lLoopCount += 1
@@ -852,6 +860,7 @@ class BrowserDriver:
         "waitForPageLoadAfterButtonClick"
         :return:
         """
+        e = None
         retryCount = 0
         wasSuccessful = False
         while retryCount < 5 and not wasSuccessful:
@@ -859,10 +868,21 @@ class BrowserDriver:
                 self.html = self.driver.find_element_by_tag_name('html')  # This is for waitForPageLoadAfterButton
                 wasSuccessful = True
             except NoSuchElementException as e:
-                pass
+                logger.debug(f"had a NoSuchElementException: {e}")
             except NoSuchWindowException as e:
-                raise Exceptions.baangtTestStepException(f"Window ceased to exist. Error: {e}")
-            self.sleep(0.2)
+                logger.debug(f"had a noSuchWindowException: {e}")
+            except WebDriverException as e:
+                logger.debug(f"had a WebDriverException: {e}")
+            except BaseException as e:
+                logger.warning(f"had an unknown exception (should be checked): {e}")
+
+            retryCount += 1
+            self.sleep(0.5)
+
+        if retryCount == 5:
+            raise Exceptions.baangtTestStepException(f"Couldn't locate HTML element in Page. "
+                                                     f"No idea what's going on. This was the last error"
+                                                     f" (check logs for more): {e}")
 
     def findWaitNotVisible(self, css=None, xpath=None, id=None, timeout=90, optional=False):
         """
