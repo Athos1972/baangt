@@ -1105,7 +1105,8 @@ class BrowserDriver:
     def goToUrl(self, url):
         self._log(logging.INFO, f'GoToUrl:{url}')
         try:
-            self.driver.set_context("content")
+            if self.browserName==GC.BROWSER_FIREFOX:
+                self.driver.set_context("content")
             self.driver.get(url)
             self.setZoomFactor()
         except WebDriverException as e:
