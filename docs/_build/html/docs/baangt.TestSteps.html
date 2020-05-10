@@ -86,9 +86,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../simpleExample.html">   First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Structure.html">   Structure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ParametersConfigFile.html">   Parameters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../DataFile.html">   Data file</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../SimpleAPI.html">   First API Test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../TestTypes.html">   Types of Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../DataFile.html">   Data file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SaveResults2Database.html">   Results in Database</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Developer.html">   For Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../HistoryAndReasons.html">   History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contributors.html">   Contributions</a></li>
@@ -193,13 +194,8 @@
 <span id="baangt-teststeps-teststepmaster-module"></span><h2>baangt.TestSteps.TestStepMaster module<a class="headerlink" href="#module-baangt.TestSteps.TestStepMaster" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="baangt.TestSteps.TestStepMaster.TestStepMaster">
-<em class="property">class </em><code class="sig-prename descclassname">baangt.TestSteps.TestStepMaster.</code><code class="sig-name descname">TestStepMaster</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.TestSteps.TestStepMaster.TestStepMaster" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">baangt.TestSteps.TestStepMaster.</code><code class="sig-name descname">TestStepMaster</code><span class="sig-paren">(</span><em class="sig-param">executeDirect=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.TestSteps.TestStepMaster.TestStepMaster" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="method">
-<dt id="baangt.TestSteps.TestStepMaster.TestStepMaster.anyting2Boolean">
-<em class="property">static </em><code class="sig-name descname">anyting2Boolean</code><span class="sig-paren">(</span><em class="sig-param">valueIn</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.TestSteps.TestStepMaster.TestStepMaster.anyting2Boolean" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="method">
 <dt id="baangt.TestSteps.TestStepMaster.TestStepMaster.checkLinks">
 <code class="sig-name descname">checkLinks</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#baangt.TestSteps.TestStepMaster.TestStepMaster.checkLinks" title="Permalink to this definition">¶</a></dt>
@@ -207,6 +203,11 @@
 <p>Result will be written into “CheckedLinks” in TestDataDict</p>
 <p>If theres a returncode &gt;= 400 in the list, we’ll mark the testcase as failed</p>
 </dd></dl>
+
+<dl class="method">
+<dt id="baangt.TestSteps.TestStepMaster.TestStepMaster.doPDFComparison">
+<code class="sig-name descname">doPDFComparison</code><span class="sig-paren">(</span><em class="sig-param">lValue</em>, <em class="sig-param">lFieldnameForResults='DOC_Compare'</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.TestSteps.TestStepMaster.TestStepMaster.doPDFComparison" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="baangt.TestSteps.TestStepMaster.TestStepMaster.doSaveData">
@@ -236,7 +237,15 @@
 <dl class="method">
 <dt id="baangt.TestSteps.TestStepMaster.TestStepMaster.executeDirect">
 <code class="sig-name descname">executeDirect</code><span class="sig-paren">(</span><em class="sig-param">executionCommands</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.TestSteps.TestStepMaster.TestStepMaster.executeDirect" title="Permalink to this definition">¶</a></dt>
-<dd><p>This will execute single Operations directly</p>
+<dd><p>Executes a sequence of Commands. Will be subclassed in other modules.
+:param executionCommands:
+:return:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="baangt.TestSteps.TestStepMaster.TestStepMaster.executeDirectSingle">
+<code class="sig-name descname">executeDirectSingle</code><span class="sig-paren">(</span><em class="sig-param">commandNumber</em>, <em class="sig-param">command</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.TestSteps.TestStepMaster.TestStepMaster.executeDirectSingle" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will execute a single instruction</p>
 </dd></dl>
 
 <dl class="method">
@@ -245,6 +254,11 @@
 <dd><p>This function will test version_global and version_line
 &#64;return True or False</p>
 </dd></dl>
+
+<dl class="method">
+<dt id="baangt.TestSteps.TestStepMaster.TestStepMaster.replaceAllVariables">
+<code class="sig-name descname">replaceAllVariables</code><span class="sig-paren">(</span><em class="sig-param">lValue</em>, <em class="sig-param">lValue2</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.TestSteps.TestStepMaster.TestStepMaster.replaceAllVariables" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="baangt.TestSteps.TestStepMaster.TestStepMaster.replaceVariables">

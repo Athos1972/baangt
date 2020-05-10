@@ -101,9 +101,10 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Structure.html">   Structure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ParametersConfigFile.html">   Parameters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="DataFile.html">   Data file</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SimpleAPI.html">   First API Test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="TestTypes.html">   Types of Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DataFile.html">   Data file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SaveResults2Database.html">   Results in Database</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Developer.html">   For Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">   History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
@@ -455,6 +456,21 @@ link will be reported accordingly. Reporting format is:</p>
 <tr class="row-odd"><td><p>clear</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Value</span></code> must have the variable or column name, that should be cleared (without <code class="docutils literal notranslate"><span class="pre">$(columnName)</span></code>,
 just <code class="docutils literal notranslate"><span class="pre">columnName</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>switchwindow</p></td>
+<td><p>Switches to a browser window. <code class="docutils literal notranslate"><span class="pre">Value</span></code> is the number of the window, that you want to switch to.</p></td>
+</tr>
+<tr class="row-odd"><td><p>setanchor</p></td>
+<td><p>There are pages, where you’ll not find good unique IDs or no nice way to locate elements. Setting an anchor can
+help in these cases. An anchor is an element, that can be located by CSS, ID or XPATH. After the anchor is set
+all future tries to locate an element will happen within the children of the anchor.</p>
+<p>To unset an anchor use setanchor without locator.</p>
+<p>setanchor can also improve the location performance, if you’re dealing with really large pages.</p>
+<blockquote>
+<div><p>While an anchor is set, ALL location attempts of elements happen within the anchor’s children. If you want
+to avoid that, use <code class="docutils literal notranslate"><span class="pre">`///`</span></code> (= 3 slashes instead of 2) to signal the logic to ignore the anchor.</p>
+</div></blockquote>
+</td>
 </tr>
 <tr class="row-even"><td><p>address_create</p></td>
 <td><p>provide an easy and easily extendable way to generate address data for a test case

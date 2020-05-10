@@ -105,11 +105,13 @@ class BrowserFactory:
                                                                browserProxy=browserMobProxy,
                                                                browserInstance=browserInstance,
                                                                randomProxy=randomProxy)
+
                 if self.globalSettings.get("TC." + GC.EXECUTION_SLOW):
                     self.browser[browserInstance].slowExecutionToggle()
                 if browserWindowSize:
                     self.setBrowserWindowSize(self.browser[browserInstance], browserWindowSize)
-
+                if self.globalSettings.get("TC." + GC.BROWSER_ZOOM_FACTOR):
+                    self.browser[browserInstance].setZoomFactor(self.globalSettings["TC." + GC.BROWSER_ZOOM_FACTOR])
             else:
                 logger.debug(f"Using existing instance of browser {browserInstance}")
             return self.browser[browserInstance]

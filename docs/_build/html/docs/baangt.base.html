@@ -86,9 +86,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../simpleExample.html">   First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Structure.html">   Structure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ParametersConfigFile.html">   Parameters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../DataFile.html">   Data file</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../SimpleAPI.html">   First API Test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../TestTypes.html">   Types of Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../DataFile.html">   Data file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SaveResults2Database.html">   Results in Database</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Developer.html">   For Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../HistoryAndReasons.html">   History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contributors.html">   Contributions</a></li>
@@ -317,101 +318,8 @@ find appropriate record and return that - one at a time</p>
 <div class="section" id="module-baangt.base.TestRun">
 <span id="baangt-base-testrun-module"></span><h2>baangt.base.TestRun module<a class="headerlink" href="#module-baangt.base.TestRun" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-baangt.base.TestRunDatabaseCreate">
-<span id="baangt-base-testrundatabasecreate-module"></span><h2>baangt.base.TestRunDatabaseCreate module<a class="headerlink" href="#module-baangt.base.TestRunDatabaseCreate" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate">
-<em class="property">class </em><code class="sig-prename descclassname">baangt.base.TestRunDatabaseCreate.</code><code class="sig-name descname">TestRunDatabaseCreate</code><span class="sig-paren">(</span><em class="sig-param">dbConnection=None</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Initializes the Database and loads some sample data</p>
-<dl class="method">
-<dt id="baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.commit">
-<code class="sig-name descname">commit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.commit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createActivityTypes">
-<code class="sig-name descname">createActivityTypes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createActivityTypes" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createExectionMethods">
-<code class="sig-name descname">createExectionMethods</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createExectionMethods" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createLocatorTypes">
-<code class="sig-name descname">createLocatorTypes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createLocatorTypes" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createMasterClasses">
-<code class="sig-name descname">createMasterClasses</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createMasterClasses" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createStructures">
-<code class="sig-name descname">createStructures</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createStructures" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createTestCase">
-<code class="sig-name descname">createTestCase</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createTestCase" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createTestCase2TestData">
-<code class="sig-name descname">createTestCase2TestData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createTestCase2TestData" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createTestCaseSequence">
-<code class="sig-name descname">createTestCaseSequence</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createTestCaseSequence" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createTestDataDefinition">
-<code class="sig-name descname">createTestDataDefinition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createTestDataDefinition" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createTestRun">
-<code class="sig-name descname">createTestRun</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createTestRun" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createTestStep">
-<code class="sig-name descname">createTestStep</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createTestStep" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createTestStepSequence">
-<code class="sig-name descname">createTestStepSequence</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createTestStepSequence" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createValidator">
-<code class="sig-name descname">createValidator</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createValidator" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.getCursor">
-<code class="sig-name descname">getCursor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.getCursor" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="baangt.base.TestRunDatabaseCreate.TestRunDatabaseFill">
-<em class="property">class </em><code class="sig-prename descclassname">baangt.base.TestRunDatabaseCreate.</code><code class="sig-name descname">TestRunDatabaseFill</code><span class="sig-paren">(</span><em class="sig-param">cursor</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.TestRunDatabaseCreate.TestRunDatabaseFill" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="method">
-<dt id="baangt.base.TestRunDatabaseCreate.TestRunDatabaseFill.fill">
-<code class="sig-name descname">fill</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.TestRunDatabaseCreate.TestRunDatabaseFill.fill" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<div class="section" id="baangt-base-testrundatabasecreate-module">
+<h2>baangt.base.TestRunDatabaseCreate module<a class="headerlink" href="#baangt-base-testrundatabasecreate-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-baangt.base.TestRunExcelImporter">
 <span id="baangt-base-testrunexcelimporter-module"></span><h2>baangt.base.TestRunExcelImporter module<a class="headerlink" href="#module-baangt.base.TestRunExcelImporter" title="Permalink to this headline">¶</a></h2>
@@ -499,9 +407,24 @@ XLSX and JSON Config files.</p>
 <em class="property">class </em><code class="sig-prename descclassname">baangt.base.Utils.</code><code class="sig-name descname">utils</code><a class="headerlink" href="#baangt.base.Utils.utils" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="method">
+<dt id="baangt.base.Utils.utils.anyting2Boolean">
+<em class="property">static </em><code class="sig-name descname">anyting2Boolean</code><span class="sig-paren">(</span><em class="sig-param">valueIn</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.Utils.utils.anyting2Boolean" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="baangt.base.Utils.utils.datetime_return">
 <em class="property">static </em><code class="sig-name descname">datetime_return</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.Utils.utils.datetime_return" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="baangt.base.Utils.utils.dynamicImportOfClasses">
+<em class="property">static </em><code class="sig-name descname">dynamicImportOfClasses</code><span class="sig-paren">(</span><em class="sig-param">modulePath=None</em>, <em class="sig-param">className=None</em>, <em class="sig-param">fullQualifiedImportName=None</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.Utils.utils.dynamicImportOfClasses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Will import a class from a module and return the class reference</p>
+<p>&#64;param fullQualifiedImportName: Full name of Module and Class. Alternatively:
+&#64;param modulePath: Path to module and:
+&#64;param className: Name of the class inside the module
+&#64;return: The class instance. If no class instance can be found the TestRun aborts hard with sys.exit</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="baangt.base.Utils.utils.extractFileNameFromFullPath">
@@ -555,6 +478,11 @@ given, this function will replace it with the actual value (e.g. FIREFOX)</p>
 &#64;param lLocator: Value of the locator
 &#64;return:</p>
 </dd></dl>
+
+<dl class="method">
+<dt id="baangt.base.Utils.utils.setLogLevel">
+<em class="property">static </em><code class="sig-name descname">setLogLevel</code><span class="sig-paren">(</span><em class="sig-param">level</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.Utils.utils.setLogLevel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 

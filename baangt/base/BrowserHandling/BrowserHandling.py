@@ -54,6 +54,8 @@ class BrowserDriver:
         self.downloadFolder = None
         self.downloadFolderMonitoring = None
         self.randomProxy = None
+        self.zoomFactor = None                     # Desired zoom factor for this page
+        self.browserName = None
         # Reference to Selenium "HTML" in order to track page changes. It is set on every interaction with the page
         self.html = None
         self.managedPaths = ManagedPaths()
@@ -79,6 +81,7 @@ class BrowserDriver:
         """
         self.takeTime("Browser Start")
         self.randomProxy = randomProxy
+        self.browserName = browserName
         browserNames = {
             GC.BROWSER_FIREFOX: webdriver.Firefox,
             GC.BROWSER_CHROME: webdriver.Chrome,
@@ -1101,12 +1104,13 @@ class BrowserDriver:
         self._log(logging.INFO, f'GoToUrl:{url}')
         try:
             self.driver.get(url)
+            self.setZoomFactor()
         except WebDriverException as e:
             # Use noScreenshot-Parameter as otherwise we'll try on a dead browser to create a screenshot
             self._log(logging.ERROR, f"Webpage {url} not reached. Error was: {e}", noScreenShot=True)
             self.__setProxyError()
             raise Exceptions.baangtTestStepException
-        except Exceptions as e:
+        except Exception as e:
             # Use noScreenshot-Parameter as otherwise we'll try on a dead browser to create a screenshot
             self._log(logging.ERROR, f"Webpage {url} throws error {e}", noScreenShot=True)
             self.__setProxyError()
@@ -1136,6 +1140,49 @@ class BrowserDriver:
     def javaScript(self, jsText, *args):
         """Execute a given JavaScript in the current Session"""
         self.driver.execute_script(jsText, *args)
+
+    def setZoomFactor(self, lZoomFactor=None):
+        """
+        During initialziation of Browser the desired zoom factor is given. But that's too early.
+        Only once we open a URL we can set the zoom factor.
+
+        So we store desired zoom factor and return after GOTOURL to actually set it.
+
+        :param lZoomFactor: set with a value. Otherwise existing value will be used
+        :return:
+        """
+        if not self.zoomFactor and not lZoomFactor:
+            return False
+
+        if lZoomFactor:
+            self.zoomFactor = lZoomFactor
+
+        self.driver.set_context("chrome")
+        try:
+            lWindow = self.driver.find_element_by_tag_name("html")
+            if platform.system().lower() == "darwin":
+                lWindow.send_keys(keys.Keys.META + "-")
+                time.sleep(0.3)
+                lWindow.send_keys(keys.Keys.META + "-")
+            else:
+                lWindow.send_keys(keys.Keys.CONTROL + "-")
+                time.sleep(0.3)
+                lWindow.send_keys(keys.Keys.CONTROL + "-")
+
+            logger.debug(f"Adjusted zoom factor of browserwindow to {self.zoomFactor}")
+        except Exception as e:
+            logger.debug(f"Tried to adjust zoom factor and failed: {e}")
+        finally:
+            self.driver.set_context("content")
+
+        # if self.browserName == GC.BROWSER_FIREFOX:
+        #     ljSCommand = f"document.body.style.MozTransform = 'scale({int(self.zoomFactor) / 100})';"
+        #     self.javaScript(ljSCommand)
+        #     logger.debug(f"Adjusted zoom factor of Firefox to {self.zoomFactor} using {ljSCommand}")
+        #
+        # ljSCommand = f"document.body.style.zoom = '{self.zoomFactor}%';"
+        # self.javaScript(ljSCommand)
+        # logger.debug(f"Adjusted zoom factor of browserwindow to {self.zoomFactor} using {ljSCommand}")
 
     def downloadDriver(self, browserName):
         path = Path(self.managedPaths.getOrSetDriverPath())
