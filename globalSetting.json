@@ -37,9 +37,9 @@
             "displayText": "Browser Size"
         },
         "TC.BrowserZoomFactor": {
-            "hint": "Set the Zoom Factor level for the browser window. Default = 1.0",
+            "hint": "Set the Zoom Factor level for the browser window. Default = 100. Switch e.g. to 70 or 120",
             "type": "text",
-            "default": "1.0",
+            "default": "100",
             "displayText": "Zoom Factor"
         },
         "TC.ParallelRuns": {
