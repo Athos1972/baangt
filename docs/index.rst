@@ -35,6 +35,7 @@ and well documented master functionality.
       Planned Features <PlannedFeatures.rst>
       Browser Drivers <BrowserDrivers.rst>
       Variables <Variables.rst>
+      Datagenerator <Datagenerator.rst>
       :subheader: Articles </articles/Articles.rst>
       Web <http://www.baangt.org>
 
