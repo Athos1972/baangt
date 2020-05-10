@@ -1158,6 +1158,16 @@ class BrowserDriver:
         if lZoomFactor:
             self.zoomFactorDesired = int(lZoomFactor)
 
+        if self.browserName == GC.BROWSER_CHROME:
+            x = self.getURL()
+            if x[0:5] == "http:":       # He loaded already something. Too late for us
+                logger.debug("CHROME: Got called to change Zoom level - but already URL loaded. Too late.")
+                return False
+            self.driver.get("chrome://settings/")
+            self.driver.execute_script(f"chrome.settingsPrivate.setDefaultZoom({self.zoomFactorDesired/100});")
+            logger.debug(f"CHROME: Set default zoom using JS-Method to {self.zoomFactorDesired/100}")
+            return True
+
         if self.browserName == GC.BROWSER_FIREFOX:
             self.driver.set_context("chrome")                # !sic: in Firefox.. Whatever...
 
