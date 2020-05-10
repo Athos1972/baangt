@@ -129,10 +129,9 @@ class MainWindow(Ui_MainWindow):
             self.setupBasePath(self.directory)
             self.readContentofGlobals()
         except Exception as e:
-            print("Exception in Main readConfig", e)
-            self.directory = str(self.managedPaths.derivePathForOSAndInstallationOption())
+            print("Exception in Main readConfig. Starting with defaults", e)
+            self.directory = str(self.managedPaths.derivePathForOSAndInstallationOption().joinpath("examples"))
             self.setupBasePath(self.directory)
-            pass
 
     def readContentofGlobals(self):
         """ This will read the content of config file """
