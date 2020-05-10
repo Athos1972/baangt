@@ -54,7 +54,8 @@ class BrowserDriver:
         self.downloadFolder = None
         self.downloadFolderMonitoring = None
         self.randomProxy = None
-        self.zoomFactor = None                     # Desired zoom factor for this page
+        self.zoomFactorDesired = None                     # Desired zoom factor for this page
+        self.zoomFactorCurrent = 100
         self.browserName = None
         # Reference to Selenium "HTML" in order to track page changes. It is set on every interaction with the page
         self.html = None
@@ -1151,25 +1152,37 @@ class BrowserDriver:
         :param lZoomFactor: set with a value. Otherwise existing value will be used
         :return:
         """
-        if not self.zoomFactor and not lZoomFactor:
+        if not self.zoomFactorDesired and not lZoomFactor:
             return False
 
         if lZoomFactor:
-            self.zoomFactor = lZoomFactor
+            self.zoomFactorDesired = lZoomFactor
 
-        self.driver.set_context("chrome")
+        if self.zoomFactorCurrent == self.zoomFactorDesired:
+            return None
+
+        self.driver.set_context("chrome")                # !sic: Also in Firefox.. Whatever...
+
+        if self.zoomFactorDesired > self.zoomFactorCurrent:
+            lZoomKey = "+"
+        else:
+            lZoomKey = "-"
+
+        # E.g. current = 100. Desired = 67%: 100-67 = 33. 33/10 = 3.3  int(3.3) = 3 --> he'll hit 3 times CTRL+"-"
+        lDifference = abs(self.zoomFactorCurrent - self.zoomFactorDesired)
+        lHitKeyTimes = int(lDifference/10)
+
+
         try:
             lWindow = self.driver.find_element_by_tag_name("html")
-            if platform.system().lower() == "darwin":
-                lWindow.send_keys(keys.Keys.META + "-")
-                time.sleep(0.3)
-                lWindow.send_keys(keys.Keys.META + "-")
-            else:
-                lWindow.send_keys(keys.Keys.CONTROL + "-")
-                time.sleep(0.3)
-                lWindow.send_keys(keys.Keys.CONTROL + "-")
+            for counter in range(lHitKeyTimes-1):
+                if platform.system().lower() == "darwin":
+                    lWindow.send_keys(keys.Keys.META + lZoomKey)
+                else:
+                    lWindow.send_keys(keys.Keys.CONTROL + lZoomKey)
+            self.zoomFactorCurrent = self.zoomFactorDesired
 
-            logger.debug(f"Adjusted zoom factor of browserwindow to {self.zoomFactor}")
+            logger.debug(f"Adjusted zoom factor of browserwindow to {self.zoomFactorDesired}")
         except Exception as e:
             logger.debug(f"Tried to adjust zoom factor and failed: {e}")
         finally:
