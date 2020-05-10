@@ -55,7 +55,6 @@ class BrowserDriver:
         self.downloadFolderMonitoring = None
         self.randomProxy = None
         self.zoomFactorDesired = None                     # Desired zoom factor for this page
-        self.zoomFactorCurrent = 100
         self.browserName = None
         # Reference to Selenium "HTML" in order to track page changes. It is set on every interaction with the page
         self.html = None
@@ -497,8 +496,10 @@ class BrowserDriver:
                     except NoSuchWindowException as e:
                         # If the window is already closed, it's fine. Don't do anything
                         pass
-
-                self.driver.switch_to.window(self.driver.window_handles[exceptHandles])
+                try:
+                    self.driver.switch_to.window(self.driver.window_handles[exceptHandles])
+                except IndexError as e:
+                    raise Exceptions.baangtTestStepException(f"Seems like the browser crashed. Main-Window lost")
         else:
             success = False
             duration = 0
@@ -1104,6 +1105,7 @@ class BrowserDriver:
     def goToUrl(self, url):
         self._log(logging.INFO, f'GoToUrl:{url}')
         try:
+            self.driver.set_context("content")
             self.driver.get(url)
             self.setZoomFactor()
         except WebDriverException as e:
@@ -1144,58 +1146,48 @@ class BrowserDriver:
 
     def setZoomFactor(self, lZoomFactor=None):
         """
-        During initialziation of Browser the desired zoom factor is given. But that's too early.
-        Only once we open a URL we can set the zoom factor.
+        Will try to set the browser's zoom factor.
 
-        So we store desired zoom factor and return after GOTOURL to actually set it.
-
-        :param lZoomFactor: set with a value. Otherwise existing value will be used
+        :param lZoomFactor: set with a value. Otherwise existing value will be used (if previously set)
         :return:
         """
         if not self.zoomFactorDesired and not lZoomFactor:
             return False
 
         if lZoomFactor:
-            self.zoomFactorDesired = lZoomFactor
-
-        if self.zoomFactorCurrent == self.zoomFactorDesired:
-            return None
+            self.zoomFactorDesired = int(lZoomFactor)
 
         self.driver.set_context("chrome")                # !sic: Also in Firefox.. Whatever...
 
-        if self.zoomFactorDesired > self.zoomFactorCurrent:
+        if self.zoomFactorDesired > 100:
             lZoomKey = "+"
         else:
             lZoomKey = "-"
 
         # E.g. current = 100. Desired = 67%: 100-67 = 33. 33/10 = 3.3  int(3.3) = 3 --> he'll hit 3 times CTRL+"-"
-        lDifference = abs(self.zoomFactorCurrent - self.zoomFactorDesired)
+        lDifference = abs(100 - self.zoomFactorDesired)
         lHitKeyTimes = int(lDifference/10)
-
 
         try:
             lWindow = self.driver.find_element_by_tag_name("html")
-            for counter in range(lHitKeyTimes-1):
+            # Reset the browser window to 100%:
+            if platform.system().lower() == "darwin":
+                lWindow.send_keys(keys.Keys.META + "0")
+            else:
+                lWindow.send_keys(keys.Keys.CONTROL + "0")
+
+            # Now set to desired zoom factor:
+            for counter in range(lHitKeyTimes):
                 if platform.system().lower() == "darwin":
                     lWindow.send_keys(keys.Keys.META + lZoomKey)
                 else:
                     lWindow.send_keys(keys.Keys.CONTROL + lZoomKey)
-            self.zoomFactorCurrent = self.zoomFactorDesired
 
             logger.debug(f"Adjusted zoom factor of browserwindow to {self.zoomFactorDesired}")
         except Exception as e:
             logger.debug(f"Tried to adjust zoom factor and failed: {e}")
         finally:
             self.driver.set_context("content")
-
-        # if self.browserName == GC.BROWSER_FIREFOX:
-        #     ljSCommand = f"document.body.style.MozTransform = 'scale({int(self.zoomFactor) / 100})';"
-        #     self.javaScript(ljSCommand)
-        #     logger.debug(f"Adjusted zoom factor of Firefox to {self.zoomFactor} using {ljSCommand}")
-        #
-        # ljSCommand = f"document.body.style.zoom = '{self.zoomFactor}%';"
-        # self.javaScript(ljSCommand)
-        # logger.debug(f"Adjusted zoom factor of browserwindow to {self.zoomFactor} using {ljSCommand}")
 
     def downloadDriver(self, browserName):
         path = Path(self.managedPaths.getOrSetDriverPath())
