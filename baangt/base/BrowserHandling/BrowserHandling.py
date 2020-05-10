@@ -1157,7 +1157,8 @@ class BrowserDriver:
         if lZoomFactor:
             self.zoomFactorDesired = int(lZoomFactor)
 
-        self.driver.set_context("chrome")                # !sic: Also in Firefox.. Whatever...
+        if self.browserName == GC.BROWSER_FIREFOX:
+            self.driver.set_context("chrome")                # !sic: in Firefox.. Whatever...
 
         if self.zoomFactorDesired > 100:
             lZoomKey = "+"
@@ -1187,7 +1188,8 @@ class BrowserDriver:
         except Exception as e:
             logger.debug(f"Tried to adjust zoom factor and failed: {e}")
         finally:
-            self.driver.set_context("content")
+            if self.browserName == GC.BROWSER_FIREFOX:
+                self.driver.set_context("content")
 
     def downloadDriver(self, browserName):
         path = Path(self.managedPaths.getOrSetDriverPath())
