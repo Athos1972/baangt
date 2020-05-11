@@ -20,7 +20,94 @@ def test_sanitizeFileName():
     sanitize_file_name = "test.py"
 
     assert utils.sanitizeFileName(file_name) == sanitize_file_name
-    
+
+def test_replaceFieldValueWithValueOfConstant_GC_GCG():
+    assert utils.replaceFieldValueWithValueOfConstant(
+        "GC.BROWSER_CHROME") == "CHROME"
+    assert utils.replaceFieldValueWithValueOfConstant(
+        "CGC.VERMITTLER") == "vermittler"
+    assert utils.replaceFieldValueWithValueOfConstant(
+        "GC.NOT_EXISTENT") == "GC.NOT_EXISTENT"
+        
+def test_replaceAllGlobalConstantsInDict_str():
+    obj_constants = {
+        "GC.BROWSER_CHROME": "GC.BROWSER_CHROME",
+        "CGC.VERMITTLER": "vermittler",
+        "GC.NOT_EXISTENT": "GC.NOT_EXISTENT"
+    }
+
+    obj_result = utils.replaceAllGlobalConstantsInDict(obj_constants)
+
+    assert obj_result["CHROME"] == "CHROME"
+    assert obj_result["vermittler"] == "vermittler"
+    assert obj_result["GC.NOT_EXISTENT"] == "GC.NOT_EXISTENT"
+
+def test_replaceAllGlobalConstantsInDict_dict():
+    obj = {
+        "constants" : {
+            "GC.BROWSER_CHROME": "GC.BROWSER_CHROME",
+            "CGC.VERMITTLER": "vermittler",
+            "GC.NOT_EXISTENT": "GC.NOT_EXISTENT"
+        }
+    }
+
+    obj_result = utils.replaceAllGlobalConstantsInDict(obj)
+
+    assert obj_result["constants"]["CHROME"] == "CHROME"
+    assert obj_result["constants"]["vermittler"] == "vermittler"
+    assert obj_result["constants"]["GC.NOT_EXISTENT"] == "GC.NOT_EXISTENT"
+
+def test_replaceAllGlobalConstantsInDict_list():
+    obj = {
+        "constants": ["GC.BROWSER_CHROME", "CGC.VERMITTLER", "GC.NOT_EXISTENT"]
+    }
+
+    obj_result = utils.replaceAllGlobalConstantsInDict(obj)
+
+    assert obj_result["constants"][0] == "CHROME"
+    assert obj_result["constants"][1] == "vermittler"
+    assert obj_result["constants"][2] == "GC.NOT_EXISTENT"
+
+def test_replaceAllGlobalConstantsInDict_other():
+    obj = {
+        "total": 15.5,
+        "age": 21
+    }
+
+    obj_result = utils.replaceAllGlobalConstantsInDict(obj)
+
+    assert obj_result["total"] == 15.5
+    assert obj_result["age"] == 21
+
+def test_replaceAllGlobalConstantsInDict_loopList_dict():
+    obj = {
+        "constants" : [
+            {"GC.BROWSER_CHROME": "GC.BROWSER_CHROME"},
+            {"CGC.VERMITTLER": "vermittler"},
+            {"GC.NOT_EXISTENT": "GC.NOT_EXISTENT"}
+        ]
+    }
+
+    result = utils.replaceAllGlobalConstantsInDict(obj)
+    constants = result["constants"]
+
+    assert constants[0]["CHROME"] == "CHROME"
+    assert constants[1]["vermittler"] == "vermittler"
+    assert constants[2]["GC.NOT_EXISTENT"] == "GC.NOT_EXISTENT"
+
+def test_replaceAllGlobalConstantsInDict_loopList_list():
+    obj = {
+        "constants": [
+            ["GC.BROWSER_CHROME", "CGC.VERMITTLER", "GC.NOT_EXISTENT"]
+        ]
+    }
+
+    result = utils.replaceAllGlobalConstantsInDict(obj)
+    result_list = result["constants"][0]
+
+    assert result_list[0] == "CHROME"
+    assert result_list[1] == "vermittler"
+    assert result_list[2] == "GC.NOT_EXISTENT"
 
 def test_openJson():
     directory = Path(os.getcwd()).joinpath("examples")
@@ -119,14 +206,6 @@ def test_dynamicImportOfClasses_path_className_not_found_class_in_module():
 def test_anyting2Boolean_raise():
     # todo
     pass
-
-def test_replaceFieldValueWithValueOfConstant_GC_GCG():
-    assert utils.replaceFieldValueWithValueOfConstant(
-        "GC.BROWSER_CHROME") == "CHROME"
-    assert utils.replaceFieldValueWithValueOfConstant(
-        "CGC.VERMITTLER") == "vermittler"
-    assert utils.replaceFieldValueWithValueOfConstant(
-        "GC.NOT_EXISTENT") == "GC.NOT_EXISTENT"
 
 def test_anyting2Boolean_booleans():
     assert utils.anyting2Boolean(True) is True
