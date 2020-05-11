@@ -188,15 +188,19 @@ containing all data.</p>
 <div class="section" id="input-file">
 <h1>Input File<a class="headerlink" href="#input-file" title="Permalink to this headline">¶</a></h1>
 <img alt="_images/DataGeneratorInput.png" src="_images/DataGeneratorInput.png" />
-<p>This image is an example input file. Different types of data types supported are given different number in the above image.
-1. Is a simple value.
-2. Is a list of value.
-3. Is a list of value with <code class="docutils literal notranslate"><span class="pre">RND_</span></code> prefix. We will learn more on it further.
-4. <code class="docutils literal notranslate"><span class="pre">RND_1,10,2</span></code>: <code class="docutils literal notranslate"><span class="pre">RND_</span></code> prefix is also used here but with a range.
-5. Simple range.
-6. List of header.
-7. <code class="docutils literal notranslate"><span class="pre">FKR_</span></code> keyword is used here.
-8. <code class="docutils literal notranslate"><span class="pre">FKR_</span></code> keyword is used here with a new integer value 0 in end.</p>
+<dl class="simple">
+<dt>This image is an example input file. Different types of data types supported are given different number in the above image.</dt><dd><ol class="arabic simple">
+<li><p>Is a simple value.</p></li>
+<li><p>Is a list of value.</p></li>
+<li><p>Is a list of value with <code class="docutils literal notranslate"><span class="pre">RND_</span></code> prefix. We will learn more on it further.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RND_1,10,2</span></code>: <code class="docutils literal notranslate"><span class="pre">RND_</span></code> prefix is also used here but with a range.</p></li>
+<li><p>Simple range.</p></li>
+<li><p>List of header.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FKR_</span></code> keyword is used here.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FKR_</span></code> keyword is used here with a new integer value 0 in end.</p></li>
+</ol>
+</dd>
+</dl>
 <p>Using these data type we will generate all possible values.
 Here is a simple example with simple value and value of list.</p>
 <p>Example Input:-</p>
@@ -257,12 +261,12 @@ Now this will generate new email for every data in the output.</p></li>
 <div class="section" id="all-data-types-format">
 <h1>All Data Types Format<a class="headerlink" href="#all-data-types-format" title="Permalink to this headline">¶</a></h1>
 <ol class="arabic simple">
-<li><p>Value             = value</p></li>
-<li><p>list of values    = [val1,val2]</p></li>
-<li><p>range             = start-end,step</p></li>
+<li><p>Value             = <code class="docutils literal notranslate"><span class="pre">value</span></code></p></li>
+<li><p>list of values    = <code class="docutils literal notranslate"><span class="pre">[&lt;value1&gt;,&lt;value2&gt;]</span></code></p></li>
+<li><p>range             = <code class="docutils literal notranslate"><span class="pre">&lt;start&gt;-&lt;end&gt;,&lt;step&gt;</span></code></p></li>
 <li><p>random            = <code class="docutils literal notranslate"><span class="pre">RND_[list]</span></code></p></li>
-<li><p>random from range = RND_start-end,step</p></li>
-<li><p>List of header    = [title1, title2, title3]</p></li>
+<li><p>random from range = <code class="docutils literal notranslate"><span class="pre">RND_&lt;start&gt;-&lt;end&gt;,&lt;step&gt;</span></code></p></li>
+<li><p>List of header    = <code class="docutils literal notranslate"><span class="pre">[title1,</span> <span class="pre">title2,</span> <span class="pre">title3]</span></code></p></li>
 <li><p>Faker Prefix      = <code class="docutils literal notranslate"><span class="pre">FKR_(type,</span> <span class="pre">locale,</span> <span class="pre">number_of_data)</span></code></p></li>
 </ol>
 </div>

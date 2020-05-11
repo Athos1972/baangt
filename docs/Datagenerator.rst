@@ -83,10 +83,10 @@ We will use the reference of above image and assigned number to learn about it i
 All Data Types Format
 =====================
 
-1. Value             = value
-2. list of values    = [val1,val2]
-3. range             = start-end,step
+1. Value             = ``value``
+2. list of values    = ``[<value1>,<value2>]``
+3. range             = ``<start>-<end>,<step>``
 4. random            = ``RND_[list]``
-5. random from range = RND_start-end,step
-6. List of header    = [title1, title2, title3]
+5. random from range = ``RND_<start>-<end>,<step>``
+6. List of header    = ``[title1, title2, title3]``
 7. Faker Prefix      = ``FKR_(type, locale, number_of_data)``
