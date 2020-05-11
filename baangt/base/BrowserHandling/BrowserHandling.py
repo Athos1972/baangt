@@ -1159,6 +1159,8 @@ class BrowserDriver:
             self.zoomFactorDesired = int(lZoomFactor)
 
         if self.browserName == GC.BROWSER_CHROME:
+            logger.critical(f"Zoom in Chrome doesn't work. Continuing without zoom")
+            return
             x = self.getURL()
             if x[0:5] == "http:":       # He loaded already something. Too late for us
                 logger.debug("CHROME: Got called to change Zoom level - but already URL loaded. Too late.")
