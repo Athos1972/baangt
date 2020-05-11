@@ -449,12 +449,17 @@ class ExportResults:
     def _exportData(self):
         for key, value in self.dataRecords.items():
             # write DB UUID
-            self.worksheet.write(key + 1, 0, str(self.testcase_uuids.get(key,"noUUIDForThisOne-Error!")))
-            # write RESULT fields
-            for (n, column) in enumerate(self.fieldListExport):
-                self.__writeCell(key + 1, n + 1, value, column)
-            # Also write everything as JSON-String into the last column
-            self.worksheet.write(key + 1, len(self.fieldListExport) + 1, json.dumps(value))
+            try:
+                self.worksheet.write(key + 1, 0, str(self.testcase_uuids[key]))
+                # write RESULT fields
+                for (n, column) in enumerate(self.fieldListExport):
+                    self.__writeCell(key + 1, n + 1, value, column)
+                # Also write everything as JSON-String into the last column
+                self.worksheet.write(key + 1, len(self.fieldListExport) + 1, json.dumps(value))
+            except IndexError as e:
+                logger.error(f"List of testcase_uuids didn't have a value for {key}. That shouldn't happen!")
+            except BaseException as e:
+                logger.error(f"Error happened where it shouldn't. Error was {e}")
 
         # Create autofilter
         self.worksheet.autofilter(0, 0, len(self.dataRecords.items()), len(self.fieldListExport))
