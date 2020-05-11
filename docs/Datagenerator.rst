@@ -12,14 +12,14 @@ Input File
 .. image:: DataGeneratorInput.png
 
 This image is an example input file. Different types of data types supported are given different number in the above image.
-1. Is a simple value.
-2. Is a list of value.
-3. Is a list of value with ``RND_`` prefix. We will learn more on it further.
-4. ``RND_1,10,2``: ``RND_`` prefix is also used here but with a range.
-5. Simple range.
-6. List of header.
-7. ``FKR_`` keyword is used here.
-8. ``FKR_`` keyword is used here with a new integer value 0 in end.
+  1. Is a simple value.
+  2. Is a list of value.
+  3. Is a list of value with ``RND_`` prefix. We will learn more on it further.
+  4. ``RND_1,10,2``: ``RND_`` prefix is also used here but with a range.
+  5. Simple range.
+  6. List of header.
+  7. ``FKR_`` keyword is used here.
+  8. ``FKR_`` keyword is used here with a new integer value 0 in end.
 
 Using these data type we will generate all possible values.
 Here is a simple example with simple value and value of list.

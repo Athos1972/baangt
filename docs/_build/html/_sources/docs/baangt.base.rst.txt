@@ -108,38 +108,6 @@ baangt.base.Utils module
    :undoc-members:
    :show-inheritance:
 
-baangt.TestCase module
-----------------------
-
-.. automodule:: baangt.TestCase
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-baangt.TestCaseSequence module
-------------------------------
-
-.. automodule:: baangt.TestCaseSequence
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-baangt.TestSteps module
------------------------
-
-.. automodule:: baangt.TestSteps
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-baangt.katalonImporter module
------------------------------
-
-.. automodule:: baangt.katalonImporter
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Module contents
 ---------------
 
