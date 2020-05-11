@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>baangt.base package &mdash; baangt 2020.3.0.rc4 documentation</title>
+  <title>baangt.base package &mdash; baangt 2020.5.2rc5 documentation</title>
   
 
   
@@ -36,6 +36,7 @@
   <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="baangt" href="modules.html" />
     <link rel="prev" title="Integration with Selenium Grid V4" href="../articles/SeleniumGridV4WithBaangt.html" /> 
 </head>
 
@@ -91,7 +92,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../TestTypes.html">   Types of Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../DataFile.html">   Data file</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../SaveResults2Database.html">   Results in Database</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Developer.html">   For Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../HistoryAndReasons.html">   History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contributors.html">   Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">   Changelog</a></li>
@@ -102,10 +102,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../Datagenerator.html#input-file">Input File</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Datagenerator.html#data-type">Data Type</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Datagenerator.html#all-data-types-format">All Data Types Format</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Developer.html">   For Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../baangt-Plugin.html">What is a baangt-plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../baangt-Plugin.html#how-to-make-a-baangt-plugin">how to make a baangt-plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../baangt-Plugin.html#how-the-baangt-plugin-work">how the baangt-plugin work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../baangt-Plugin.html#how-to-replace-the-existing-plugin-by-your-own-one">how to replace the existing plugin by your own one</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../articles/Articles.html">   :subheader: Articles</a></li>
 <li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Contents:</span></p>
+<p class="caption"><span class="caption-text">Autodocs:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Autodocs</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
@@ -122,13 +127,10 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-baangt.base.TestRunUtils">baangt.base.TestRunUtils module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-baangt.base.Timing">baangt.base.Timing module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-baangt.base.Utils">baangt.base.Utils module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-baangt.TestCase">baangt.TestCase module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-baangt.TestCaseSequence">baangt.TestCaseSequence module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-baangt.TestSteps">baangt.TestSteps module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-baangt.katalonImporter">baangt.katalonImporter module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-baangt.base">Module contents</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
 </ul>
 
             
@@ -514,18 +516,6 @@ given, this function will replace it with the actual value (e.g. FIREFOX)</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-baangt.TestCase">
-<span id="baangt-testcase-module"></span><h2>baangt.TestCase module<a class="headerlink" href="#module-baangt.TestCase" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-baangt.TestCaseSequence">
-<span id="baangt-testcasesequence-module"></span><h2>baangt.TestCaseSequence module<a class="headerlink" href="#module-baangt.TestCaseSequence" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-baangt.TestSteps">
-<span id="baangt-teststeps-module"></span><h2>baangt.TestSteps module<a class="headerlink" href="#module-baangt.TestSteps" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-baangt.katalonImporter">
-<span id="baangt-katalonimporter-module"></span><h2>baangt.katalonImporter module<a class="headerlink" href="#module-baangt.katalonImporter" title="Permalink to this headline">¶</a></h2>
-</div>
 <div class="section" id="module-baangt.base">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-baangt.base" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -538,6 +528,8 @@ given, this function will replace it with the actual value (e.g. FIREFOX)</p>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="modules.html" class="btn btn-neutral float-right" title="baangt" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="../articles/SeleniumGridV4WithBaangt.html" class="btn btn-neutral float-left" title="Integration with Selenium Grid V4" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

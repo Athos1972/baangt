@@ -1,8 +1,3 @@
-.. baangt documentation master file, created by
-   sphinx-quickstart on Wed Jan 22 20:01:05 2020.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Welcome to ``baangt``!
 ==================================
 ``baangt`` is the new, open source test suite, that grows along with your requirements. From simple recoding based automation to
@@ -54,3 +49,4 @@ Autodocs
    :caption: Autodocs:
 
    Autodocs </docs/baangt.base.rst>
+   Modules </docs/modules.rst>
