@@ -51,6 +51,6 @@ Autodocs
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Autodocs:
 
    Autodocs </docs/baangt.base.rst>
