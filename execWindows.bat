@@ -2,7 +2,7 @@ rm -r dist
 rm -r build
 rm -r executables
 
-pyinstaller --noconfirm --path venv/Lib/site-packages windows/baangtWindows.spec
+pyinstaller --noconfirm --path C:/Users/buhl/git/baangt/venv3_6/Lib/site-packages windows/baangtWindows.spec
 
 rem Remove Screenshots and Logs ^
 rm -r dist/baangt/examples/Screenshots
