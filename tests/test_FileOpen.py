@@ -2,7 +2,7 @@ from baangt.base import FilesOpen
 from pathlib import Path
 import os
 
-lXLSXFile = Path(os.getcwd()).joinpath("1TestResults").joinpath("baangt_simpleAutomationpractice.xlsx_20200427_091657.xlsx")
+lXLSXFile = Path(os.getcwd()).joinpath("1TestResults").joinpath("baangt_testfranzi.xlsx_20200501_173746.xlsx")
 lLogFile = Path(os.getcwd()).joinpath("logs").joinpath("20200502_100944.log")
 
 def test_Open_NoFile():
