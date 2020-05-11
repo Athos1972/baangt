@@ -1,0 +1,319 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>DataGenerator &mdash; baangt 2020.5.2rc5 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Developer guidelines for custom enhancements" href="Developer.html" />
+    <link rel="prev" title="Dealing with variables" href="Variables.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> baangt
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Installation.html">   Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="OverviewUsage.html">   Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simpleExample.html">   First Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Structure.html">   Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ParametersConfigFile.html">   Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SimpleAPI.html">   First API Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TestTypes.html">   Types of Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DataFile.html">   Data file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SaveResults2Database.html">   Results in Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">   History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">   Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BrowserDrivers.html">   Browser Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Variables.html">   Variables</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">DataGenerator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#input-file">Input File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#data-type">Data Type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#all-data-types-format">All Data Types Format</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Developer.html">   For Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html">What is a baangt-plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html#how-to-make-a-baangt-plugin">how to make a baangt-plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html#how-the-baangt-plugin-work">how the baangt-plugin work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html#how-to-replace-the-existing-plugin-by-your-own-one">how to replace the existing plugin by your own one</a></li>
+<li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">   :subheader: Articles</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Autodocs:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="docs/baangt.base.html">Autodocs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">baangt</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>DataGenerator</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/Datagenerator.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="datagenerator">
+<h1>DataGenerator<a class="headerlink" href="#datagenerator" title="Permalink to this headline">¶</a></h1>
+<p>When we work with <code class="docutils literal notranslate"><span class="pre">baangt</span></code> to perform various tasks, we need to give excel file containing all data as input.
+Sometimes this data can be too big and can be a huge headache when one has to type all these manually. To overcome this
+issue we had made an application which can generate all possible data combinations by just providing and small excel file
+containing all data.</p>
+</div>
+<div class="section" id="input-file">
+<h1>Input File<a class="headerlink" href="#input-file" title="Permalink to this headline">¶</a></h1>
+<img alt="_images/DataGeneratorInput.png" src="_images/DataGeneratorInput.png" />
+<p>This image is an example input file. Different types of data types supported are given different number in the above image.
+1. Is a simple value.
+2. Is a list of value.
+3. Is a list of value with <code class="docutils literal notranslate"><span class="pre">RND_</span></code> prefix. We will learn more on it further.
+4. <code class="docutils literal notranslate"><span class="pre">RND_1,10,2</span></code>: <code class="docutils literal notranslate"><span class="pre">RND_</span></code> prefix is also used here but with a range.
+5. Simple range.
+6. List of header.
+7. <code class="docutils literal notranslate"><span class="pre">FKR_</span></code> keyword is used here.
+8. <code class="docutils literal notranslate"><span class="pre">FKR_</span></code> keyword is used here with a new integer value 0 in end.</p>
+<p>Using these data type we will generate all possible values.
+Here is a simple example with simple value and value of list.</p>
+<p>Example Input:-</p>
+<p>vehicle, seats
+car, [2,4,5]
+bus, 60</p>
+<p>Example Output:-</p>
+<p>vehicle, seats
+car, 2
+car, 4
+car, 5
+bus, 60</p>
+<p>As you can see that the output file contains every possible combination of input file. Further you will learn more about
+Data Types in next section.</p>
+</div>
+<div class="section" id="data-type">
+<h1>Data Type<a class="headerlink" href="#data-type" title="Permalink to this headline">¶</a></h1>
+<dl class="simple">
+<dt>We will use the reference of above image and assigned number to learn about it in detail.</dt><dd><ol class="arabic simple">
+<li><p>It is a simple single value.</p></li>
+<li><p>It is a list of values which will be further used to create all possible combinations as shown in above example. Format = [value1, value2, value3]</p></li>
+<li><p>Here comes a prefix. <code class="docutils literal notranslate"><span class="pre">RND_</span></code> is a prefix which is used when we don’t need to create all possible combinations from a list
+and have to use any one of the data from the list whenever new data is generated. So it will not increase number as it
+is not compulsory to use all value.</p></li>
+<li><p>Range is a new data type. It is used when we want to create a list of number with all of them having same gap between
+them.
+Format = Starting-Ending,Step
+Example input = 2-40,4   ||   Output = [2, 6, 10, 14, 18, 22, 26, 30, 34, 38]
+As shown in example, instead of writing whole list we can just use Range. In our example range is used with <code class="docutils literal notranslate"><span class="pre">RND_</span></code> so
+after creating this list random function will come into effect.</p></li>
+<li><p>As explained in point 4.</p></li>
+<li><p>List of header. When there are multiple headers which have same value inside them, then we can simply write a list of
+header in a single cell. Then the program will consider each value as an individual header and each of them will have
+the same below data.
+Example:
+header1, [header2,header3]
+value1 , value2
+output:
+header1, header2, header3
+value1 , value2 , value2</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FKR_</span></code> is another prefix used to generate fake data. It uses the faker module of python the generate the fake data.
+format = <code class="docutils literal notranslate"><span class="pre">FKR_``(type,</span> <span class="pre">locale)</span>
+<span class="pre">Note:-</span> <span class="pre">We</span> <span class="pre">use</span> <span class="pre">tuple</span> <span class="pre">with</span> <span class="pre">``FKR_</span></code> prefix
+Example = <code class="docutils literal notranslate"><span class="pre">FKR_(email,</span> <span class="pre">EN_US)</span></code>
+In our example we used type = email as we want to get fake emails. EN_US is a locale which will make sure that email
+should be of same words of that language. By default this will create list of 5 fake emails, if you want to change default
+number of 5 you can add that number in the end of tuple.
+Example:- <code class="docutils literal notranslate"><span class="pre">FKR_(email,</span> <span class="pre">EN_US,</span> <span class="pre">8)</span></code>
+Now this will generate list of 8 fake email and on every data any random email would be selected.</p></li>
+<li><p>Now what if we don’t want to create a list of email instead we want new mail for every data generated. For this we can
+simply use 0 number at the position of list length.
+Example:- <code class="docutils literal notranslate"><span class="pre">FKR_(email,</span> <span class="pre">EN_US,</span> <span class="pre">0)</span></code>
+Now this will generate new email for every data in the output.</p></li>
+</ol>
+</dd>
+</dl>
+</div>
+<div class="section" id="all-data-types-format">
+<h1>All Data Types Format<a class="headerlink" href="#all-data-types-format" title="Permalink to this headline">¶</a></h1>
+<ol class="arabic simple">
+<li><p>Value             = value</p></li>
+<li><p>list of values    = [val1,val2]</p></li>
+<li><p>range             = start-end,step</p></li>
+<li><p>random            = <code class="docutils literal notranslate"><span class="pre">RND_[list]</span></code></p></li>
+<li><p>random from range = RND_start-end,step</p></li>
+<li><p>List of header    = [title1, title2, title3]</p></li>
+<li><p>Faker Prefix      = <code class="docutils literal notranslate"><span class="pre">FKR_(type,</span> <span class="pre">locale,</span> <span class="pre">number_of_data)</span></code></p></li>
+</ol>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Developer.html" class="btn btn-neutral float-right" title="Developer guidelines for custom enhancements" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Variables.html" class="btn btn-neutral float-left" title="Dealing with variables" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Bernhard Buhl
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
