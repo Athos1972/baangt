@@ -97,10 +97,6 @@ def test_setLocatorFromLocatorType_id():
 
 def test_dynamicImportOfClasses_fullQualifiedImportName():
     fullQualifiedImportName = "baangt.base.BrowserHandling.BrowserHandling.BrowserDriver"
-    # fullQualifiedImportName = "baangt.base.BrowserHandling.hookImpls.BrowserDriverHookImpl"
-    # print("***********************************")
-    # print(type(utils.dynamicImportOfClasses(fullQualifiedImportName=fullQualifiedImportName)) is type(BrowserDriver))
-    # print("***********************************")
     
     assert utils.dynamicImportOfClasses(fullQualifiedImportName=fullQualifiedImportName)  == BrowserDriver().__class__
 
