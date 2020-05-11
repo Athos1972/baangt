@@ -386,12 +386,12 @@ class baangtHookSpec(object):
     # -------------------------------------------------------------------
 
     @hook_spec
-    def webdriverFunctions_webdriver_doSomething(self, webdriverobject, command, value=None, timeout=20, xpath=None, optional=False, browserDriveroptions=None):
+    def webdriverFunctions_webdriver_doSomething(self, webdriverobject, command, value=None, timeout=20, xpath=None, optional=False, browserOptions=None):
         pass
 
 
     @hook_spec
-    def webdriverFunctions_webdriver_tryAndRetry(self, webdriverobject, browserDriveroptions, id=None, css=None, xpath=None, class_name=None, timeout=20, optional=False):
+    def webdriverFunctions_webdriver_tryAndRetry(self, webdriverobject, browserOptions, id=None, css=None, xpath=None, class_name=None, timeout=20, optional=False):
         pass
 
 
@@ -408,7 +408,7 @@ class baangtHookSpec(object):
 
 
     @hook_spec
-    def browserHelperFunction_browserHelper_log(self, browserHelperObject, logType, logText, browserDriveroptions, cbTakeScreenshot = None, **kwargs):
+    def browserHelperFunction_browserHelper_log(self, browserHelperObject, logType, logText, browserOptions, cbTakeScreenshot = None, **kwargs):
         pass
 
     @hook_spec

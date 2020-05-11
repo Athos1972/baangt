@@ -41,7 +41,7 @@ def test_takeScreenshot_filecheck(getdriver):
     assert os.path.isfile(filename)
 
     getdriver.closeBrowser()
-    assert not getdriver.browserDriveroptions.driver
+    assert not getdriver.browserOptions.driver
 
 
 def test_setBrowserWindowSizeEmpty(getdriver):

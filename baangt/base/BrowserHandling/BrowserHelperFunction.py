@@ -88,7 +88,7 @@ class BrowserHelperFunction:
 
 
     @staticmethod
-    def browserHelper_log(logType, logText, browserDriveroptions, cbTakeScreenshot = None, **kwargs):
+    def browserHelper_log(logType, logText, browserOptions, cbTakeScreenshot = None, **kwargs):
         """
         Interal wrapper of Browser-Class for Logging. Takes a screenshot on Error and Warning.
 
@@ -99,8 +99,8 @@ class BrowserHelperFunction:
         argsString = ""
         xshot = "Couldn't take Screenshot"
 
-        locatorType = browserDriveroptions.locatorType
-        locator = browserDriveroptions.locator
+        locatorType = browserOptions.locatorType
+        locator = browserOptions.locator
 
         for key, value in kwargs.items():
             if value:
@@ -127,7 +127,7 @@ class BrowserHelperFunction:
             logger.critical(logText + argsString + f" Screenshot: {xshot}")
         else:
             print(f"Unknown call to Logger: {logType}")
-            #self.browserHelper_log(logging.CRITICAL, f"Unknown type in call to logger: {logType}", browserDriveroptions, cbTakeScreenshot = cbTakeScreenshot)
+            BrowserHelperFunction.browserHelper_log(logging.CRITICAL, f"Unknown type in call to logger: {logType}", browserOptions, cbTakeScreenshot = cbTakeScreenshot)
 
 
     @staticmethod

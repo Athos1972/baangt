@@ -178,7 +178,7 @@ class WebdriverFunctions:
 
 
     @staticmethod
-    def webdriver_tryAndRetry(browserDriveroptions, id=None, css=None, xpath=None, class_name=None, timeout=20, optional=False):
+    def webdriver_tryAndRetry(browserOptions, id=None, css=None, xpath=None, class_name=None, timeout=20, optional=False):
         """
         In: Locator
         Out: Boolean whether the element was found or not.
@@ -202,21 +202,21 @@ class WebdriverFunctions:
         lLoopCount = 0
 
         try:
-            html = WebdriverFunctions.webdriver_getCurrentHTMLReference(browserDriveroptions.driver)
+            html = WebdriverFunctions.webdriver_getCurrentHTMLReference(browserOptions.driver)
         except BaseException as e:
             raise Exceptions.baangtTestStepException(f"__getCurrentHTMLReference was not successful: {e}")
 
         while element is None and elapsed < timeout:
             lLoopCount += 1
             try:
-                driverWait = WebDriverWait(browserDriveroptions.driver, timeout=internalTimeout, poll_frequency=pollFrequency)
+                driverWait = WebDriverWait(browserOptions.driver, timeout=internalTimeout, poll_frequency=pollFrequency)
 
                 if id:
                     element = driverWait.until(ec.visibility_of_element_located((By.ID, id)))
                 elif css:
                     element = driverWait.until(ec.visibility_of_element_located((By.CSS_SELECTOR, css)))
                 elif class_name:
-                    element = browserDriveroptions.driver.find_element_by_class_name(class_name)
+                    element = browserOptions.driver.find_element_by_class_name(class_name)
                 elif xpath:
                     # visibility of element sometimes not true, but still clickable. If we tried already
                     # 2 times with visibility, let's give it one more try with Presence of element
@@ -242,13 +242,13 @@ class WebdriverFunctions:
                 logger.debug("WebDriver Exception - terminating testrun: " + str(e))
                 raise Exceptions.baangtTestStepException
             except NoSuchWindowException as e:
-                helper.browserHelper_log(logging.CRITICAL, "WebDriver Exception - terminating testrun: " + str(e), browserDriveroptions)
+                helper.browserHelper_log(logging.CRITICAL, "WebDriver Exception - terminating testrun: " + str(e), browserOptions)
                 raise Exceptions.baangtTestStepException
             except ElementNotInteractableException as e:
                 logger.debug("Most probably timeout exception - retrying: " + str(e))
                 time.sleep(pollFrequency)
             except WebDriverException as e:
-                helper.browserHelper_log(logging.ERROR, "Retrying WebDriver Exception: " + str(e), browserDriveroptions)
+                helper.browserHelper_log(logging.ERROR, "Retrying WebDriver Exception: " + str(e), browserOptions)
                 time.sleep(2)
 
             elapsed = time.time() - begin
@@ -257,7 +257,7 @@ class WebdriverFunctions:
 
 
     @staticmethod
-    def webdriver_doSomething(command, element, value=None, timeout=20, xpath=None, optional=False, browserDriveroptions=None):
+    def webdriver_doSomething(command, element, value=None, timeout=20, xpath=None, optional=False, browserOptions=None):
         """
         Will interact in an element (that was found before by findBy-Method and stored in self.element) as defined by
         ``command``.
@@ -272,8 +272,8 @@ class WebdriverFunctions:
         begin = time.time()
         counter = 0
 
-        locatorType = browserDriveroptions.locatorType
-        locator = browserDriveroptions.locator
+        locatorType = browserOptions.locatorType
+        locator = browserOptions.locator
 
         while not didWork and elapsed < timeout:
             counter += 1
@@ -300,14 +300,14 @@ class WebdriverFunctions:
                 if counter < 2:
                     time.sleep(0.2)
                 elif counter < 4:
-                    begin = WebdriverFunctions.webdriver_refindElementAfterError(browserDriveroptions, timeout)
+                    begin = WebdriverFunctions.webdriver_refindElementAfterError(browserOptions, timeout)
                 else:
                     raise Exceptions.baangtTestStepException(e)
             except NoSuchElementException as e:
                 logger.debug("doSomething: Element not there yet - retry")
                 time.sleep(0.5)
             except InvalidSessionIdException as e:
-                helper.browserHelper_log(logging.ERROR, f"Invalid Session ID Exception caught - aborting... {e} ", browserDriveroptions)
+                helper.browserHelper_log(logging.ERROR, f"Invalid Session ID Exception caught - aborting... {e} ", browserOptions)
                 raise Exceptions.baangtTestStepException(e)
             except ElementNotInteractableException as e:
                 if counter < 2:
@@ -315,9 +315,9 @@ class WebdriverFunctions:
                     time.sleep(0.2)
                 elif counter < 5:
                     logger.debug(f"Element not interactable {locatorType} {locator}, re-finding element")
-                    begin = WebdriverFunctions.webdriver_refindElementAfterError(browserDriveroptions, timeout)
+                    begin = WebdriverFunctions.webdriver_refindElementAfterError(browserOptions, timeout)
                 else:
-                    helper.browserHelper_log(logging.ERROR, f"Element not interactable {e}", browserDriveroptions)
+                    helper.browserHelper_log(logging.ERROR, f"Element not interactable {e}", browserOptions)
                     raise Exceptions.baangtTestStepException(e)
             except NoSuchWindowException as e:
                 raise Exceptions.baangtTestStepException(e)
@@ -331,14 +331,14 @@ class WebdriverFunctions:
                 f"Action not possible after {timeout} s, Locator: {locatorType}: {locator}")
 
     @staticmethod
-    def webdriver_refindElementAfterError(browserDriveroptions, timeout):
-        xpath, css, id = utils.setLocatorFromLocatorType(browserDriveroptions.locatorType, browserDriveroptions.locator)
-        element = WebdriverFunctions.webdriver_tryAndRetry(browserDriveroptions, xpath=xpath, css=css, id=id, timeout=timeout / 2, optional=True)
+    def webdriver_refindElementAfterError(browserOptions, timeout):
+        xpath, css, id = utils.setLocatorFromLocatorType(browserOptions.locatorType, browserOptions.locator)
+        element = WebdriverFunctions.webdriver_tryAndRetry(browserOptions, xpath=xpath, css=css, id=id, timeout=timeout / 2, optional=True)
         if element is not None:
-            logger.debug(f"Re-Found element {browserDriveroptions.locatorType}: {browserDriveroptions.locator}, will retry ")
+            logger.debug(f"Re-Found element {browserOptions.locatorType}: {browserOptions.locator}, will retry ")
             begin = time.time()
         else:
             raise Exceptions.baangtTestStepException(
-                f"Element {browserDriveroptions.locatorType} {browserDriveroptions.locator} couldn't be found. "
+                f"Element {browserOptions.locatorType} {browserOptions.locator} couldn't be found. "
                 f"Tried to re-find it, but not element was not found")
         return begin
