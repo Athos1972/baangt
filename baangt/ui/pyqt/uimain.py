@@ -130,7 +130,11 @@ class MainWindow(Ui_MainWindow):
             self.readContentofGlobals()
         except Exception as e:
             print("Exception in Main readConfig. Starting with defaults", e)
-            self.directory = str(self.managedPaths.derivePathForOSAndInstallationOption().joinpath("examples"))
+            self.directory = self.managedPaths.derivePathForOSAndInstallationOption().joinpath("examples")
+            if not self.directory.is_dir():
+                self.directory = str(self.managedPaths.derivePathForOSAndInstallationOption())
+            else:
+                self.directory = str(self.directory)
             self.setupBasePath(self.directory)
 
     def readContentofGlobals(self):
