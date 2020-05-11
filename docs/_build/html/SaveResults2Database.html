@@ -36,7 +36,7 @@
   <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Developer guidelines for custom enhancements" href="Developer.html" />
+    <link rel="next" title="Why baangt and why is it open source?" href="HistoryAndReasons.html" />
     <link rel="prev" title="Special functions in datafiles" href="DataFile.html" /> 
 </head>
 
@@ -112,15 +112,27 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="Developer.html">   For Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">   History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">   Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="BrowserDrivers.html">   Browser Drivers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Variables.html">   Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html">DataGenerator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html#input-file">Input File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html#data-type">Data Type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html#all-data-types-format">All Data Types Format</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Developer.html">   For Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html">What is a baangt-plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html#how-to-make-a-baangt-plugin">how to make a baangt-plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html#how-the-baangt-plugin-work">how the baangt-plugin work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html#how-to-replace-the-existing-plugin-by-your-own-one">how to replace the existing plugin by your own one</a></li>
 <li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">   :subheader: Articles</a></li>
 <li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="docs/baangt.base.html">Autodocs</a></li>
 </ul>
 
             
@@ -644,6 +656,59 @@ The models are located in module <code class="docutils literal notranslate"><spa
 <div class="section" id="testcasenetworkinfo">
 <h3>TestCaseNetworkInfo<a class="headerlink" href="#testcasenetworkinfo" title="Permalink to this headline">¶</a></h3>
 <p>Provides interface with table <code class="docutils literal notranslate"><span class="pre">networkInfo</span></code></p>
+<table class="colwidths-given docutils align-default" id="id12">
+<caption><span class="caption-text">baangt.base.DataBaseORM.TestCaseField</span><a class="headerlink" href="#id12" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>browserName</p></td>
+<td><p>Browser name that mede the request.</p></td>
+</tr>
+<tr class="row-odd"><td><p>status</p></td>
+<td><p>Status code of the request as an integer.</p></td>
+</tr>
+<tr class="row-even"><td><p>method</p></td>
+<td><p>The request method used.</p></td>
+</tr>
+<tr class="row-odd"><td><p>url</p></td>
+<td><p>The request URL.</p></td>
+</tr>
+<tr class="row-even"><td><p>contentType</p></td>
+<td><p>Type of the response content as a string.</p></td>
+</tr>
+<tr class="row-odd"><td><p>contentSize</p></td>
+<td><p>Size of the response content as an integer.</p></td>
+</tr>
+<tr class="row-even"><td><p>headers</p></td>
+<td><p>A lList of the response headers as a string.</p></td>
+</tr>
+<tr class="row-odd"><td><p>params</p></td>
+<td><p>A list of the request GET parameters as a string.</p></td>
+</tr>
+<tr class="row-even"><td><p>response</p></td>
+<td><p>The response content as a string.</p></td>
+</tr>
+<tr class="row-odd"><td><p>startDateTime</p></td>
+<td><p>The request start time as a <code class="docutils literal notranslate"><span class="pre">datetime.datetime</span></code> object.</p></td>
+</tr>
+<tr class="row-even"><td><p>duration</p></td>
+<td><p>The duration of the request in <code class="docutils literal notranslate"><span class="pre">ms</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>testcase</p></td>
+<td><p>The associated test case (as a <code class="docutils literal notranslate"><span class="pre">TestCaseLog</span></code> instance).</p></td>
+</tr>
+<tr class="row-even"><td><p>to_json()</p></td>
+<td><p>Method. Returns the network info as a dictionary object.</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -656,7 +721,7 @@ The models are located in module <code class="docutils literal notranslate"><spa
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="Developer.html" class="btn btn-neutral float-right" title="Developer guidelines for custom enhancements" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="HistoryAndReasons.html" class="btn btn-neutral float-right" title="Why baangt and why is it open source?" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="DataFile.html" class="btn btn-neutral float-left" title="Special functions in datafiles" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

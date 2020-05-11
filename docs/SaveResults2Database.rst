@@ -349,7 +349,7 @@ Provides interface with table ``networkInfo``
      - A lList of the response headers as a string.
    * - params
      - A list of the request GET parameters as a string.
-   * response
+   * - response
      - The response content as a string.
    * - startDateTime
      - The request start time as a ``datetime.datetime`` object.
