@@ -202,6 +202,32 @@ def test_dynamicImportOfClasses_path_className_not_found_class_in_module():
     with pytest.raises(Exception) as e:
         assert utils.dynamicImportOfClasses(modulePath=path, className=className)  == BrowserDriver().__class__
 
+def test_findFileAndPathFromPath_directory():
+    directory = "~/baangt/examples"
+    fileNameAndPath = Path(directory).joinpath('globals.json')
+    with pytest.raises(Exception) as e:
+        result = utils.findFileAndPathFromPath(fileNameAndPath, directory)
+
+def test_findFileAndPathFromPath_only_fileNamePath():
+    directory = "~/baangt/examples"
+    fileNameAndPath = Path(directory).joinpath('globals.json')
+    result = utils.findFileAndPathFromPath(str(fileNameAndPath))
+    
+    assert Path(result).exists() == False
+
+def test_findFileAndPathFromPath_except_canot_find_file():
+    directory = Path(os.getcwd()).joinpath("examples")
+    fileNameAndPath = Path(directory).joinpath('globals2.json')
+    with pytest.raises(Exception) as e:
+        result = utils.findFileAndPathFromPath(str(fileNameAndPath))
+
+def test_findFileAndPathFromPath_exists_by_directory_and_only_fileName():
+    directory = Path(os.getcwd()).joinpath("examples")
+    fileNameAndPath = 'globals.json'
+    result = utils.findFileAndPathFromPath(fileNameAndPath, str(directory))
+
+    assert Path(result).exists()
+
 
 def test_anyting2Boolean_raise():
     # todo
