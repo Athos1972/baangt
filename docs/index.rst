@@ -13,8 +13,6 @@ and well documented master functionality.
 .. image:: screenshotBaangtIA.png
    :target: https://www.baangt.org
 
-
-
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
@@ -28,7 +26,6 @@ and well documented master functionality.
       Types of Tests <TestTypes.rst>
       Data file <DataFile.rst>
       Results in Database <SaveResults2Database.rst>
-      For Developers <Developer.rst>
       History <HistoryAndReasons.rst>
       Contributions <contributors.rst>
       Changelog <changelog.rst>
@@ -36,6 +33,8 @@ and well documented master functionality.
       Browser Drivers <BrowserDrivers.rst>
       Variables <Variables.rst>
       Datagenerator <Datagenerator.rst>
+      For Developers <Developer.rst>
+      How2Plugin <baangt-Plugin.rst>
       :subheader: Articles </articles/Articles.rst>
       Web <http://www.baangt.org>
 
@@ -46,3 +45,12 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+Autodocs
+========
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+   Autodocs </docs/baangt.base.rst>

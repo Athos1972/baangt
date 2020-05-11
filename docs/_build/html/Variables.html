@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Search &mdash; baangt 2020.3.0.rc4 documentation</title>
+  <title>Dealing with variables &mdash; baangt 2020.3.0.rc4 documentation</title>
   
 
   
@@ -25,7 +25,6 @@
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
         <script type="text/javascript" src="_static/language_data.js"></script>
-        <script type="text/javascript" src="_static/searchtools.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -36,7 +35,9 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="#" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Not Exactly Documentation" href="articles/Articles.html" />
+    <link rel="prev" title="Handling of Browser Drivers" href="BrowserDrivers.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -63,7 +64,7 @@
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="#" method="get">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -81,7 +82,7 @@
             
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="Installation.html">   Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="OverviewUsage.html">   Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="simpleExample.html">   First Steps</a></li>
@@ -91,27 +92,22 @@
 <li class="toctree-l1"><a class="reference internal" href="TestTypes.html">   Types of Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="DataFile.html">   Data file</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SaveResults2Database.html">   Results in Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Developer.html">   For Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">   History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">   Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="BrowserDrivers.html">   Browser Drivers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Variables.html">   Variables</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html">DataGenerator</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html#input-file">Input File</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html#data-type">Data Type</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html#all-data-types-format">All Data Types Format</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Developer.html">   For Developers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html">What is a baangt-plugin</a></li>
-<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html#how-to-make-a-baangt-plugin">how to make a baangt-plugin</a></li>
-<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html#how-the-baangt-plugin-work">how the baangt-plugin work</a></li>
-<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html#how-to-replace-the-existing-plugin-by-your-own-one">how to replace the existing plugin by your own one</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">   Variables</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#special-variables-for-apis">Special variables for APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#faker">Faker</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#info-for-developers">Info for Developers</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">   :subheader: Articles</a></li>
 <li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="docs/baangt.base.html">Autodocs</a></li>
 </ul>
 
             
@@ -157,12 +153,14 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Search</li>
+      <li>Dealing with variables</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
+            <a href="_sources/Variables.rst.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
     
@@ -174,24 +172,61 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <noscript>
-  <div id="fallback" class="admonition warning">
-    <p class="last">
-      Please activate JavaScript to enable the search
-      functionality.
-    </p>
-  </div>
-  </noscript>
+  <div class="section" id="dealing-with-variables">
+<h1>Dealing with variables<a class="headerlink" href="#dealing-with-variables" title="Permalink to this headline">¶</a></h1>
+<p>You know the basic variable format <code class="docutils literal notranslate"><span class="pre">$(ColumnFromDataFile)</span></code> which works in Locators and value fields.</p>
+<dl class="simple">
+<dt>For instance:</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">//&#64;id[$(SomeColumnName)]</span></code> will replace the locator at run time with the content of the data file of column <code class="docutils literal notranslate"><span class="pre">SomeColumnName</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">$(URL)</span></code> in the Value 1 or Value 2 will replace the Value at run time with the content of the data file of column <code class="docutils literal notranslate"><span class="pre">URL</span></code></p></li>
+</ul>
+</dd>
+<dt>You may combine several variables into one expression</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">http://($(BASEURL)-$(URLPART)</span></code> will work, if your data file has the columns <code class="docutils literal notranslate"><span class="pre">BASEURL</span></code> and <code class="docutils literal notranslate"><span class="pre">URLPART</span></code>.
+Most probably you guessed it already - Column names are case sensitive. And columns may not be used twice.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="section" id="special-variables-for-apis">
+<h2>Special variables for APIs<a class="headerlink" href="#special-variables-for-apis" title="Permalink to this headline">¶</a></h2>
+<p>TODO: Write Doku.</p>
+</div>
+<div class="section" id="faker">
+<h2>Faker<a class="headerlink" href="#faker" title="Permalink to this headline">¶</a></h2>
+<p>From Version 2020.04.6rc4 (April 2020) you can also use all the methods, that the famous python module <code class="docutils literal notranslate"><span class="pre">Faker</span></code> provides.</p>
+<p>The syntax is:
+<code class="docutils literal notranslate"><span class="pre">$(FAKER.&lt;methodName&gt;)</span></code></p>
+<dl class="simple">
+<dt>Examples:</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">$(FAKER.email)</span></code> will generate random E-Mail addresses</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">$(FAKER.name)</span></code> will generate a random name</p></li>
+</ul>
+</dd>
+</dl>
+<p>To see all the methods, head over to <a class="reference external" href="https://faker.readthedocs.io/en/stable/fakerclass.html">https://faker.readthedocs.io/en/stable/fakerclass.html</a>. Because you use <code class="docutils literal notranslate"><span class="pre">baangt</span></code>
+you can use all Faker Methods without writing a single line of code.</p>
+<div class="section" id="info-for-developers">
+<h3>Info for Developers<a class="headerlink" href="#info-for-developers" title="Permalink to this headline">¶</a></h3>
+<p>Source in <code class="docutils literal notranslate"><span class="pre">baangt.base.Faker.py</span></code>. Called from <code class="docutils literal notranslate"><span class="pre">baangt.TestSteps.TestStepMaster.py</span></code> from <code class="docutils literal notranslate"><span class="pre">__getFakerData</span></code>.
+Currently it is not supported to hand over parameters.</p>
+</div>
+</div>
+</div>
 
-  
-  <div id="search-results">
-  
-  </div>
 
            </div>
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="articles/Articles.html" class="btn btn-neutral float-right" title="Not Exactly Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="BrowserDrivers.html" class="btn btn-neutral float-left" title="Handling of Browser Drivers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>
@@ -224,14 +259,7 @@
   
   
     
-  
-  <script type="text/javascript">
-    jQuery(function() { Search.loadIndex("searchindex.js"); });
-  </script>
-  
-  <script type="text/javascript" id="searchindexloader"></script>
    
-
 
 </body>
 </html>

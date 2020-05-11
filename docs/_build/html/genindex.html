@@ -91,15 +91,27 @@
 <li class="toctree-l1"><a class="reference internal" href="TestTypes.html">   Types of Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="DataFile.html">   Data file</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SaveResults2Database.html">   Results in Database</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Developer.html">   For Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">   History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">   Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="BrowserDrivers.html">   Browser Drivers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Variables.html">   Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html">DataGenerator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html#input-file">Input File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html#data-type">Data Type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html#all-data-types-format">All Data Types Format</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Developer.html">   For Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html">What is a baangt-plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html#how-to-make-a-baangt-plugin">how to make a baangt-plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html#how-the-baangt-plugin-work">how the baangt-plugin work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html#how-to-replace-the-existing-plugin-by-your-own-one">how to replace the existing plugin by your own one</a></li>
 <li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">   :subheader: Articles</a></li>
 <li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="docs/baangt.base.html">Autodocs</a></li>
 </ul>
 
             
@@ -176,6 +188,7 @@
  | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#L"><strong>L</strong></a>
+ | <a href="#M"><strong>M</strong></a>
  | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
@@ -244,23 +257,23 @@
 </li>
       <li><a href="docs/baangt.base.html#module-baangt.base.Utils">baangt.base.Utils (module)</a>
 </li>
+      <li><a href="docs/baangt.base.html#module-baangt.katalonImporter">baangt.katalonImporter (module)</a>, <a href="docs/baangt.katalonImporter.html#module-baangt.katalonImporter">[1]</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="docs/baangt.katalonImporter.html#module-baangt.katalonImporter">baangt.katalonImporter (module)</a>
-</li>
       <li><a href="docs/baangt.katalonImporter.html#module-baangt.katalonImporter.katalonImport">baangt.katalonImporter.katalonImport (module)</a>
 </li>
-      <li><a href="docs/baangt.TestCase.html#module-baangt.TestCase">baangt.TestCase (module)</a>
+      <li><a href="docs/baangt.TestCase.html#module-baangt.TestCase">baangt.TestCase (module)</a>, <a href="docs/baangt.base.html#module-baangt.TestCase">[1]</a>
 </li>
       <li><a href="docs/baangt.TestCase.html#module-baangt.TestCase.TestCaseMaster">baangt.TestCase.TestCaseMaster (module)</a>
 </li>
-      <li><a href="docs/baangt.TestCaseSequence.html#module-baangt.TestCaseSequence">baangt.TestCaseSequence (module)</a>
+      <li><a href="docs/baangt.TestCaseSequence.html#module-baangt.TestCaseSequence">baangt.TestCaseSequence (module)</a>, <a href="docs/baangt.base.html#module-baangt.TestCaseSequence">[1]</a>
 </li>
       <li><a href="docs/baangt.TestCaseSequence.html#module-baangt.TestCaseSequence.TestCaseSequenceMaster">baangt.TestCaseSequence.TestCaseSequenceMaster (module)</a>
 </li>
       <li><a href="docs/baangt.TestCaseSequence.html#module-baangt.TestCaseSequence.TestCaseSequenceParallel">baangt.TestCaseSequence.TestCaseSequenceParallel (module)</a>
 </li>
-      <li><a href="docs/baangt.TestSteps.html#module-baangt.TestSteps">baangt.TestSteps (module)</a>
+      <li><a href="docs/baangt.TestSteps.html#module-baangt.TestSteps">baangt.TestSteps (module)</a>, <a href="docs/baangt.base.html#module-baangt.TestSteps">[1]</a>
 </li>
       <li><a href="docs/baangt.TestSteps.DropsApp.html#module-baangt.TestSteps.DropsApp">baangt.TestSteps.DropsApp (module)</a>
 </li>
@@ -273,6 +286,8 @@
       <li><a href="docs/baangt.ui.html#module-baangt.ui">baangt.ui (module)</a>
 </li>
       <li><a href="docs/baangt.ui.html#module-baangt.ui.ImportKatalonRecorder">baangt.ui.ImportKatalonRecorder (module)</a>
+</li>
+      <li><a href="docs/baangt.ui.html#module-baangt.ui.ui">baangt.ui.ui (module)</a>
 </li>
       <li><a href="docs/baangtIA.html#module-baangtIA">baangtIA (module)</a>
 </li>
@@ -382,6 +397,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="docs/baangt.base.html#baangt.base.TestRunUtils.TestRunUtils.getCompleteTestRunAttributes">getCompleteTestRunAttributes() (baangt.base.TestRunUtils.TestRunUtils method)</a>
 </li>
+      <li><a href="docs/baangt.ui.html#baangt.ui.ui.UI.getConfigFilesInDirectory">getConfigFilesInDirectory() (baangt.ui.ui.UI method)</a>
+</li>
       <li><a href="docs/baangt.base.html#baangt.base.CliAndInteractive.getGlobalSettings">getGlobalSettings() (in module baangt.base.CliAndInteractive)</a>
 </li>
       <li><a href="docs/baangt.base.html#baangt.base.ApiHandling.ApiHandling.getNewSession">getNewSession() (baangt.base.ApiHandling.ApiHandling method)</a>
@@ -390,10 +407,10 @@
 </li>
       <li><a href="docs/baangt.base.html#baangt.base.IBAN.IBAN.getRandomIBAN">getRandomIBAN() (baangt.base.IBAN.IBAN method)</a>
 </li>
-      <li><a href="docs/baangt.base.html#baangt.base.TestRunExcelImporter.TestRunExcelImporter.getRowsWithHeadersAsDict">getRowsWithHeadersAsDict() (baangt.base.TestRunExcelImporter.TestRunExcelImporter method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="docs/baangt.base.html#baangt.base.TestRunExcelImporter.TestRunExcelImporter.getRowsWithHeadersAsDict">getRowsWithHeadersAsDict() (baangt.base.TestRunExcelImporter.TestRunExcelImporter method)</a>
+</li>
       <li><a href="docs/baangt.base.html#baangt.base.TestRunUtils.TestRunUtils.getSequenceByNumber">getSequenceByNumber() (baangt.base.TestRunUtils.TestRunUtils method)</a>
 </li>
       <li><a href="docs/baangt.base.html#baangt.base.ApiHandling.ApiHandling.getSession">getSession() (baangt.base.ApiHandling.ApiHandling method)</a>
@@ -453,6 +470,14 @@
   </ul></td>
 </tr></table>
 
+<h2 id="M">M</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="docs/baangt.ui.html#baangt.ui.ui.UI.modifyValuesOfConfigFileInMemory">modifyValuesOfConfigFileInMemory() (baangt.ui.ui.UI method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -492,6 +517,10 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="docs/baangt.base.html#baangt.base.HandleDatabase.HandleDatabase.read_excel">read_excel() (baangt.base.HandleDatabase.HandleDatabase method)</a>
 </li>
+      <li><a href="docs/baangt.ui.html#baangt.ui.ui.UI.readConfig">readConfig() (baangt.ui.ui.UI method)</a>
+</li>
+      <li><a href="docs/baangt.ui.html#baangt.ui.ui.UI.readContentsOfGlobals">readContentsOfGlobals() (baangt.ui.ui.UI method)</a>
+</li>
       <li><a href="docs/baangt.katalonImporter.html#baangt.katalonImporter.katalonImport.readFile">readFile() (in module baangt.katalonImporter.katalonImport)</a>
 </li>
       <li><a href="docs/baangt.base.html#baangt.base.HandleDatabase.HandleDatabase.readNextRecord">readNextRecord() (baangt.base.HandleDatabase.HandleDatabase method)</a>
@@ -502,10 +531,10 @@
 </li>
       <li><a href="docs/baangt.base.html#baangt.base.Utils.utils.replaceAllGlobalConstantsInDict">replaceAllGlobalConstantsInDict() (baangt.base.Utils.utils static method)</a>
 </li>
-      <li><a href="docs/baangt.TestSteps.html#baangt.TestSteps.TestStepMaster.TestStepMaster.replaceAllVariables">replaceAllVariables() (baangt.TestSteps.TestStepMaster.TestStepMaster method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="docs/baangt.TestSteps.html#baangt.TestSteps.TestStepMaster.TestStepMaster.replaceAllVariables">replaceAllVariables() (baangt.TestSteps.TestStepMaster.TestStepMaster method)</a>
+</li>
       <li><a href="docs/baangt.base.html#baangt.base.TestRunExcelImporter.TestRunExcelImporter.replaceFieldValueWithValueOfConstant">replaceFieldValueWithValueOfConstant() (baangt.base.TestRunExcelImporter.TestRunExcelImporter method)</a>
 
       <ul>
@@ -532,6 +561,12 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="docs/baangt.base.html#baangt.base.Utils.utils.sanitizeFileName">sanitizeFileName() (baangt.base.Utils.utils static method)</a>
 </li>
+      <li><a href="docs/baangt.ui.html#baangt.ui.ui.UI.saveConfigFileProcedure">saveConfigFileProcedure() (baangt.ui.ui.UI method)</a>
+</li>
+      <li><a href="docs/baangt.ui.html#baangt.ui.ui.UI.saveContentsOfConfigFile">saveContentsOfConfigFile() (baangt.ui.ui.UI method)</a>
+</li>
+      <li><a href="docs/baangt.ui.html#baangt.ui.ui.UI.saveInteractiveGuiConfig">saveInteractiveGuiConfig() (baangt.ui.ui.UI method)</a>
+</li>
       <li><a href="docs/baangt.katalonImporter.html#baangt.katalonImporter.katalonImport.translateGoovy.savePythonFile">savePythonFile() (baangt.katalonImporter.katalonImport.translateGoovy method)</a>
 </li>
       <li><a href="docs/baangt.ui.html#baangt.ui.ImportKatalonRecorder.ImportKatalonRecorder.saveTestCase">saveTestCase() (baangt.ui.ImportKatalonRecorder.ImportKatalonRecorder method)</a>
@@ -542,12 +577,12 @@
 </li>
       <li><a href="docs/baangt.ui.html#baangt.ui.ImportKatalonRecorder.ImportKatalonRecorder.saveTestData">saveTestData() (baangt.ui.ImportKatalonRecorder.ImportKatalonRecorder method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="docs/baangt.base.html#baangt.base.ApiHandling.ApiHandling.setBaseURL">setBaseURL() (baangt.base.ApiHandling.ApiHandling method)</a>
 </li>
       <li><a href="docs/baangt.base.html#baangt.base.TestRunUtils.TestRunUtils.setCompleteTestRunAttributes">setCompleteTestRunAttributes() (baangt.base.TestRunUtils.TestRunUtils method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="docs/baangt.base.html#baangt.base.ApiHandling.ApiHandling.setEndPoint">setEndPoint() (baangt.base.ApiHandling.ApiHandling method)</a>
 </li>
       <li><a href="docs/baangt.base.html#baangt.base.ApiHandling.ApiHandling.setHeaders">setHeaders() (baangt.base.ApiHandling.ApiHandling method)</a>
@@ -608,10 +643,12 @@
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="docs/baangt.base.html#baangt.base.HandleDatabase.HandleDatabase.updateGlobals">updateGlobals() (baangt.base.HandleDatabase.HandleDatabase method)</a>
+      <li><a href="docs/baangt.ui.html#baangt.ui.ui.UI">UI (class in baangt.ui.ui)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="docs/baangt.base.html#baangt.base.HandleDatabase.HandleDatabase.updateGlobals">updateGlobals() (baangt.base.HandleDatabase.HandleDatabase method)</a>
+</li>
       <li><a href="docs/baangt.base.html#baangt.base.Utils.utils">utils (class in baangt.base.Utils)</a>
 </li>
   </ul></td>
