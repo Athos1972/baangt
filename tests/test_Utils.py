@@ -5,6 +5,7 @@ from pathlib import Path
 from datetime import datetime
 import baangt.base.GlobalConstants as GC
 import baangt.base.CustGlobalConstants as CGC
+from baangt.base.BrowserHandling.BrowserHandling import BrowserDriver
 
 logger = logging.getLogger("pyC")
 
@@ -93,6 +94,33 @@ def test_setLocatorFromLocatorType_id():
     assert xpath == None
     assert css == None
     assert id == locator
+
+def test_dynamicImportOfClasses_fullQualifiedImportName():
+    fullQualifiedImportName = "baangt.base.BrowserHandling.BrowserHandling.BrowserDriver"
+    # fullQualifiedImportName = "baangt.base.BrowserHandling.hookImpls.BrowserDriverHookImpl"
+    # print("***********************************")
+    # print(type(utils.dynamicImportOfClasses(fullQualifiedImportName=fullQualifiedImportName)) is type(BrowserDriver))
+    # print("***********************************")
+    
+    assert utils.dynamicImportOfClasses(fullQualifiedImportName=fullQualifiedImportName)  == BrowserDriver().__class__
+
+
+def test_dynamicImportOfClasses_className():
+    className = "BrowserDriver"
+    with pytest.raises(Exception) as e:
+        assert utils.dynamicImportOfClasses(className=className)  == BrowserDriver().__class__
+
+def test_dynamicImportOfClasses_path_className():
+    path = "baangt.base.BrowserHandling.BrowserHandling"
+    className = "BrowserDriver"
+
+    assert utils.dynamicImportOfClasses(modulePath=path, className=className)  == BrowserDriver().__class__
+
+def test_dynamicImportOfClasses_path_className_not_found_class_in_module():
+    path = "baangt.base.BrowserHandling.BrowserHandling"
+    className = "BrowserDriverHookImpl"
+    with pytest.raises(Exception) as e:
+        assert utils.dynamicImportOfClasses(modulePath=path, className=className)  == BrowserDriver().__class__
 
 
 def test_anyting2Boolean_raise():
