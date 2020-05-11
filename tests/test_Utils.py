@@ -51,9 +51,6 @@ def test_listToString_object_list():
 
 def test___listChildToString_number_list():
     numbers = [1, 2, 3]
-    print("***********************************")
-    print(utils._utils__listChildToString(numbers))
-    print("***********************************")
     assert utils.listToString(numbers) == '1, 2, 3'
 
 def test___listChildToString_string_list():
