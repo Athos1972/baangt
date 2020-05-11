@@ -449,7 +449,7 @@ class ExportResults:
     def _exportData(self):
         for key, value in self.dataRecords.items():
             # write DB UUID
-            self.worksheet.write(key + 1, 0, str(self.testcase_uuids[key]))
+            self.worksheet.write(key + 1, 0, str(self.testcase_uuids.get(key,"noUUIDForThisOne-Error!")))
             # write RESULT fields
             for (n, column) in enumerate(self.fieldListExport):
                 self.__writeCell(key + 1, n + 1, value, column)
