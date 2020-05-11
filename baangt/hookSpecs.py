@@ -269,31 +269,13 @@ class baangtHookSpec(object):
     def browserDriver_createNewBrowser(self, browserDriverObject, browserName=GC.BROWSER_FIREFOX, desiredCapabilities=None, **kwargs):
         pass
 
-
-    @hook_spec
-    def browserDriver___findBrowserDriverPaths(self, browserDriverObject, filename):
-        pass
-
-
     @hook_spec
     def browserDriver_slowExecutionToggle(self, browserDriverObject, newSlowExecutionWaitTimeInSeconds = None):
         pass
 
-
-    @hook_spec
-    def browserDriver___createBrowserOptions(self, browserDriverObject, browserName, desiredCapabilities):
-        pass
-
-
     @hook_spec
     def browserDriver_closeBrowser(self, browserDriverObject):
         pass
-
-
-    @hook_spec
-    def browserDriver__log(self, browserDriverObject, logType, logText, **kwargs):
-        pass
-
 
     @hook_spec
     def browserDriver_takeScreenshot(self, browserDriverObject, screenShotPath=None):
@@ -373,22 +355,12 @@ class baangtHookSpec(object):
 
 
     @hook_spec
-    def browserDriver___tryAndRetry(self, browserDriverObject, id=None, css=None, xpath=None, class_name=None, timeout=20):
-        pass
-
-
-    @hook_spec
     def browserDriver_findWaitNotVisible(self, browserDriverObject, xpath=None, id=None, timeout = 90):
         pass
 
 
     @hook_spec
     def browserDriver_sleep(self, browserDriverObject, sleepTimeinSeconds):
-        pass
-
-
-    @hook_spec
-    def browserDriver___doSomething(self, browserDriverObject, command, value=None, timeout=20, xpath=None, optional=False):
         pass
 
 
@@ -406,4 +378,40 @@ class baangtHookSpec(object):
     def browserDriver_javaScript(self, browserDriverObject, jsText):
         pass
 
+
+    # -------------------------------------------------------------------
+
+    # correspond to baangt/base/WebdriverFunctions
+
+    # -------------------------------------------------------------------
+
+    @hook_spec
+    def webdriverFunctions_webdriver_doSomething(self, webdriverobject, command, value=None, timeout=20, xpath=None, optional=False, browserDriveroptions=None):
+        pass
+
+
+    @hook_spec
+    def webdriverFunctions_webdriver_tryAndRetry(self, webdriverobject, browserDriveroptions, id=None, css=None, xpath=None, class_name=None, timeout=20, optional=False):
+        pass
+
+
+    @hook_spec
+    def webdriver_createBrowserOptions(self, webdriverobject, browserName, desiredCapabilities, browserMobProxy=None, randomProxy=None):
+        pass
+
+
+    # -------------------------------------------------------------------
+
+    # correspond to baangt/base/BrowserHelperFunctions
+
+    # -------------------------------------------------------------------
+
+
+    @hook_spec
+    def browserHelperFunction_browserHelper_log(self, browserHelperObject, logType, logText, browserDriveroptions, cbTakeScreenshot = None, **kwargs):
+        pass
+
+    @hook_spec
+    def browserHelperFunction_browserHelper_findBrowserDriverPaths(self, browserHelperObject ,filename):
+        pass
 

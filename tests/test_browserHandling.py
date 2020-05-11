@@ -23,8 +23,10 @@ def test_takeScreenshot_exception(getdriver):
     """
     Test takeScreenshot method
     """
-    with pytest.raises(Exception) as e:
-        filename = getdriver.takeScreenshot()
+    filename = getdriver.takeScreenshot()
+    import os
+    # the file name should not exist
+    assert not os.path.isfile(filename)
 
 
 def test_takeScreenshot_filecheck(getdriver):
@@ -39,7 +41,7 @@ def test_takeScreenshot_filecheck(getdriver):
     assert os.path.isfile(filename)
 
     getdriver.closeBrowser()
-    assert not getdriver.driver
+    assert not getdriver.browserDriveroptions.driver
 
 
 def test_setBrowserWindowSizeEmpty(getdriver):
