@@ -27,6 +27,7 @@ TIMELOG = "timelog"
 GECKO_DRIVER = "geckodriver.exe"
 CHROME_DRIVER = "chromedriver.exe"
 EDGE_DRIVER = "msedgedriver.exe"
+REMOTE_EXECUTE_URL = "http://localhost:4444/wd/hub"
 
 BROWSER_FIREFOX = "FF"
 BROWSER_CHROME = "CHROME"

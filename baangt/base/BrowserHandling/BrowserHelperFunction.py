@@ -1,36 +1,12 @@
-import os
-#from selenium import webdriver
-#from appium import webdriver as Appiumwebdriver
-#from selenium.webdriver.support import expected_conditions as ec
-#from selenium.webdriver.common.by import By
-#from selenium.webdriver.support.ui import WebDriverWait
-#from selenium.webdriver.chrome.options import Options as ChromeOptions
-#from selenium.webdriver.firefox.options import Options as ffOptions
-#from selenium.common.exceptions import *
-#from selenium.webdriver.common import keys
-#from baangt.base import GlobalConstants as GC
-#from baangt.base.Timing.Timing import Timing#
-#from baangt.TestSteps import Exceptions
-#from baangt.base.DownloadFolderMonitoring import DownloadFolderMonitoring
-#from baangt.base.Utils import utils
+
 from baangt.base.ProxyRotate import ProxyRotate
+from baangt.base import GlobalConstants as GC
+from baangt.base.PathManagement import ManagedPaths
+import os
 import uuid
-import time
 import logging
 from pathlib import Path
-from baangt.base import GlobalConstants as GC
-#import json
-#import sys
-#import platform
-#import ctypes
-#from urllib.request import urlretrieve
-#import tarfile
-#import zipfile
-#import requests
-from baangt.base.PathManagement import ManagedPaths
 from dataclasses import dataclass
-
-
 
 logger = logging.getLogger("pyC")
 
@@ -39,12 +15,6 @@ class BrowserDriverOptions:
     locatorType : str
     locator : str
     driver : None
-    '''
-    def __init__(self, locatorType=None, locator=None):
-        self.locatorType = locatorType
-        self.locator = locator
-    '''
-
 
 class BrowserHelperFunction:
 
@@ -96,13 +66,14 @@ class BrowserHelperFunction:
     @staticmethod
     def browserHelper_getBrowserExecutable(browserName):
         # Get executable
-        executable = GC.GECKO_DRIVER
         if GC.BROWSER_FIREFOX == browserName:
             executable = GC.GECKO_DRIVER
         elif GC.BROWSER_CHROME == browserName:
             executable = GC.CHROME_DRIVER
+        else:
+           executable = None 
 
-        if 'NT' not in os.name.upper():
+        if 'NT' not in os.name.upper() and executable is not None:
             executable = executable.split('.')[0]
         return executable
 
@@ -128,15 +99,12 @@ class BrowserHelperFunction:
         argsString = ""
         xshot = "Couldn't take Screenshot"
 
-        locatorType = browserOptions.locatorType
-        locator = browserOptions.locator
-
         for key, value in kwargs.items():
             if value:
                 argsString = argsString + f" {key}: {value}"
 
-        if locator:
-            argsString = argsString + f" Locator: {locatorType} = {locator}"
+        if browserOptions.locator is not None:
+            argsString = argsString + f" Locator: {browserOptions.locatorType} = {browserOptions.locator}"
 
         if logType == logging.DEBUG:
             logger.debug(logText + argsString)
@@ -144,13 +112,11 @@ class BrowserHelperFunction:
             if cbTakeScreenshot is not None:
                 xshot = cbTakeScreenshot()
             logger.error(logText + argsString + f" Screenshot: {xshot}")
-
         elif logType == logging.WARN:
             logger.warning(logText + argsString)
         elif logType == logging.INFO:
             logger.info(logText + argsString)
         elif logType == logging.CRITICAL:
-
             if cbTakeScreenshot is not None:
                 xshot = cbTakeScreenshot()
             logger.critical(logText + argsString + f" Screenshot: {xshot}")
@@ -167,5 +133,4 @@ class BrowserHelperFunction:
         :return:
         """
         if randomProxy:
-            lProxyService = ProxyRotate()
-            lProxyService.remove_proxy(ip=randomProxy["ip"], port=randomProxy["port"], type=randomProxy.get("type"))
+            ProxyRotate().remove_proxy(ip=randomProxy["ip"], port=randomProxy["port"], type=randomProxy.get("type"))

@@ -19,7 +19,10 @@ class utils:
     @staticmethod
     def str2bool(string):
         if string is not None:
-            return string.lower() in ("yes", "true", "t", "1")
+            if type(string) == str:
+                return string.lower() in ("yes", "true", "t", "1")
+            else:
+                return False
         else:
             return False
 

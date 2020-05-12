@@ -1,6 +1,6 @@
 import os
 from selenium import webdriver
-#from appium import webdriver as Appiumwebdriver
+from appium import webdriver as Appiumwebdriver
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -9,88 +9,81 @@ from selenium.webdriver.firefox.options import Options as ffOptions
 from selenium.common.exceptions import *
 from selenium.webdriver.common import keys
 from baangt.base import GlobalConstants as GC
-#from baangt.base.Timing.Timing import Timing
 from baangt.TestSteps import Exceptions
-#from baangt.base.DownloadFolderMonitoring import DownloadFolderMonitoring
 from baangt.base.Utils import utils
-#from baangt.base.ProxyRotate import ProxyRotate
-#import uuid
+from baangt.base.BrowserHandling.BrowserHelperFunction import BrowserDriverOptions
+from baangt.base.BrowserHandling.BrowserHelperFunction import BrowserHelperFunction as helper
 import time
 import logging
 from pathlib import Path
 import json
 import sys
-#import platform
-#import ctypes
-#from urllib.request import urlretrieve
-#import tarfile
-#import zipfile
-#import requests
-
-
-from baangt.base.BrowserHandling.BrowserHelperFunction import BrowserDriverOptions
-from baangt.base.BrowserHandling.BrowserHelperFunction import BrowserHelperFunction as helper
-
-
-
 
 logger = logging.getLogger("pyC")
 
-
-
 class WebdriverFunctions:
 
+    BROWSER_DRIVERS = {
+        GC.BROWSER_FIREFOX: webdriver.Firefox,
+        GC.BROWSER_CHROME: webdriver.Chrome,
+        GC.BROWSER_SAFARI: webdriver.Safari,
+        GC.BROWSER_EDGE: webdriver.Edge,
+        GC.BROWSER_REMOTE: webdriver.Remote,
+        GC.BROWSER_REMOTE_V4 : webdriver.Remote,
+        GC.BROWSER_APPIUM : Appiumwebdriver.Remote
+    }
+
     @staticmethod
-    def webdriver_setFirefoxProfile(browserProxy, profile, randomProxy=None):
-            if browserProxy:
-                profile.set_proxy(browserProxy.selenium_proxy())
+    def webdriver_setFirefoxProfile(browserProxy, randomProxy=None):
+        profile = webdriver.FirefoxProfile()
+        if browserProxy:
+            profile.set_proxy(browserProxy.selenium_proxy())
 
-            if randomProxy:
-                """
-                from selenium import webdriver
-                return webdriver.Proxy({
-                    "httpProxy": self.proxy,
-                    "sslProxy": self.proxy,
-                })
-                """
-                # We shall use a random Proxy from the list:
-                PROXY = f"{randomProxy['ip']}:{randomProxy['port']}"
+        if randomProxy:
+            """
+            from selenium import webdriver
+            return webdriver.Proxy({
+                "httpProxy": self.proxy,
+                "sslProxy": self.proxy,
+            })
+            """
+            # We shall use a random Proxy from the list:
+            PROXY = f"{randomProxy['ip']}:{randomProxy['port']}"
 
-                logger.info(f"Using Proxy-Server: {PROXY}")
+            logger.info(f"Using Proxy-Server: {PROXY}")
 
-                ffProxy = webdriver.Proxy( {
-                            "httpProxy":PROXY,
-                            "ftpProxy":PROXY,
-                            "sslProxy":PROXY,
-                            "noProxy":None,
-                            "proxy_type":"MANUAL",
-                            "proxyType":"MANUAL",
-                            "class":"org.openqa.selenium.Proxy",
-                            "autodetect":False
-                            })
+            ffProxy = webdriver.Proxy( {
+                        "httpProxy":PROXY,
+                        "ftpProxy":PROXY,
+                        "sslProxy":PROXY,
+                        "noProxy":None,
+                        "proxy_type":"MANUAL",
+                        "proxyType":"MANUAL",
+                        "class":"org.openqa.selenium.Proxy",
+                        "autodetect":False
+                        })
 
-                profile.set_proxy(ffProxy)
+            profile.set_proxy(ffProxy)
 
-            profile.set_preference("browser.download.folderList", 2)
-            profile.set_preference("browser.helperApps.alwaysAsk.force", False)
-            profile.set_preference("browser.download.manager.showWhenStarting", False)
-            profile.set_preference("browser.download.manager.showAlertOnComplete", False)
-            profile.set_preference('browser.helperApps.neverAsk.saveToDisk',
-                                'application/octet-stream,application/pdf,application/x-pdf,application/vnd.pdf,application/zip,application/octet-stream,application/x-zip-compressed,multipart/x-zip,application/x-rar-compressed, application/octet-stream,application/msword,application/vnd.ms-word.document.macroEnabled.12,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/rtf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,application/vnd.ms-word.document.macroEnabled.12,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/xls,application/msword,text/csv,application/vnd.ms-excel.sheet.binary.macroEnabled.12,text/plain,text/csv/xls/xlsb,application/csv,application/download,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/octet-stream')
-            profile.set_preference('browser.helperApps.neverAsk.openFile',
-                                'application/octet-stream,application/pdf,application/x-pdf,application/vnd.pdf,application/zip,application/octet-stream,application/x-zip-compressed,multipart/x-zip,application/x-rar-compressed, application/octet-stream,application/msword,application/vnd.ms-word.document.macroEnabled.12,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/rtf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,application/vnd.ms-word.document.macroEnabled.12,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/xls,application/msword,text/csv,application/vnd.ms-excel.sheet.binary.macroEnabled.12,text/plain,text/csv/xls/xlsb,application/csv,application/download,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/octet-stream')
-            profile.set_preference("browser.download.dir", helper.browserHelper_setBrowserDownloadDirRandom())
-            profile.set_preference("browser.download.manager.useWindow", False)
-            profile.set_preference("browser.download.manager.focusWhenStarting", False)
-            profile.set_preference("browser.download.manager.showAlertOnComplete", False)
-            profile.set_preference("browser.download.manager.closeWhenDone", True)
-            profile.set_preference("pdfjs.enabledCache.state", False)
-            profile.set_preference("pdfjs.disabled", True) # This is nowhere on the Internet! But that did the trick!
+        profile.set_preference("browser.download.folderList", 2)
+        profile.set_preference("browser.helperApps.alwaysAsk.force", False)
+        profile.set_preference("browser.download.manager.showWhenStarting", False)
+        profile.set_preference("browser.download.manager.showAlertOnComplete", False)
+        profile.set_preference('browser.helperApps.neverAsk.saveToDisk',
+                            'application/octet-stream,application/pdf,application/x-pdf,application/vnd.pdf,application/zip,application/octet-stream,application/x-zip-compressed,multipart/x-zip,application/x-rar-compressed, application/octet-stream,application/msword,application/vnd.ms-word.document.macroEnabled.12,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/rtf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,application/vnd.ms-word.document.macroEnabled.12,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/xls,application/msword,text/csv,application/vnd.ms-excel.sheet.binary.macroEnabled.12,text/plain,text/csv/xls/xlsb,application/csv,application/download,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/octet-stream')
+        profile.set_preference('browser.helperApps.neverAsk.openFile',
+                            'application/octet-stream,application/pdf,application/x-pdf,application/vnd.pdf,application/zip,application/octet-stream,application/x-zip-compressed,multipart/x-zip,application/x-rar-compressed, application/octet-stream,application/msword,application/vnd.ms-word.document.macroEnabled.12,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/rtf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,application/vnd.ms-word.document.macroEnabled.12,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/xls,application/msword,text/csv,application/vnd.ms-excel.sheet.binary.macroEnabled.12,text/plain,text/csv/xls/xlsb,application/csv,application/download,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/octet-stream')
+        profile.set_preference("browser.download.dir", helper.browserHelper_setBrowserDownloadDirRandom())
+        profile.set_preference("browser.download.manager.useWindow", False)
+        profile.set_preference("browser.download.manager.focusWhenStarting", False)
+        profile.set_preference("browser.download.manager.showAlertOnComplete", False)
+        profile.set_preference("browser.download.manager.closeWhenDone", True)
+        profile.set_preference("pdfjs.enabledCache.state", False)
+        profile.set_preference("pdfjs.disabled", True) # This is nowhere on the Internet! But that did the trick!
 
-            # Set volume to 0
-            profile.set_preference("media.volume_scale", "0.0")
-            return profile
-
+        # Set volume to 0
+        profile.set_preference("media.volume_scale", "0.0")
+        return profile
 
     @staticmethod
     def webdriver_createBrowserOptions(browserName, desiredCapabilities, browserMobProxy=None, randomProxy=None):
@@ -104,41 +97,45 @@ class WebdriverFunctions:
         @param randomProxy: Proxy-Server IP+Port of random external Proxy
         @return: the proper BrowserOptions for the currently active browser.
         """
-        if browserName == GC.BROWSER_CHROME:
-            lOptions = ChromeOptions()
-        elif browserName == GC.BROWSER_FIREFOX:
-            lOptions = ffOptions()
-        else:
-            return None
 
         # Default Download Directory for Attachment downloads
         if browserName == GC.BROWSER_CHROME:
+            lOptions = ChromeOptions()
             prefs = {"plugins.plugins_disabled" : ["Chrome PDF Viewer"],
                      "plugins.always_open_pdf_externally": True,
                      "profile.default_content_settings.popups": 0,
                      "download.default_directory": helper.browserHelper_setBrowserDownloadDirRandom(),  # IMPORTANT - ENDING SLASH V IMPORTANT
                      "directory_upgrade": True}
             lOptions.add_experimental_option("prefs", prefs)
-            lOptions.add_argument("--user-data-dir=/home/peter/snap/chromium/1143/.config/chromium/Default") # TODO remove
             # Set Proxy for Chrome. First RandomProxy (External), if set. If not, then internal Browsermob
             if randomProxy:
                 lOptions.add_argument(f"--proxy-server={randomProxy['ip']}:{randomProxy['port']}")
             elif browserMobProxy:
                 lOptions.add_argument('--proxy-server={0}'.format(browserMobProxy.proxy))
+        elif browserName == GC.BROWSER_FIREFOX:
+            lOptions = ffOptions()
+        else:
+            lOptions = None
+        
 
-        if not desiredCapabilities and not browserMobProxy:
-            return None
+        if desiredCapabilities and browserMobProxy and lOptions:
+            # sometimes instead of DICT comes a string with DICT-Format
+            if isinstance(desiredCapabilities, str) and "{" in desiredCapabilities and "}" in desiredCapabilities:
+                desiredCapabilities = json.loads(desiredCapabilities.replace("'", '"'))
 
-        # sometimes instead of DICT comes a string with DICT-Format
-        if isinstance(desiredCapabilities, str) and "{" in desiredCapabilities and "}" in desiredCapabilities:
-            desiredCapabilities = json.loads(desiredCapabilities.replace("'", '"'))
-
-        if not isinstance(desiredCapabilities, dict) and not browserMobProxy:
-            return None
-
-        if isinstance(desiredCapabilities, dict) and desiredCapabilities.get(GC.BROWSER_MODE_HEADLESS):
-            logger.debug("Starting in Headless mode")
-            lOptions.headless = True
+            if isinstance(desiredCapabilities, dict):
+                if desiredCapabilities.get(GC.BROWSER_MODE_HEADLESS):
+                    logger.debug("Starting in Headless mode")
+                    lOptions.headless = True
+                else:
+                    # statement not matched
+                    pass
+            else:
+                # statement not matched
+                pass
+        else:
+            # statement not matched
+            pass
 
         return lOptions
 
@@ -295,7 +292,6 @@ class WebdriverFunctions:
                     time.sleep(0.1)
                     element.send_keys(value)
                 didWork = True
-                return didWork
             except ElementClickInterceptedException as e:
                 logger.debug("doSomething: Element intercepted - retry")
                 time.sleep(0.2)
@@ -328,12 +324,15 @@ class WebdriverFunctions:
                 raise Exceptions.baangtTestStepException(e)
             elapsed = time.time() - begin
 
-        if optional:
-            logger.debug(
-                f"Action not possible after {timeout} s, Locator: {browserOptions.locatorType}: {browserOptions.locator}, but flag 'optional' is set")
+        if not didWork:
+            if optional:
+                logger.debug(
+                    f"Action not possible after {timeout} s, Locator: {browserOptions.locatorType}: {browserOptions.locator}, but flag 'optional' is set")
+            else:
+                raise Exceptions.baangtTestStepException(f"Action not possible after {timeout} s, Locator: {browserOptions.locatorType}: {browserOptions.locator}")
         else:
-            raise Exceptions.baangtTestStepException(
-                f"Action not possible after {timeout} s, Locator: {browserOptions.locatorType}: {browserOptions.locator}")
+            # Function successful
+            pass
 
         return didWork
 

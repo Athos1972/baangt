@@ -1,19 +1,17 @@
 import os
-from selenium import webdriver
-from appium import webdriver as Appiumwebdriver
+#from selenium import webdriver
+#from appium import webdriver as Appiumwebdriver
 #from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.common.by import By
-#from selenium.webdriver.support.ui import WebDriverWait
-#from selenium.webdriver.chrome.options import Options as ChromeOptions
-#from selenium.webdriver.firefox.options import Options as ffOptions
-#from selenium.common.exceptions import *
-#from selenium.webdriver.common import keys
+from selenium.common.exceptions import *
+from selenium.webdriver.common import keys
 from baangt.base import GlobalConstants as GC
 from baangt.base.Timing.Timing import Timing
 from baangt.TestSteps import Exceptions
 from baangt.base.DownloadFolderMonitoring import DownloadFolderMonitoring
 from baangt.base.Utils import utils
 from baangt.base.ProxyRotate import ProxyRotate
+from http import HTTPStatus
 import uuid
 import time
 import logging
@@ -29,21 +27,12 @@ import requests
 from baangt.base.PathManagement import ManagedPaths
 
 
-from baangt.base.BrowserHandling.WebdriverFunctions import WebdriverFunctions
+from baangt.base.BrowserHandling.WebdriverFunctions import WebdriverFunctions as webDrv
 from baangt.base.BrowserHandling.BrowserHelperFunction import BrowserDriverOptions
 from baangt.base.BrowserHandling.BrowserHelperFunction import BrowserHelperFunction as helper
 
 
 logger = logging.getLogger("pyC")
-
-BROWSER_NAMES = {
-    GC.BROWSER_FIREFOX: webdriver.Firefox,
-    GC.BROWSER_CHROME: webdriver.Chrome,
-    GC.BROWSER_SAFARI: webdriver.Safari,
-    GC.BROWSER_EDGE: webdriver.Edge,
-    GC.BROWSER_REMOTE: webdriver.Remote
-}
-
 
 class BrowserDriver:
     """
@@ -59,8 +48,8 @@ class BrowserDriver:
 
     def __init__(self, timing=None, screenshotPath=None):
         self.iFrame = None
-        self.element = None
-        self.browserOptions = BrowserDriverOptions(locatorType=None, locator=None, driver=webdriver.firefox)
+        self.element = None                 
+        self.browserOptions = BrowserDriverOptions(locatorType=None, locator=None, driver=webDrv.BROWSER_DRIVERS[GC.BROWSER_FIREFOX])
         self.slowExecution = False
         self.slowExecutionTimeoutInSeconds = 1
         self.downloadFolder = None
@@ -79,43 +68,10 @@ class BrowserDriver:
 
         self.takeTime = self.timing.takeTime
 
-        self.screenshotPath = self.managedPaths.getOrSetScreenshotsPath()
-
-
-    def _downloadDriverTODO(self, executable, lCurPath, browserName):
-        lCurPath = lCurPath.joinpath(executable)
-
-        if not (os.path.isfile(str(lCurPath))):
-            self.downloadDriver(browserName)
-
-    def _browserChromeRun(self, browserName, lCurPath, browserProxy, randomProxy, desiredCapabilities):
-        executable = helper.browserHelper_getBrowserExecutable(browserName)
-        self._downloadDriverTODO(executable, lCurPath, browserName)
-
-        return BROWSER_NAMES[browserName](
-            chrome_options = WebdriverFunctions.webdriver_createBrowserOptions(browserName=browserName,
-                                                        desiredCapabilities=desiredCapabilities,
-                                                        browserMobProxy=browserProxy,
-                                                        randomProxy=randomProxy),
-            executable_path = helper.browserHelper_findBrowserDriverPaths(executable),
-            service_log_path = os.path.join(self.managedPaths.getLogfilePath(), 'chromedriver.log')
-        )
-
-    def _browserFirefoxRun(self, browserName, lCurPath, browserProxy, randomProxy, desiredCapabilities):
-        executable = helper.browserHelper_getBrowserExecutable(browserName)
-        self._downloadDriverTODO(executable, lCurPath, browserName)
-
-        profile = webdriver.FirefoxProfile()
-        profile = WebdriverFunctions.webdriver_setFirefoxProfile(browserProxy, profile, randomProxy)
-        logger.debug(f"Firefox Profile as follows:{profile.userPrefs}")
-
-        return BROWSER_NAMES[browserName](
-            options = WebdriverFunctions.webdriver_createBrowserOptions(browserName=browserName, desiredCapabilities=desiredCapabilities),
-            executable_path = helper.browserHelper_findBrowserDriverPaths(executable),
-            firefox_profile = profile,
-            service_log_path = os.path.join(self.managedPaths.getLogfilePath(), 'geckodriver.log')
-            )
-
+        if screenshotPath is None or screenshotPath == "":
+            self.screenshotPath = self.managedPaths.getOrSetScreenshotsPath()
+        else:
+            self.screenshotPath = screenshotPath
 
     def createNewBrowser(self, mobileType=None, mobileApp = None, desired_app = None, mobile_app_setting = None,
                          browserName=GC.BROWSER_FIREFOX,
@@ -133,33 +89,36 @@ class BrowserDriver:
 
         lCurPath = Path(self.managedPaths.getOrSetDriverPath())
 
-        if browserName in BROWSER_NAMES:
+        if browserName in webDrv.BROWSER_DRIVERS:
 
             browserProxy = kwargs.get('browserProxy')
             browserInstance = kwargs.get('browserInstance', 'unknown')
 
             if utils.str2bool(mobileType):
-                    self.mobileConnectAppium(browserName, desired_app, mobileApp, mobile_app_setting)
-            if GC.BROWSER_FIREFOX == browserName:
+                self.browserOptions.driver = self._mobileConnectAppium(browserName, desired_app, mobileApp, mobile_app_setting)
+            elif GC.BROWSER_FIREFOX == browserName:
                 self.browserOptions.driver  = self._browserFirefoxRun(browserName, lCurPath, browserProxy, randomProxy, desiredCapabilities)
                 helper.browserHelper_startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance, browserProxy=browserProxy)
             elif GC.BROWSER_CHROME == browserName:
                 self.browserOptions.driver = self._browserChromeRun(browserName, lCurPath, browserProxy, randomProxy, desiredCapabilities)
                 helper.browserHelper_startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance, browserProxy=browserProxy)
             elif GC.BROWSER_EDGE == browserName:
-                self.browserOptions.driver = BROWSER_NAMES[browserName](executable_path = helper.browserHelper_findBrowserDriverPaths(GC.EDGE_DRIVER))
+                self.browserOptions.driver = webDrv.BROWSER_DRIVERS[browserName](executable_path = helper.browserHelper_findBrowserDriverPaths(GC.EDGE_DRIVER))
             elif GC.BROWSER_SAFARI == browserName:
                 # SAFARI doesn't provide any options, but desired_capabilities.
                 # Executable_path = the standard safaridriver path.
                 if len(desiredCapabilities) == 0:
                     desiredCapabilities = {}
-                self.browserOptions.driver = BROWSER_NAMES[browserName](desired_capabilities=desiredCapabilities)
+                self.browserOptions.driver = webDrv.BROWSER_DRIVERS[browserName](desired_capabilities=desiredCapabilities)
 
             elif GC.BROWSER_REMOTE == browserName:
-                self.browserOptions.driver = BROWSER_NAMES[browserName](options = WebdriverFunctions.webdriver_createBrowserOptions(browserName=browserName,
+                self.browserOptions.driver = webDrv.BROWSER_DRIVERS[browserName](options = webDrv.webdriver_createBrowserOptions(browserName=browserName,
                                                         desiredCapabilities=desiredCapabilities),
-                                                        command_executor='http://localhost:4444/wd/hub',
+                                                        command_executor=GC.REMOTE_EXECUTE_URL,
                                                         desired_capabilities=desiredCapabilities)
+            else:
+                # TODO add exception, this code should never be reached
+                pass
         elif GC.BROWSER_REMOTE_V4 == browserName:
             desired_capabilities, seleniumGridIp, seleniumGridPort = helper.browserHelper_setSettingsRemoteV4(desiredCapabilities)
 
@@ -171,8 +130,7 @@ class BrowserDriver:
                 self._downloadDriverTODO(browserExecutable, lCurPath, GC.BROWSER_CHROME)
 
             serverUrl = 'http://' + seleniumGridIp + ':' + seleniumGridPort
-
-            self.browserOptions.driver = webdriver.Remote(command_executor=serverUrl, desired_capabilities=desiredCapabilities)
+            self.browserOptions.driver = webDrv.BROWSER_DRIVERS[browserName](command_executor=serverUrl, desired_capabilities=desiredCapabilities)
         else:
             raise SystemExit("Browsername unknown")
 
@@ -183,10 +141,47 @@ class BrowserDriver:
 
 
 
-    def mobileConnectAppium(self, browserName, desired_app, mobileApp, mobile_app_setting):
+    def _downloadDriverTODO(self, executable, lCurPath, browserName):
+        lCurPath = lCurPath.joinpath(executable)
+
+        if not (os.path.isfile(str(lCurPath))):
+            self.downloadDriver(browserName)
+
+    def _browserChromeRun(self, browserName, lCurPath, browserProxy, randomProxy, desiredCapabilities):
+        executable = helper.browserHelper_getBrowserExecutable(browserName)
+        self._downloadDriverTODO(executable, lCurPath, browserName)
+
+        return webDrv.BROWSER_DRIVERS[browserName](
+            chrome_options = webDrv.webdriver_createBrowserOptions(browserName=browserName,
+                                                        desiredCapabilities=desiredCapabilities,
+                                                        browserMobProxy=browserProxy,
+                                                        randomProxy=randomProxy),
+            executable_path = helper.browserHelper_findBrowserDriverPaths(executable),
+            service_log_path = os.path.join(self.managedPaths.getLogfilePath(), 'chromedriver.log')
+        )
+
+    def _browserFirefoxRun(self, browserName, lCurPath, browserProxy, randomProxy, desiredCapabilities):
+        executable = helper.browserHelper_getBrowserExecutable(browserName)
+        self._downloadDriverTODO(executable, lCurPath, browserName)
+
+        profile = webDrv.webdriver_setFirefoxProfile(browserProxy, randomProxy)
+        logger.debug(f"Firefox Profile as follows:{profile.userPrefs}")
+
+        return webDrv.BROWSER_DRIVERS[browserName](
+            options = webDrv.webdriver_createBrowserOptions(browserName=browserName, desiredCapabilities=desiredCapabilities),
+            executable_path = helper.browserHelper_findBrowserDriverPaths(executable),
+            firefox_profile = profile,
+            service_log_path = os.path.join(self.managedPaths.getLogfilePath(), 'geckodriver.log')
+            )
+
+
+    def _mobileConnectAppium(self, browserName, desired_app, mobileApp, mobile_app_setting):
+        validSettings = False
+        desired_cap = desired_app
+
         if desired_app[GC.MOBILE_PLATFORM_NAME] == "Android":
-            desired_cap = desired_app
-            if mobileApp == 'True':
+            validSettings = True
+            if utils.str2bool(mobileApp):
                 desired_cap['app'] = mobile_app_setting[GC.MOBILE_APP_URL]
                 desired_cap['appPackage'] = mobile_app_setting[GC.MOBILE_APP_PACKAGE]
                 desired_cap['appActivity'] = mobile_app_setting[GC.MOBILE_APP_ACTIVITY]
@@ -194,18 +189,19 @@ class BrowserDriver:
                 desired_cap['browserName'] = browserName
                 desired_cap['chromedriverExecutable'] = mobile_app_setting[GC.MOBILE_APP_BROWSER_PATH]
                 desired_cap['noReset'] = False
-            self.browserOptions.driver = Appiumwebdriver.Remote("http://localhost:4723/wd/hub", desired_cap)
+            
         elif desired_app[GC.MOBILE_PLATFORM_NAME] == "iOS":
-            desired_cap = desired_app
-            if mobileApp == 'True':
+            validSettings = True
+            if utils.str2bool(mobileApp):
                 desired_cap['automationName'] = 'XCUITest'
                 desired_cap['app'] = mobile_app_setting[GC.MOBILE_APP_URL]
             else:
                 desired_cap['browserName'] = 'safari'
-            self.browserOptions.driver = Appiumwebdriver.Remote("http://localhost:4723/wd/hub", desired_cap)
-
-
-
+            
+        if validSettings:
+            return webDrv.BROWSER_DRIVERS[GC.BROWSER_APPIUM](GC.REMOTE_EXECUTE_URL, desired_cap)
+        else:
+            return None
 
     def closeBrowser(self):
         try:
@@ -220,7 +216,7 @@ class BrowserDriver:
         self.browserOptions.driver.execute_script("window.location.reload()")
 
     def takeScreenshot(self, screenShotPath=None):
-        driver =self.browserOptions.driver
+        driver = self.browserOptions.driver
         # Filename must have ".png" inside
         lFile = str(uuid.uuid4()) + ".png"
 
@@ -243,7 +239,7 @@ class BrowserDriver:
         Give an IFRAME and it will try to go into.
         If you're inside an iframe it will go out of the iframe
         """
-        if iframe:
+        if iframe is not None:
             helper.browserHelper_log(logging.DEBUG, "Going into Iframe: ", self.browserOptions, **{"iframe": iframe})
             # frame_to_be_availble_and_switch_to_it doesn't work.
             mustEnd = time.time() + 30
@@ -259,10 +255,13 @@ class BrowserDriver:
             if time.time() > mustEnd:
                 raise TimeoutError
 
-        elif self.iFrame:
+        elif self.iFrame is not None:
             helper.browserHelper_log(logging.DEBUG, f"Leaving Iframe: {self.iFrame}", self.browserOptions)
             self.browserOptions.driver.switch_to.default_content()
             self.iFrame = None
+        else:
+            # TODO add exception, this code should never be reached
+            pass
 
     def handleWindow(self, windowNumber=None, function=None, timeout=20):
         """
@@ -271,7 +270,7 @@ class BrowserDriver:
         @param windowNumber: Number of the windowHandle inside this browser session (0 = startwindow(=Tab), 1=Next window
         @param function: "CLOSE", "CLOSEALL"
         """
-        if function:
+        if function is not None:
             if function.lower() == "close":
                 self.browserOptions.driver.close()
                 self.browserOptions.driver.switch_to.window(self.browserOptions.driver.window_handles[0])
@@ -297,6 +296,9 @@ class BrowserDriver:
                     self.browserOptions.driver.switch_to.window(self.browserOptions.driver.window_handles[exceptHandles])
                 except IndexError as e:
                     raise Exceptions.baangtTestStepException(f"Seems like the browser crashed. Main-Window lost")
+            else:
+                # TODO Wrung function, add exception
+                pass
         else:
             success = False
             duration = 0
@@ -345,7 +347,8 @@ class BrowserDriver:
                 elif self.element.tag_name == 'input':
                     #  element is of type <input />
                     returnValue = self.element.get_property('value')
-
+                else:
+                    returnValue = None
             except Exception as e:
                 logger.debug(f"Exception during findByAndWaitForValue, but continuing {str(e)}, "
                              f"Locator: {self.browserOptions.locatorType} = {self.browserOptions.locator}")
@@ -361,7 +364,7 @@ class BrowserDriver:
         """
         self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
 
-        WebdriverFunctions.webdriver_doSomething(GC.CMD_SETTEXT, self.element, value=value, timeout=timeout, optional=optional, browserOptions = self.browserOptions)
+        return webDrv.webdriver_doSomething(GC.CMD_SETTEXT, self.element, value=value, timeout=timeout, optional=optional, browserOptions = self.browserOptions)
 
     def slowExecutionToggle(self, newSlowExecutionWaitTimeInSeconds=None):
         """
@@ -390,26 +393,13 @@ class BrowserDriver:
         If value is evaluated into "True" the Text is set.
 
         """
-        if not value:
+
+        if self._isValidKeyValue(value):
+            return self.findByAndSetText(id=id, css=css, xpath=xpath, class_name=class_name, value=value, iframe=iframe, timeout=timeout, optional=optional)
+        else:
             return False
 
-        if len(value) == 0:
-            return False
-
-        if str(value) == "0":
-            return False
-
-        return self.findByAndSetText(id=id, css=css, xpath=xpath, class_name=class_name, value=value, iframe=iframe,
-                                     timeout=timeout, optional=optional)
-
-    def findByAndSetTextValidated(self, id=None,
-                                  css=None,
-                                  xpath=None,
-                                  class_name=None,
-                                  value=None,
-                                  iframe=None,
-                                  timeout=60,
-                                  retries=5):
+    def findByAndSetTextValidated(self, id=None, css=None, xpath=None, class_name=None, value=None, iframe=None, timeout=60, retries=5):
         """
         This is a method not recommended to be used regularly. Sometimes (especially with Angular Frontends) it gets
         pretty hard to set a value into a field. Chrome, but also FF will show the value, but the DOM will not have it.
@@ -443,16 +433,15 @@ class BrowserDriver:
         Execute a Click on an element identified by it's locator.
         @return wasSuccessful says, whether the element was found.
         """
-        wasSuccessful = False
+
         self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout,
                                     optional=optional)
 
         if self.element is None:
             logger.debug("findBy didn't work in findByAndClick")
+            return False
         else:
-            wasSuccessful = WebdriverFunctions.webdriver_doSomething(GC.CMD_CLICK, self.element, timeout=timeout, optional=optional, browserOptions = self.browserOptions)
-
-        return wasSuccessful
+            return webDrv.webdriver_doSomething(GC.CMD_CLICK, self.element, timeout=timeout, optional=optional, browserOptions = self.browserOptions)
 
     def _isValidKeyValue(self, value):
         isValid = False
@@ -476,12 +465,10 @@ class BrowserDriver:
 
         If value is evaluated to "True", the click-event is executed.
         """
-        returnValue = False
-
         if self._isValidKeyValue(value):
-            returnValue = self.findByAndClick(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout, optional=optional)
-        
-        return returnValue
+            return self.findByAndClick(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout, optional=optional)
+        else:
+            return False
 
     def findByAndForceText(self, id=None, css=None, xpath=None, class_name=None, value=None,
                            iframe=None, timeout=60, optional=False):
@@ -492,7 +479,7 @@ class BrowserDriver:
 
         self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
 
-        WebdriverFunctions.webdriver_doSomething(GC.CMD_FORCETEXT, self.element, value=value, timeout=timeout, optional=optional, browserOptions = self.browserOptions)
+        return webDrv.webdriver_doSomething(GC.CMD_FORCETEXT, self.element, value=value, timeout=timeout, optional=optional, browserOptions = self.browserOptions)
 
     def setBrowserWindowSize(self, browserWindowSize: str):
         """
@@ -539,7 +526,22 @@ class BrowserDriver:
         l_list = self.downloadFolderMonitoring.getNewFiles()
         return l_list
 
-
+    def _setLocator(self, id, css, xpath, class_name, browserOptions):
+        browserOptions.locatorType = None
+        browserOptions.locator = None
+        if xpath:
+            browserOptions.locatorType = By.XPATH 
+            browserOptions.locator = xpath
+        elif css:
+            browserOptions.locatorType = By.CSS_SELECTOR
+            browserOptions.locator = css
+        elif class_name:
+            browserOptions.locatorType = By.CLASS_NAME 
+            browserOptions.locator = class_name
+        elif id:
+            browserOptions.locatorType = By.ID 
+            browserOptions.locator = id
+        return browserOptions
 
     def findBy(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=60, loggingOn=True, optional=False):
         """
@@ -564,32 +566,18 @@ class BrowserDriver:
             self.handleIframe(iframe)
 
         # Set class variables for potential logging of problems.
-
-        if xpath:
-            self.browserOptions.locatorType = By.XPATH 
-            self.browserOptions.locator = xpath
-        elif css:
-            self.browserOptions.locatorType = By.CSS_SELECTOR
-            self.browserOptions.locator = css
-        elif class_name:
-            self.browserOptions.locatorType = By.CLASS_NAME 
-            self.browserOptions.locator = class_name
-        elif id:
-            self.browserOptions.locatorType = By.ID 
-            self.browserOptions.locator = id
+        self.browserOptions = self._setLocator(id, css, xpath, class_name, self.browserOptions)
 
         if loggingOn:
             logger.debug(f"Locating Element {self.browserOptions.locatorType} = {self.browserOptions.locator}")
 
-        element, html = WebdriverFunctions.webdriver_tryAndRetry(self.browserOptions, timeout=timeout, optional=optional)
+        element, html = webDrv.webdriver_tryAndRetry(self.browserOptions, timeout=timeout, optional=optional)
 
         if element is None and not optional:
             raise Exceptions.baangtTestStepException(f"Element {self.browserOptions.locatorType} = {self.browserOptions.locator} could not be found "
                                                      f"within timeout of {timeout}")
         return element, html
 
-
- 
 
     def getURL(self):
         """
@@ -653,18 +641,13 @@ class BrowserDriver:
                     lResult.append([r.status_code, lHref])
                     logger.debug(f"Result was: {r.status_code}, {lHref}")
                 except requests.exceptions.InvalidURL as e:
-                    lResult.append([500, f"Invalid URL: {lHref}"])
+                    lResult.append([HTTPStatus.INTERNAL_SERVER_ERROR, f"Invalid URL: {lHref}"])  
                 except requests.exceptions.ConnectionError as e:
-                    lResult.append([500, f"HTTP connection error: {lHref}"])
+                    lResult.append([HTTPStatus.INTERNAL_SERVER_ERROR, f"HTTP connection error: {lHref}"])
                 except requests.exceptions.MissingSchema as e:
-                    lResult.append([500, f"Missing Schema - invalid URL: {lHref}"])
+                    lResult.append([HTTPStatus.INTERNAL_SERVER_ERROR, f"Missing Schema - invalid URL: {lHref}"])
 
         return lResult
-
-    @staticmethod
-    def sleep(sleepTimeinSeconds):
-        time.sleep(sleepTimeinSeconds)
-
 
     def waitForElementChangeAfterButtonClick(self, timeout=5):
         """
@@ -678,10 +661,8 @@ class BrowserDriver:
         """
 
         lOldElement = self.element.id
-
         lStartOfWaiting = time.time()
         elapsed = 0
-
         logger.debug("Starting")
 
         xpath, css, id = utils.setLocatorFromLocatorType(self.browserOptions.locatorType, self.browserOptions.locator)
@@ -700,6 +681,9 @@ class BrowserDriver:
             elapsed = time.time() - lStartOfWaiting
 
         logger.debug("Old element equal to new element after timeout. Staleness not detected using this method")
+
+        # TimeOut Return false
+        return False
 
     def waitForPageLoadAfterButtonClick(self, timeout=5):
         """
