@@ -54,6 +54,8 @@ class BrowserDriver:
         self.downloadFolder = None
         self.downloadFolderMonitoring = None
         self.randomProxy = None
+        self.zoomFactorDesired = None                     # Desired zoom factor for this page
+        self.browserName = None
         # Reference to Selenium "HTML" in order to track page changes. It is set on every interaction with the page
         self.html = None
         self.managedPaths = ManagedPaths()
@@ -79,6 +81,7 @@ class BrowserDriver:
         """
         self.takeTime("Browser Start")
         self.randomProxy = randomProxy
+        self.browserName = browserName
         browserNames = {
             GC.BROWSER_FIREFOX: webdriver.Firefox,
             GC.BROWSER_CHROME: webdriver.Chrome,
@@ -480,7 +483,12 @@ class BrowserDriver:
                 exceptHandles = exceptHandles.replace("-", "")
                 # WindowHandles based on 0.. Value "let 2 windows open" means to close everything except 0 and 1:
                 exceptHandles = int(exceptHandles.strip()) - 1
-                totalWindows = len(self.driver.window_handles)
+                try:
+                    totalWindows = len(self.driver.window_handles)
+                except BaseException as e:
+                    logger.error(f"Tried to get amount of windows. Threw error {e}. Most probably browser crashed")
+                    raise Exceptions.baangtTestStepException(f"Tried to get amount of windows. "
+                                                             f"Threw error {e}. Most probably browser crashed")
                 for windowHandle in self.driver.window_handles[-1:exceptHandles:-1]:
                     try:
                         self.driver.switch_to.window(windowHandle)
@@ -488,8 +496,10 @@ class BrowserDriver:
                     except NoSuchWindowException as e:
                         # If the window is already closed, it's fine. Don't do anything
                         pass
-
-                self.driver.switch_to.window(self.driver.window_handles[exceptHandles])
+                try:
+                    self.driver.switch_to.window(self.driver.window_handles[exceptHandles])
+                except IndexError as e:
+                    raise Exceptions.baangtTestStepException(f"Seems like the browser crashed. Main-Window lost")
         else:
             success = False
             duration = 0
@@ -683,6 +693,7 @@ class BrowserDriver:
         lIntBrowserWindowSize = lIntBrowserWindowSize.replace(";", "/")
         lIntBrowserWindowSize = lIntBrowserWindowSize.replace(",", "/")
         lIntBrowserWindowSize = lIntBrowserWindowSize.replace("x", "/")
+        lIntBrowserWindowSize = lIntBrowserWindowSize.replace("*", "/")
 
         try:
             width = int(lIntBrowserWindowSize.split("/")[0])
@@ -793,7 +804,10 @@ class BrowserDriver:
 
         lLoopCount = 0
 
-        self.__getCurrentHTMLReference()
+        try:
+            self.__getCurrentHTMLReference()
+        except BaseException as e:
+            raise Exceptions.baangtTestStepException(f"__getCurrentHTMLReference was not successful: {e}")
 
         while not wasSuccessful and elapsed < timeout:
             lLoopCount += 1
@@ -852,6 +866,11 @@ class BrowserDriver:
         "waitForPageLoadAfterButtonClick"
         :return:
         """
+        # Performance in 5 parallel Runs dropped from 06:50 to 07:51. That's 1 Minute slower
+        # 60 Seconds or 10% time lost.
+        # For now let it as it is. If users report that as a problem, revisit the subject and
+        # e.g. find another way to understand, whether we're still on the same page or not.
+        e = None
         retryCount = 0
         wasSuccessful = False
         while retryCount < 5 and not wasSuccessful:
@@ -859,10 +878,21 @@ class BrowserDriver:
                 self.html = self.driver.find_element_by_tag_name('html')  # This is for waitForPageLoadAfterButton
                 wasSuccessful = True
             except NoSuchElementException as e:
-                pass
+                logger.debug(f"had a NoSuchElementException: {e}")
             except NoSuchWindowException as e:
-                raise Exceptions.baangtTestStepException(f"Window ceased to exist. Error: {e}")
-            self.sleep(0.2)
+                logger.debug(f"had a noSuchWindowException: {e}")
+            except WebDriverException as e:
+                logger.debug(f"had a WebDriverException: {e}")
+            except BaseException as e:
+                logger.warning(f"had an unknown exception (should be checked): {e}")
+
+            retryCount += 1
+            self.sleep(0.5)
+
+        if retryCount == 5:
+            raise Exceptions.baangtTestStepException(f"Couldn't locate HTML element in Page. "
+                                                     f"No idea what's going on. This was the last error"
+                                                     f" (check logs for more): {e}")
 
     def findWaitNotVisible(self, css=None, xpath=None, id=None, timeout=90, optional=False):
         """
@@ -1080,13 +1110,16 @@ class BrowserDriver:
     def goToUrl(self, url):
         self._log(logging.INFO, f'GoToUrl:{url}')
         try:
+            if self.browserName==GC.BROWSER_FIREFOX:
+                self.driver.set_context("content")
             self.driver.get(url)
+            self.setZoomFactor()
         except WebDriverException as e:
             # Use noScreenshot-Parameter as otherwise we'll try on a dead browser to create a screenshot
             self._log(logging.ERROR, f"Webpage {url} not reached. Error was: {e}", noScreenShot=True)
             self.__setProxyError()
             raise Exceptions.baangtTestStepException
-        except Exceptions as e:
+        except Exception as e:
             # Use noScreenshot-Parameter as otherwise we'll try on a dead browser to create a screenshot
             self._log(logging.ERROR, f"Webpage {url} throws error {e}", noScreenShot=True)
             self.__setProxyError()
@@ -1116,6 +1149,65 @@ class BrowserDriver:
     def javaScript(self, jsText, *args):
         """Execute a given JavaScript in the current Session"""
         self.driver.execute_script(jsText, *args)
+
+    def setZoomFactor(self, lZoomFactor=None):
+        """
+        Will try to set the browser's zoom factor.
+
+        :param lZoomFactor: set with a value. Otherwise existing value will be used (if previously set)
+        :return:
+        """
+        if not self.zoomFactorDesired and not lZoomFactor:
+            return False
+
+        if lZoomFactor:
+            self.zoomFactorDesired = int(lZoomFactor)
+
+        if self.browserName == GC.BROWSER_CHROME:
+            logger.critical(f"Zoom in Chrome doesn't work. Continuing without zoom")
+            return
+            x = self.getURL()
+            if x[0:5] == "http:":       # He loaded already something. Too late for us
+                logger.debug("CHROME: Got called to change Zoom level - but already URL loaded. Too late.")
+                return False
+            self.driver.get("chrome://settings/")
+            self.driver.execute_script(f"chrome.settingsPrivate.setDefaultZoom({self.zoomFactorDesired/100});")
+            logger.debug(f"CHROME: Set default zoom using JS-Method to {self.zoomFactorDesired/100}")
+            return True
+
+        if self.browserName == GC.BROWSER_FIREFOX:
+            self.driver.set_context("chrome")                # !sic: in Firefox.. Whatever...
+
+        if self.zoomFactorDesired > 100:
+            lZoomKey = "+"
+        else:
+            lZoomKey = "-"
+
+        # E.g. current = 100. Desired = 67%: 100-67 = 33. 33/10 = 3.3  int(3.3) = 3 --> he'll hit 3 times CTRL+"-"
+        lDifference = abs(100 - self.zoomFactorDesired)
+        lHitKeyTimes = int(lDifference/10)
+
+        try:
+            lWindow = self.driver.find_element_by_tag_name("html")
+            # Reset the browser window to 100%:
+            if platform.system().lower() == "darwin":
+                lWindow.send_keys(keys.Keys.META + "0")
+            else:
+                lWindow.send_keys(keys.Keys.CONTROL + "0")
+
+            # Now set to desired zoom factor:
+            for counter in range(lHitKeyTimes):
+                if platform.system().lower() == "darwin":
+                    lWindow.send_keys(keys.Keys.META + lZoomKey)
+                else:
+                    lWindow.send_keys(keys.Keys.CONTROL + lZoomKey)
+
+            logger.debug(f"Adjusted zoom factor of browserwindow to {self.zoomFactorDesired}")
+        except Exception as e:
+            logger.debug(f"Tried to adjust zoom factor and failed: {e}")
+        finally:
+            if self.browserName == GC.BROWSER_FIREFOX:
+                self.driver.set_context("content")
 
     def downloadDriver(self, browserName):
         path = Path(self.managedPaths.getOrSetDriverPath())

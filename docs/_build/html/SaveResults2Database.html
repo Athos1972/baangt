@@ -1,0 +1,766 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Save Testrun Results to Database &mdash; baangt 2020.5.2rc5 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Why baangt and why is it open source?" href="HistoryAndReasons.html" />
+    <link rel="prev" title="Special functions in datafiles" href="DataFile.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> baangt
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Installation.html">   Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="OverviewUsage.html">   Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simpleExample.html">   First Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Structure.html">   Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ParametersConfigFile.html">   Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SimpleAPI.html">   First API Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TestTypes.html">   Types of Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DataFile.html">   Data file</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">   Results in Database</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#tables">Tables</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#table-testruns">Table: <code class="docutils literal notranslate"><span class="pre">testruns</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#table-testcasesequences">Table: <code class="docutils literal notranslate"><span class="pre">testCaseSequences</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#table-testcases">Table: <code class="docutils literal notranslate"><span class="pre">testCases</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#table-globals">Table: <code class="docutils literal notranslate"><span class="pre">globals</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#table-testcasefields">Table: <code class="docutils literal notranslate"><span class="pre">testCaseFields</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#table-networkinfo">Table: <code class="docutils literal notranslate"><span class="pre">networkInfo</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#for-developers-orm-api">For Developers: ORM API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#testrunlog">TestrunLog</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#testcasesequencelog">TestCaseSequenceLog</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#testcaselog">TestCaseLog</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#globalattribute">GlobalAttribute</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#testcasefield">TestCaseField</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#testcasenetworkinfo">TestCaseNetworkInfo</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">   History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">   Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BrowserDrivers.html">   Browser Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Variables.html">   Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html">DataGenerator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html#input-file">Input File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html#data-type">Data Type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html#all-data-types-format">All Data Types Format</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Developer.html">   For Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html">What is a baangt-plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html#how-to-make-a-baangt-plugin">how to make a baangt-plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html#how-the-baangt-plugin-work">how the baangt-plugin work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html#how-to-replace-the-existing-plugin-by-your-own-one">how to replace the existing plugin by your own one</a></li>
+<li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">   :subheader: Articles</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Autodocs:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="docs/baangt.base.html">Autodocs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">baangt</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Save Testrun Results to Database</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/SaveResults2Database.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="save-testrun-results-to-database">
+<h1>Save Testrun Results to Database<a class="headerlink" href="#save-testrun-results-to-database" title="Permalink to this headline">¶</a></h1>
+<p>One of the options that <code class="docutils literal notranslate"><span class="pre">baangt</span></code> provides to save the results of the executed Testruns is using an SQL database.
+The identification of the database is implemented via the environmental variable BAANGT_RESULTS_DATABASE_URL.
+if <code class="docutils literal notranslate"><span class="pre">baangt</span></code> cannot retrieve BAANGT_RESULTS_DATABASE_URL it uses the default database URL:
+<code class="docutils literal notranslate"><span class="pre">sqlite:///testrun.db</span></code></p>
+<div class="section" id="tables">
+<h2>Tables<a class="headerlink" href="#tables" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="table-testruns">
+<h3>Table: <code class="docutils literal notranslate"><span class="pre">testruns</span></code><a class="headerlink" href="#table-testruns" title="Permalink to this headline">¶</a></h3>
+<p>Table holds results of the executed Testruns: Testrun Logs</p>
+<table class="colwidths-given docutils align-default" id="id1">
+<caption><span class="caption-text">Testrun Logs</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 15%" />
+<col style="width: 60%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Data Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td><p>BINARY</p></td>
+<td><p>Testrun Log UUID. Primary key for Testrun Log.</p></td>
+</tr>
+<tr class="row-odd"><td><p>testrunName</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>A name associated with the Testrun.</p></td>
+</tr>
+<tr class="row-even"><td><p>logfileName</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>Path to the logfile of the Testrun.</p></td>
+</tr>
+<tr class="row-odd"><td><p>startTime</p></td>
+<td><p>DATETIME</p></td>
+<td><p>Satrt time of the Testrun execution.</p></td>
+</tr>
+<tr class="row-even"><td><p>endTime</p></td>
+<td><p>DATETIME</p></td>
+<td><p>End time of the Testrun execurtion.</p></td>
+</tr>
+<tr class="row-odd"><td><p>dataFile</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>Path to the Data File of the Testrun.</p></td>
+</tr>
+<tr class="row-even"><td><p>statusOk</p></td>
+<td><p>INTEGER</p></td>
+<td><p>Number of the successful test cases within the executed Testrun.</p></td>
+</tr>
+<tr class="row-odd"><td><p>statusFailed</p></td>
+<td><p>INTEGER</p></td>
+<td><p>Number of the failed test cases within the executed Testrun.</p></td>
+</tr>
+<tr class="row-even"><td><p>statusPaused</p></td>
+<td><p>INTEGER</p></td>
+<td><p>Number of the paused test cases within the executed Testrun.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="table-testcasesequences">
+<h3>Table: <code class="docutils literal notranslate"><span class="pre">testCaseSequences</span></code><a class="headerlink" href="#table-testcasesequences" title="Permalink to this headline">¶</a></h3>
+<p>Table holds data on the executed test case sequences: TestCaseSequence Logs</p>
+<table class="colwidths-given docutils align-default" id="id2">
+<caption><span class="caption-text">TestCaseSequence Logs</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 15%" />
+<col style="width: 60%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Data Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td><p>BINARY</p></td>
+<td><p>TestCaseSequence Log UUID. Primary key for TestCaseSequence Log.</p></td>
+</tr>
+<tr class="row-odd"><td><p>testrun_id</p></td>
+<td><p>INTEGER</p></td>
+<td><p>Foreign key to <code class="docutils literal notranslate"><span class="pre">testruns</span></code>
+Testrun that contains the test case sequence.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="table-testcases">
+<h3>Table: <code class="docutils literal notranslate"><span class="pre">testCases</span></code><a class="headerlink" href="#table-testcases" title="Permalink to this headline">¶</a></h3>
+<p>Table holds data on the executed test cases: TestCase Logs</p>
+<table class="colwidths-given docutils align-default" id="id3">
+<caption><span class="caption-text">TestCase Logs</span><a class="headerlink" href="#id3" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 15%" />
+<col style="width: 60%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Data Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td><p>BINARY</p></td>
+<td><p>TestCase Log UUID. Primary key for TestCase Log.</p></td>
+</tr>
+<tr class="row-odd"><td><p>testcase_sequence_id</p></td>
+<td><p>INTEGER</p></td>
+<td><p>Foreign key to <code class="docutils literal notranslate"><span class="pre">testCaseSequences</span></code>
+Test case sequence that contains the test case.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="table-globals">
+<h3>Table: <code class="docutils literal notranslate"><span class="pre">globals</span></code><a class="headerlink" href="#table-globals" title="Permalink to this headline">¶</a></h3>
+<p>Table holds global variables of the executed Testruns</p>
+<table class="colwidths-given docutils align-default" id="id4">
+<caption><span class="caption-text">Globals</span><a class="headerlink" href="#id4" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 15%" />
+<col style="width: 60%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Data Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td><p>INTEGER</p></td>
+<td><p>Primary key for the global variable.</p></td>
+</tr>
+<tr class="row-odd"><td><p>name</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>Name of the global variable.</p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>Value of the global variable.</p></td>
+</tr>
+<tr class="row-odd"><td><p>testrun_id</p></td>
+<td><p>INTEGER</p></td>
+<td><p>Foreign key to <code class="docutils literal notranslate"><span class="pre">testruns</span></code>
+Testrun that contains the global variable.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="table-testcasefields">
+<h3>Table: <code class="docutils literal notranslate"><span class="pre">testCaseFields</span></code><a class="headerlink" href="#table-testcasefields" title="Permalink to this headline">¶</a></h3>
+<p>Table holds log fields of the executed test cases</p>
+<table class="colwidths-given docutils align-default" id="id5">
+<caption><span class="caption-text">Testcase Fields</span><a class="headerlink" href="#id5" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 15%" />
+<col style="width: 60%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Data Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td><p>INTEGER</p></td>
+<td><p>Primary key for the field.</p></td>
+</tr>
+<tr class="row-odd"><td><p>name</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>Name of the field.</p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>Value of the field.</p></td>
+</tr>
+<tr class="row-odd"><td><p>testcase_id</p></td>
+<td><p>INTEGER</p></td>
+<td><p>Foreign key to <code class="docutils literal notranslate"><span class="pre">testCases</span></code>
+Test case that contains the field.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="table-networkinfo">
+<h3>Table: <code class="docutils literal notranslate"><span class="pre">networkInfo</span></code><a class="headerlink" href="#table-networkinfo" title="Permalink to this headline">¶</a></h3>
+<p>Table holds info on requests made while execution of the test cases</p>
+<table class="colwidths-given docutils align-default" id="id6">
+<caption><span class="caption-text">Network Info</span><a class="headerlink" href="#id6" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 15%" />
+<col style="width: 60%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Data Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td><p>INTEGER</p></td>
+<td><p>Primary key for the network info.</p></td>
+</tr>
+<tr class="row-odd"><td><p>browserName</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>Browser name that was used to make the request.</p></td>
+</tr>
+<tr class="row-even"><td><p>status</p></td>
+<td><p>INTEGER</p></td>
+<td><p>The status code of the HTTP response.</p></td>
+</tr>
+<tr class="row-odd"><td><p>method</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>The request method.</p></td>
+</tr>
+<tr class="row-even"><td><p>url</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>The request URL.</p></td>
+</tr>
+<tr class="row-odd"><td><p>contentType</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>Content-type header of the response.</p></td>
+</tr>
+<tr class="row-even"><td><p>contentSize</p></td>
+<td><p>INTEGER</p></td>
+<td><p>The size of the response content.</p></td>
+</tr>
+<tr class="row-odd"><td><p>headers</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>A string that represents a list of the response headers in format:
+<code class="docutils literal notranslate"><span class="pre">{'name':</span> <span class="pre">HEADER_NAME,</span> <span class="pre">'value':</span> <span class="pre">HEADER_VALUE}</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>params</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>A string that represents a list of the request GET parameters in format:
+<code class="docutils literal notranslate"><span class="pre">{'name':</span> <span class="pre">PARAMETER_NAME,</span> <span class="pre">'value':</span> <span class="pre">PARAMETER_VALUE}</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>response</p></td>
+<td><p>VARCHAR</p></td>
+<td><p>The content of the response.</p></td>
+</tr>
+<tr class="row-even"><td><p>startDateTime</p></td>
+<td><p>DATETIME</p></td>
+<td><p>The time when the request was sent.</p></td>
+</tr>
+<tr class="row-odd"><td><p>duration</p></td>
+<td><p>INTEGER</p></td>
+<td><p>The time (in <code class="docutils literal notranslate"><span class="pre">ms</span></code>) that it took to receive the response after the request was sent.</p></td>
+</tr>
+<tr class="row-even"><td><p>testcase_id</p></td>
+<td><p>INTEGER</p></td>
+<td><p>Foreign key to <code class="docutils literal notranslate"><span class="pre">testCases</span></code>
+Test case that contains the network info.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="for-developers-orm-api">
+<h2>For Developers: ORM API<a class="headerlink" href="#for-developers-orm-api" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">baangt</span></code> provides ORM models to facilatate analysis of Testruns results.
+The models are located in module <code class="docutils literal notranslate"><span class="pre">baangt.base.DataBaseORM</span></code></p>
+<div class="section" id="testrunlog">
+<h3>TestrunLog<a class="headerlink" href="#testrunlog" title="Permalink to this headline">¶</a></h3>
+<p>Provides interface with table <code class="docutils literal notranslate"><span class="pre">testruns</span></code></p>
+<table class="colwidths-given docutils align-default" id="id7">
+<caption><span class="caption-text">baangt.base.DataBaseORM.TestrunLog</span><a class="headerlink" href="#id7" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td><p>Testrun Log UUID as a bianry string.</p></td>
+</tr>
+<tr class="row-odd"><td><p>testrunName</p></td>
+<td><p>Name of the associated TestRun.</p></td>
+</tr>
+<tr class="row-even"><td><p>logfileName</p></td>
+<td><p>Path to the associated log file.</p></td>
+</tr>
+<tr class="row-odd"><td><p>startTime</p></td>
+<td><p>TestRun start time as a <code class="docutils literal notranslate"><span class="pre">datetime.datetime</span></code> object.</p></td>
+</tr>
+<tr class="row-even"><td><p>endTime</p></td>
+<td><p>TestRun start time as a <code class="docutils literal notranslate"><span class="pre">datetime.datetime</span></code> object.</p></td>
+</tr>
+<tr class="row-odd"><td><p>dataFile</p></td>
+<td><p>Path to the associated Data File.</p></td>
+</tr>
+<tr class="row-even"><td><p>statusOk</p></td>
+<td><p>Number of the successful test cases.</p></td>
+</tr>
+<tr class="row-odd"><td><p>statusFailed</p></td>
+<td><p>Number of the failed test cases.</p></td>
+</tr>
+<tr class="row-even"><td><p>statusPaused</p></td>
+<td><p>Number of the paused test cases.</p></td>
+</tr>
+<tr class="row-odd"><td><p>globalVars</p></td>
+<td><p>List of the global attributes (as <code class="docutils literal notranslate"><span class="pre">GlobalAttribute</span></code> instances) of the associated Testrun.</p></td>
+</tr>
+<tr class="row-even"><td><p>testcase_sequences</p></td>
+<td><p>List of the test case sequences (as <code class="docutils literal notranslate"><span class="pre">TestCaseSequenceLog</span></code> instances) within the associated Testrun.</p></td>
+</tr>
+<tr class="row-odd"><td><p>__str__()</p></td>
+<td><p>Method. Returns Testrun Log UUID as a string.</p></td>
+</tr>
+<tr class="row-even"><td><p>to_json()</p></td>
+<td><p>Method. Returns Testrun Log as a dictionary object.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="testcasesequencelog">
+<h3>TestCaseSequenceLog<a class="headerlink" href="#testcasesequencelog" title="Permalink to this headline">¶</a></h3>
+<p>Provides interface with table <code class="docutils literal notranslate"><span class="pre">testCaseSequences</span></code></p>
+<table class="colwidths-given docutils align-default" id="id8">
+<caption><span class="caption-text">baangt.base.DataBaseORM.TestCaseSequenceLog</span><a class="headerlink" href="#id8" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td><p>TestCase Sequence Log UUID as a bianry string.</p></td>
+</tr>
+<tr class="row-odd"><td><p>testrun</p></td>
+<td><p>The associated Testrun (as a <code class="docutils literal notranslate"><span class="pre">TestrunLog</span></code> instance).</p></td>
+</tr>
+<tr class="row-even"><td><p>testcases</p></td>
+<td><p>List of the test cases (as <code class="docutils literal notranslate"><span class="pre">TestCaseLog</span></code> instances) within the associated Test Case Sequence.</p></td>
+</tr>
+<tr class="row-odd"><td><p>__str__()</p></td>
+<td><p>Method. Returns TestCase Sequence Log UUID as a string.</p></td>
+</tr>
+<tr class="row-even"><td><p>to_json()</p></td>
+<td><p>Method. Returns TestCase Sequence Log as a dictionary object.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="testcaselog">
+<h3>TestCaseLog<a class="headerlink" href="#testcaselog" title="Permalink to this headline">¶</a></h3>
+<p>Provides interface with database table <code class="docutils literal notranslate"><span class="pre">testCases</span></code></p>
+<table class="colwidths-given docutils align-default" id="id9">
+<caption><span class="caption-text">baangt.base.DataBaseORM.TestCaseLog</span><a class="headerlink" href="#id9" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>id</p></td>
+<td><p>TestCase Log UUID as a bianry string.</p></td>
+</tr>
+<tr class="row-odd"><td><p>testcase_sequence</p></td>
+<td><p>The associated Test Case Sequence (as a <code class="docutils literal notranslate"><span class="pre">TestCaseSequenceLog</span></code> instance).</p></td>
+</tr>
+<tr class="row-even"><td><p>fields</p></td>
+<td><p>List of the attributes (as <code class="docutils literal notranslate"><span class="pre">TestCaseField</span></code> instances) of the associated Test Case.</p></td>
+</tr>
+<tr class="row-odd"><td><p>networkInfo</p></td>
+<td><p>List of the network requests (as <code class="docutils literal notranslate"><span class="pre">TestCaseNetworkInfo</span></code> instances) made while executing the associated Test Case.</p></td>
+</tr>
+<tr class="row-even"><td><p>__str__()</p></td>
+<td><p>Method. Returns TestCase Log UUID as a string.</p></td>
+</tr>
+<tr class="row-odd"><td><p>to_json()</p></td>
+<td><p>Method. Returns TestCase Log as a dictionary object.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="globalattribute">
+<h3>GlobalAttribute<a class="headerlink" href="#globalattribute" title="Permalink to this headline">¶</a></h3>
+<p>Provides interface with table <code class="docutils literal notranslate"><span class="pre">globals</span></code></p>
+<table class="colwidths-given docutils align-default" id="id10">
+<caption><span class="caption-text">baangt.base.DataBaseORM.GlobalAttribute</span><a class="headerlink" href="#id10" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>name</p></td>
+<td><p>Name of the global attribute.</p></td>
+</tr>
+<tr class="row-odd"><td><p>value</p></td>
+<td><p>Value of the global attribute as a string.</p></td>
+</tr>
+<tr class="row-even"><td><p>testrun</p></td>
+<td><p>The associated Testrun (as a <code class="docutils literal notranslate"><span class="pre">TestrunLog</span></code> instance).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="testcasefield">
+<h3>TestCaseField<a class="headerlink" href="#testcasefield" title="Permalink to this headline">¶</a></h3>
+<p>Provides interface with table <code class="docutils literal notranslate"><span class="pre">testCaseFields</span></code></p>
+<table class="colwidths-given docutils align-default" id="id11">
+<caption><span class="caption-text">baangt.base.DataBaseORM.TestCaseField</span><a class="headerlink" href="#id11" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>name</p></td>
+<td><p>Name of the Test Case Field.</p></td>
+</tr>
+<tr class="row-odd"><td><p>value</p></td>
+<td><p>Value of the Test Case Field as a string.</p></td>
+</tr>
+<tr class="row-even"><td><p>testcase</p></td>
+<td><p>The associated test case (as a <code class="docutils literal notranslate"><span class="pre">TestCaseLog</span></code> instance).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="testcasenetworkinfo">
+<h3>TestCaseNetworkInfo<a class="headerlink" href="#testcasenetworkinfo" title="Permalink to this headline">¶</a></h3>
+<p>Provides interface with table <code class="docutils literal notranslate"><span class="pre">networkInfo</span></code></p>
+<table class="colwidths-given docutils align-default" id="id12">
+<caption><span class="caption-text">baangt.base.DataBaseORM.TestCaseField</span><a class="headerlink" href="#id12" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>browserName</p></td>
+<td><p>Browser name that mede the request.</p></td>
+</tr>
+<tr class="row-odd"><td><p>status</p></td>
+<td><p>Status code of the request as an integer.</p></td>
+</tr>
+<tr class="row-even"><td><p>method</p></td>
+<td><p>The request method used.</p></td>
+</tr>
+<tr class="row-odd"><td><p>url</p></td>
+<td><p>The request URL.</p></td>
+</tr>
+<tr class="row-even"><td><p>contentType</p></td>
+<td><p>Type of the response content as a string.</p></td>
+</tr>
+<tr class="row-odd"><td><p>contentSize</p></td>
+<td><p>Size of the response content as an integer.</p></td>
+</tr>
+<tr class="row-even"><td><p>headers</p></td>
+<td><p>A lList of the response headers as a string.</p></td>
+</tr>
+<tr class="row-odd"><td><p>params</p></td>
+<td><p>A list of the request GET parameters as a string.</p></td>
+</tr>
+<tr class="row-even"><td><p>response</p></td>
+<td><p>The response content as a string.</p></td>
+</tr>
+<tr class="row-odd"><td><p>startDateTime</p></td>
+<td><p>The request start time as a <code class="docutils literal notranslate"><span class="pre">datetime.datetime</span></code> object.</p></td>
+</tr>
+<tr class="row-even"><td><p>duration</p></td>
+<td><p>The duration of the request in <code class="docutils literal notranslate"><span class="pre">ms</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>testcase</p></td>
+<td><p>The associated test case (as a <code class="docutils literal notranslate"><span class="pre">TestCaseLog</span></code> instance).</p></td>
+</tr>
+<tr class="row-even"><td><p>to_json()</p></td>
+<td><p>Method. Returns the network info as a dictionary object.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="HistoryAndReasons.html" class="btn btn-neutral float-right" title="Why baangt and why is it open source?" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="DataFile.html" class="btn btn-neutral float-left" title="Special functions in datafiles" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Bernhard Buhl
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

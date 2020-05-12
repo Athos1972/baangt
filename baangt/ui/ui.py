@@ -1,4 +1,4 @@
-import PySimpleGUI as sg
+# import PySimpleGUI as sg
 import glob
 import os
 import sys
@@ -44,116 +44,116 @@ class UI:
 
         self.startWindow()
 
-    def getLayout(self):
-
-        lMenu = [['&File', ['&Open', '&Save', 'E&xit', 'Properties']],
-                 ['&Katalon Studio', ['Paste', ['Special', 'Normal', ], 'Undo'], ],
-                 ['&Help', '&About...'], ]
-        # lMenu doesnt' work. It shows up in the Mac-Menu, but none of the buttons work. Even the
-        # Mac-Button stops working until the window is closed
-
-        lColumnLeft = [[sg.Text("")],
-                       [sg.Text("Path", size=(10,1), font="Helvetica 10 bold"),
-                        sg.In(key="-directory-", size=(31,1), enable_events=True, default_text=self.directory, font="Helvetica 12"),
-                        sg.FolderBrowse(initial_folder=os.getcwd(), font="Helvetica 10", enable_events=True, size=(10,1))]]
-
-        lColumnLeft.append([sg.Text("TestRun", size=(10, 1), font="Helvetica 10 bold"),
-                        sg.InputCombo(self.testRunFiles, key="testRunFile", default_value=self.testRunFile,
-                                      size=(29, 1), font="Helvetica 12"),
-                        sg.Button("Execute", size=(10, 1), font="Helvetica 10", button_color=('white', 'darkgreen'))])
-
-        lColumnLeft.append([sg.Text("Settings", size=(10, 1), font="Helvetica 10 bold"),
-                            sg.InputCombo(self.configFiles, key="configFile", default_value=self.configFile,
-                                          enable_events=True, size=(29, 1), font="Helvetica 12"),
-                            sg.Button("Details", size=(10, 1), font="Helvetica 10", key="ToggleFields")])
-
-        # Baangt Logo
-        lPathLogo = Path(__file__).parent.parent.parent.joinpath("ressources").joinpath("baangtLogo2020Small.png")
-        # when in pip-Package, this doesn't work.
-        if not lPathLogo.exists():
-            lPathLogo = Path(__file__).parent.parent.joinpath("ressources").joinpath("baangtLogo2020Small.png")
-
-        lColumnRight = [[sg.Image(filename=lPathLogo)]]
-
-        lLayout = [[sg.Menu(lMenu)],
-                   [sg.Col(lColumnLeft, pad=(0,0)),
-                    sg.Col(lColumnRight, pad=(0,0), justification="right")]]
-
-        # Show the button to provide more details
-        ttip_Recorder = 'Will start the Katalon Recorder Importer'
-
-        if self.configContents:
-            lLayout.append([sg.Text(f"SETTINGS IN {self.configFile}", font="Helvetica 8 bold",
-                                    visible=self.toggleAdditionalFieldsVisible)])
-            for key, value in self.configContents.items():
-                lLayout.append([sg.In(key, key="-attrib-" + key, size=(28,1), visible=self.toggleAdditionalFieldsVisible),
-                                sg.In(key="-val-"+key, size=(34,1), default_text=value, visible=self.toggleAdditionalFieldsVisible)])
-            for i in range(0,4):
-                lLayout.append([sg.In(key=f"-newField-{i}", size=(28,1), visible=self.toggleAdditionalFieldsVisible),
-                                sg.In(key=f"-newValue-{i}", size=(34,1), visible=self.toggleAdditionalFieldsVisible)])
-
-            lLayout.append([sg.Button('Save', size=(13,1)),
-                            sg.Button("SaveAs", size=(13,1)),
-                            sg.Button("Import Recorder", size=(13,1), tooltip=ttip_Recorder),
-                            sg.Button("Import Katalon", size=(13,1), disabled=True),])
-            lLayout.append([sg.T()])
-
-        return lLayout
-
-    def startWindow(self):
-        sg.theme("LightBrown1")
-
-        self.window = sg.Window("baangt Interactive Starter", layout=self.getLayout(), location=self.mainWindowPosition,
-                                icon=self.iconFileWindow)  # size=(750,400)
-        lWindow = self.window
-        lWindow.finalize()
-
-        while True:
-            lEvent, lValues = lWindow.read(timeout=200)
-            if lEvent == "Exit":
-                break
-
-            if not lEvent:       # Window was closed by "X"-Button
-                break
-
-            self.mainWindowPosition = lWindow.CurrentLocation()
-
-            if lValues.get('-directory-') != self.directory:
-                self.directory = lValues.get("-directory-")
-                self.getConfigFilesInDirectory()
-
-            if lValues["testRunFile"]:
-                self.testRunFile = lValues["testRunFile"]
-
-            if lValues["configFile"]:
-                if lValues["configFile"] != self.configFile:
-                    self.configFile = lValues['configFile']
-                    self.readContentsOfGlobals()
-                    lWindow = self.reopenWindow(lWindow)
-
-            if lEvent == 'Save':
-                lWindow = self.saveConfigFileProcedure(lWindow, lValues)
-
-            if lEvent == 'SaveAs':
-                self.configFile = sg.popup_get_text("New Name of Configfile:")
-                if len(self.configFile) > 0:
-                    lWindow = self.saveConfigFileProcedure(lWindow, lValues)
-
-            if lEvent == "Execute":
-                self.modifyValuesOfConfigFileInMemory(lValues=lValues)
-                self.runTestRun()
-
-            if lEvent == "Import Recorder":
-                lRecorder = ImportKatalonRecorder(self.directory)
-                self.getConfigFilesInDirectory()   # Refresh display
-                lWindow['testRunFile'].update(values=self.testRunFiles,
-                                              value=lRecorder.fileNameExport)
-
-            if lEvent == 'ToggleFields':
-                lWindow = self.toggleAdditionalFieldsExecute(lWindow=lWindow)
-
-        self.saveInteractiveGuiConfig()
-        lWindow.close()
+    # def getLayout(self):
+    #
+    #     lMenu = [['&File', ['&Open', '&Save', 'E&xit', 'Properties']],
+    #              ['&Katalon Studio', ['Paste', ['Special', 'Normal', ], 'Undo'], ],
+    #              ['&Help', '&About...'], ]
+    #     # lMenu doesnt' work. It shows up in the Mac-Menu, but none of the buttons work. Even the
+    #     # Mac-Button stops working until the window is closed
+    #
+    #     lColumnLeft = [[sg.Text("")],
+    #                    [sg.Text("Path", size=(10,1), font="Helvetica 10 bold"),
+    #                     sg.In(key="-directory-", size=(31,1), enable_events=True, default_text=self.directory, font="Helvetica 12"),
+    #                     sg.FolderBrowse(initial_folder=os.getcwd(), font="Helvetica 10", enable_events=True, size=(10,1))]]
+    #
+    #     lColumnLeft.append([sg.Text("TestRun", size=(10, 1), font="Helvetica 10 bold"),
+    #                     sg.InputCombo(self.testRunFiles, key="testRunFile", default_value=self.testRunFile,
+    #                                   size=(29, 1), font="Helvetica 12"),
+    #                     sg.Button("Execute", size=(10, 1), font="Helvetica 10", button_color=('white', 'darkgreen'))])
+    #
+    #     lColumnLeft.append([sg.Text("Settings", size=(10, 1), font="Helvetica 10 bold"),
+    #                         sg.InputCombo(self.configFiles, key="configFile", default_value=self.configFile,
+    #                                       enable_events=True, size=(29, 1), font="Helvetica 12"),
+    #                         sg.Button("Details", size=(10, 1), font="Helvetica 10", key="ToggleFields")])
+    #
+    #     # Baangt Logo
+    #     lPathLogo = Path(__file__).parent.parent.parent.joinpath("ressources").joinpath("baangtLogo2020Small.png")
+    #     # when in pip-Package, this doesn't work.
+    #     if not lPathLogo.exists():
+    #         lPathLogo = Path(__file__).parent.parent.joinpath("ressources").joinpath("baangtLogo2020Small.png")
+    #
+    #     lColumnRight = [[sg.Image(filename=lPathLogo)]]
+    #
+    #     lLayout = [[sg.Menu(lMenu)],
+    #                [sg.Col(lColumnLeft, pad=(0,0)),
+    #                 sg.Col(lColumnRight, pad=(0,0), justification="right")]]
+    #
+    #     # Show the button to provide more details
+    #     ttip_Recorder = 'Will start the Katalon Recorder Importer'
+    #
+    #     if self.configContents:
+    #         lLayout.append([sg.Text(f"SETTINGS IN {self.configFile}", font="Helvetica 8 bold",
+    #                                 visible=self.toggleAdditionalFieldsVisible)])
+    #         for key, value in self.configContents.items():
+    #             lLayout.append([sg.In(key, key="-attrib-" + key, size=(28,1), visible=self.toggleAdditionalFieldsVisible),
+    #                             sg.In(key="-val-"+key, size=(34,1), default_text=value, visible=self.toggleAdditionalFieldsVisible)])
+    #         for i in range(0,4):
+    #             lLayout.append([sg.In(key=f"-newField-{i}", size=(28,1), visible=self.toggleAdditionalFieldsVisible),
+    #                             sg.In(key=f"-newValue-{i}", size=(34,1), visible=self.toggleAdditionalFieldsVisible)])
+    #
+    #         lLayout.append([sg.Button('Save', size=(13,1)),
+    #                         sg.Button("SaveAs", size=(13,1)),
+    #                         sg.Button("Import Recorder", size=(13,1), tooltip=ttip_Recorder),
+    #                         sg.Button("Import Katalon", size=(13,1), disabled=True),])
+    #         lLayout.append([sg.T()])
+    #
+    #     return lLayout
+    #
+    # def startWindow(self):
+    #     sg.theme("LightBrown1")
+    #
+    #     self.window = sg.Window("baangt Interactive Starter", layout=self.getLayout(), location=self.mainWindowPosition,
+    #                             icon=self.iconFileWindow)  # size=(750,400)
+    #     lWindow = self.window
+    #     lWindow.finalize()
+    #
+    #     while True:
+    #         lEvent, lValues = lWindow.read(timeout=200)
+    #         if lEvent == "Exit":
+    #             break
+    #
+    #         if not lEvent:       # Window was closed by "X"-Button
+    #             break
+    #
+    #         self.mainWindowPosition = lWindow.CurrentLocation()
+    #
+    #         if lValues.get('-directory-') != self.directory:
+    #             self.directory = lValues.get("-directory-")
+    #             self.getConfigFilesInDirectory()
+    #
+    #         if lValues["testRunFile"]:
+    #             self.testRunFile = lValues["testRunFile"]
+    #
+    #         if lValues["configFile"]:
+    #             if lValues["configFile"] != self.configFile:
+    #                 self.configFile = lValues['configFile']
+    #                 self.readContentsOfGlobals()
+    #                 lWindow = self.reopenWindow(lWindow)
+    #
+    #         if lEvent == 'Save':
+    #             lWindow = self.saveConfigFileProcedure(lWindow, lValues)
+    #
+    #         if lEvent == 'SaveAs':
+    #             self.configFile = sg.popup_get_text("New Name of Configfile:")
+    #             if len(self.configFile) > 0:
+    #                 lWindow = self.saveConfigFileProcedure(lWindow, lValues)
+    #
+    #         if lEvent == "Execute":
+    #             self.modifyValuesOfConfigFileInMemory(lValues=lValues)
+    #             self.runTestRun()
+    #
+    #         if lEvent == "Import Recorder":
+    #             lRecorder = ImportKatalonRecorder(self.directory)
+    #             self.getConfigFilesInDirectory()   # Refresh display
+    #             lWindow['testRunFile'].update(values=self.testRunFiles,
+    #                                           value=lRecorder.fileNameExport)
+    #
+    #         if lEvent == 'ToggleFields':
+    #             lWindow = self.toggleAdditionalFieldsExecute(lWindow=lWindow)
+    #
+    #     self.saveInteractiveGuiConfig()
+    #     lWindow.close()
 
     def saveConfigFileProcedure(self, lWindow, lValues):
         # receive updated fields and values to store in JSON-File
@@ -162,51 +162,51 @@ class UI:
         lWindow = self.reopenWindow(lWindow)
         return lWindow
 
-    def reopenWindow(self, lWindow):
-        lSize = lWindow.Size
-        lPosition = lWindow.CurrentLocation()
-        lWindow.close()
-        self.window = sg.Window("baangt Interactive Starter", layout=self.getLayout(),
-                                location=lPosition, icon=self.iconFileWindow)
-        lWindow = self.window
-        lWindow.finalize()
-        return lWindow
-
-    def toggleAdditionalFieldsExecute(self, lWindow):
-        if self.toggleAdditionalFieldsVisible:
-            self.toggleAdditionalFieldsVisible = False
-        else:
-            self.toggleAdditionalFieldsVisible = True
-
-        lWindow = self.reopenWindow(lWindow=lWindow)
-        return lWindow
-
-    def runTestRun(self):
-        if not self.configFile:
-            sg.popup_cancel("No Config File selected - can't run")
-            return
-        if not self.testRunFile:
-            sg.popup_cancel("No Testrun File selected - can't run")
-            return
-        runCmd = self._getRunCommand()
-        if self.configContents.get("TX.DEBUG"):
-            from baangt.base.TestRun.TestRun import TestRun
-
-            lTestRun = TestRun(f"{Path(self.directory).joinpath(self.testRunFile)}",
-                               globalSettingsFileNameAndPath=f'{Path(self.directory).joinpath(self.tempConfigFile)}')
-
-        else:
-            logger.info(f"Running command: {runCmd}")
-            p = subprocess.run(runCmd, shell=True, close_fds=True)
-
-
-        sg.popup_ok("Testrun finished")
-        # Remove temporary Configfile, that was created only for this run:
-        try:
-            os.remove(Path(self.directory).joinpath(self.tempConfigFile))
-        except Exception as e:
-            logger.warning(f"Tried to remove temporary file but seems to be not there: "
-                           f"{self.directory}/{self.tempConfigFile}")
+    # def reopenWindow(self, lWindow):
+    #     lSize = lWindow.Size
+    #     lPosition = lWindow.CurrentLocation()
+    #     lWindow.close()
+    #     self.window = sg.Window("baangt Interactive Starter", layout=self.getLayout(),
+    #                             location=lPosition, icon=self.iconFileWindow)
+    #     lWindow = self.window
+    #     lWindow.finalize()
+    #     return lWindow
+    #
+    # def toggleAdditionalFieldsExecute(self, lWindow):
+    #     if self.toggleAdditionalFieldsVisible:
+    #         self.toggleAdditionalFieldsVisible = False
+    #     else:
+    #         self.toggleAdditionalFieldsVisible = True
+    #
+    #     lWindow = self.reopenWindow(lWindow=lWindow)
+    #     return lWindow
+    #
+    # def runTestRun(self):
+    #     if not self.configFile:
+    #         sg.popup_cancel("No Config File selected - can't run")
+    #         return
+    #     if not self.testRunFile:
+    #         sg.popup_cancel("No Testrun File selected - can't run")
+    #         return
+    #     runCmd = self._getRunCommand()
+    #     if self.configContents.get("TX.DEBUG"):
+    #         from baangt.base.TestRun.TestRun import TestRun
+    #
+    #         lTestRun = TestRun(f"{Path(self.directory).joinpath(self.testRunFile)}",
+    #                            globalSettingsFileNameAndPath=f'{Path(self.directory).joinpath(self.tempConfigFile)}')
+    #
+    #     else:
+    #         logger.info(f"Running command: {runCmd}")
+    #         p = subprocess.run(runCmd, shell=True, close_fds=True)
+    #
+    #
+    #     sg.popup_ok("Testrun finished")
+    #     # Remove temporary Configfile, that was created only for this run:
+    #     try:
+    #         os.remove(Path(self.directory).joinpath(self.tempConfigFile))
+    #     except Exception as e:
+    #         logger.warning(f"Tried to remove temporary file but seems to be not there: "
+    #                        f"{self.directory}/{self.tempConfigFile}")
 
     def _getRunCommand(self):
         """

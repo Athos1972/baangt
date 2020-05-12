@@ -10,6 +10,7 @@ from baangt.TestSteps.TestStepMaster import TestStepMaster
 from baangt.TestCase.TestCaseMaster import TestCaseMaster
 from baangt.TestCaseSequence.TestCaseSequenceMaster import TestCaseSequenceMaster
 from baangt.base.ProxyRotate import ProxyRotate
+from baangt.base.FilesOpen import FilesOpen
 import logging
 from pathlib import Path
 import sys
@@ -133,6 +134,12 @@ class TestRun:
                     f"{successful} Testcases successfully executed, {error} errors")
         print(f"Finished execution of Testrun {self.testRunName}. "
               f"{successful} Testcases successfully executed, {error} errors")
+
+        lOpen = FilesOpen
+        lOpen.openResultFile(self.results.fileName)
+        lOpen.openLogFile([handler.baseFilename
+                           for handler in logger.handlers
+                           if isinstance(handler, logging.FileHandler)][0])
 
     def getSuccessAndError(self):
         """

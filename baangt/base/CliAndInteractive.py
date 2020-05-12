@@ -1,6 +1,6 @@
 import sys, getopt
 from baangt.base.Utils import utils
-from baangt.ui.ui import UI
+# from baangt.ui.ui import UI
 from baangt import plugin_manager
 import baangt.base.GlobalConstants as GC
 from PyQt5 import QtWidgets

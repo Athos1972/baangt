@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Developer guidelines for custom enhancements &mdash; baangt 2020.3.0.rc4 documentation</title>
+  <title>Developer guidelines for custom enhancements &mdash; baangt 2020.5.2rc5 documentation</title>
   
 
   
@@ -36,8 +36,8 @@
   <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Why baangt and why is it open source?" href="HistoryAndReasons.html" />
-    <link rel="prev" title="Types of tests" href="TestTypes.html" /> 
+    <link rel="next" title="What is a baangt-plugin" href="baangt-Plugin.html" />
+    <link rel="prev" title="DataGenerator" href="Datagenerator.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -88,9 +88,20 @@
 <li class="toctree-l1"><a class="reference internal" href="simpleExample.html">   First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Structure.html">   Structure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ParametersConfigFile.html">   Parameters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="DataFile.html">   Data file</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SimpleAPI.html">   First API Test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="TestTypes.html">   Types of Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DataFile.html">   Data file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SaveResults2Database.html">   Results in Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">   History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">   Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BrowserDrivers.html">   Browser Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Variables.html">   Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html">DataGenerator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html#input-file">Input File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html#data-type">Data Type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html#all-data-types-format">All Data Types Format</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">   For Developers</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#subclassing">Subclassing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#debugging">Debugging</a></li>
@@ -106,14 +117,17 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">   History</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html">   Changelog</a></li>
-<li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="BrowserDrivers.html">   Browser Drivers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Variables.html">   Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html">What is a baangt-plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html#how-to-make-a-baangt-plugin">how to make a baangt-plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html#how-the-baangt-plugin-work">how the baangt-plugin work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html#how-to-replace-the-existing-plugin-by-your-own-one">how to replace the existing plugin by your own one</a></li>
 <li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">   :subheader: Articles</a></li>
 <li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Autodocs:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="docs/baangt.base.html">Autodocs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/modules.html">Modules</a></li>
 </ul>
 
             
@@ -249,7 +263,9 @@ call.</p>
 <h3>Building Executables<a class="headerlink" href="#building-executables" title="Permalink to this headline">¶</a></h3>
 <ul>
 <li><p>Checkout <code class="docutils literal notranslate"><span class="pre">https://github.com/Athos1972/baangt-executables</span></code></p></li>
-<li><p>On a Windows computer: <code class="docutils literal notranslate"><span class="pre">execWindow.bat</span></code></p></li>
+<li><p>Checkout <code class="docutils literal notranslate"><span class="pre">https://gogs.earthsquad.global/athos/baangt</span></code></p></li>
+<li><p>Change to /baangt directory</p></li>
+<li><p>On a Windows computer: <code class="docutils literal notranslate"><span class="pre">execWindow.bat</span></code> (Takes about 5 Minutes)</p></li>
 <li><p>Move <code class="docutils literal notranslate"><span class="pre">/executables/baangt_windows_executable.zip</span></code> to checked out <code class="docutils literal notranslate"><span class="pre">baangt-executables</span></code> ideally with this line:</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">mv</span> <span class="pre">executables/baangt_mac_executable.zip</span> <span class="pre">../baangt-executables</span></code></p>
@@ -264,9 +280,15 @@ call.</p>
 <div class="section" id="windows-bundle-executables">
 <h4>Windows bundle executables:<a class="headerlink" href="#windows-bundle-executables" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
-<li><p>Install innosetup-qsp (QuickStartPack) Versoin 6 from <a class="reference external" href="https://jrsoftware.org/isdl.php">https://jrsoftware.org/isdl.php</a></p></li>
+<li><p>Install innosetup-qsp (QuickStartPack) Version 6 from <a class="reference external" href="https://jrsoftware.org/isdl.php">https://jrsoftware.org/isdl.php</a></p></li>
 <li><p>Open Inno Setup</p></li>
 <li><p>Use Script <code class="docutils literal notranslate"><span class="pre">/windows/baangtSetupWindows.iss</span></code></p></li>
+<li><p>Check that the path for the LICENSE is correct on your computer (most probably it isn’t!)</p></li>
+<li><p>Execute the script using the “Compile”-Button (takes about 3-5 Minutes)</p></li>
+<li><p>Copy the file from <code class="docutils literal notranslate"><span class="pre">/baangt/windows/output/baangtsetup.exe</span></code> to <code class="docutils literal notranslate"><span class="pre">baangt-executables</span></code> folder</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">add</span> <span class="pre">.</span></code> in the folder <code class="docutils literal notranslate"><span class="pre">baangt-executables</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">commit</span> <span class="pre">-m</span> <span class="pre">&lt;version&gt;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">push</span></code></p></li>
 </ul>
 </div>
 </div>
@@ -281,10 +303,10 @@ call.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="HistoryAndReasons.html" class="btn btn-neutral float-right" title="Why baangt and why is it open source?" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="baangt-Plugin.html" class="btn btn-neutral float-right" title="What is a baangt-plugin" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="TestTypes.html" class="btn btn-neutral float-left" title="Types of tests" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="Datagenerator.html" class="btn btn-neutral float-left" title="DataGenerator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

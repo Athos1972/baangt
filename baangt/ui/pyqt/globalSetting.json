@@ -30,6 +30,18 @@
                         ""],
             "displayText": "Browser attributes"
         },
+        "TC.BrowserWindowSize": {
+            "hint": "Size of the browser window",
+            "type": "text",
+            "default": "1024x768",
+            "displayText": "Browser Size"
+        },
+        "TC.BrowserZoomFactor": {
+            "hint": "Set the Zoom Factor level for the browser window. Default = 100. Switch e.g. to 70 or 120",
+            "type": "text",
+            "default": "100",
+            "displayText": "Zoom Factor"
+        },
         "TC.ParallelRuns": {
             "hint": "How many sessions do you want to run in parallel",
             "type": "text",
@@ -132,8 +144,8 @@
         "TC.LogLevel": {
             "hint": "Set the level of logging. Standard = 'debug'. For production you might want to change to another value",
             "type": "select",
-            "default": "Debug",
-            "options": ["Debug", "Info", "Warning", "Error"],
+            "default": "",
+            "options": ["", "Debug", "Info", "Warning", "Error"],
             "displayText": "LogLevel"
         }
     }
