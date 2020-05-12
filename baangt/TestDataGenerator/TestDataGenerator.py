@@ -2,6 +2,7 @@ import csv
 import itertools
 import xlsxwriter
 import xl2dict
+import xlrd
 import errno
 import os
 import logging
@@ -26,7 +27,7 @@ class TestDataGenerator:
         self.sheet_name = sheetName
         if not os.path.isfile(self.path):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), self.path)
-        self.raw_data_json = self.__read_excel(self.path, self.sheet_name)
+        self.sheet_dict, self.raw_data_json = self.__read_excel(self.path, self.sheet_name)
         self.processed_datas = self.__process_data(self.raw_data_json)
         self.headers = list(self.processed_datas[0].keys())
         self.final_data = self.__generateFinalData(self.processed_datas)
@@ -90,7 +91,6 @@ class TestDataGenerator:
         :return:
         """
         final_data = []
-        index = {}
         for lis in processed_data:
             index = {}
             data_lis = []
@@ -132,7 +132,6 @@ class TestDataGenerator:
         logger.info(f"Total generated data = {len(final_data)}")
         return final_data
 
-
     def __process_data(self, raw_json):
         """
         Processes raw json data to __data_generators and Converts raw data range and list to python list.
@@ -160,12 +159,18 @@ class TestDataGenerator:
         if type(raw_data)==float:
             raw_data = int(raw_data)
         raw_data = str(raw_data).strip()
+        prefix = ""
         try:
             if raw_data[3] == "_":
                 if raw_data[:4].lower() == "rnd_":
                     raw_data = raw_data[4:]
                     data_type = tuple
                 elif raw_data[:4].lower() == "fkr_":
+                    prefix = "Faker"
+                    raw_data = raw_data[4:]
+                    data_type = tuple
+                elif raw_data[:4].lower() == "rrd_":
+                    prefix = "Rrd"
                     raw_data = raw_data[4:]
                     data_type = tuple
                 else:
@@ -176,13 +181,21 @@ class TestDataGenerator:
             data_type = list
 
         if raw_data[0] == "[" and raw_data[-1] == "]":
-            proccesed_datas = [data.strip() for data in raw_data[1:-1].split(",")]
+            proccesed_datas = self.__splitList(raw_data)
             proccesed_datas = data_type(proccesed_datas)
 
         elif raw_data[0] == "(" and raw_data[-1] == ")":
-            proccesed_datas = [data.strip() for data in raw_data[1:-1].split(",")]
-            proccesed_datas.insert(0, "Faker")
-            proccesed_datas = data_type(proccesed_datas)
+            if prefix == "Faker":
+                proccesed_datas = [data.strip() for data in raw_data[1:-1].split(",")]
+                proccesed_datas.insert(0, "Faker")
+                proccesed_datas = data_type(proccesed_datas)
+            else:
+                evaluated_list = ']],'.join(','.join(raw_data[1:-1].split(',')[2:])[1:-1].split('],')).split('],')
+                evaluated_dict = {
+                    splited_data.split(':')[0]: self.__splitList(splited_data.split(':')[1])  for splited_data in evaluated_list
+                }
+                proccesed_datas = self.__processRrd(raw_data[1:-1].split(',')[0],raw_data[1:-1].split(',')[1],evaluated_dict)
+                proccesed_datas = data_type(proccesed_datas)
 
         elif "-" in raw_data:
             raw_data = raw_data.split('-')
@@ -201,19 +214,49 @@ class TestDataGenerator:
             proccesed_datas = data_type(proccesed_datas)
         return proccesed_datas
 
-
-
     def __read_excel(self, path, sheet_name=""):
         """
         :param path: Path to raw data xlsx file.
+        :param sheet_name: Name of the sheet where main input data is located.
         :return: json of raw data
         """
-        xl_obj = xl2dict.XlToDict()
+        wb = xlrd.open_workbook(path)
+        sheet_lis = wb.sheet_names()
+        sheet_dict = {}
+        for sheet in sheet_lis:
+            xl_obj = xl2dict.XlToDict()
+            data = xl_obj.fetch_data_by_column_by_sheet_name(path,sheet_name=sheet)
+            sheet_dict[sheet] = data
         if sheet_name == "":
-            sheet = xl_obj.fetch_data_by_column_by_sheet_index(path,sheet_index=0)
+            base_sheet = sheet_dict[sheet_lis[0]]
         else:
-            sheet = xl_obj.fetch_data_by_column_by_sheet_name(path, sheet_name=sheet_name)
-        return sheet
+            base_sheet = sheet_dict[sheet_name]
+        return sheet_dict, base_sheet
+
+    def __splitList(self, raw_data):
+        """
+        Will convert string list to python list
+        :param raw_data:
+        :return:
+        """
+        proccesed_datas = [data.strip() for data in raw_data[1:-1].split(",")]
+        return proccesed_datas
+
+    def __processRrd(self, sheet_name, data_looking_for, data_to_match: dict):
+        """
+        Will process data with RRD_ prefix
+        :param sheet_name:
+        :param data_looking_for:
+        :param data_to_match:
+        :return:
+        """
+        matching_data = [list(x) for x in itertools.product(*[data_to_match[key] for key in data_to_match])]
+        base_sheet = self.sheet_dict[sheet_name]
+        data_lis = []
+        for data in base_sheet:
+            if [data[key] for key in data_to_match] in matching_data:
+                data_lis.append(data[data_looking_for])
+        return data_lis
 
 
 if __name__ == "__main__":
