@@ -866,9 +866,10 @@ class BrowserDriver:
         "waitForPageLoadAfterButtonClick"
         :return:
         """
-        # BB/12.5.: Temporarily deactivated. This seems to be an absolute performance killer
-        # FIXME check performance WITH and WITHOUT.
-        return None
+        # Performance in 5 parallel Runs dropped from 06:50 to 07:51. That's 1 Minute slower
+        # 60 Seconds or 10% time lost.
+        # For now let it as it is. If users report that as a problem, revisit the subject and
+        # e.g. find another way to understand, whether we're still on the same page or not.
         e = None
         retryCount = 0
         wasSuccessful = False
