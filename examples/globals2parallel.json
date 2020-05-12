@@ -1,8 +1,14 @@
 {
     "exportFilesBasePath": "",
-    "TC.Lines": "",
+    "TC.Lines": "1",
     "TC.dontCloseBrowser": "True",
-    "TC.slowExecution": "True",
-    "TC.ParallelRuns": "2",
-    "TC.NetworkInfo": ""
+    "TC.slowExecution": "False",
+    "TC.ParallelRuns": "1",
+    "TC.NetworkInfo": "False",
+    "TC.Browser": "Chrome",
+    "TC.BrowserAttributes": "",
+    "TC.BrowserWindowSize": "1024x768",
+    "TC.BrowserZoomFactor": "80",
+    "TC.LogLevel": "Debug",
+    "TX.DEBUG": "True"
 }

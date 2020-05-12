@@ -10,6 +10,7 @@ from baangt.TestSteps.TestStepMaster import TestStepMaster
 from baangt.TestCase.TestCaseMaster import TestCaseMaster
 from baangt.TestCaseSequence.TestCaseSequenceMaster import TestCaseSequenceMaster
 from baangt.base.ProxyRotate import ProxyRotate
+from baangt.base.FilesOpen import FilesOpen
 import logging
 from pathlib import Path
 import sys
@@ -133,6 +134,12 @@ class TestRun:
                     f"{successful} Testcases successfully executed, {error} errors")
         print(f"Finished execution of Testrun {self.testRunName}. "
               f"{successful} Testcases successfully executed, {error} errors")
+
+        lOpen = FilesOpen
+        lOpen.openResultFile(self.results.fileName)
+        lOpen.openLogFile([handler.baseFilename
+                           for handler in logger.handlers
+                           if isinstance(handler, logging.FileHandler)][0])
 
     def getSuccessAndError(self):
         """
@@ -300,7 +307,7 @@ class TestRun:
             # Change boolean strings into boolean values.
             if isinstance(value, str):
                 if value.lower() in ("false", "true", "no", "x"):
-                    self.globalSettings[key] = utils.anyting2Boolean(value)
+                    self.globalSettings[key] = utils.anything2Boolean(value)
 
             if isinstance(value, dict):
                 if "default" in value:

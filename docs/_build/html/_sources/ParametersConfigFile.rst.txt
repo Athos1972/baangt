@@ -43,6 +43,8 @@ for instance to slowly retest a single testrecord or to not close the browser af
      - If the testcase is WEB-Testing, then you can overwrite the browser, which is defined inside the testrun definition.
        If the testcase is not a Web-Testcase this setting doesn't have any effect.
        Valid values are ``Chrome``, ``FF`` and ``Safari``
+   * - ``TC.BrowserZoomFactor``
+     - Set's the zoom factor for the browser window in the current test case. Values are numeric. Default = 100.
    * - ``TC.ParallelRuns``
      - Number of parallel sessions to be executed. Values depend largely on your hardware and internet connection.
        Debugging works only in a single session.
@@ -56,8 +58,20 @@ for instance to slowly retest a single testrecord or to not close the browser af
      - When set to "True", will always start a new browser after the previous test case was done.
    * - ``TC.UseRotatingProxies``
      - When set to "True", will not use your own IP-Address but will use random rotating proxy servers from a list of proxies.
+   * - ``TC.BrowserWindowSize``
+     - When set to a value of width x height, will adjust the browser window dimensions. Value format can be
+       ``<w>;<h> or <w>,<h> or <w>/<h> or <w>x<h> or --<w>,--<h>``
    * - ``TC.ReReadProxies``
      - When set to "True", the proxy-servers will be re-evaluated. Otherwise existing list of Proxy-Servers will be used
        for proxy rotation. List must be named ``proxies.json`` and contain a list of proxies.
        Each entry in the json file must contain ``ip`` and ``port``.
+   * - ``CL.<classType>``
+     - Usually you'd set the className of your own subclassing classes either in the testrun-JSON or XLSX for each
+       object of a testrun (TestCaseSequence, TestCase, TestStepSequence, TestStep). Here you also have the
+       change/define other classes (e.g. BrowserDriver, Timing, etc.), which you subclassed and enhanced for your
+       local installation.
+   * - ``TC.LogLevel``
+     - Set the LogLevel to a different value. In baangt standard the file-logger is set to ``debug`` while the console
+       output is set to ``info``. Using this setting you'll set both logger channels to whatever value you provide.
+       In the new UI you'll see a dropdown menu.
 

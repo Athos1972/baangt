@@ -2,9 +2,11 @@ import csv
 import itertools
 import xlsxwriter
 import xl2dict
+import xlrd
 import errno
 import os
 import logging
+import faker
 from random import sample, randint
 import baangt.base.GlobalConstants as GC
 
@@ -20,19 +22,24 @@ class TestDataGenerator:
     :method write_excel: Will write the final processed data in excel file.
     :method write_csv: Will write the final processed data in csv file.
     """
-    def __init__(self, rawExcelPath=GC.TESTDATAGENERATOR_INPUTFILE):
+    def __init__(self, rawExcelPath=GC.TESTDATAGENERATOR_INPUTFILE, sheetName=""):
         self.path = os.path.abspath(rawExcelPath)
+        self.sheet_name = sheetName
         if not os.path.isfile(self.path):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), self.path)
-        self.raw_data_json = self.__read_excel(self.path)
+        self.sheet_dict, self.raw_data_json = self.__read_excel(self.path, self.sheet_name)
         self.processed_datas = self.__process_data(self.raw_data_json)
         self.headers = list(self.processed_datas[0].keys())
         self.final_data = self.__generateFinalData(self.processed_datas)
 
     def write(self, OutputFormat=GC.TESTDATAGENERATOR_OUTPUT_FORMAT, batch_size=0, outputfile=None):
         if OutputFormat.lower() == "xlsx":
+            if outputfile == None:
+                outputfile = GC.TESTDATAGENERATOR_OUTPUTFILE_XLSX
             self.__write_excel(batch_size=batch_size, outputfile=outputfile)
         elif OutputFormat.lower() == "csv":
+            if outputfile == None:
+                outputfile = GC.TESTDATAGENERATOR_OUTPUTFILE_CSV
             self.__write_csv(batch_size=batch_size, outputfile=outputfile)
         else:
             logger.debug("Incorrect file format")
@@ -84,15 +91,31 @@ class TestDataGenerator:
         :return:
         """
         final_data = []
-        index = {}
         for lis in processed_data:
+            index = {}
             data_lis = []
             for key in lis:
                 if type(lis[key]) == str:
                     data = [lis[key]]
                 elif type(lis[key]) == tuple:
-                    index[list(lis.keys()).index(key)] = lis[key]
-                    continue
+                    if lis[key][0] == "Faker":
+                        fake = faker.Faker(lis[key][2])
+                        fake_lis = []
+                        if len(lis[key]) == 4:
+                            if int(lis[key][3]) == 0:
+                                index[list(lis.keys()).index(key)] = list(lis[key])
+                                continue
+                            else:
+                                for x in range(int(lis[key][3])):
+                                    fake_lis.append(getattr(fake, lis[key][1])())
+                        else:
+                            for x in range(5):
+                                fake_lis.append(getattr(fake, lis[key][1])())
+                        index[list(lis.keys()).index(key)] = tuple(fake_lis)
+                        continue
+                    else:
+                        index[list(lis.keys()).index(key)] = lis[key]
+                        continue
                 else:
                     data = lis[key]
                 data_lis.append(data)
@@ -100,11 +123,14 @@ class TestDataGenerator:
             for dtt in datas:
                 dtt = list(dtt)
                 for ind in index:
-                    dtt.insert(ind, index[ind][randint(0, len(index[ind])-1)])
+                    if type(index[ind]) == list:
+                        fake = faker.Faker(index[ind][2])
+                        dtt.insert(ind, getattr(fake, index[ind][1])())
+                    else:
+                        dtt.insert(ind, index[ind][randint(0, len(index[ind])-1)])
                 final_data.append(dtt)
         logger.info(f"Total generated data = {len(final_data)}")
         return final_data
-
 
     def __process_data(self, raw_json):
         """
@@ -133,9 +159,18 @@ class TestDataGenerator:
         if type(raw_data)==float:
             raw_data = int(raw_data)
         raw_data = str(raw_data).strip()
+        prefix = ""
         try:
             if raw_data[3] == "_":
                 if raw_data[:4].lower() == "rnd_":
+                    raw_data = raw_data[4:]
+                    data_type = tuple
+                elif raw_data[:4].lower() == "fkr_":
+                    prefix = "Faker"
+                    raw_data = raw_data[4:]
+                    data_type = tuple
+                elif raw_data[:4].lower() == "rrd_":
+                    prefix = "Rrd"
                     raw_data = raw_data[4:]
                     data_type = tuple
                 else:
@@ -146,8 +181,21 @@ class TestDataGenerator:
             data_type = list
 
         if raw_data[0] == "[" and raw_data[-1] == "]":
-            proccesed_datas = [data.strip() for data in raw_data[1:-1].split(",")]
+            proccesed_datas = self.__splitList(raw_data)
             proccesed_datas = data_type(proccesed_datas)
+
+        elif raw_data[0] == "(" and raw_data[-1] == ")":
+            if prefix == "Faker":
+                proccesed_datas = [data.strip() for data in raw_data[1:-1].split(",")]
+                proccesed_datas.insert(0, "Faker")
+                proccesed_datas = data_type(proccesed_datas)
+            else:
+                evaluated_list = ']],'.join(','.join(raw_data[1:-1].split(',')[2:])[1:-1].split('],')).split('],')
+                evaluated_dict = {
+                    splited_data.split(':')[0]: self.__splitList(splited_data.split(':')[1])  for splited_data in evaluated_list
+                }
+                proccesed_datas = self.__processRrd(raw_data[1:-1].split(',')[0],raw_data[1:-1].split(',')[1],evaluated_dict)
+                proccesed_datas = data_type(proccesed_datas)
 
         elif "-" in raw_data:
             raw_data = raw_data.split('-')
@@ -166,18 +214,51 @@ class TestDataGenerator:
             proccesed_datas = data_type(proccesed_datas)
         return proccesed_datas
 
-
-
-    def __read_excel(self, path):
+    def __read_excel(self, path, sheet_name=""):
         """
         :param path: Path to raw data xlsx file.
+        :param sheet_name: Name of the sheet where main input data is located.
         :return: json of raw data
         """
-        xl_obj = xl2dict.XlToDict()
-        sheet = xl_obj.fetch_data_by_column_by_sheet_index(path,sheet_index=0)
-        return sheet
+        wb = xlrd.open_workbook(path)
+        sheet_lis = wb.sheet_names()
+        sheet_dict = {}
+        for sheet in sheet_lis:
+            xl_obj = xl2dict.XlToDict()
+            data = xl_obj.fetch_data_by_column_by_sheet_name(path,sheet_name=sheet)
+            sheet_dict[sheet] = data
+        if sheet_name == "":
+            base_sheet = sheet_dict[sheet_lis[0]]
+        else:
+            base_sheet = sheet_dict[sheet_name]
+        return sheet_dict, base_sheet
+
+    def __splitList(self, raw_data):
+        """
+        Will convert string list to python list
+        :param raw_data:
+        :return:
+        """
+        proccesed_datas = [data.strip() for data in raw_data[1:-1].split(",")]
+        return proccesed_datas
+
+    def __processRrd(self, sheet_name, data_looking_for, data_to_match: dict):
+        """
+        Will process data with RRD_ prefix
+        :param sheet_name:
+        :param data_looking_for:
+        :param data_to_match:
+        :return:
+        """
+        matching_data = [list(x) for x in itertools.product(*[data_to_match[key] for key in data_to_match])]
+        base_sheet = self.sheet_dict[sheet_name]
+        data_lis = []
+        for data in base_sheet:
+            if [data[key] for key in data_to_match] in matching_data:
+                data_lis.append(data[data_looking_for])
+        return data_lis
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     lTestDataGenerator = TestDataGenerator("../../tests/0TestInput/RawTestData.xlsx")
-    lTestDataGenerator.write()#batch_size=1000)
+    lTestDataGenerator.write()

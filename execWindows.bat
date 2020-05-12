@@ -2,13 +2,14 @@ rm -r dist
 rm -r build
 rm -r executables
 
-pyinstaller --noconfirm windows/baangtWindows.spec
+pyinstaller --noconfirm --path C:/Users/buhl/git/baangt/venv3_6/Lib/site-packages windows/baangtWindows.spec
 
 rem Remove Screenshots and Logs ^
 rm -r dist/baangt/examples/Screenshots
 rm -r dist/baangt/examples/Logs
 rm -r dist/baangt/examples/1testoutput
 rm -r dist/baangt/Logs
+
 
 rem Create ZIP-file
 mkdir executables

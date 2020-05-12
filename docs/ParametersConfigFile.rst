@@ -43,6 +43,8 @@ for instance to slowly retest a single testrecord or to not close the browser af
      - If the testcase is WEB-Testing, then you can overwrite the browser, which is defined inside the testrun definition.
        If the testcase is not a Web-Testcase this setting doesn't have any effect.
        Valid values are ``Chrome``, ``FF`` and ``Safari``
+   * - ``TC.BrowserZoomFactor``
+     - Set's the zoom factor for the browser window in the current test case. Values are numeric. Default = 100.
    * - ``TC.ParallelRuns``
      - Number of parallel sessions to be executed. Values depend largely on your hardware and internet connection.
        Debugging works only in a single session.

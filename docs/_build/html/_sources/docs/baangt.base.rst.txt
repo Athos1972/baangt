@@ -76,14 +76,6 @@ baangt.base.TestRun module
    :undoc-members:
    :show-inheritance:
 
-baangt.base.TestRunDatabaseCreate module
-----------------------------------------
-
-.. automodule:: baangt.base.TestRunDatabaseCreate
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 baangt.base.TestRunExcelImporter module
 ---------------------------------------
 
@@ -115,7 +107,6 @@ baangt.base.Utils module
    :members:
    :undoc-members:
    :show-inheritance:
-
 
 Module contents
 ---------------

@@ -13,8 +13,8 @@ class TestCaseMaster:
 
         self.kwargs = kwargs
 
-        self.timing = Timing()   # Use own instance of the timing class, so that we can record timing also in
-                                 # parallel runs.
+        self.timing = Timing()  # Use own instance of the timing class, so that we can record timing also in
+        # parallel runs.
 
         self.testRunInstance = kwargs.get(GC.KWARGS_TESTRUNINSTANCE)
         self.testRunUtils = self.testRunInstance.testRunUtils
@@ -83,7 +83,7 @@ class TestCaseMaster:
 
         # Get all the TestSteps for the global loop, that are kept within this TestCase:
         lTestStepClasses = {}
-        for testStepSequenceNumer, testStep in enumerate(self.testSteps.keys(),start=1):
+        for testStepSequenceNumer, testStep in enumerate(self.testSteps.keys(), start=1):
             if self.testSteps[testStep][0]["TestStepClass"]:
                 lTestStepClasses[testStepSequenceNumer] = self.testSteps[testStep][0]["TestStepClass"]
 
@@ -99,7 +99,7 @@ class TestCaseMaster:
 
     def _finalizeTestCase(self):
         tcData = self.kwargs[GC.KWARGS_DATA]
-        tcData[GC.TIMING_DURATION] = self.timing.takeTime(self.timingName)   # Write the End-Record for this Testcase
+        tcData[GC.TIMING_DURATION] = self.timing.takeTime(self.timingName)  # Write the End-Record for this Testcase
 
         tcData[GC.TIMELOG] = self.timing.returnTime()
         self.timing.resetTime(self.timingName)
@@ -124,13 +124,20 @@ class TestCaseMaster:
 
         # If TestcaseErrorlog is not empty, the testcase status should be error.
         if data[GC.TESTCASEERRORLOG]:
-                data[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
+            data[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
 
         if self.kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR:
             # Try taking a Screenshot
             if self.testCaseType == GC.KWARGS_BROWSER:
-                data[GC.SCREENSHOTS] = self.kwargs[GC.KWARGS_DATA][GC.SCREENSHOTS] \
-                                       + '\n' + self.browser.takeScreenshot()
+                if data[GC.SCREENSHOTS]:
+                    if isinstance(data[GC.SCREENSHOTS], str):
+                        # From where does this come, damn it?!
+                        data[GC.SCREENSHOTS] = [self.browser.takeScreenshot(), data[GC.SCREENSHOTS]]
+                        pass
+                    else:
+                        data[GC.SCREENSHOTS].append(self.browser.takeScreenshot())
+                else:
+                    data[GC.SCREENSHOTS] = [self.browser.takeScreenshot()]
 
         # If Testcase-Status was not set, we'll set error. Shouldn't happen anyways.
         if not self.kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS]:
@@ -140,5 +147,5 @@ class TestCaseMaster:
 
         self._checkAndSetTestcaseStatusIfFailExpected()
 
-        logger.info(f"Testcase {self.kwargs.get(GC.STRUCTURE_TESTSTEP,'')} finished with status: {data[GC.TESTCASESTATUS]}")
-
+        logger.info(
+            f"Testcase {self.kwargs.get(GC.STRUCTURE_TESTSTEP, '')} finished with status: {data[GC.TESTCASESTATUS]}")
