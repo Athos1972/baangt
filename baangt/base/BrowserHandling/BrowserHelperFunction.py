@@ -18,6 +18,7 @@ import uuid
 import time
 import logging
 from pathlib import Path
+from baangt.base import GlobalConstants as GC
 #import json
 #import sys
 #import platform
@@ -67,14 +68,43 @@ class BrowserHelperFunction:
                              options={'captureHeaders': True, 'captureContent': True}) if browserProxy else None
 
 
+
     @staticmethod
-    def browserHelper_getBrowserExecutableNames():
-        GeckoExecutable = "geckodriver"
-        ChromeExecutable = "chromedriver"
-        if 'NT' in os.name.upper():
-            GeckoExecutable = GeckoExecutable + ".exe"
-            ChromeExecutable = ChromeExecutable + ".exe"
-        return ChromeExecutable, GeckoExecutable
+    def browserHelper_setSettingsRemoteV4(desiredCapabilities):
+        seleniumGridIp = ""
+        seleniumGridPort = ""
+        desired_capabilities = {}
+        if len(desiredCapabilities) > 0:
+            desired_capabilities = eval(desiredCapabilities)
+            if 'seleniumGridIp' in desired_capabilities.keys():
+                seleniumGridIp = desired_capabilities['seleniumGridIp']
+                del desired_capabilities['seleniumGridIp']
+            else:
+                seleniumGridIp = '127.0.0.1'
+
+            if 'seleniumGridPort' in desired_capabilities.keys():
+                seleniumGridPort = desired_capabilities['seleniumGridPort']
+                del desired_capabilities['seleniumGridPort']
+            else:
+                seleniumGridPort = '4444'
+
+            if not 'browserName' in desired_capabilities.keys():
+                desired_capabilities['browserName'] = 'firefox'
+
+        return desired_capabilities, seleniumGridIp, seleniumGridPort
+
+    @staticmethod
+    def browserHelper_getBrowserExecutable(browserName):
+        # Get executable
+        executable = GC.GECKO_DRIVER
+        if GC.BROWSER_FIREFOX == browserName:
+            executable = GC.GECKO_DRIVER
+        elif GC.BROWSER_CHROME == browserName:
+            executable = GC.CHROME_DRIVER
+
+        if 'NT' not in os.name.upper():
+            executable = executable.split('.')[0]
+        return executable
 
     @staticmethod
     def browserHelper_findBrowserDriverPaths(filename):
@@ -84,7 +114,6 @@ class BrowserHelperFunction:
 
         logger.debug(f"Path for BrowserDrivers: {lCurPath}")
         return str(lCurPath)
-
 
 
     @staticmethod
@@ -139,5 +168,4 @@ class BrowserHelperFunction:
         """
         if randomProxy:
             lProxyService = ProxyRotate()
-            lProxyService.remove_proxy(ip=randomProxy["ip"], port=randomProxy["port"],
-                                       type=randomProxy.get("type"))
+            lProxyService.remove_proxy(ip=randomProxy["ip"], port=randomProxy["port"], type=randomProxy.get("type"))

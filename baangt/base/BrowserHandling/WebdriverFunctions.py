@@ -116,10 +116,10 @@ class WebdriverFunctions:
             prefs = {"plugins.plugins_disabled" : ["Chrome PDF Viewer"],
                      "plugins.always_open_pdf_externally": True,
                      "profile.default_content_settings.popups": 0,
-                     "download.default_directory":
-                         helper.browserHelper_setBrowserDownloadDirRandom(),  # IMPORTANT - ENDING SLASH V IMPORTANT
+                     "download.default_directory": helper.browserHelper_setBrowserDownloadDirRandom(),  # IMPORTANT - ENDING SLASH V IMPORTANT
                      "directory_upgrade": True}
             lOptions.add_experimental_option("prefs", prefs)
+            lOptions.add_argument("--user-data-dir=/home/peter/snap/chromium/1143/.config/chromium/Default") # TODO remove
             # Set Proxy for Chrome. First RandomProxy (External), if set. If not, then internal Browsermob
             if randomProxy:
                 lOptions.add_argument(f"--proxy-server={randomProxy['ip']}:{randomProxy['port']}")
@@ -150,13 +150,14 @@ class WebdriverFunctions:
         "waitForPageLoadAfterButtonClick"
         :return:
         """
+        RETRY_COUNTER_LIMIT = 5
         e = None
+        html = None
         retryCount = 0
-        wasSuccessful = False
-        while retryCount < 5 and not wasSuccessful:
+
+        while retryCount < RETRY_COUNTER_LIMIT and html is None:
             try:
                 html = driver.find_element_by_tag_name('html')  # This is for waitForPageLoadAfterButton
-                wasSuccessful = True
             except NoSuchElementException as e:
                 logger.debug(f"had a NoSuchElementException: {e}")
             except NoSuchWindowException as e:
@@ -169,7 +170,7 @@ class WebdriverFunctions:
             retryCount += 1
             time.sleep(0.5)
 
-        if retryCount == 5:
+        if retryCount >= RETRY_COUNTER_LIMIT:
             raise Exceptions.baangtTestStepException(f"Couldn't locate HTML element in Page. "
                                                      f"No idea what's going on. This was the last error"
                                                      f" (check logs for more): {e}")
@@ -188,15 +189,18 @@ class WebdriverFunctions:
         The method is resistant to common timing problems (can't work 100% of the time but will remove at least 80%
         of your pain compared to directly calling Selenium Methods).
         """
+        REQUEST_TIMEOUT_MINIMUM = 1.5
+        REQUEST_POLL_FREQUENCY = 0.5
+
 
         element = None
         html = None
         begin = time.time()
         elapsed = 0
-        if timeout < 1.5:
+        if timeout < REQUEST_TIMEOUT_MINIMUM:
             pollFrequency = timeout / 3
         else:
-            pollFrequency = 0.5
+            pollFrequency = REQUEST_POLL_FREQUENCY
 
         internalTimeout = timeout / 5
 
@@ -266,13 +270,15 @@ class WebdriverFunctions:
         Similarly to __try_and_retry the method is pretty robust when it comes to error handling of timing issues.
 
         """
+        NUMBER_OF_SEND_KEY_BACKSPACE = 10
+        COUNTER_LIMIT_RETRY = 2
+        COUNTER_LIMIT_ELEMENT_REF = 4
+        COUNTER_LIMIT_ELEMENT_NOT_INTERACT = 5
+
         didWork = False
         elapsed = 0
-        begin = time.time()
         counter = 0
-
-        locatorType = browserOptions.locatorType
-        locator = browserOptions.locator
+        begin = time.time()
 
         while not didWork and elapsed < timeout:
             counter += 1
@@ -284,7 +290,7 @@ class WebdriverFunctions:
                     element.click()
                 elif command.upper() == GC.CMD_FORCETEXT:
                     element.clear()
-                    for i in range(0, 10):
+                    for i in range(0, NUMBER_OF_SEND_KEY_BACKSPACE):
                         element.send_keys(keys.Keys.BACKSPACE)
                     time.sleep(0.1)
                     element.send_keys(value)
@@ -294,12 +300,12 @@ class WebdriverFunctions:
                 logger.debug("doSomething: Element intercepted - retry")
                 time.sleep(0.2)
             except StaleElementReferenceException as e:
-                logger.debug(f"doSomething: Element stale - retry {locatorType} {locator}")
+                logger.debug(f"doSomething: Element stale - retry {browserOptions.locatorType} {browserOptions.locator}")
                 # If the element is stale after 2 times, try to re-locate the element
-                if counter < 2:
+                if counter < COUNTER_LIMIT_RETRY:
                     time.sleep(0.2)
-                elif counter < 4:
-                    begin = WebdriverFunctions.webdriver_refindElementAfterError(browserOptions, timeout)
+                elif counter < COUNTER_LIMIT_ELEMENT_REF:
+                    element, begin = WebdriverFunctions.webdriver_refindElementAfterError(browserOptions, timeout)
                 else:
                     raise Exceptions.baangtTestStepException(e)
             except NoSuchElementException as e:
@@ -309,12 +315,12 @@ class WebdriverFunctions:
                 helper.browserHelper_log(logging.ERROR, f"Invalid Session ID Exception caught - aborting... {e} ", browserOptions)
                 raise Exceptions.baangtTestStepException(e)
             except ElementNotInteractableException as e:
-                if counter < 2:
-                    logger.debug(f"Element not interactable {locatorType} {locator}, retrying")
+                if counter < COUNTER_LIMIT_RETRY:
+                    logger.debug(f"Element not interactable {browserOptions.locatorType} {browserOptions.locator}, retrying")
                     time.sleep(0.2)
-                elif counter < 5:
-                    logger.debug(f"Element not interactable {locatorType} {locator}, re-finding element")
-                    begin = WebdriverFunctions.webdriver_refindElementAfterError(browserOptions, timeout)
+                elif counter < COUNTER_LIMIT_ELEMENT_NOT_INTERACT:
+                    logger.debug(f"Element not interactable {browserOptions.locatorType} {browserOptions.locator}, re-finding element")
+                    element, begin = WebdriverFunctions.webdriver_refindElementAfterError(browserOptions, timeout)
                 else:
                     helper.browserHelper_log(logging.ERROR, f"Element not interactable {e}", browserOptions)
                     raise Exceptions.baangtTestStepException(e)
@@ -324,16 +330,16 @@ class WebdriverFunctions:
 
         if optional:
             logger.debug(
-                f"Action not possible after {timeout} s, Locator: {locatorType}: {locator}, but flag 'optional' is set")
+                f"Action not possible after {timeout} s, Locator: {browserOptions.locatorType}: {browserOptions.locator}, but flag 'optional' is set")
         else:
             raise Exceptions.baangtTestStepException(
-                f"Action not possible after {timeout} s, Locator: {locatorType}: {locator}")
+                f"Action not possible after {timeout} s, Locator: {browserOptions.locatorType}: {browserOptions.locator}")
 
         return didWork
 
     @staticmethod
     def webdriver_refindElementAfterError(browserOptions, timeout):
-        element = WebdriverFunctions.webdriver_tryAndRetry(browserOptions, timeout=timeout / 2, optional=True)
+        element, _ = WebdriverFunctions.webdriver_tryAndRetry(browserOptions, timeout=timeout / 2, optional=True)
         if element is not None:
             logger.debug(f"Re-Found element {browserOptions.locatorType}: {browserOptions.locator}, will retry ")
             begin = time.time()
@@ -341,4 +347,4 @@ class WebdriverFunctions:
             raise Exceptions.baangtTestStepException(
                 f"Element {browserOptions.locatorType} {browserOptions.locator} couldn't be found. "
                 f"Tried to re-find it, but not element was not found")
-        return begin
+        return begin, element

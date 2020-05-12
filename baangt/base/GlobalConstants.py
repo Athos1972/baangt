@@ -26,6 +26,7 @@ TIMELOG = "timelog"
 
 GECKO_DRIVER = "geckodriver.exe"
 CHROME_DRIVER = "chromedriver.exe"
+EDGE_DRIVER = "msedgedriver.exe"
 
 BROWSER_FIREFOX = "FF"
 BROWSER_CHROME = "CHROME"

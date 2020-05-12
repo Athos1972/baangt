@@ -17,6 +17,13 @@ class utils:
         self.__perf_trace = {}
 
     @staticmethod
+    def str2bool(string):
+        if string is not None:
+            return string.lower() in ("yes", "true", "t", "1")
+        else:
+            return False
+
+    @staticmethod
     def datetime_return():
         # needed, so that the datetime-module is called newly
         t = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -25,7 +32,6 @@ class utils:
     @staticmethod
     def extractFileNameFromFullPath(fileAndPathName):
         return ntpath.basename(fileAndPathName)
-        pass
 
     @staticmethod
     def sanitizeFileName(value):
