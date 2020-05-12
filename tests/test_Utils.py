@@ -230,8 +230,8 @@ def test_findFileAndPathFromPath_exists_by_directory_and_only_fileName():
 
 
 def test_anyting2Boolean_raise():
-    # todo
-    pass
+    with pytest.raises(Exception) as e:
+        utils.anyting2Boolean({})
 
 def test_anyting2Boolean_booleans():
     assert utils.anyting2Boolean(True) is True
