@@ -499,16 +499,21 @@ class ExportResults:
 
     def __attachScreenshotsToExcelCells(self, cellNumber, fieldName, line, testRecordDict):
         # Place the screenshot images "on" the appropriate cell
-        if type(testRecordDict[fieldName]) == list:
-            self.worksheet.insert_image(line, cellNumber, testRecordDict[fieldName][-1], {'x_scale': 0.05,
-                                                                                          'y_scale': 0.05})
-            for nextScreenshotNumber in range(len(testRecordDict[fieldName]) - 1):
-                self.worksheet.insert_image(line, len(self.fieldListExport) + nextScreenshotNumber + 1,
-                                            testRecordDict[fieldName][nextScreenshotNumber],
-                                            {'x_scale': 0.05, 'y_scale': 0.05})
-        else:
-            self.worksheet.insert_image(line, cellNumber, testRecordDict[fieldName], {'x_scale': 0.05,
-                                                                                      'y_scale': 0.05})
+        try:
+            if type(testRecordDict[fieldName]) == list:
+
+                self.worksheet.insert_image(line, cellNumber, testRecordDict[fieldName][-1], {'x_scale': 0.05,
+                                                                                              'y_scale': 0.05})
+                for nextScreenshotNumber in range(len(testRecordDict[fieldName]) - 1):
+                    self.worksheet.insert_image(line, len(self.fieldListExport) + nextScreenshotNumber + 1,
+                                                testRecordDict[fieldName][nextScreenshotNumber],
+                                                {'x_scale': 0.05, 'y_scale': 0.05})
+            else:
+                self.worksheet.insert_image(line, cellNumber, testRecordDict[fieldName], {'x_scale': 0.05,
+                                                                               'y_scale': 0.05})
+        except Exception as e:
+            logger.error(f"Problem with screenshots - can't attach them {e}")
+
         self.worksheet.set_row(line, 35)
 
     def closeExcel(self):

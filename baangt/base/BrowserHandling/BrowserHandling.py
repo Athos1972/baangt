@@ -693,6 +693,7 @@ class BrowserDriver:
         lIntBrowserWindowSize = lIntBrowserWindowSize.replace(";", "/")
         lIntBrowserWindowSize = lIntBrowserWindowSize.replace(",", "/")
         lIntBrowserWindowSize = lIntBrowserWindowSize.replace("x", "/")
+        lIntBrowserWindowSize = lIntBrowserWindowSize.replace("*", "/")
 
         try:
             width = int(lIntBrowserWindowSize.split("/")[0])
@@ -865,6 +866,9 @@ class BrowserDriver:
         "waitForPageLoadAfterButtonClick"
         :return:
         """
+        # BB/12.5.: Temporarily deactivated. This seems to be an absolute performance killer
+        # FIXME check performance WITH and WITHOUT.
+        return None
         e = None
         retryCount = 0
         wasSuccessful = False
