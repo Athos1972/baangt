@@ -2,7 +2,7 @@ import os
 from selenium import webdriver
 from appium import webdriver as Appiumwebdriver
 #from selenium.webdriver.support import expected_conditions as ec
-#from selenium.webdriver.common.by import By
+from selenium.webdriver.common.by import By
 #from selenium.webdriver.support.ui import WebDriverWait
 #from selenium.webdriver.chrome.options import Options as ChromeOptions
 #from selenium.webdriver.firefox.options import Options as ffOptions
@@ -351,43 +351,41 @@ class BrowserDriver:
         @param optional: If set to "True" and the operation can not be executed, just a log entry is written but no error raised
         @return: the text of the element, if element was found
         """
+        self.element = None
+        returnValue = None
         start = time.time()
-        found = False
         duration = 0
 
-        while not found and duration < timeout:
-            self.element = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout / 3,
+        while self.element is None and duration < timeout:
+            self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout / 3,
                             optional=optional)
+            time.sleep(0.5)
+            duration = time.time() - start
+
+        if self.element is not None:
             try:
                 if len(self.element.text) > 0:
-                    return self.element.text
+                    returnValue = self.element.text
                 elif self.element.tag_name == 'input':
                     #  element is of type <input />
-                    return self.element.get_property('value')
+                    returnValue = self.element.get_property('value')
 
             except Exception as e:
                 logger.debug(f"Exception during findByAndWaitForValue, but continuing {str(e)}, "
                              f"Locator: {self.browserOptions.locatorType} = {self.browserOptions.locator}")
-                pass
-            time.sleep(0.5)
-            duration = time.time() - start
+        else:
+            logger.info(f"Couldn't find value for element {self.browserOptions.locatorType}:{self.browserOptions.locator}")
 
-        logger.info(f"Couldn't find value for element {self.browserOptions.locatorType}:{self.browserOptions.locator}")
-        return None
+        return returnValue
 
     def findByAndSetText(self, id=None, css=None, xpath=None, class_name=None, value=None, iframe=None,
                          timeout=60, optional=False):
         """
         Please see documentation in findBy and __doSomething
         """
-        self.element = self.findBy(id=id,
-                    css=css,
-                    xpath=xpath,
-                    class_name=class_name,
-                    iframe=iframe,
-                    timeout=timeout)
+        self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
 
-        WebdriverFunctions.webdriver_doSomething(GC.CMD_SETTEXT, self.element, value=value, timeout=timeout, xpath=xpath, optional=optional, browserOptions = self.browserOptions)
+        WebdriverFunctions.webdriver_doSomething(GC.CMD_SETTEXT, self.element, value=value, timeout=timeout, optional=optional, browserOptions = self.browserOptions)
 
     def slowExecutionToggle(self, newSlowExecutionWaitTimeInSeconds=None):
         """
@@ -445,7 +443,7 @@ class BrowserDriver:
 
         tries = 0
 
-        self.element = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
+        self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
 
         while self.element.text != value and self.element.get_property("value") != value and tries < retries:
             helper.browserHelper_log(logging.DEBUG, f"Verified trying of SetText - iteration {tries} of {retries}", self.browserOptions)
@@ -453,7 +451,7 @@ class BrowserDriver:
             self.findByAndForceText(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe,
                                     value=value, timeout=timeout)
 
-            self.element = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
+            self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
 
             tries += 1
 
@@ -470,17 +468,25 @@ class BrowserDriver:
         @return wasSuccessful says, whether the element was found.
         """
         wasSuccessful = False
-        self.element = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout,
+        self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout,
                                     optional=optional)
 
         if self.element is None:
             logger.debug("findBy didn't work in findByAndClick")
-            wasSuccessful = False
         else:
-            wasSuccessful = True
-            WebdriverFunctions.webdriver_doSomething(GC.CMD_CLICK, self.element, xpath=xpath, timeout=timeout, optional=optional, browserOptions = self.browserOptions)
+            wasSuccessful = WebdriverFunctions.webdriver_doSomething(GC.CMD_CLICK, self.element, timeout=timeout, optional=optional, browserOptions = self.browserOptions)
 
         return wasSuccessful
+
+    def _isValidKeyValue(self, value):
+        isValid = False
+        if value is None:
+            pass
+        elif len(value) == 0 or str(value) == "0":
+            pass
+        else:
+            isValid = True
+        return isValid 
 
     def findByAndClickIf(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=60,
                          value=None, optional=False):
@@ -494,17 +500,12 @@ class BrowserDriver:
 
         If value is evaluated to "True", the click-event is executed.
         """
-        if not value:
-            return False
+        returnValue = False
 
-        if len(value) == 0:
-            return False
-
-        if str(value) == "0":
-            return False
-
-        return self.findByAndClick(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout,
-                                   optional=optional)
+        if self._isValidKeyValue(value):
+            returnValue = self.findByAndClick(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout, optional=optional)
+        
+        return returnValue
 
     def findByAndForceText(self, id=None, css=None, xpath=None, class_name=None, value=None,
                            iframe=None, timeout=60, optional=False):
@@ -513,9 +514,9 @@ class BrowserDriver:
 
         """
 
-        self.element = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
+        self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
 
-        WebdriverFunctions.webdriver_doSomething(GC.CMD_FORCETEXT, self.element, value=value, timeout=timeout, xpath=xpath, optional=optional, browserOptions = self.browserOptions)
+        WebdriverFunctions.webdriver_doSomething(GC.CMD_FORCETEXT, self.element, value=value, timeout=timeout, optional=optional, browserOptions = self.browserOptions)
 
     def setBrowserWindowSize(self, browserWindowSize: str):
         """
@@ -564,8 +565,7 @@ class BrowserDriver:
 
 
 
-    def findBy(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=60, loggingOn=True,
-               optional=False):
+    def findBy(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=60, loggingOn=True, optional=False):
         """
         chose any single locator (ID, CSS, XPATH, CLASS_NAME) to identify an element within the page. if slowExectuion
         is set, we'll pause for slowExecutionTimeoutInSeconds.
@@ -590,29 +590,27 @@ class BrowserDriver:
         # Set class variables for potential logging of problems.
 
         if xpath:
-            self.browserOptions.locatorType = 'XPATH'
+            self.browserOptions.locatorType = By.XPATH #'XPATH'  
             self.browserOptions.locator = xpath
         elif css:
-            self.browserOptions.locatorType = 'CSS'
+            self.browserOptions.locatorType = By.CSS_SELECTOR# 'CSS'
             self.browserOptions.locator = css
-
-            self.browserOptions = BrowserDriverOptions('CSS', xpath)
         elif class_name:
-            self.browserOptions.locatorType = 'ClassName'
+            self.browserOptions.locatorType = By.CLASS_NAME # 'ClassName'
             self.browserOptions.locator = class_name
         elif id:
-            self.browserOptions.locatorType = 'ID'
+            self.browserOptions.locatorType = By.ID  # 'ID'
             self.browserOptions.locator = id
 
         if loggingOn:
             logger.debug(f"Locating Element {self.browserOptions.locatorType} = {self.browserOptions.locator}")
 
-        element, self.html = WebdriverFunctions.webdriver_tryAndRetry(self.browserOptions, id, css, xpath, class_name, timeout=timeout, optional=optional)
+        element, html = WebdriverFunctions.webdriver_tryAndRetry(self.browserOptions, timeout=timeout, optional=optional)
 
         if element is None and not optional:
             raise Exceptions.baangtTestStepException(f"Element {self.browserOptions.locatorType} = {self.browserOptions.locator} could not be found "
                                                      f"within timeout of {timeout}")
-        return element
+        return element, html
 
 
  
@@ -713,7 +711,7 @@ class BrowserDriver:
         xpath, css, id = utils.setLocatorFromLocatorType(self.browserOptions.locatorType, self.browserOptions.locator)
 
         while elapsed < timeout:
-            self.element = self.findBy(xpath=xpath, css=css, id=id, timeout=0.5, optional=True)
+            self.element, self.html = self.findBy(xpath=xpath, css=css, id=id, timeout=0.5, optional=True)
             if self.element is None:
                 # Wonderful. Element is gone
                 logger.debug("Old object is not in the page any longer, save to continue")

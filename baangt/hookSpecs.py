@@ -386,12 +386,12 @@ class baangtHookSpec(object):
     # -------------------------------------------------------------------
 
     @hook_spec
-    def webdriverFunctions_webdriver_doSomething(self, webdriverobject, command, value=None, timeout=20, xpath=None, optional=False, browserOptions=None):
+    def webdriverFunctions_webdriver_doSomething(self, webdriverobject, command, value=None, timeout=20, optional=False, browserOptions=None):
         pass
 
 
     @hook_spec
-    def webdriverFunctions_webdriver_tryAndRetry(self, webdriverobject, browserOptions, id=None, css=None, xpath=None, class_name=None, timeout=20, optional=False):
+    def webdriverFunctions_webdriver_tryAndRetry(self, webdriverobject, browserOptions, timeout=20, optional=False):
         pass
 
 

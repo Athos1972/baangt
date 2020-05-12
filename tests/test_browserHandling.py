@@ -9,6 +9,53 @@ def getdriver():
     from baangt.base.BrowserHandling.BrowserHandling import BrowserDriver
     return BrowserDriver()
 
+def test_findBy_class(getdriver):
+    """ check if png file created in path """
+    # create browser
+    getdriver.createNewBrowser()
+    # take screenshot
+    getdriver.goToUrl("https://www.baangt.org")
+
+    element, html = getdriver.findBy(class_name="et_pb_menu__wrap", timeout=20, optional=False)
+
+    assert element is not None
+    assert html is not None
+
+    getdriver.closeBrowser()
+    assert not getdriver.browserOptions.driver
+
+def test_findBy_id(getdriver):
+    """ check if png file created in path """
+    # create browser
+    getdriver.createNewBrowser()
+    # take screenshot
+    getdriver.goToUrl("https://www.baangt.org/contact/")
+
+    element, html = getdriver.findBy(id="et_pb_contact_name_0", timeout=20, optional=False)
+
+    assert "input" == element.tag_name
+    assert "html" == html.tag_name 
+
+    getdriver.closeBrowser()
+    assert not getdriver.browserOptions.driver
+
+
+
+def test_findByAndClick(getdriver):
+    """ check if png file created in path """
+    # create browser
+    getdriver.createNewBrowser()
+    # take screenshot
+    getdriver.goToUrl("https://www.baangt.org")
+
+    result = getdriver.findByAndClick(xpath="//a[text()='Features']", timeout=20, optional=False)
+
+    # the file name should  exist
+    assert result == True
+
+    getdriver.closeBrowser()
+    assert not getdriver.browserOptions.driver
+
 
 def test_slowExecutionToggle(getdriver):
     """ Test slowExecution Function """
