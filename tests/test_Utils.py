@@ -11,6 +11,10 @@ logger = logging.getLogger("pyC")
 
 from baangt.base.Utils import utils
 
+def test_utils_instance():
+    instance = utils()
+    assert instance._utils__perf_trace == {}
+
 def test_datetime_return():
     datetime_now = datetime.now().strftime("%Y%m%d_%H%M%S")
     assert utils.datetime_return() == datetime_now
