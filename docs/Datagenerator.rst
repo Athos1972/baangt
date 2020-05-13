@@ -80,7 +80,7 @@ We will use the reference of above image and assigned number to learn about it i
      simply use 0 number at the position of list length.
      Example:- ``FKR_(email, EN_US, 0)``
      Now this will generate new email for every data in the output.
-  9. ``RRD_`` is used when we have multiple sheets in a input file and we need to take value which are mactching conditions
+  9. ``RRD_`` is used when we have multiple sheets in a input file and we need to take value which are matching conditions
      from that sheet.
      Format:- ``RRD_(sheetName,TargetData,[Header1:[Value1],Header2:[Value1,Value2]])``
      Here sheetName is the name of the sheet where our TargetData is located. A list of TargetData is generated with all
