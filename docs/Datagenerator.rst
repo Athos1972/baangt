@@ -10,6 +10,7 @@ Input File
 ==========
 
 .. image:: DataGeneratorInput.png
+.. image:: DataGeneratorInput_9.png
 
 This image is an example input file. Different types of data types supported are given different number in the above image.
   1. Is a simple value.
@@ -18,8 +19,9 @@ This image is an example input file. Different types of data types supported are
   4. ``RND_1,10,2``: ``RND_`` prefix is also used here but with a range.
   5. Simple range.
   6. List of header.
-  7. ``FKR_`` keyword is used here.
-  8. ``FKR_`` keyword is used here with a new integer value 0 in end.
+  7. ``FKR_`` prefix is used here.
+  8. ``FKR_`` prefix is used here with a new integer value 0 in end.
+  9. ``RRD_`` prefix is used here.
 
 Using these data type we will generate all possible values.
 Here is a simple example with simple value and value of list.
@@ -79,6 +81,13 @@ We will use the reference of above image and assigned number to learn about it i
      simply use 0 number at the position of list length.
      Example:- ``FKR_(email, EN_US, 0)``
      Now this will generate new email for every data in the output.
+  9. ``RRD_`` is used when we have multiple sheets in a input file and we need to take value which are mactching conditions
+     from that sheet.
+     Format:- ``RRD_(sheetName,TargetData,[Header1:[Value1],Header2:[Value1,Value2]])``
+     Here sheetName is the name of the sheet where our TargetData is located. A list of TargetData is generated with all
+     the data which are matching from our Header: Value pair. A header with multiple value list is than converted to all
+     possible value as mentioned in above explanation. At last a random value is selected from TargetData list for every
+     output data.
 
 All Data Types Format
 =====================
@@ -90,3 +99,4 @@ All Data Types Format
 5. random from range = ``RND_<start>-<end>,<step>``
 6. List of header    = ``[title1, title2, title3]``
 7. Faker Prefix      = ``FKR_(type, locale, number_of_data)``
+8. RRD Prefix        = ``RRD_(sheetName,TargetData,[Header1:[Value1],Header2:[Value1,Value2]])``
