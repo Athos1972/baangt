@@ -6,12 +6,18 @@ import os
 import uuid
 import logging
 from pathlib import Path
+import platform
+import ctypes
+import zipfile
+import requests
 from dataclasses import dataclass
+import tarfile
+from urllib.request import urlretrieve
 
 logger = logging.getLogger("pyC")
 
 @dataclass
-class BrowserDriverOptions:
+class BrowserDriverData:
     locatorType : str
     locator : str
     driver : None
@@ -36,7 +42,6 @@ class BrowserHelperFunction:
     def browserHelper_startBrowsermobProxy(browserName, browserInstance, browserProxy):
         browserProxy.new_har(f"baangt-{browserName}-{browserInstance}",
                              options={'captureHeaders': True, 'captureContent': True}) if browserProxy else None
-
 
 
     @staticmethod
@@ -73,7 +78,7 @@ class BrowserHelperFunction:
         else:
            executable = None 
 
-        if 'NT' not in os.name.upper() and executable is not None:
+        if 'NT' not in os.name.upper() and executable:
             executable = executable.split('.')[0]
         return executable
 
@@ -88,7 +93,7 @@ class BrowserHelperFunction:
 
 
     @staticmethod
-    def browserHelper_log(logType, logText, browserOptions, cbTakeScreenshot = None, **kwargs):
+    def browserHelper_log(logType, logText, browserData, cbTakeScreenshot = None, **kwargs):
         """
         Interal wrapper of Browser-Class for Logging. Takes a screenshot on Error and Warning.
 
@@ -103,13 +108,13 @@ class BrowserHelperFunction:
             if value:
                 argsString = argsString + f" {key}: {value}"
 
-        if browserOptions.locator is not None:
-            argsString = argsString + f" Locator: {browserOptions.locatorType} = {browserOptions.locator}"
+        if browserData.locator:
+            argsString = argsString + f" Locator: {browserData.locatorType} = {browserData.locator}"
 
         if logType == logging.DEBUG:
             logger.debug(logText + argsString)
         elif logType == logging.ERROR:
-            if cbTakeScreenshot is not None:
+            if cbTakeScreenshot:
                 xshot = cbTakeScreenshot()
             logger.error(logText + argsString + f" Screenshot: {xshot}")
         elif logType == logging.WARN:
@@ -117,12 +122,12 @@ class BrowserHelperFunction:
         elif logType == logging.INFO:
             logger.info(logText + argsString)
         elif logType == logging.CRITICAL:
-            if cbTakeScreenshot is not None:
+            if cbTakeScreenshot:
                 xshot = cbTakeScreenshot()
             logger.critical(logText + argsString + f" Screenshot: {xshot}")
         else:
             print(f"Unknown call to Logger: {logType}")
-            BrowserHelperFunction.browserHelper_log(logging.CRITICAL, f"Unknown type in call to logger: {logType}", browserOptions, cbTakeScreenshot = cbTakeScreenshot)
+            BrowserHelperFunction.browserHelper_log(logging.CRITICAL, f"Unknown type in call to logger: {logType}", browserData, cbTakeScreenshot = cbTakeScreenshot)
 
 
     @staticmethod
@@ -134,3 +139,81 @@ class BrowserHelperFunction:
         """
         if randomProxy:
             ProxyRotate().remove_proxy(ip=randomProxy["ip"], port=randomProxy["port"], type=randomProxy.get("type"))
+
+
+    @staticmethod
+    def browserHelper_getFirefoxFileUrl():
+        url = None
+        response = requests.get(GC.GECKO_URL)
+        gecko = response.json()
+        gecko = gecko['assets']
+        gecko_length_results = len(gecko)
+        drivers_url_dict = []
+
+        for i in range(gecko_length_results):
+            drivers_url_dict.append(gecko[i]['browser_download_url'])
+
+        isTarFile = True
+        zipbObj = zip(GC.OS_list, drivers_url_dict)
+        geckoDriversDict = dict(zipbObj)
+        if platform.system().lower() == GC.WIN_PLATFORM:
+            isTarFile = False
+            if ctypes.sizeof(ctypes.c_voidp) == GC.BIT_64:
+                url = geckoDriversDict[GC.OS_list[4]]
+            else:
+                url = geckoDriversDict[GC.OS_list[3]]
+        elif platform.system().lower() == GC.LINUX_PLATFORM:
+            if ctypes.sizeof(ctypes.c_voidp) == GC.BIT_64:
+                url = geckoDriversDict[GC.OS_list[1]]
+            else:
+                url = geckoDriversDict[GC.OS_list[0]]
+        else:
+            url = geckoDriversDict[GC.OS_list[2]]
+
+        return url, isTarFile
+
+    @staticmethod
+    def browserHelper_getChromeFileUrl():
+        url = None
+        response = requests.get(GC.CHROME_URL)
+        chromeversion = response.text
+        chromedriver_url_dict = []
+
+        for i in range(len(GC.OS_list_chrome)):
+            OS = GC.OS_list_chrome[i]
+            chrome = f'http://chromedriver.storage.googleapis.com/{chromeversion}/chromedriver_{OS}.zip'
+            chromedriver_url_dict.append(chrome)
+
+        zipbObjChrome = zip(GC.OS_list, chromedriver_url_dict)
+        chromeDriversDict = dict(zipbObjChrome)
+        if platform.system().lower() == GC.WIN_PLATFORM:
+            url = chromeDriversDict[GC.OS_list[3]]
+        elif platform.system().lower() == GC.LINUX_PLATFORM:
+            url = chromeDriversDict[GC.OS_list[1]]
+        else:
+            url = chromeDriversDict[GC.OS_list[2]]
+
+        return url
+  
+    @staticmethod
+    def browserHelper_unzipDriverFile(url, path, driverName):
+        file = requests.get(url)
+        path_zip = path.joinpath(driverName.replace('exe', 'zip'))
+        logger.debug(f"Zipfile with browser expected here: {path_zip} ")
+        open(path_zip, 'wb').write(file.content)
+        with zipfile.ZipFile(path_zip, 'r') as zip_ref:
+            zip_ref.extractall(path)
+
+        if platform.system().lower() != GC.WIN_PLATFORM:
+            file_path = path.joinpath(driverName.replace('.exe', ''))
+            os.chmod(file_path, 0o777)
+        os.remove(path_zip)
+
+    @staticmethod
+    def browserHelper_extractTarDriverFile(url, path, driverName):
+        path_zip = path.joinpath(driverName.replace('exe', 'tar.gz'))
+        filename, _ = urlretrieve(url, path_zip)
+        logger.debug(f"Tarfile with browser expected here: {filename} ")
+        tar = tarfile.open(filename, "r:gz")
+        tar.extractall(path=path)
+        tar.close()
