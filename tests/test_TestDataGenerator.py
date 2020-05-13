@@ -7,9 +7,8 @@ import pytest
 import baangt.base.GlobalConstants as GC
 from xlsxwriter.exceptions import FileCreateError
 
-# Test files path
+# Test file path
 rawTestFile = "0TestInput/RawTestData.xlsx"
-rrdTestFile = "0TestInput/RrdTestData.xlsx"
 
 # Create an instance of TestDataGenerator object with sample input file
 testDataGenerator = TestDataGenerator(rawTestFile)
@@ -17,7 +16,6 @@ testOutput100xls = str(Path(os.getcwd()).joinpath("1TestResults").joinpath("outp
 testOutput300csv = str(Path(os.getcwd()).joinpath("1TestResults").joinpath("output300.csv"))
 testOutputFullxls = str(Path(os.getcwd()).joinpath("1TestResults").joinpath("outputFull.xlsx"))
 testOutputFullcsv = str(Path(os.getcwd()).joinpath("1TestResults").joinpath("outputFull.csv"))
-testOutputRrd = str(Path(os.getcwd()).joinpath("1TestResults").joinpath("outputRrd.xlsx"))
 
 
 def removeFile(file):
@@ -76,16 +74,31 @@ def test_write_to_wrong_Path():
     with pytest.raises(FileCreateError):
         testDataGenerator.write(outputfile="/franzi/fritzi/hansi.xlsx", batch_size=100)
 
-def test_rrd():
-    # Checks __processRrd to get list to target data
-    rrd_test_generator = TestDataGenerator(rrdTestFile)
-    rrd_output_lis = rrd_test_generator._TestDataGenerator__processRrd(
-        'Partner', 'Partner#', {'Stage': ['PQA'], 'Bundesland': ['W', 'VBG'], 'Land': ['AT'], 'Mandant': ['WSTV']}
-    )
-    assert len(rrd_output_lis) > 0
-    for data in rrd_output_lis:
-        print(int(data))
 
-    # Write rrd output in 1TestOutput
-    rrd_test_generator.write(outputfile=testOutputRrd)
+def test_rrd_simple_input():
+    # Checks __processRrd to get dict to target data
+    rrd_output_dict = testDataGenerator._TestDataGenerator__processRrd(
+        'Customers', 'Customer', {'Age group': ['30s', '40s'], 'Employment_status': ['employed']}
+    )
+    assert len(rrd_output_dict) > 0
+    for data in rrd_output_dict:
+        print(data)
+
+
+def test_rrd_target_data_all():
+    # Checks __processRrd to get dict to for all data of matching values
+    rrd_output_dict = testDataGenerator._TestDataGenerator__processRrd(
+        'Customers', '*', {'Age group': ['30s', '40s'], 'Employment_status': ['employed']}
+    )
+    assert len(rrd_output_dict) > 0
+    for data in rrd_output_dict:
+        print(data)
+
+
+def test_rrd_no_data_to_match():
+    # Checks __processRrd to get dict to for all data of when no value of matching is given
+    rrd_output_dict = testDataGenerator._TestDataGenerator__processRrd('PaymentTerms', '*', {})
+    assert len(rrd_output_dict) > 0
+    for data in rrd_output_dict:
+        print(data)
 

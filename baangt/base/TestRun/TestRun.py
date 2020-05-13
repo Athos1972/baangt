@@ -11,6 +11,7 @@ from baangt.TestCase.TestCaseMaster import TestCaseMaster
 from baangt.TestCaseSequence.TestCaseSequenceMaster import TestCaseSequenceMaster
 from baangt.base.ProxyRotate import ProxyRotate
 from baangt.base.FilesOpen import FilesOpen
+import json
 import logging
 from pathlib import Path
 import sys
@@ -295,7 +296,7 @@ class TestRun:
             self.globalSettings = utils.openJson(self.globalSettingsFileNameAndPath)
 
         # Set default execution STAGE
-        if self.globalSettings.get(GC.EXECUTION_STAGE, None) is None:
+        if not self.globalSettings.get(GC.EXECUTION_STAGE, None):
             self.globalSettings[GC.EXECUTION_STAGE] = GC.EXECUTION_STAGE_TEST
 
     def __sanitizeGlobalsValues(self):
@@ -315,9 +316,17 @@ class TestRun:
                     # but is not part of the globalSetting.json. In this case there's the whole shebang in a dict. We
                     # are only interested in the actual value, which is stored in "default":
                     self.globalSettings[key] = value["default"]
+                    continue
                 else:
                     # This could be the "old" way of the globals-file (with {"HEADLESS":"True"})
                     self.globalSettings[key] = value
+                    continue
+
+            if isinstance(value, str) and len(value) > 0:
+                if value[0] == "{" and value[-1] == "}":
+                    # Dict, that is not seen as dict
+                    value = value.replace("\'", '"')
+                    self.globalSettings[key] = json.loads(value)
 
         if self.globalSettings.get("TC." + GC.EXECUTION_LOGLEVEL):
             utils.setLogLevel(self.globalSettings.get("TC." + GC.EXECUTION_LOGLEVEL))

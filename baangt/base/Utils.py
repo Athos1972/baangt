@@ -25,7 +25,6 @@ class utils:
     @staticmethod
     def extractFileNameFromFullPath(fileAndPathName):
         return ntpath.basename(fileAndPathName)
-        pass
 
     @staticmethod
     def sanitizeFileName(value):
@@ -275,5 +274,8 @@ class utils:
                 return True
             else:
                 return False
+
+        if not valueIn:
+            return False
 
         raise TypeError(f"Anything2Boolean had a wrong value: {valueIn}. Don't know how to convert that to boolean")
