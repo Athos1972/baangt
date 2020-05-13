@@ -40,12 +40,14 @@ class ExportResults:
         self.stage = self.testRunInstance.globalSettings.get('TC.Stage')
 
         try:
-            self.exportFormat = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.EXPORT_FORMAT)[GC.EXPORT_FORMAT]
+            self.exportFormat = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.EXPORT_FORMAT)
+            if isinstance(self.exportFormat, dict):
+                self.exportFormat = self.exportFormat.get(GC.EXPORT_FORMAT)
+
             if not self.exportFormat:
                 self.exportFormat = GC.EXP_XLSX
         except KeyError:
             self.exportFormat = GC.EXP_XLSX
-
 
         self.fileName = self.__getOutputFileName()
         logger.info("Export-Sheet for results: " + self.fileName)
