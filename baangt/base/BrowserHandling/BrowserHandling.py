@@ -481,6 +481,7 @@ class BrowserDriver:
         lIntBrowserWindowSize = lIntBrowserWindowSize.replace(";", "/")
         lIntBrowserWindowSize = lIntBrowserWindowSize.replace(",", "/")
         lIntBrowserWindowSize = lIntBrowserWindowSize.replace("x", "/")
+        lIntBrowserWindowSize = lIntBrowserWindowSize.replace("*", "/")
         validSize = False
 
         try:
@@ -694,6 +695,11 @@ class BrowserDriver:
         :return: True = New page loaded, False = The element didn't get stale within timeout
         """
 
+        # Performance in 5 parallel Runs dropped from 06:50 to 07:51. That's 1 Minute slower
+        # 60 Seconds or 10% time lost.
+        # For now let it as it is. If users report that as a problem, revisit the subject and
+        # e.g. find another way to understand, whether we're still on the same page or not.
+
         if not self.html:
             sys.exit("Something is very wrong! self.html didn't exist when waitForPageLoadAfterButtonClick was called")
 
@@ -745,9 +751,9 @@ class BrowserDriver:
 
     def javaScript(self, jsText, *args):
         """Execute a given JavaScript in the current Session"""
+
         self.browserData.driver.execute_script(jsText, *args)
-
-
+        
     def _zoomFirefox(self, lZoomKey, lHitKeyTimes):
         try:
             lWindow = self.browserData.driver.find_element_by_tag_name("html")
@@ -783,6 +789,8 @@ class BrowserDriver:
         if self.zoomFactorDesired and lZoomFactor:
             self.zoomFactorDesired = int(lZoomFactor)
             if self.browserName == GC.BROWSER_CHROME:
+                logger.critical(f"Zoom in Chrome doesn't work. Continuing without zoom")
+                return False
                 x = self.getURL()
                 if x[0:5] == "http:":       # He loaded already something. Too late for us
                     logger.debug("CHROME: Got called to change Zoom level - but already URL loaded. Too late.")

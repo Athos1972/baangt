@@ -307,7 +307,7 @@ class TestRun:
             # Change boolean strings into boolean values.
             if isinstance(value, str):
                 if value.lower() in ("false", "true", "no", "x"):
-                    self.globalSettings[key] = utils.anyting2Boolean(value)
+                    self.globalSettings[key] = utils.anything2Boolean(value)
 
             if isinstance(value, dict):
                 if "default" in value:

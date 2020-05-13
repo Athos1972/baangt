@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>baangt.base package &mdash; baangt 2020.3.0.rc4 documentation</title>
+  <title>baangt.base package &mdash; baangt 2020.5.2rc5 documentation</title>
   
 
   
@@ -35,7 +35,9 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="baangt" href="modules.html" />
+    <link rel="prev" title="Integration with Selenium Grid V4" href="../articles/SeleniumGridV4WithBaangt.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -90,15 +92,45 @@
 <li class="toctree-l1"><a class="reference internal" href="../TestTypes.html">   Types of Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../DataFile.html">   Data file</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../SaveResults2Database.html">   Results in Database</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Developer.html">   For Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../HistoryAndReasons.html">   History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contributors.html">   Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">   Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PlannedFeatures.html">   Planned Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../BrowserDrivers.html">   Browser Drivers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Variables.html">   Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Datagenerator.html">DataGenerator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Datagenerator.html#input-file">Input File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Datagenerator.html#data-type">Data Type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Datagenerator.html#all-data-types-format">All Data Types Format</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Developer.html">   For Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../baangt-Plugin.html">What is a baangt-plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../baangt-Plugin.html#how-to-make-a-baangt-plugin">how to make a baangt-plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../baangt-Plugin.html#how-the-baangt-plugin-work">how the baangt-plugin work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../baangt-Plugin.html#how-to-replace-the-existing-plugin-by-your-own-one">how to replace the existing plugin by your own one</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../articles/Articles.html">   :subheader: Articles</a></li>
 <li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Autodocs:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Autodocs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-baangt.base.ApiHandling">baangt.base.ApiHandling module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-baangt.base.BrowserHandling">baangt.base.BrowserHandling module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-baangt.base.CliAndInteractive">baangt.base.CliAndInteractive module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-baangt.base.CustGlobalConstants">baangt.base.CustGlobalConstants module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-baangt.base.ExportResults">baangt.base.ExportResults module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-baangt.base.GlobalConstants">baangt.base.GlobalConstants module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-baangt.base.HandleDatabase">baangt.base.HandleDatabase module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-baangt.base.IBAN">baangt.base.IBAN module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-baangt.base.TestRun">baangt.base.TestRun module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-baangt.base.TestRunExcelImporter">baangt.base.TestRunExcelImporter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-baangt.base.TestRunUtils">baangt.base.TestRunUtils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-baangt.base.Timing">baangt.base.Timing module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-baangt.base.Utils">baangt.base.Utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-baangt.base">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
 </ul>
 
             
@@ -318,9 +350,6 @@ find appropriate record and return that - one at a time</p>
 <div class="section" id="module-baangt.base.TestRun">
 <span id="baangt-base-testrun-module"></span><h2>baangt.base.TestRun module<a class="headerlink" href="#module-baangt.base.TestRun" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="baangt-base-testrundatabasecreate-module">
-<h2>baangt.base.TestRunDatabaseCreate module<a class="headerlink" href="#baangt-base-testrundatabasecreate-module" title="Permalink to this headline">¶</a></h2>
-</div>
 <div class="section" id="module-baangt.base.TestRunExcelImporter">
 <span id="baangt-base-testrunexcelimporter-module"></span><h2>baangt.base.TestRunExcelImporter module<a class="headerlink" href="#module-baangt.base.TestRunExcelImporter" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
@@ -497,6 +526,15 @@ given, this function will replace it with the actual value (e.g. FIREFOX)</p>
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="modules.html" class="btn btn-neutral float-right" title="baangt" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../articles/SeleniumGridV4WithBaangt.html" class="btn btn-neutral float-left" title="Integration with Selenium Grid V4" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

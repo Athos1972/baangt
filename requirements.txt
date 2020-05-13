@@ -21,4 +21,4 @@ wheel>=0.34.2
 xl2dict>=0.1.5
 xlrd>=1.2.0
 XlsxWriter>=1.2.7
-
+numpy>=1.18.4

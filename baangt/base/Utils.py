@@ -241,8 +241,10 @@ class utils:
         if not Path(lFileNameAndPath).exists():
             managedPaths = ManagedPaths()
             root_dir = managedPaths.getOrSetRootPath()
-            if "~" in lFileNameAndPath:
+            if "~" in str(lFileNameAndPath):
                 lFileNameAndPath = Path(lFileNameAndPath).expanduser()
+                if not lFileNameAndPath.exists():
+                    raise Exception(f"Can't find file {fileNameAndPath}")
             elif Path(lBasePath).joinpath(fileNameAndPath).exists():
                 lFileNameAndPath = Path(lBasePath).joinpath(lFileNameAndPath)
                 logger.debug(f"Found file via BasePath {str(lFileNameAndPath)}")
@@ -270,7 +272,7 @@ class utils:
         return str(lFileNameAndPath.absolute())
 
     @staticmethod
-    def anyting2Boolean(valueIn):
+    def anything2Boolean(valueIn):
         if isinstance(valueIn, bool):
             return valueIn
 

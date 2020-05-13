@@ -7,8 +7,11 @@ import pytest
 import baangt.base.GlobalConstants as GC
 from xlsxwriter.exceptions import FileCreateError
 
+# Test file path
+rawTestFile = "0TestInput/RawTestData.xlsx"
+
 # Create an instance of TestDataGenerator object with sample input file
-testDataGenerator = TestDataGenerator("0TestInput/RawTestData.xlsx")
+testDataGenerator = TestDataGenerator(rawTestFile)
 testOutput100xls = str(Path(os.getcwd()).joinpath("1TestResults").joinpath("output100.xlsx"))
 testOutput300csv = str(Path(os.getcwd()).joinpath("1TestResults").joinpath("output300.csv"))
 testOutputFullxls = str(Path(os.getcwd()).joinpath("1TestResults").joinpath("outputFull.xlsx"))
@@ -70,3 +73,12 @@ def test_write_csv_all():
 def test_write_to_wrong_Path():
     with pytest.raises(FileCreateError):
         testDataGenerator.write(outputfile="/franzi/fritzi/hansi.xlsx", batch_size=100)
+
+def test_rrd():
+    # Checks __processRrd to get list to target data
+    rrd_output_lis = testDataGenerator._TestDataGenerator__processRrd(
+        'Sheet2', 'Customer', {'Age group': ['30s', '40s'], 'Employment_status': ['employed']}
+    )
+    assert len(rrd_output_lis) > 0
+    for data in rrd_output_lis:
+        print(int(data))

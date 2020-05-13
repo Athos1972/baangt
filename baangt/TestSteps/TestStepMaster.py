@@ -96,7 +96,7 @@ class TestStepMaster:
         lValue = str(command["Value"])
         lValue2 = str(command["Value2"])
         lComparison = command["Comparison"]
-        lOptional = utils.anyting2Boolean(command["Optional"])
+        lOptional = utils.anything2Boolean(command["Optional"])
 
         # check release line
         lRelease = command["Release"]
@@ -329,8 +329,8 @@ class TestStepMaster:
 
     def __doComparisons(self, lComparison, value1, value2):
         if isinstance(value1, bool) or isinstance(value2, bool):
-            value1 = utils.anyting2Boolean(value1)
-            value2 = utils.anyting2Boolean(value2)
+            value1 = utils.anything2Boolean(value1)
+            value2 = utils.anything2Boolean(value2)
 
         if value2 == 'None':
             value2 = None
