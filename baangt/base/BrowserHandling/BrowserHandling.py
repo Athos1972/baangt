@@ -119,7 +119,7 @@ class BrowserDriver:
                 self._downloadDriverCheck(browserExecutable, lCurPath, GC.BROWSER_CHROME)
 
             serverUrl = 'http://' + seleniumGridIp + ':' + seleniumGridPort
-            self.browserData.driver = webDrv.BROWSER_DRIVERS[browserName](command_executor=serverUrl, desired_capabilities=desiredCapabilities)
+            self.browserData.driver = webDrv.BROWSER_DRIVERS[GC.BROWSER_REMOTE](command_executor=serverUrl, desired_capabilities=desiredCapabilities)
         else:
             raise SystemExit("Browsername unknown")
 

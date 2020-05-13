@@ -63,11 +63,13 @@ class BrowserHelperFunction:
                 seleniumGridIp = '127.0.0.1'
             else:
                 seleniumGridIp = desiredCapabilities["seleniumGridIp"]
+                desiredCapabilities.pop("seleniumGridIp")
 
             if not 'seleniumGridPort' in desiredCapabilities.keys():
                 seleniumGridPort = '4444'
             else:
                 seleniumGridPort = desiredCapabilities["seleniumGridPort"]
+                desiredCapabilities.pop("seleniumGridPort")
 
             if not 'browserName' in desiredCapabilities.keys():
                 desiredCapabilities['browserName'] = 'firefox'
