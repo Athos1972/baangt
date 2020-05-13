@@ -119,9 +119,8 @@ class WebdriverFunctions:
             lOptions = ffOptions()
         else:
             lOptions = None
-        
 
-        if desiredCapabilities and browserMobProxy and lOptions:
+        if desiredCapabilities and lOptions:
             # sometimes instead of DICT comes a string with DICT-Format
             if isinstance(desiredCapabilities, str) and "{" in desiredCapabilities and "}" in desiredCapabilities:
                 desiredCapabilities = json.loads(desiredCapabilities.replace("'", '"'))
