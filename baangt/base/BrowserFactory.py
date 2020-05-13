@@ -116,7 +116,8 @@ class BrowserFactory:
                 logger.debug(f"Using existing instance of browser {browserInstance}")
             return self.browser[browserInstance]
 
-    def setBrowserWindowSize(self, lBrowserInstance: BrowserDriver, browserWindowSize):
+    @staticmethod
+    def setBrowserWindowSize(lBrowserInstance: BrowserDriver, browserWindowSize):
         lBrowserInstance.setBrowserWindowSize(browserWindowSize)
 
     def _getBrowserInstance(self, browserInstance):

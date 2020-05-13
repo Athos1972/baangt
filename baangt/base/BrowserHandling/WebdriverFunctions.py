@@ -32,7 +32,6 @@ class WebdriverFunctions:
         GC.BROWSER_SAFARI: webdriver.Safari,
         GC.BROWSER_EDGE: webdriver.Edge,
         GC.BROWSER_REMOTE: webdriver.Remote,
-        GC.BROWSER_REMOTE_V4 : webdriver.Remote,
         GC.BROWSER_APPIUM : Appiumwebdriver.Remote
     }
 

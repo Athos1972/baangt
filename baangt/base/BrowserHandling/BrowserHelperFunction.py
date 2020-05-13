@@ -49,27 +49,30 @@ class BrowserHelperFunction:
 
     @staticmethod
     def browserHelper_setSettingsRemoteV4(desiredCapabilities):
+        """
+        Extract IP, Port and Browser from the globalSettings, if set.
+        If not, use localhost:4444/firefox as default settings
+
+        :param desiredCapabilities: (from globals)
+        :return: desiredCapabiligies, IP and Port of Selenium Grid V4
+        """
         seleniumGridIp = ""
         seleniumGridPort = ""
-        desired_capabilities = {}
         if len(desiredCapabilities) > 0:
-            desired_capabilities = eval(desiredCapabilities)
-            if 'seleniumGridIp' in desired_capabilities.keys():
-                seleniumGridIp = desired_capabilities['seleniumGridIp']
-                del desired_capabilities['seleniumGridIp']
-            else:
+            if not 'seleniumGridIp' in desiredCapabilities.keys():
                 seleniumGridIp = '127.0.0.1'
-
-            if 'seleniumGridPort' in desired_capabilities.keys():
-                seleniumGridPort = desired_capabilities['seleniumGridPort']
-                del desired_capabilities['seleniumGridPort']
             else:
+                seleniumGridIp = desiredCapabilities["seleniumGridIp"]
+
+            if not 'seleniumGridPort' in desiredCapabilities.keys():
                 seleniumGridPort = '4444'
+            else:
+                seleniumGridPort = desiredCapabilities["seleniumGridPort"]
 
-            if not 'browserName' in desired_capabilities.keys():
-                desired_capabilities['browserName'] = 'firefox'
+            if not 'browserName' in desiredCapabilities.keys():
+                desiredCapabilities['browserName'] = 'firefox'
 
-        return desired_capabilities, seleniumGridIp, seleniumGridPort
+        return desiredCapabilities, seleniumGridIp, seleniumGridPort
 
     @staticmethod
     def browserHelper_getBrowserExecutable(browserName):

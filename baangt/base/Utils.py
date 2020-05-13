@@ -275,4 +275,7 @@ class utils:
             else:
                 return False
 
+        if not valueIn:
+            return False
+
         raise TypeError(f"Anything2Boolean had a wrong value: {valueIn}. Don't know how to convert that to boolean")
