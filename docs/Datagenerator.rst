@@ -10,7 +10,6 @@ Input File
 ==========
 
 .. image:: DataGeneratorInput.png
-.. image:: DataGeneratorInput_9.png
 
 This image is an example input file. Different types of data types supported are given different number in the above image.
   1. Is a simple value.
