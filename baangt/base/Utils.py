@@ -17,16 +17,6 @@ class utils:
         self.__perf_trace = {}
 
     @staticmethod
-    def str2bool(string):
-        if string:
-            if type(string) == str:
-                return string.lower() in ("yes", "true", "t", "1")
-            else:
-                return False
-        else:
-            return False
-
-    @staticmethod
     def datetime_return():
         # needed, so that the datetime-module is called newly
         t = datetime.now().strftime("%Y%m%d_%H%M%S")

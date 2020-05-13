@@ -84,7 +84,7 @@ class BrowserDriver:
             browserProxy = kwargs.get('browserProxy')
             browserInstance = kwargs.get('browserInstance', 'unknown')
 
-            if utils.str2bool(mobileType):
+            if utils.anything2Boolean(mobileType):
                 self.browserData.driver = self._mobileConnectAppium(browserName, desired_app, mobileApp, mobile_app_setting)
             elif GC.BROWSER_FIREFOX == browserName:
                 self.browserData.driver  = self._browserFirefoxRun(browserName, lCurPath, browserProxy, randomProxy, desiredCapabilities)
@@ -169,7 +169,7 @@ class BrowserDriver:
 
         if desired_app[GC.MOBILE_PLATFORM_NAME] == "Android":
             validSettings = True
-            if utils.str2bool(mobileApp):
+            if utils.anything2Boolean(mobileApp):
                 desired_cap['app'] = mobile_app_setting[GC.MOBILE_APP_URL]
                 desired_cap['appPackage'] = mobile_app_setting[GC.MOBILE_APP_PACKAGE]
                 desired_cap['appActivity'] = mobile_app_setting[GC.MOBILE_APP_ACTIVITY]
@@ -180,7 +180,7 @@ class BrowserDriver:
             
         elif desired_app[GC.MOBILE_PLATFORM_NAME] == "iOS":
             validSettings = True
-            if utils.str2bool(mobileApp):
+            if utils.anything2Boolean(mobileApp):
                 desired_cap['automationName'] = 'XCUITest'
                 desired_cap['app'] = mobile_app_setting[GC.MOBILE_APP_URL]
             else:
