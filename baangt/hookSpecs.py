@@ -386,7 +386,7 @@ class baangtHookSpec(object):
     # -------------------------------------------------------------------
 
     @hook_spec
-    def webdriverFunctions_webdriver_doSomething(self, webdriverobject, command, value=None, timeout=20, optional=False, browserData=None):
+    def webdriverFunctions_webdriver_doSomething(self, webdriverobject, command, element, value=None, timeout=20, optional=False, browserData=None):
         pass
 
 
@@ -406,10 +406,10 @@ class baangtHookSpec(object):
 
     # -------------------------------------------------------------------
 
-
     @hook_spec
     def browserHelperFunction_browserHelper_log(self, browserHelperObject, logType, logText, browserData, cbTakeScreenshot = None, **kwargs):
         pass
+
 
     @hook_spec
     def browserHelperFunction_browserHelper_findBrowserDriverPaths(self, browserHelperObject ,filename):

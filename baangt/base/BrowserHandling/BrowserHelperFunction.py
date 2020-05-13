@@ -23,6 +23,9 @@ class BrowserDriverData:
     driver : None
 
 class BrowserHelperFunction:
+    """
+    Helper function class for BrowserHandling. 
+    """
 
     @staticmethod
     def browserHelper_setBrowserDownloadDirRandom():
@@ -143,6 +146,8 @@ class BrowserHelperFunction:
 
     @staticmethod
     def browserHelper_getFirefoxFileUrl():
+        #TODO check if this function can be combined with browserHelper_getChromeFileUrl
+        # Can ctypes.c_voidp used for both browsers?
         url = None
         response = requests.get(GC.GECKO_URL)
         gecko = response.json()

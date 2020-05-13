@@ -22,6 +22,9 @@ import sys
 logger = logging.getLogger("pyC")
 
 class WebdriverFunctions:
+    """
+    The webdriverclass for BrowserHandling to interact with selenium webdriver.
+    """
 
     BROWSER_DRIVERS = {
         GC.BROWSER_FIREFOX: webdriver.Firefox,
@@ -188,7 +191,6 @@ class WebdriverFunctions:
         """
         REQUEST_TIMEOUT_MINIMUM = 1.5
         REQUEST_POLL_FREQUENCY = 0.5
-
 
         element = None
         html = None

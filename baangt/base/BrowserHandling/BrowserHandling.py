@@ -162,7 +162,8 @@ class BrowserDriver:
             )
 
 
-    def _mobileConnectAppium(self, browserName, desired_app, mobileApp, mobile_app_setting):
+    @staticmethod
+    def _mobileConnectAppium(browserName, desired_app, mobileApp, mobile_app_setting):
         validSettings = False
         desired_cap = desired_app
 
@@ -303,8 +304,7 @@ class BrowserDriver:
             if not success:
                 raise Exceptions.baangtTestStepException(f"Window {windowNumber} doesn't exist after timeout {timeout}")
 
-    def findByAndWaitForValue(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=20,
-                              optional=False):
+    def findByAndWaitForValue(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=20, optional=False):
         """
 
         @param id: ID of the element
@@ -430,7 +430,8 @@ class BrowserDriver:
         else:
             return webDrv.webdriver_doSomething(GC.CMD_CLICK, self.element, timeout=timeout, optional=optional, browserData = self.browserData)
 
-    def _isValidKeyValue(self, value):
+    @staticmethod
+    def _isValidKeyValue(value):
         isValid = False
         if not value:
             pass
@@ -519,7 +520,8 @@ class BrowserDriver:
         l_list = self.downloadFolderMonitoring.getNewFiles()
         return l_list
 
-    def _setLocator(self, id, css, xpath, class_name, browserData):
+    @staticmethod
+    def _setLocator(id, css, xpath, class_name, browserData):
         browserData.locatorType = None
         browserData.locator = None
         if xpath:
