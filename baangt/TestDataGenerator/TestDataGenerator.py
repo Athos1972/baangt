@@ -101,24 +101,8 @@ class TestDataGenerator:
                     data = [lis[key]]
                 elif type(lis[key]) == tuple:
                     if len(lis[key]) > 0:
-                        if lis[key][0] == "Faker":
-                            fake = faker.Faker(lis[key][2])
-                            fake_lis = []
-                            if len(lis[key]) == 4:
-                                if int(lis[key][3]) == 0:
-                                    index[list(lis.keys()).index(key)] = list(lis[key])
-                                    continue
-                                else:
-                                    for x in range(int(lis[key][3])):
-                                        fake_lis.append(getattr(fake, lis[key][1])())
-                            else:
-                                for x in range(5):
-                                    fake_lis.append(getattr(fake, lis[key][1])())
-                            index[list(lis.keys()).index(key)] = tuple(fake_lis)
-                            continue
-                        else:
-                            index[list(lis.keys()).index(key)] = lis[key]
-                            continue
+                        self.__prefix_data_processing(lis, key, index)
+                        continue
                     else:
                         data = ['']
                 else:
@@ -156,6 +140,27 @@ class TestDataGenerator:
         logger.info(f"Total generated data = {len(final_data)}")
         return final_data
 
+    def __prefix_data_processing(self, lis, key, dictionary):
+        ltuple = lis[key]
+        if ltuple[0] == "Faker":
+            fake = faker.Faker(ltuple[2])
+            fake_lis = []
+            if len(ltuple) == 4:
+                if int(ltuple[3]) == 0:
+                    dictionary[list(lis.keys()).index(key)] = list(ltuple)
+                    return True
+                else:
+                    for x in range(int(ltuple[3])):
+                        fake_lis.append(getattr(fake, ltuple[1])())
+            else:
+                for x in range(5):
+                    fake_lis.append(getattr(fake, ltuple[1])())
+            dictionary[list(lis.keys()).index(key)] = tuple(fake_lis)
+            return True
+        else:
+            dictionary[list(lis.keys()).index(key)] = ltuple
+            return True
+
     def __process_data(self, raw_json):
         """
         Processes raw json data to __data_generators and Converts raw data range and list to python list.
@@ -171,12 +176,10 @@ class TestDataGenerator:
                 keys = self.__data_generators(key)
                 for ke in keys:
                     processed_data[ke] = self.__data_generators(raw_data[key])
-                    '''if type(processed_data[ke]) == tuple and len(processed_data[ke])>0:
+                    if type(processed_data[ke]) == tuple and len(processed_data[ke])>0:
                         if type(processed_data[ke][0]) == dict:
-                            if len(processed_data[ke][0]) == 1 and ke in processed_data[ke][0]:
-                                pass
-                            else:
-                                self.remove_header.append(ke)'''
+                            if ke not in processed_data[ke][0]:
+                                self.remove_header.append(ke)
             processed_datas.append(processed_data)
         return processed_datas
 
