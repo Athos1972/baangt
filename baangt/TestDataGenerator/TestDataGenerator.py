@@ -9,6 +9,7 @@ import logging
 import faker
 from random import sample, randint
 import baangt.base.GlobalConstants as GC
+import re
 
 logger = logging.getLogger("pyC")
 
@@ -170,9 +171,12 @@ class TestDataGenerator:
                 keys = self.__data_generators(key)
                 for ke in keys:
                     processed_data[ke] = self.__data_generators(raw_data[key])
-                    if type(processed_data[ke]) == tuple and len(processed_data[ke])>0:
+                    '''if type(processed_data[ke]) == tuple and len(processed_data[ke])>0:
                         if type(processed_data[ke][0]) == dict:
-                            self.remove_header.append(ke)
+                            if len(processed_data[ke][0]) == 1 and ke in processed_data[ke][0]:
+                                pass
+                            else:
+                                self.remove_header.append(ke)'''
             processed_datas.append(processed_data)
         return processed_datas
 
@@ -197,6 +201,7 @@ class TestDataGenerator:
                     data_type = tuple
                 elif raw_data[:4].lower() == "rrd_":
                     prefix = "Rrd"
+                    raw_data = self.__process_rrd_string(raw_data)
                     raw_data = raw_data[4:]
                     data_type = tuple
                 else:
@@ -219,7 +224,12 @@ class TestDataGenerator:
         elif prefix == "Rrd":
             first_value = raw_data[1:-1].split(',')[0].strip()
             second_value = raw_data[1:-1].split(',')[1].strip()
-            third_value = [x.strip() for x in raw_data[1:-1].split(',')[2:]]
+            if second_value[0] == "[":
+                second_value = ','.join(raw_data[1:-1].split(',')[1:]).strip()
+                second_value = second_value[:second_value.index(']')+1]
+                third_value = [x.strip() for x in ']'.join(raw_data[1:-1].split(']')[1:]).split(',')[1:]]
+            else:
+                third_value = [x.strip() for x in raw_data[1:-1].split(',')[2:]]
             evaluated_list = ']],'.join(','.join(third_value)[1:-1].strip().split('],')).split('],')
             if evaluated_list[0] == "":
                 evaluated_dict = {}
@@ -265,6 +275,7 @@ class TestDataGenerator:
         if sheet_name == "":
             base_sheet = sheet_dict[sheet_lis[0]]
         else:
+            assert sheet_name in sheet_dict, f"Excel file doesn't contain {sheet_name} sheet. Please recheck."
             base_sheet = sheet_dict[sheet_name]
         return sheet_dict, base_sheet
 
@@ -286,9 +297,12 @@ class TestDataGenerator:
         :return:
         """
         matching_data = [list(x) for x in itertools.product(*[data_to_match[key] for key in data_to_match])]
+        assert sheet_name in self.sheet_dict, f"Excel file doesn't contain {sheet_name} sheet. Please recheck. Called in 'RRD_'"
         base_sheet = self.sheet_dict[sheet_name]
         data_lis = []
-        data_looking_for = data_looking_for.split(",")
+        if type(data_looking_for) == str:
+            data_looking_for = data_looking_for.split(",")
+
         for data in base_sheet:
             if len(matching_data) == 1 and len(matching_data[0]) == 0:
                 if data_looking_for[0] == "*":
@@ -303,6 +317,10 @@ class TestDataGenerator:
                         data_lis.append({keys: data[keys] for keys in data_looking_for})
         return data_lis
 
+    def __process_rrd_string(self, rrd_string):
+        processed_string = ','.join([word.strip() for word in rrd_string.split(', ')])
+        match = re.match(r"(RRD_(\(|\[))[a-zA-z0-9]+,([a-zA-z]+|\*),\[([a-zA-z0-9]+:\[[a-zA-z0-9,]+\](,?))*\](\]|\))",processed_string)
+        return processed_string
 
 if __name__ == "__main__":
     lTestDataGenerator = TestDataGenerator("../../tests/0TestInput/RawTestData.xlsx")
