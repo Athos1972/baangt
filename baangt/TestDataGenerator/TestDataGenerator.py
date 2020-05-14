@@ -537,5 +537,5 @@ class TestDataGenerator:
         return processed_string
 
 if __name__ == "__main__":
-    lTestDataGenerator = TestDataGenerator("../../tests/0TestInput/RawTestData.xlsx")#../KfzDataGenerator.xlsx", sheetName="PKW u KlLKW")
+    lTestDataGenerator = TestDataGenerator("../../tests/0TestInput/RawTestData.xlsx")
     lTestDataGenerator.write()
