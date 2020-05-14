@@ -336,13 +336,13 @@ class TestDataGenerator:
         if len(raw_data)<=1:
             return [""]
         if raw_data[0] == "[" and raw_data[-1] == "]" and prefix == "":
-            proccesed_datas = self.__splitList(raw_data)
-            proccesed_datas = data_type(proccesed_datas)
+            processed_datas = self.__splitList(raw_data)
+            processed_datas = data_type(processed_datas)
 
         elif prefix == "Faker":
-                proccesed_datas = [data.strip() for data in raw_data[1:-1].split(",")]
-                proccesed_datas.insert(0, "Faker")
-                proccesed_datas = data_type(proccesed_datas)
+                processed_datas = [data.strip() for data in raw_data[1:-1].split(",")]
+                processed_datas.insert(0, "Faker")
+                processed_datas = data_type(processed_datas)
 
         elif prefix == "Rrd":
             first_value = raw_data[1:-1].split(',')[0].strip()
@@ -362,8 +362,8 @@ class TestDataGenerator:
                 }
             if second_value[0] == "[" and second_value[-1] == "]":
                 second_value = self.__splitList(second_value)
-            proccesed_datas = self.__processRrd(first_value, second_value,evaluated_dict)
-            proccesed_datas = data_type(proccesed_datas)
+            processed_datas = self.__processRrd(first_value, second_value,evaluated_dict)
+            processed_datas = data_type(processed_datas)
 
         elif "-" in raw_data:
             raw_data = raw_data.split('-')
@@ -374,13 +374,13 @@ class TestDataGenerator:
                 raw_data = end.split(",")
                 end = raw_data[0].strip()
                 step = raw_data[1].strip()
-            proccesed_datas = [x for x in range(int(start), int(end)+1, int(step))]
-            proccesed_datas = data_type(proccesed_datas)
+            processed_datas = [x for x in range(int(start), int(end)+1, int(step))]
+            processed_datas = data_type(processed_datas)
 
         else:
-            proccesed_datas = [raw_data.strip()]
-            proccesed_datas = data_type(proccesed_datas)
-        return proccesed_datas
+            processed_datas = [raw_data.strip()]
+            processed_datas = data_type(processed_datas)
+        return processed_datas
 
     def __raw_data_string_process(self, raw_string):
         """
