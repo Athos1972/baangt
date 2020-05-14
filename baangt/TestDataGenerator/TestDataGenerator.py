@@ -407,14 +407,14 @@ class TestDataGenerator:
         prefix = ""
         if len(raw_string)>4:
             if raw_string[3] == "_":
-                if raw_string[:4].lower() == "rnd_":
+                if raw_string[:4].lower() == "rnd_":           # Random
                     raw_string = raw_string[4:]
                     data_type = tuple
                 elif raw_string[:4].lower() == "fkr_":
                     prefix = "Faker"
                     raw_string = raw_string[4:]
                     data_type = tuple
-                elif raw_string[:4].lower() == "rrd_":
+                elif raw_string[:4].lower() == "rrd_":         # Remote Random (Remote = other sheet)
                     prefix = "Rrd"
                     raw_string = self.__process_rrd_string(raw_string)
                     raw_string = raw_string[4:]
@@ -427,7 +427,8 @@ class TestDataGenerator:
             data_type = list
         return raw_string, prefix, data_type
 
-    def __read_excel(self, path, sheet_name=""):
+    @staticmethod
+    def __read_excel(path, sheet_name=""):
         """
         This method will read the input excel file.
         It will read all the sheets inside this excel file and will create a dictionary of dictionary containing all data
@@ -457,7 +458,8 @@ class TestDataGenerator:
             base_sheet = sheet_dict[sheet_name]
         return sheet_dict, base_sheet
 
-    def __splitList(self, raw_data):
+    @staticmethod
+    def __splitList(raw_data):
         """
         Will convert string list to python list.
         i.e. "[value1,value2,value3]" ==> ["value1","value2","value3"]
@@ -532,7 +534,8 @@ class TestDataGenerator:
         """
         processed_string = ','.join([word.strip() for word in rrd_string.split(', ')])
         match = re.match(r"(RRD_(\(|\[))[a-zA-z0-9\s]+,(\[?[a-zA-z\s,]+\]?|)|\*,\[([a-zA-z0-9\s]+:\[[a-zA-z0-9,\s]+\](,?))*\]",processed_string)
-        err_string = f"{rrd_string} not matching pattern RRD_(sheetName,TargetData,[Header1:[Value1],Header2:[Value1,Value2]])"
+        err_string = f"{rrd_string} not matching pattern RRD_(sheetName,TargetData," \
+                     f"[Header1:[Value1],Header2:[Value1,Value2]])"
         assert match, err_string
         return processed_string
 
