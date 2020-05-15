@@ -578,13 +578,12 @@ class BrowserDriver:
         if loggingOn:
             logger.debug(f"Locating Element {self.browserData.locatorType} = {self.browserData.locator}")
 
-        self.element, html = webDrv.webdriver_tryAndRetry(self.browserData, timeout=timeout, optional=optional)
+        self.element, self.html = webDrv.webdriver_tryAndRetry(self.browserData, timeout=timeout, optional=optional)
 
         if not self.element and not optional:
             raise Exceptions.baangtTestStepException(f"Element {self.browserData.locatorType} = {self.browserData.locator} could not be found "
                                                      f"within timeout of {timeout}")
-        return self.element, html
-
+        return self.element, self.html
 
     def getURL(self):
         """
