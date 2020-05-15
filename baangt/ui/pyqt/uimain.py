@@ -23,6 +23,7 @@ import pyperclip
 import platform
 from baangt.base.PathManagement import ManagedPaths
 from uuid import uuid4
+from baangt.base.FilesOpen import FilesOpen
 
 logger = logging.getLogger("pyC")
 
@@ -92,6 +93,11 @@ class MainWindow(Ui_MainWindow):
         self.deleteLastPushButton.clicked.connect(self.deleteLast)
         self.saveAspushButton.clicked.connect(self.saveAsNewFile)
         self.executePushButton_4.clicked.connect(self.runTestRun)
+
+        # FileOpen buttons
+        self.openResultFilePushButton_4.clicked.connect(self.openResultFile)
+        self.openLogFilePushButton_4.clicked.connect(self.openLogFile)
+        self.openTestFilePushButton_4.clicked.connect(self.openTestFile)
 
         # Quit Event
         self.actionExit.triggered.connect(self.quitApplication)
@@ -360,7 +366,7 @@ class MainWindow(Ui_MainWindow):
             from baangt.base.TestRun.TestRun import TestRun
 
             lUUID = uuid4()
-            lTestRun = TestRun(f"{Path(self.directory).joinpath(self.testRunFile)}",
+            self.lTestRun = TestRun(f"{Path(self.directory).joinpath(self.testRunFile)}",
                  globalSettingsFileNameAndPath=f'{Path(self.directory).joinpath(self.tempConfigFile)}', uuid=lUUID)
 
         else:
@@ -886,6 +892,41 @@ class MainWindow(Ui_MainWindow):
         """ Call ImportKatalonRecorder.importClipboard internally """
         self.TextIn_2.setPlainText(pyperclip.paste())
         self.importClipboard()
+
+    @QtCore.pyqtSlot()
+    def openResultFile(self):
+        """ Uses Files Open class to open Result file """
+        try:
+            filePathName = self.lTestRun.results.fileName
+            fileName = os.path.basename(filePathName)
+            self.statusbar.showMessage(f"Opening file {fileName}")
+            FilesOpen.openResultFile(filePathName)
+        except:
+            self.statusbar.showMessage("No file found!")
+
+    @QtCore.pyqtSlot()
+    def openLogFile(self):
+        """ Uses Files Open class to open Log file """
+        try:
+            filePathName = [
+                handler.baseFilename for handler in logger.handlers if isinstance(handler, logging.FileHandler)
+            ][0]
+            fileName = os.path.basename(filePathName)
+            self.statusbar.showMessage(f"Opening file {fileName}")
+            FilesOpen.openResultFile(filePathName)
+        except:
+            self.statusbar.showMessage("No file found!")
+
+    @QtCore.pyqtSlot()
+    def openTestFile(self):
+        """ Uses Files Open class to open Log file """
+        try:
+            filePathName = f"{Path(self.directory).joinpath(self.testRunFile)}"
+            fileName = os.path.basename(filePathName)
+            self.statusbar.showMessage(f"Opening file {fileName}")
+            FilesOpen.openResultFile(filePathName)
+        except:
+            self.statusbar.showMessage("No file found!")
 
 
 # Controller

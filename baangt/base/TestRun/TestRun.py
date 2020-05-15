@@ -136,11 +136,6 @@ class TestRun:
         print(f"Finished execution of Testrun {self.testRunName}. "
               f"{successful} Testcases successfully executed, {error} errors")
 
-        lOpen = FilesOpen
-        lOpen.openResultFile(self.results.fileName)
-        lOpen.openLogFile([handler.baseFilename
-                           for handler in logger.handlers
-                           if isinstance(handler, logging.FileHandler)][0])
 
     def getSuccessAndError(self):
         """
