@@ -144,11 +144,15 @@ class BrowserDriver:
         executable = helper.browserHelper_getBrowserExecutable(browserName)
         self._downloadDriverCheck(executable, lCurPath, browserName)
 
-        return webDrv.BROWSER_DRIVERS[browserName](
-            chrome_options = webDrv.webdriver_createBrowserOptions(browserName=browserName,
+        lOptions = webDrv.webdriver_createBrowserOptions(browserName=browserName,
                                                         desiredCapabilities=desiredCapabilities,
                                                         browserMobProxy=browserProxy,
-                                                        randomProxy=randomProxy),
+                                                        randomProxy=randomProxy)
+
+        self.downloadFolder=webDrv.getDownloadFolderFromChromeOptions(options=lOptions)
+
+        return webDrv.BROWSER_DRIVERS[browserName](
+            chrome_options = lOptions,
             executable_path = helper.browserHelper_findBrowserDriverPaths(executable),
             service_log_path = os.path.join(self.managedPaths.getLogfilePath(), 'chromedriver.log')
         )
@@ -158,6 +162,7 @@ class BrowserDriver:
         self._downloadDriverCheck(executable, lCurPath, browserName)
 
         profile = webDrv.webdriver_setFirefoxProfile(browserProxy, randomProxy)
+        self.downloadFolder = webDrv.getDownloadFolderFromProfile(profile)
         logger.debug(f"Firefox Profile as follows:{profile.userPrefs}")
 
         return webDrv.BROWSER_DRIVERS[browserName](

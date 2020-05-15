@@ -36,6 +36,10 @@ class WebdriverFunctions:
     }
 
     @staticmethod
+    def getDownloadFolderFromProfile(profile: webdriver.FirefoxProfile):
+        return profile.__getattribute__("default_preferences")["browser.download.dir"]
+
+    @staticmethod
     def webdriver_setFirefoxProfile(browserProxy, randomProxy=None):
         profile = webdriver.FirefoxProfile()
         if browserProxy:
@@ -140,6 +144,9 @@ class WebdriverFunctions:
 
         return lOptions
 
+    @staticmethod
+    def getDownloadFolderFromChromeOptions(options: ChromeOptions):
+        return options.__getattribute__("experimental_options")["prefs"]["download.default_directory"]
 
     @staticmethod
     def webdriver_getCurrentHTMLReference(driver):
