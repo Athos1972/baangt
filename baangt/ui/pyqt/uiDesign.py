@@ -155,7 +155,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.executePushButton_4.setSizePolicy(sizePolicy)
         self.executePushButton_4.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(138, 226, 52);")
 
-        self.executeIcon = QtGui.QIcon("baangt/ressources/play.png")
+        self.executeIcon = QtGui.QIcon(":/baangt/executeicon")
         self.executePushButton_4.setIcon(self.executeIcon)
         self.executePushButton_4.setIconSize(QtCore.QSize(28, 20))
         self.executePushButton_4.setObjectName("executePushButton_4")
@@ -169,7 +169,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.openTestFilePushButton_4.setSizePolicy(sizePolicy)
         self.openTestFilePushButton_4.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(114, 159, 207);")
         self.openTestFilePushButton_4.setObjectName("openTestFilePushButton_4")
-        self.openTestFileIcon = QtGui.QIcon("baangt/ressources/glass.png")
+        self.openTestFileIcon = QtGui.QIcon(":/baangt/testfileicon")
         self.openTestFilePushButton_4.setIcon(self.openTestFileIcon)
         self.openTestFilePushButton_4.setIconSize(QtCore.QSize(28, 20))
         self.horizontalLayout_15.addWidget(self.openTestFilePushButton_4)
