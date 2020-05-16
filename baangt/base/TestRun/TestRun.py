@@ -35,7 +35,7 @@ class ClassesForObjects:
 class TestRun:
     """
     This is the main Class of Testexecution in the baangt Framework. It is usually started
-    from baangt.py
+    from baangtIA.py
     """
 
     def __init__(self, testRunName, globalSettingsFileNameAndPath=None,

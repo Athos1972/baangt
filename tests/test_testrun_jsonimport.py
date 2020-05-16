@@ -16,7 +16,7 @@ def testrun_obj():
 def test_with_globalsHeadless(testrun_obj):
     lTestRun = TestRun("SimpleTheInternet.xlsx",
                        globalSettingsFileNameAndPath= \
-                           Path(os.getcwd()).joinpath("jsons").joinpath("globals_headless.json"),
+                           Path(os.getcwd()).joinpath("tests").joinpath("jsons").joinpath("globals_headless.json"),
                        executeDirect=False)
     lTestRun._initTestRunSettingsFromFile()
 
@@ -27,18 +27,18 @@ def test_with_globalsHeadless(testrun_obj):
 def test_with_globalsHeadlessVersion2(testrun_obj):
     lTestRun = TestRun("SimpleTheInternet.xlsx",
                        globalSettingsFileNameAndPath= \
-                           Path(os.getcwd()).joinpath("jsons").joinpath("globals_headless2.json"),
+                           Path(os.getcwd()).joinpath("tests").joinpath("jsons").joinpath("globals_headless2.json"),
                        executeDirect=False)
 
     lTestRun._initTestRunSettingsFromFile()
 
     assert lTestRun.globalSettings["TC.BrowserAttributes"]
-    assert isinstance(lTestRun.globalSettings["TC.BrowserAttributes"], str)
+    assert isinstance(lTestRun.globalSettings["TC.BrowserAttributes"], dict)
 
 def tests_with_fullGlobalsFile(testrun_obj):
     lTestRun = TestRun("SimpleTheInternet.xlsx",
                        globalSettingsFileNameAndPath= \
-                           Path(os.getcwd()).joinpath("jsons").joinpath("globalsFullExample.json"),
+                           Path(os.getcwd()).joinpath("tests").joinpath("jsons").joinpath("globalsFullExample.json"),
                        executeDirect=False)
 
     lTestRun._initTestRunSettingsFromFile()

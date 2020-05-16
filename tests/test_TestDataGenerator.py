@@ -7,15 +7,20 @@ import pytest
 import baangt.base.GlobalConstants as GC
 from xlsxwriter.exceptions import FileCreateError
 
+####
+# DO NOT CHANGE THE PATHS below. Instead execute PYTEST from baangt root directory and not from /tests
+####pi
+
 # Test file path
-rawTestFile = "0TestInput/RawTestData.xlsx"
+rawTestFile = "tests/0TestInput/RawTestData.xlsx"
 
 # Create an instance of TestDataGenerator object with sample input file
+
 testDataGenerator = TestDataGenerator(rawTestFile)
-testOutput100xls = str(Path(os.getcwd()).joinpath("1TestResults").joinpath("output100.xlsx"))
-testOutput300csv = str(Path(os.getcwd()).joinpath("1TestResults").joinpath("output300.csv"))
-testOutputFullxls = str(Path(os.getcwd()).joinpath("1TestResults").joinpath("outputFull.xlsx"))
-testOutputFullcsv = str(Path(os.getcwd()).joinpath("1TestResults").joinpath("outputFull.csv"))
+testOutput100xls = str(Path(os.getcwd()).joinpath("Tests").joinpath("1TestResults").joinpath("output100.xlsx"))
+testOutput300csv = str(Path(os.getcwd()).joinpath("Tests").joinpath("1TestResults").joinpath("output300.csv"))
+testOutputFullxls = str(Path(os.getcwd()).joinpath("Tests").joinpath("1TestResults").joinpath("outputFull.xlsx"))
+testOutputFullcsv = str(Path(os.getcwd()).joinpath("Tests").joinpath("1TestResults").joinpath("outputFull.csv"))
 
 
 def removeFile(file):

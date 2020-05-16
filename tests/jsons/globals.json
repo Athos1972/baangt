@@ -1,8 +1,7 @@
 {
-    "exportFilesBasePath": "",
     "TC.Lines": "",
     "TC.dontCloseBrowser": "",
-    "TC.slowExecution": "",
+    "TC.slowExecution": "True",
     "TC.BrowserAttributes": "{'browserName': 'firefox', 'seleniumGridIp': 'localhost', 'seleniumGridPort': '4444'}",
     "TC.Browser": "REMOTE_V4",
     "TC.ExportFormat": "CSV"
