@@ -1,4 +1,4 @@
-Appium-Python-Client>=0.50
+Appium-Python-Client==0.52
 beautifulsoup4==4.8.2
 browsermob-proxy>=0.8.0
 dataclasses>=0.6
