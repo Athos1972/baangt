@@ -1,6 +1,7 @@
 Appium-Python-Client>=0.50
 alabaster==0.7.12
 Babel>=2.8.0
+bump2version>=1.0.0
 beautifulsoup4==4.8.2
 browsermob-proxy>=0.8.0
 coverage==5.0.4
