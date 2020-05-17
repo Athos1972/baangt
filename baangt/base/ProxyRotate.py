@@ -290,6 +290,9 @@ class ProxyRotate(metaclass=Singleton):
             lCount += 1
             time.sleep(1)
         logger.critical(f"Proxies count: {len(self.proxies)}")
+        if len(self.proxies) == 0:
+            logger.critical("No proxy was found. Maybe internet down?")
+            raise BaseException("No proxy was found. Maybe internet down?")
         proxy = self.proxies[list(self.proxies.keys())[randint(0, len(self.proxies) - 1)]]
         proxy.Called()
         if proxy.username == "" and proxy.password == "":
