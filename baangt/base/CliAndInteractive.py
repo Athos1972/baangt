@@ -8,16 +8,16 @@ from PyQt5 import QtWidgets
 from baangt.ui.pyqt.uimain import MainController
 def print_args():
     print("""
-Call: python baangt.py --parameters 
+Call: python baangtIA.py --parameters 
        --run=<Existing, predefined Name of a TestRun (XLSX or .JSON-File incl. Path)>
        --globals=<path to JSON-File containing global Settings. If omitted, will look for globals.json in the current directory>
        --reloadDrivers=<anyValue> : This command will replace existing browser drivers (Chrome/Firefox) with latest versions
 
  Suggested for standard use:
-   python baangt.py --run="Franzi4711.xlsx": Will run a Testrun Franzi4711.xlsx
-   python baangt.py --run="runProducts.json": Will execute a Testrun as specified in runProducts.json and use default globals.json, if exists
-   python baangt.py --run="runProducts.json" --globals="production.json" will use settings in production.json
-   python baangt.py --run="runProducts.json" --globals="qa.json" will use settings in qa.json
+   python baangtIA.py --run="Franzi4711.xlsx": Will run a Testrun Franzi4711.xlsx
+   python baangtIA.py --run="runProducts.json": Will execute a Testrun as specified in runProducts.json and use default globals.json, if exists
+   python baangtIA.py --run="runProducts.json" --globals="production.json" will use settings in production.json
+   python baangtIA.py --run="runProducts.json" --globals="qa.json" will use settings in qa.json
    
    If run without parameters you'll find a simple interactive Window
    """)

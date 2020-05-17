@@ -17,25 +17,18 @@ from pathlib import Path
 import sys
 from baangt.base.Timing.Timing import Timing
 from baangt.base.TestRunUtils import TestRunUtils
+from baangt.base.TestRun.ClassesForObjects import ClassesForObjects
 import time
 from baangt.base.PathManagement import ManagedPaths
-from dataclasses import dataclass
 from uuid import uuid4
 
 logger = logging.getLogger("pyC")
 
 
-@dataclass
-class ClassesForObjects:
-    browserFactory: str = "baangt.base.BrowserFactory.BrowserFactory"
-    browserHandling: str = "baangt.base.BrowserHandling.BrowserHandling.BrowserDriver"
-    testCaseSequenceMaster: str = "baangt.TestCaseSequenceMaster.TestCaseSequenceMaster"
-
-
 class TestRun:
     """
     This is the main Class of Testexecution in the baangt Framework. It is usually started
-    from baangt.py
+    from baangtIA.py
     """
 
     def __init__(self, testRunName, globalSettingsFileNameAndPath=None,
@@ -136,12 +129,6 @@ class TestRun:
         print(f"Finished execution of Testrun {self.testRunName}. "
               f"{successful} Testcases successfully executed, {error} errors")
 
-        lOpen = FilesOpen
-        lOpen.openResultFile(self.results.fileName)
-        lOpen.openLogFile([handler.baseFilename
-                           for handler in logger.handlers
-                           if isinstance(handler, logging.FileHandler)][0])
-
     def getSuccessAndError(self):
         """
         Returns number of successful and number of error test cases of the current test run
@@ -195,6 +182,7 @@ class TestRun:
 
         """
         self.testRunUtils.replaceGlobals(self.globalSettings)
+        self.testRunUtils.replaceClasses(self.testRunName, self.classesForObjects)
 
         kwargs = {GC.KWARGS_TESTRUNATTRIBUTES: self.getAllTestRunAttributes(),
                   GC.KWARGS_TESTRUNINSTANCE: self,

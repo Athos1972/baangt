@@ -122,13 +122,12 @@ def test_replaceAllGlobalConstantsInDict_loopList_list():
 
 
 def test_openJson():
-    directory = Path(os.getcwd()).parent.joinpath("examples")
+    directory = Path(os.getcwd()).joinpath("tests").joinpath("jsons")
     json_globals = utils.openJson(Path(directory).joinpath('globals.json'))
     assert json_globals["TC.Lines"] == ""
-    assert json_globals["TC.dontCloseBrowser"] == "True"
+    assert not json_globals["TC.dontCloseBrowser"]
     assert json_globals["TC.slowExecution"] == "True"
-    assert json_globals["TC.NetworkInfo"] == "False"
-    assert json_globals["TX.DEBUG"] == "False"
+    assert not json_globals.get("TX.DEBUG")
 
 
 def test_setLogLevel():
@@ -250,7 +249,7 @@ def test_findFileAndPathFromPath_except_canot_find_file():
 
 
 def test_findFileAndPathFromPath_exists_by_directory_and_only_fileName():
-    directory = Path(os.getcwd()).parent.joinpath("examples")
+    directory = Path(os.getcwd()).joinpath("examples")
     fileNameAndPath = 'globals.json'
     result = utils.findFileAndPathFromPath(fileNameAndPath, str(directory))
 
@@ -258,8 +257,8 @@ def test_findFileAndPathFromPath_exists_by_directory_and_only_fileName():
 
 
 def test_anything2Boolean_raise():
-    with pytest.raises(Exception):
-        utils.anything2Boolean({})
+    lResult = utils.anything2Boolean({})
+    assert lResult == False
 
 
 def test_anything2Boolean_booleans():

@@ -41,7 +41,8 @@ class BrowserDriver:
     def __init__(self, timing=None, screenshotPath=None):
         self.iFrame = None
         self.element = None                 
-        self.browserData = BrowserDriverData(locatorType=None, locator=None, driver=webDrv.BROWSER_DRIVERS[GC.BROWSER_FIREFOX])
+        self.browserData = BrowserDriverData(locatorType=None, locator=None,
+                                             driver=webDrv.BROWSER_DRIVERS[GC.BROWSER_FIREFOX])
         self.slowExecution = False
         self.slowExecutionTimeoutInSeconds = 1
         self.downloadFolder = None
@@ -54,14 +55,19 @@ class BrowserDriver:
         self.managedPaths = ManagedPaths()
 
         if timing:
+            self.timing = timing
             self.takeTime = timing.takeTime
         else:
-            self.takeTime = Timing().takeTime
+            self.timing = Timing()
+            self.takeTime = self.timing.takeTime
 
         if not screenshotPath or screenshotPath == "":
             self.screenshotPath = self.managedPaths.getOrSetScreenshotsPath()
         else:
             self.screenshotPath = screenshotPath
+
+    def sleep(self, seconds):
+        time.sleep(seconds)
 
     def createNewBrowser(self, mobileType=None, mobileApp = None, desired_app = None, mobile_app_setting = None,
                          browserName=GC.BROWSER_FIREFOX,
@@ -138,11 +144,15 @@ class BrowserDriver:
         executable = helper.browserHelper_getBrowserExecutable(browserName)
         self._downloadDriverCheck(executable, lCurPath, browserName)
 
-        return webDrv.BROWSER_DRIVERS[browserName](
-            chrome_options = webDrv.webdriver_createBrowserOptions(browserName=browserName,
+        lOptions = webDrv.webdriver_createBrowserOptions(browserName=browserName,
                                                         desiredCapabilities=desiredCapabilities,
                                                         browserMobProxy=browserProxy,
-                                                        randomProxy=randomProxy),
+                                                        randomProxy=randomProxy)
+
+        self.downloadFolder=webDrv.getDownloadFolderFromChromeOptions(options=lOptions)
+
+        return webDrv.BROWSER_DRIVERS[browserName](
+            chrome_options = lOptions,
             executable_path = helper.browserHelper_findBrowserDriverPaths(executable),
             service_log_path = os.path.join(self.managedPaths.getLogfilePath(), 'chromedriver.log')
         )
@@ -152,6 +162,7 @@ class BrowserDriver:
         self._downloadDriverCheck(executable, lCurPath, browserName)
 
         profile = webDrv.webdriver_setFirefoxProfile(browserProxy, randomProxy)
+        self.downloadFolder = webDrv.getDownloadFolderFromProfile(profile)
         logger.debug(f"Firefox Profile as follows:{profile.userPrefs}")
 
         return webDrv.BROWSER_DRIVERS[browserName](
@@ -567,13 +578,12 @@ class BrowserDriver:
         if loggingOn:
             logger.debug(f"Locating Element {self.browserData.locatorType} = {self.browserData.locator}")
 
-        element, html = webDrv.webdriver_tryAndRetry(self.browserData, timeout=timeout, optional=optional)
+        self.element, self.html = webDrv.webdriver_tryAndRetry(self.browserData, timeout=timeout, optional=optional)
 
-        if not element and not optional:
+        if not self.element and not optional:
             raise Exceptions.baangtTestStepException(f"Element {self.browserData.locatorType} = {self.browserData.locator} could not be found "
                                                      f"within timeout of {timeout}")
-        return element, html
-
+        return self.element, self.html
 
     def getURL(self):
         """

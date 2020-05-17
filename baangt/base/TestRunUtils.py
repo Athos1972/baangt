@@ -1,3 +1,4 @@
+from baangt.base.TestRun.ClassesForObjects import ClassesForObjects
 import baangt.base.GlobalConstants as GC
 import logging
 
@@ -22,6 +23,29 @@ class TestRunUtils():
 
     def getTestStepByNumber(self, testCase, testStepNumber):
         return testCase[2][GC.STRUCTURE_TESTSTEP].get(testStepNumber)
+
+    def replaceClasses(self, testRunName, classes:ClassesForObjects, ):
+        """
+        Apart from what is defined in the TestRunDefintion (XLSX or "guessed" by TestRunExcelImporter) the user
+        may give new class names in the globals file.
+
+        We shall replace all corresponding appearances with those new class names
+
+        :param classes:
+        :return: No return parameter. Changes are kept internally
+        """
+        lTestRun = self.testRunAttributes[testRunName]
+
+        try:
+            for n in range(1,999):
+                lSequence = self.getSequenceByNumber(n, testRunName=testRunName)
+                if lSequence:
+                    lSequence[0] = classes.testCaseSequenceMaster
+                    lSequence[1]["SequenceClass"] = classes.testCaseSequenceMaster
+                else:
+                    break
+        except BaseException as e:
+            pass # This was the last TestCaseSequence within this test case.
 
     def replaceGlobals(self, globals):
         """

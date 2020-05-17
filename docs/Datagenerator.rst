@@ -103,11 +103,11 @@ We will use the reference of above image and assigned number to learn about it i
 All Data Types Format
 =====================
 
-1. Value             = ``value``
+1. Value             = ``<value>``
 2. list of values    = ``[<value1>,<value2>]``
 3. range             = ``<start>-<end>,<step>``
 4. random            = ``RND_[list]``
 5. random from range = ``RND_<start>-<end>,<step>``
-6. List of header    = ``[title1, title2, title3]``
-7. Faker Prefix      = ``FKR_(type, locale, number_of_data)``
-8. RRD Prefix        = ``RRD_(sheetName,TargetData,[Header1:[Value1],Header2:[Value1,Value2]])``
+6. List of header    = ``[<title1>, <title2>, <title3>]``
+7. Faker Prefix      = ``FKR_(<type>, <locale>, <number_of_data>)``
+8. RRD Prefix        = ``RRD_(<sheetName>,<TargetData>,[<Header1>:[<Value1>],<Header2>:[<Value1>,<Value2>]])``
