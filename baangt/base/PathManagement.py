@@ -46,7 +46,7 @@ class ManagedPaths(metaclass=Singleton):
         """
         Will return path where Log files will be saved.
 
-        This Path will be taken from Paths.json
+        This Path will be taken from old_Paths.json
 
         :return: Logfile path
         """
