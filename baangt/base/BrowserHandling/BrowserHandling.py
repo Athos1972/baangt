@@ -827,8 +827,10 @@ class BrowserDriver:
 
         return isZoomed
 
-    def downloadDriver(self, browserName):
-        path = Path(self.managedPaths.getOrSetDriverPath())
+    @staticmethod
+    def downloadDriver(browserName):
+        managedPaths = ManagedPaths()
+        path = Path(managedPaths.getOrSetDriverPath())
         logger.debug(f"Trying to download browserDriver for {browserName} into {path}")
         path.mkdir(parents=True, exist_ok=True)
         if browserName == GC.BROWSER_FIREFOX:
