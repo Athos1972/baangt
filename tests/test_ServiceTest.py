@@ -1,5 +1,6 @@
 import os
 import glob
+import xlrd
 import subprocess
 from pathlib import Path
 from baangt.base.DownloadFolderMonitoring import DownloadFolderMonitoring
@@ -8,7 +9,7 @@ from baangt.base import GlobalConstants as GC
 from baangt.base.PathManagement import ManagedPaths
 from baangt.base.TestRun.TestRun import TestRun
 from uuid import uuid4
-
+from threading import Thread
 
 # Will Check for the current directory and change it to baangt root dir
 if not os.path.basename(os.getcwd()) == "baangt":
@@ -52,17 +53,39 @@ for f in files:
 folder_monitor = DownloadFolderMonitoring(str(output_dir))
 
 
+# Program execution functions
 def execute_from_main(run_file, globals_file):
     # Execute the main baangt program with TestRunFile and globals file
     subprocess.call(
-        "python3 baangt.py --run "+run_file+" --globals "+globals_file,
+        "python baangt.py --run "+run_file+" --globals "+globals_file,
         shell=True, env=my_env
     )
 
 
 def execute(run_file, globals_file):
+    # Execute the program using TestRun
     lUUID = uuid4()
     lTestRun = TestRun(run_file, globalSettingsFileNameAndPath=globals_file, uuid=lUUID)
+
+
+# Testing Output Functions
+def check_output(xlsx_file):
+    workbook = xlrd.open_workbook(xlsx_file)
+    book = workbook.sheet_by_name("Summary")
+    test_records = book.row(2)[1].value or 0
+    success = book.row(3)[1].value or 0
+    error = book.row(5)[1].value or 0
+    test_records = int(test_records)
+    success = int(success)
+    error = int(error)
+    assert success >= test_records/2
+
+
+def check_browsermob_output(xlsx_file):
+    workbook = xlrd.open_workbook(xlsx_file)
+    book = workbook.sheet_by_name("Network")
+    assert book.nrows > 25
+
 
 
 def test_download_browser_drivers():
@@ -133,18 +156,6 @@ def test_csv_firefox():
     return "Firefox Output Format test succeed output file =", new_file[0][0]
 
 
-def test_all_firefox():
-    # Will test all firefox functionalities together
-    results = [
-        test_regular_firefox(),
-        test_parellel_firefox(),
-        test_browsermob_proxy_firefox(),
-        test_headless_firefox(),
-        test_csv_firefox()
-    ]
-    return results
-
-
 # Chrome Testing Section
 def test_regular_chrome():
     # Will run the main program with normal regular globals settings
@@ -196,29 +207,6 @@ def test_csv_chrome():
     assert ".csv" in new_file[0][0]
     return "Chrome Output Format test succeed output file =", new_file[0][0]
 
-
-def test_all_chrome():
-    # Will test all firefox functionalities together
-    results = [
-        test_regular_chrome(),
-        test_parellel_chrome(),
-        test_browsermob_proxy_chrome(),
-        test_headless_chrome(),
-        test_csv_chrome()
-    ]
-    return results
-
-
-def test_all():
-    # Will test all functions in this module
-    results = [
-        test_download_browser_drivers(),
-        test_all_firefox(),
-        test_all_chrome()
-    ]
-    for result in results:
-        if type(result) == str:
-            print(result)
-        else:
-            for each in result:
-                print(each)
+t = Thread(target=test_parellel_firefox)
+t.daemon = True
+t.start()

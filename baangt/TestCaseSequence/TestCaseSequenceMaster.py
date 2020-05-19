@@ -84,11 +84,16 @@ class TestCaseSequenceMaster:
                                                    testcaseSequence=self.testCases,
                                                    **kwargs)
                 process.one_sequence(results)
-
+        print(parallelInstances)
         # Create and runconcurrent threads
-        threads = gevent.joinall([
-            gevent.spawn(single_thread, num) for num in range(parallelInstances)
-        ], timeout=1200)
+        lis = []
+        for num in range(parallelInstances):
+            print(num)
+            lis.append(gevent.spawn(single_thread, num))
+            print(num)
+        print(lis)
+        print(len(lis))
+        threads = gevent.joinall(lis, timeout=1200)
 
         # after joining all threads
         while not results.empty():
