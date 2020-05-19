@@ -6,6 +6,7 @@ from baangt.base.DownloadFolderMonitoring import DownloadFolderMonitoring
 from baangt.base.BrowserFactory import BrowserDriver
 from baangt.base import GlobalConstants as GC
 from baangt.base.PathManagement import ManagedPaths
+from baangt.base.TestRun.TestRun import TestRun
 
 
 # Will Check for the current directory and change it to baangt root dir
@@ -50,13 +51,17 @@ for f in files:
 folder_monitor = DownloadFolderMonitoring(str(output_dir))
 
 
-def execute(run_file, globals_file):
+def execute_from_main(run_file, globals_file):
     # Execute the main baangt program with TestRunFile and globals file
     subprocess.call(
         "python baangt.py --run "+run_file+" --globals "+globals_file,
         shell=True, env=my_env
     )
 
+
+def execute(run_file, globals_file):
+    lTestRun = TestRun(run_file, globalSettingsFileNameAndPath=globals_file)
+    del lTestRun
 
 def test_download_browser_drivers():
     # Will delete the pre-existing browsers and download new.

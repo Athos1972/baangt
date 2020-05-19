@@ -165,6 +165,11 @@ class ExportResults:
         # get documents
         datafiles = self.fileName
 
+        print(
+            self.testRunInstance.uuid.bytes, self.testRunName, logger.handlers[1].baseFilename,
+            datetime.strptime(start, "%H:%M:%S"), datetime.strptime(end, "%H:%M:%S"), success, error, waiting, datafiles
+        )
+
         # create testrun object
         tr_log = TestrunLog(
             id=self.testRunInstance.uuid.bytes,
