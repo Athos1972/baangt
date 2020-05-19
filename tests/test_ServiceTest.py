@@ -19,10 +19,10 @@ if not os.path.basename(os.getcwd()) == "baangt":
 
 # Paths
 current_dir = os.getcwd()
-output_dir = Path(current_dir).joinpath( 'tests/1Testresults/ServiceTest')
+output_dir = Path(current_dir).joinpath('tests/1Testresults/ServiceTest')
 input_dir = Path(current_dir).joinpath("tests/0TestInput/ServiceTestInput")
 input_file = str(Path(current_dir).joinpath("tests/0TestInput/ServiceTestInput/simpleAutomationpractice_small.xlsx"))
-input_file_parellel = str(Path(input_dir).joinpath("simpleAutomationpractice.xlsx"))
+input_file_parallel = str(Path(input_dir).joinpath("simpleAutomationpractice.xlsx"))
 drivers_folder = Path(current_dir).joinpath("tests/0TestInput/Drivers")
 
 
@@ -54,7 +54,7 @@ folder_monitor = DownloadFolderMonitoring(str(output_dir))
 def execute_from_main(run_file, globals_file):
     # Execute the main baangt program with TestRunFile and globals file
     subprocess.call(
-        "python baangt.py --run "+run_file+" --globals "+globals_file,
+        "python3 baangt.py --run "+run_file+" --globals "+globals_file,
         shell=True, env=my_env
     )
 
@@ -92,7 +92,7 @@ def test_regular_firefox():
 
 def test_parellel_firefox():
     # Will run the main program with 2 browsers running parallel
-    run_file = input_file_parellel
+    run_file = input_file_parallel
     globals_file = Path(input_dir).joinpath("globals_parellel_ff.json").as_posix()
     execute(run_file, globals_file)
     new_file = folder_monitor.getNewFiles()
@@ -156,7 +156,7 @@ def test_regular_chrome():
 
 def test_parellel_chrome():
     # Will run the main program with 2 browsers running parallel
-    run_file = input_file_parellel
+    run_file = input_file_parallel
     globals_file = Path(input_dir).joinpath("globals_parellel_chrome.json").as_posix()
     execute(run_file, globals_file)
     new_file = folder_monitor.getNewFiles()
