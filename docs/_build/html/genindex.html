@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; baangt 2020.3.0.rc4 documentation</title>
+  <title>Index &mdash; baangt 2020.5.2rc5 documentation</title>
   
 
   
@@ -91,15 +91,28 @@
 <li class="toctree-l1"><a class="reference internal" href="TestTypes.html">   Types of Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="DataFile.html">   Data file</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SaveResults2Database.html">   Results in Database</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Developer.html">   For Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">   History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">   Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="BrowserDrivers.html">   Browser Drivers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Variables.html">   Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html">DataGenerator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html#input-file">Input File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html#data-type">Data Type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html#all-data-types-format">All Data Types Format</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Developer.html">   For Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html">What is a baangt-plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html#how-to-make-a-baangt-plugin">how to make a baangt-plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html#how-the-baangt-plugin-work">how the baangt-plugin work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html#how-to-replace-the-existing-plugin-by-your-own-one">how to replace the existing plugin by your own one</a></li>
 <li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">   :subheader: Articles</a></li>
 <li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Autodocs:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="docs/baangt.base.html">Autodocs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/modules.html">Modules</a></li>
 </ul>
 
             
@@ -203,7 +216,7 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="docs/baangt.katalonImporter.html#baangt.katalonImporter.katalonImport.translateObjectDefinition.analyze">analyze() (baangt.katalonImporter.katalonImport.translateObjectDefinition method)</a>
 </li>
-      <li><a href="docs/baangt.TestSteps.html#baangt.TestSteps.TestStepMaster.TestStepMaster.anyting2Boolean">anyting2Boolean() (baangt.TestSteps.TestStepMaster.TestStepMaster static method)</a>
+      <li><a href="docs/baangt.base.html#baangt.base.Utils.utils.anyting2Boolean">anyting2Boolean() (baangt.base.Utils.utils static method)</a>
 </li>
       <li><a href="docs/baangt.base.html#baangt.base.ApiHandling.ApiHandling">ApiHandling (class in baangt.base.ApiHandling)</a>
 </li>
@@ -237,8 +250,6 @@
 </li>
       <li><a href="docs/baangt.base.html#module-baangt.base.TestRun">baangt.base.TestRun (module)</a>
 </li>
-      <li><a href="docs/baangt.base.html#module-baangt.base.TestRunDatabaseCreate">baangt.base.TestRunDatabaseCreate (module)</a>
-</li>
       <li><a href="docs/baangt.base.html#module-baangt.base.TestRunExcelImporter">baangt.base.TestRunExcelImporter (module)</a>
 </li>
       <li><a href="docs/baangt.base.html#module-baangt.base.TestRunUtils">baangt.base.TestRunUtils (module)</a>
@@ -247,10 +258,10 @@
 </li>
       <li><a href="docs/baangt.base.html#module-baangt.base.Utils">baangt.base.Utils (module)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="docs/baangt.katalonImporter.html#module-baangt.katalonImporter">baangt.katalonImporter (module)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="docs/baangt.katalonImporter.html#module-baangt.katalonImporter.katalonImport">baangt.katalonImporter.katalonImport (module)</a>
 </li>
       <li><a href="docs/baangt.TestCase.html#module-baangt.TestCase">baangt.TestCase (module)</a>
@@ -291,37 +302,9 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="docs/baangt.base.html#baangt.base.CliAndInteractive.callTestrun">callTestrun() (in module baangt.base.CliAndInteractive)</a>
 </li>
-      <li><a href="docs/baangt.TestSteps.html#baangt.TestSteps.TestStepMaster.TestStepMaster.checkLinks">checkLinks() (baangt.TestSteps.TestStepMaster.TestStepMaster method)</a>
-</li>
-      <li><a href="docs/baangt.base.html#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.commit">commit() (baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate method)</a>
-</li>
-      <li><a href="docs/baangt.base.html#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createActivityTypes">createActivityTypes() (baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate method)</a>
-</li>
-      <li><a href="docs/baangt.base.html#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createExectionMethods">createExectionMethods() (baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate method)</a>
-</li>
-      <li><a href="docs/baangt.base.html#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createLocatorTypes">createLocatorTypes() (baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate method)</a>
-</li>
-      <li><a href="docs/baangt.base.html#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createMasterClasses">createMasterClasses() (baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate method)</a>
-</li>
-      <li><a href="docs/baangt.base.html#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createStructures">createStructures() (baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="docs/baangt.base.html#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createTestCase">createTestCase() (baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate method)</a>
-</li>
-      <li><a href="docs/baangt.base.html#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createTestCase2TestData">createTestCase2TestData() (baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate method)</a>
-</li>
-      <li><a href="docs/baangt.base.html#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createTestCaseSequence">createTestCaseSequence() (baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate method)</a>
-</li>
-      <li><a href="docs/baangt.base.html#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createTestDataDefinition">createTestDataDefinition() (baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate method)</a>
-</li>
-      <li><a href="docs/baangt.base.html#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createTestRun">createTestRun() (baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate method)</a>
-</li>
-      <li><a href="docs/baangt.base.html#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createTestStep">createTestStep() (baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate method)</a>
-</li>
-      <li><a href="docs/baangt.base.html#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createTestStepSequence">createTestStepSequence() (baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate method)</a>
-</li>
-      <li><a href="docs/baangt.base.html#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.createValidator">createValidator() (baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate method)</a>
+      <li><a href="docs/baangt.TestSteps.html#baangt.TestSteps.TestStepMaster.TestStepMaster.checkLinks">checkLinks() (baangt.TestSteps.TestStepMaster.TestStepMaster method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -334,6 +317,8 @@
       <li><a href="docs/baangt.katalonImporter.html#baangt.katalonImporter.katalonImport.TestCases.decodeHex">decodeHex() (baangt.katalonImporter.katalonImport.TestCases static method)</a>
 </li>
       <li><a href="docs/baangt.katalonImporter.html#baangt.katalonImporter.katalonImport.doImport">doImport() (in module baangt.katalonImporter.katalonImport)</a>
+</li>
+      <li><a href="docs/baangt.TestSteps.html#baangt.TestSteps.TestStepMaster.TestStepMaster.doPDFComparison">doPDFComparison() (baangt.TestSteps.TestStepMaster.TestStepMaster method)</a>
 </li>
       <li><a href="docs/baangt.katalonImporter.html#baangt.katalonImporter.katalonImport.Groovy.doReplacementOfLiterals">doReplacementOfLiterals() (baangt.katalonImporter.katalonImport.Groovy method)</a>
 </li>
@@ -355,6 +340,8 @@
 </li>
       <li><a href="docs/baangt.ui.html#baangt.ui.ImportKatalonRecorder.ImportKatalonRecorder.doTranslateType">doTranslateType() (baangt.ui.ImportKatalonRecorder.ImportKatalonRecorder static method)</a>
 </li>
+      <li><a href="docs/baangt.base.html#baangt.base.Utils.utils.dynamicImportOfClasses">dynamicImportOfClasses() (baangt.base.Utils.utils static method)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -373,9 +360,13 @@
       </ul></li>
       <li><a href="docs/baangt.TestCaseSequence.html#baangt.TestCaseSequence.TestCaseSequenceMaster.TestCaseSequenceMaster.execute_parallel">execute_parallel() (baangt.TestCaseSequence.TestCaseSequenceMaster.TestCaseSequenceMaster method)</a>
 </li>
+      <li><a href="docs/baangt.TestSteps.html#baangt.TestSteps.TestStepMaster.TestStepMaster.executeDirect">executeDirect() (baangt.TestSteps.TestStepMaster.TestStepMaster method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="docs/baangt.TestSteps.html#baangt.TestSteps.TestStepMaster.TestStepMaster.executeDirect">executeDirect() (baangt.TestSteps.TestStepMaster.TestStepMaster method)</a>
+      <li><a href="docs/baangt.TestSteps.html#baangt.TestSteps.TestStepMaster.TestStepMaster.executeDirectSingle">executeDirectSingle() (baangt.TestSteps.TestStepMaster.TestStepMaster method)</a>
+</li>
+      <li><a href="docs/baangt.TestCase.html#baangt.TestCase.TestCaseMaster.TestCaseMaster.executeTestCase">executeTestCase() (baangt.TestCase.TestCaseMaster.TestCaseMaster method)</a>
 </li>
       <li><a href="docs/baangt.ui.html#baangt.ui.ImportKatalonRecorder.ImportKatalonRecorder.exportResult">exportResult() (baangt.ui.ImportKatalonRecorder.ImportKatalonRecorder method)</a>
 </li>
@@ -393,8 +384,6 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="docs/baangt.katalonImporter.html#baangt.katalonImporter.katalonImport.fileHandling">fileHandling (class in baangt.katalonImporter.katalonImport)</a>
 </li>
-      <li><a href="docs/baangt.base.html#baangt.base.TestRunDatabaseCreate.TestRunDatabaseFill.fill">fill() (baangt.base.TestRunDatabaseCreate.TestRunDatabaseFill method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="docs/baangt.base.html#baangt.base.Utils.utils.findFileAndPathFromPath">findFileAndPathFromPath() (baangt.base.Utils.utils static method)</a>
@@ -411,24 +400,16 @@
 </li>
       <li><a href="docs/baangt.ui.html#baangt.ui.ui.UI.getConfigFilesInDirectory">getConfigFilesInDirectory() (baangt.ui.ui.UI method)</a>
 </li>
-      <li><a href="docs/baangt.base.html#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate.getCursor">getCursor() (baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate method)</a>
-</li>
       <li><a href="docs/baangt.base.html#baangt.base.CliAndInteractive.getGlobalSettings">getGlobalSettings() (in module baangt.base.CliAndInteractive)</a>
 </li>
-      <li><a href="docs/baangt.ui.html#baangt.ui.ImportKatalonRecorder.ImportKatalonRecorder.getLayout">getLayout() (baangt.ui.ImportKatalonRecorder.ImportKatalonRecorder method)</a>
-
-      <ul>
-        <li><a href="docs/baangt.ui.html#baangt.ui.ui.UI.getLayout">(baangt.ui.ui.UI method)</a>
-</li>
-      </ul></li>
       <li><a href="docs/baangt.base.html#baangt.base.ApiHandling.ApiHandling.getNewSession">getNewSession() (baangt.base.ApiHandling.ApiHandling method)</a>
 </li>
       <li><a href="docs/baangt.TestCaseSequence.html#baangt.TestCaseSequence.TestCaseSequenceMaster.TestCaseSequenceMaster.getNextRecord">getNextRecord() (baangt.TestCaseSequence.TestCaseSequenceMaster.TestCaseSequenceMaster method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="docs/baangt.base.html#baangt.base.IBAN.IBAN.getRandomIBAN">getRandomIBAN() (baangt.base.IBAN.IBAN method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="docs/baangt.base.html#baangt.base.TestRunExcelImporter.TestRunExcelImporter.getRowsWithHeadersAsDict">getRowsWithHeadersAsDict() (baangt.base.TestRunExcelImporter.TestRunExcelImporter method)</a>
 </li>
       <li><a href="docs/baangt.base.html#baangt.base.TestRunUtils.TestRunUtils.getSequenceByNumber">getSequenceByNumber() (baangt.base.TestRunUtils.TestRunUtils method)</a>
@@ -549,12 +530,12 @@
 </li>
       <li><a href="docs/baangt.katalonImporter.html#baangt.katalonImporter.katalonImport.readXMLFile">readXMLFile() (in module baangt.katalonImporter.katalonImport)</a>
 </li>
-      <li><a href="docs/baangt.ui.html#baangt.ui.ui.UI.reopenWindow">reopenWindow() (baangt.ui.ui.UI method)</a>
-</li>
       <li><a href="docs/baangt.base.html#baangt.base.Utils.utils.replaceAllGlobalConstantsInDict">replaceAllGlobalConstantsInDict() (baangt.base.Utils.utils static method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="docs/baangt.TestSteps.html#baangt.TestSteps.TestStepMaster.TestStepMaster.replaceAllVariables">replaceAllVariables() (baangt.TestSteps.TestStepMaster.TestStepMaster method)</a>
+</li>
       <li><a href="docs/baangt.base.html#baangt.base.TestRunExcelImporter.TestRunExcelImporter.replaceFieldValueWithValueOfConstant">replaceFieldValueWithValueOfConstant() (baangt.base.TestRunExcelImporter.TestRunExcelImporter method)</a>
 
       <ul>
@@ -572,8 +553,6 @@
       <li><a href="docs/baangt.base.html#baangt.base.ApiHandling.ApiHandling.returnTestCaseStatus">returnTestCaseStatus() (baangt.base.ApiHandling.ApiHandling static method)</a>
 </li>
       <li><a href="docs/baangt.base.html#baangt.base.CliAndInteractive.run">run() (in module baangt.base.CliAndInteractive)</a>
-</li>
-      <li><a href="docs/baangt.ui.html#baangt.ui.ui.UI.runTestRun">runTestRun() (baangt.ui.ui.UI method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -599,10 +578,10 @@
 </li>
       <li><a href="docs/baangt.ui.html#baangt.ui.ImportKatalonRecorder.ImportKatalonRecorder.saveTestData">saveTestData() (baangt.ui.ImportKatalonRecorder.ImportKatalonRecorder method)</a>
 </li>
-      <li><a href="docs/baangt.base.html#baangt.base.ApiHandling.ApiHandling.setBaseURL">setBaseURL() (baangt.base.ApiHandling.ApiHandling method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="docs/baangt.base.html#baangt.base.ApiHandling.ApiHandling.setBaseURL">setBaseURL() (baangt.base.ApiHandling.ApiHandling method)</a>
+</li>
       <li><a href="docs/baangt.base.html#baangt.base.TestRunUtils.TestRunUtils.setCompleteTestRunAttributes">setCompleteTestRunAttributes() (baangt.base.TestRunUtils.TestRunUtils method)</a>
 </li>
       <li><a href="docs/baangt.base.html#baangt.base.ApiHandling.ApiHandling.setEndPoint">setEndPoint() (baangt.base.ApiHandling.ApiHandling method)</a>
@@ -613,18 +592,14 @@
 </li>
       <li><a href="docs/baangt.base.html#baangt.base.ApiHandling.ApiHandling.setLoginData">setLoginData() (baangt.base.ApiHandling.ApiHandling method)</a>
 </li>
+      <li><a href="docs/baangt.base.html#baangt.base.Utils.utils.setLogLevel">setLogLevel() (baangt.base.Utils.utils static method)</a>
+</li>
       <li><a href="docs/setup.html#module-setup">setup (module)</a>
 </li>
       <li><a href="docs/baangt.katalonImporter.html#baangt.katalonImporter.katalonImport.setupLogger">setupLogger() (in module baangt.katalonImporter.katalonImport)</a>
 </li>
       <li><a href="docs/baangt.ui.html#baangt.ui.ImportKatalonRecorder.ImportKatalonRecorder.splitVariable">splitVariable() (baangt.ui.ImportKatalonRecorder.ImportKatalonRecorder static method)</a>
 </li>
-      <li><a href="docs/baangt.ui.html#baangt.ui.ImportKatalonRecorder.ImportKatalonRecorder.startWindow">startWindow() (baangt.ui.ImportKatalonRecorder.ImportKatalonRecorder method)</a>
-
-      <ul>
-        <li><a href="docs/baangt.ui.html#baangt.ui.ui.UI.startWindow">(baangt.ui.ui.UI method)</a>
-</li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -647,21 +622,15 @@
 </li>
       <li><a href="docs/baangt.TestCaseSequence.html#baangt.TestCaseSequence.TestCaseSequenceMaster.TestCaseSequenceMaster">TestCaseSequenceMaster (class in baangt.TestCaseSequence.TestCaseSequenceMaster)</a>
 </li>
-      <li><a href="docs/baangt.TestCaseSequence.html#baangt.TestCaseSequence.TestCaseSequenceParallel.TestCaseSequenceParallel">TestCaseSequenceParallel (class in baangt.TestCaseSequence.TestCaseSequenceParallel)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="docs/baangt.base.html#baangt.base.TestRunDatabaseCreate.TestRunDatabaseCreate">TestRunDatabaseCreate (class in baangt.base.TestRunDatabaseCreate)</a>
-</li>
-      <li><a href="docs/baangt.base.html#baangt.base.TestRunDatabaseCreate.TestRunDatabaseFill">TestRunDatabaseFill (class in baangt.base.TestRunDatabaseCreate)</a>
+      <li><a href="docs/baangt.TestCaseSequence.html#baangt.TestCaseSequence.TestCaseSequenceParallel.TestCaseSequenceParallel">TestCaseSequenceParallel (class in baangt.TestCaseSequence.TestCaseSequenceParallel)</a>
 </li>
       <li><a href="docs/baangt.base.html#baangt.base.TestRunExcelImporter.TestRunExcelImporter">TestRunExcelImporter (class in baangt.base.TestRunExcelImporter)</a>
 </li>
       <li><a href="docs/baangt.base.html#baangt.base.TestRunUtils.TestRunUtils">TestRunUtils (class in baangt.base.TestRunUtils)</a>
 </li>
       <li><a href="docs/baangt.TestSteps.html#baangt.TestSteps.TestStepMaster.TestStepMaster">TestStepMaster (class in baangt.TestSteps.TestStepMaster)</a>
-</li>
-      <li><a href="docs/baangt.ui.html#baangt.ui.ui.UI.toggleAdditionalFieldsExecute">toggleAdditionalFieldsExecute() (baangt.ui.ui.UI method)</a>
 </li>
       <li><a href="docs/baangt.katalonImporter.html#baangt.katalonImporter.katalonImport.translateGoovy">translateGoovy (class in baangt.katalonImporter.katalonImport)</a>
 </li>

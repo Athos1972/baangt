@@ -1,0 +1,11 @@
+{
+    "TC.slowExecution": "False",
+    "TC.Browser": "CHROME",
+    "TC.BrowserAttributes": "{'HEADLESS': 'True'}",
+    "TC.ParallelRuns": "",
+    "TC.BrowserWindowSize": "1024x768",
+    "TC.Stage": "test",
+    "TC.LogLevel": "Info",
+    "TC.DriverPath": "tests/0TestInput/Drivers",
+    "1TestResults": "tests/1Testresults/ServiceTest"
+}

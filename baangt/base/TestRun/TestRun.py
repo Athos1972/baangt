@@ -10,77 +10,79 @@ from baangt.TestSteps.TestStepMaster import TestStepMaster
 from baangt.TestCase.TestCaseMaster import TestCaseMaster
 from baangt.TestCaseSequence.TestCaseSequenceMaster import TestCaseSequenceMaster
 from baangt.base.ProxyRotate import ProxyRotate
+from baangt.base.FilesOpen import FilesOpen
+import json
 import logging
 from pathlib import Path
 import sys
 from baangt.base.Timing.Timing import Timing
 from baangt.base.TestRunUtils import TestRunUtils
+from baangt.base.TestRun.ClassesForObjects import ClassesForObjects
 import time
 from baangt.base.PathManagement import ManagedPaths
-from dataclasses import dataclass
 from uuid import uuid4
 
 logger = logging.getLogger("pyC")
 
 
-@dataclass
-class ClassesForObjects:
-    browserFactory: str = "baangt.base.BrowserFactory.BrowserFactory"
-    browserHandling: str = "baangt.base.BrowserHandling.BrowserHandling.BrowserDriver"
-    testCaseSequenceMaster: str = "baangt.TestCaseSequenceMaster.TestCaseSequenceMaster"
-
-
 class TestRun:
     """
     This is the main Class of Testexecution in the baangt Framework. It is usually started
-    from baangt.py
+    from baangtIA.py
     """
 
     def __init__(self, testRunName, globalSettingsFileNameAndPath=None,
-                 testRunDict=None, uuid=uuid4()):  # -- API support: testRunDict --
+                 testRunDict=None, uuid=uuid4(), executeDirect=True):  # -- API support: testRunDict --
         """
         @param testRunName: The name of the TestRun to be executed.
         @param globalSettingsFileNameAndPath: from where to read the <globals>.json
         """
-        logger.info('init Testrun, id is {}'.format(id(self)))
 
+        # Take over importing parameters:
+        self.uuid = uuid
+        logger.info(f'Init Testrun, uuid is {self.uuid}')
+        self.testRunDict = testRunDict
+        self.globalSettingsFileNameAndPath = globalSettingsFileNameAndPath
+        self.testRunName, self.testRunFileName = \
+            self._sanitizeTestRunNameAndFileName(testRunName)
+
+        # Initialize everything else
         self.apiInstance = None
         self.testType = None
         self.networkInfo = None
+        self.results = None
+        self.browserFactory = None
         self.kwargs = {}
         self.dataRecords = {}
-        self.globalSettingsFileNameAndPath = globalSettingsFileNameAndPath
         self.globalSettings = {}
         self.managedPaths = ManagedPaths()
         self.classesForObjects = ClassesForObjects()         # Dynamically loaded classes
-
-        # -- API support --
-        # results
-        self.results = None
-        self.testRunDict = testRunDict
-        self.uuid = uuid
-        # -- END of API support
-
+        self.timing = Timing()
+        self.testRunUtils = TestRunUtils()
+        self.testCasesEndDateTimes_1D = []                   # refer to single execution
+        self.testCasesEndDateTimes_2D = [[]]                 # refer to parallel execution
         # New way to export additional Tabs to Excel
         # If you want to export additional data, place a Dict with Tabname + Datafields in additionalExportTabs
         # from anywhere within your custom code base.
         self.additionalExportTabs = {}
 
-        self.testRunName, self.testRunFileName = \
-            self._sanitizeTestRunNameAndFileName(testRunName)
-        self.timing = Timing()
-        self.timing.takeTime(GC.TIMING_TESTRUN)  # Initialize Testrun Duration
-        self.testRunUtils = TestRunUtils()
-        self._initTestRun()  # Loads the globals*.json file
+        # Initialize other values
+        self.timing.takeTime(GC.TIMING_TESTRUN)               # Initialize Testrun Duration
 
-        self.testCasesEndDateTimes_1D = []  # refer to single execution
-        self.testCasesEndDateTimes_2D = [[]]  # refer to parallel execution
+        # Usually the Testrun is called without the parameter executeDirect, meaning it default to "Execute"
+        # during Unit-Tests we don't want this behaviour:
+        if executeDirect:
+            self.executeTestRun()
+
+    def executeTestRun(self):
+        self._initTestRunSettingsFromFile()  # Loads the globals*.json file
+
         self._loadJSONTestRunDefinitions()
         self._loadExcelTestRunDefinitions()
 
         self.browserFactory = BrowserFactory(self)
 
-        self.executeTestRun()
+        self.executeTestSequence()
         self.tearDown()
 
     def append1DTestCaseEndDateTimes(self, dt):
@@ -165,7 +167,7 @@ class TestRun:
         logger.debug(f"Received new result for Testrecord {recordNumber}")
         self.dataRecords[recordNumber] = dataRecordResult
 
-    def executeTestRun(self):
+    def executeTestSequence(self):
         """
         Start TestcaseSequence
 
@@ -180,6 +182,7 @@ class TestRun:
 
         """
         self.testRunUtils.replaceGlobals(self.globalSettings)
+        self.testRunUtils.replaceClasses(self.testRunName, self.classesForObjects)
 
         kwargs = {GC.KWARGS_TESTRUNATTRIBUTES: self.getAllTestRunAttributes(),
                   GC.KWARGS_TESTRUNINSTANCE: self,
@@ -218,6 +221,20 @@ class TestRun:
                     logger.info(f"TC is already in status Error - not processing steps {counterName}: {key}, {value}"
                                 f"and everything behind this step")
                     return
+                if kwargs[GC.KWARGS_DATA].get(GC.TESTCASESTATUS_STOP):
+                    logger.info(f"TC wanted to stop. Not processing steps {counterName}: {key}, {value}"
+                                f"and everything behind this step. TC-Status is "
+                                f"{kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS]}")
+                    return
+                if kwargs[GC.KWARGS_DATA].get(GC.TESTCASESTATUS_STOPERROR):
+                    kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
+                    if not kwargs[GC.KWARGS_DATA].get(GC.TESTCASEERRORLOG):
+                        kwargs[GC.KWARGS_DATA][GC.TESTCASEERRORLOG] = "Aborted by command 'TCStopTestCaseError'"
+                    else:
+                        kwargs[GC.KWARGS_DATA][GC.TESTCASEERRORLOG] = kwargs[GC.KWARGS_DATA][GC.TESTCASEERRORLOG] \
+                                                                      + "\nAborted by command 'TCStopTestCaseError'"
+                    return
+
             logger.info(f"Starting {counterName}: {key}")
             kwargs[counterName] = key
 
@@ -238,9 +255,9 @@ class TestRun:
 
         self.kwargs = kwargs
 
-    def _initTestRun(self):
-        self.loadJSONGlobals()
-
+    def _initTestRunSettingsFromFile(self):
+        self.__loadJSONGlobals()
+        self.__sanitizeGlobalsValues()
         self.__setPathsIfNotPredefined()
 
     def __setPathsIfNotPredefined(self):
@@ -262,14 +279,15 @@ class TestRun:
         else:
             self.managedPaths.getOrSetRootPath(path=self.globalSettings.get(GC.PATH_ROOT))
 
-    def loadJSONGlobals(self):
+    def __loadJSONGlobals(self):
         if self.globalSettingsFileNameAndPath:
             self.globalSettings = utils.openJson(self.globalSettingsFileNameAndPath)
 
         # Set default execution STAGE
-        if self.globalSettings.get(GC.EXECUTION_STAGE, None) is None:
+        if not self.globalSettings.get(GC.EXECUTION_STAGE, None):
             self.globalSettings[GC.EXECUTION_STAGE] = GC.EXECUTION_STAGE_TEST
 
+    def __sanitizeGlobalsValues(self):
         # Support for new dataClass to load different Classes
         for key, value in self.globalSettings.items():
             if "CL." in key:
@@ -277,8 +295,8 @@ class TestRun:
 
             # Change boolean strings into boolean values.
             if isinstance(value, str):
-                if value.lower() in ("false", "true", "no"):
-                    self.globalSettings[key] = utils.anyting2Boolean(value)
+                if value.lower() in ("false", "true", "no", "x"):
+                    self.globalSettings[key] = utils.anything2Boolean(value)
 
             if isinstance(value, dict):
                 if "default" in value:
@@ -286,9 +304,20 @@ class TestRun:
                     # but is not part of the globalSetting.json. In this case there's the whole shebang in a dict. We
                     # are only interested in the actual value, which is stored in "default":
                     self.globalSettings[key] = value["default"]
+                    continue
                 else:
                     # This could be the "old" way of the globals-file (with {"HEADLESS":"True"})
                     self.globalSettings[key] = value
+                    continue
+
+            if isinstance(value, str) and len(value) > 0:
+                if value[0] == "{" and value[-1] == "}":
+                    # Dict, that is not seen as dict
+                    value = value.replace("\'", '"')
+                    self.globalSettings[key] = json.loads(value)
+
+        if self.globalSettings.get("TC." + GC.EXECUTION_LOGLEVEL):
+            utils.setLogLevel(self.globalSettings.get("TC." + GC.EXECUTION_LOGLEVEL))
 
     def _loadJSONTestRunDefinitions(self):
         if not self.testRunFileName and not self.testRunDict:  # -- API support: testRunDict --

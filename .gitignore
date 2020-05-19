@@ -16,3 +16,5 @@ baangt_*.xlsx
 
 /.eggs/
 /baangt.egg-info/
+/venv3_6/
+/tests/proxies.csv

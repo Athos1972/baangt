@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Change log &mdash; baangt 2020.3.0.rc4 documentation</title>
+  <title>Change log &mdash; baangt 2020.5.2rc5 documentation</title>
   
 
   
@@ -88,32 +88,53 @@
 <li class="toctree-l1"><a class="reference internal" href="simpleExample.html">   First Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Structure.html">   Structure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ParametersConfigFile.html">   Parameters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="DataFile.html">   Data file</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SimpleAPI.html">   First API Test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="TestTypes.html">   Types of Tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Developer.html">   For Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DataFile.html">   Data file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SaveResults2Database.html">   Results in Database</a></li>
 <li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">   History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">   Changelog</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id1">2020.04</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#new-features">New features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">2020.05</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#summary">Summary:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#new-features">New features:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bugfixes">Bugfixes:</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">2020.04</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Summary:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">New features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#changes">Changes</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id2">2020.03</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id3">New features</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#bugfixes">Bugfixes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">2020.03</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id6">New features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">Bugfixes</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id4">2020.02</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id5">2020.01</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">2020.02</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">2020.01</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="BrowserDrivers.html">   Browser Drivers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Variables.html">   Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html">DataGenerator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html#input-file">Input File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html#data-type">Data Type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html#all-data-types-format">All Data Types Format</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Developer.html">   For Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html">What is a baangt-plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html#how-to-make-a-baangt-plugin">how to make a baangt-plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html#how-the-baangt-plugin-work">how the baangt-plugin work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html#how-to-replace-the-existing-plugin-by-your-own-one">how to replace the existing plugin by your own one</a></li>
 <li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">   :subheader: Articles</a></li>
 <li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Autodocs:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="docs/baangt.base.html">Autodocs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/modules.html">Modules</a></li>
 </ul>
 
             
@@ -181,18 +202,64 @@
   <div class="section" id="change-log">
 <h1>Change log<a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
-<h2>2020.04<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
-<p>Summary:
-A huge step closer to release 1. Some minor functionalities still need fixing. May May be the release month!</p>
+<h2>2020.05<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="summary">
+<h3>Summary:<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h3>
+<p>While baangtDB is making great progress, we’re in the final touches to release Version 1.0 of baangt base.</p>
+</div>
 <div class="section" id="new-features">
-<h3>New features<a class="headerlink" href="#new-features" title="Permalink to this headline">¶</a></h3>
+<h3>New features:<a class="headerlink" href="#new-features" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
+<li><p>Added more parameters for testruns in the new UI (e.g. BrowserZoomFactor)</p></li>
+</ul>
+</div>
+<div class="section" id="bugfixes">
+<h3>Bugfixes:<a class="headerlink" href="#bugfixes" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>2020.04<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id3">
+<h3>Summary:<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>A huge step closer to release 1. Some minor functionalities still need fixing. May May be the release month!</p>
+</div>
+<div class="section" id="id4">
+<h3>New features<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p>Brandnew UI! The pySimpleGui was great during the beginning of the project. As we mature, we switched to QT5, which
+looks really great.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>No need to remember technical field names! Yeah!</p></li>
+<li><p>All settings to customize a test run execution are now nicely arranged in the details screen</p></li>
+<li><p>Katalon-Importer added a few usability changes (e.g. when you save, you’ll see this TestRun selected as default).</p></li>
+<li><p>Browsers, Selenium Grid, etc. can be selected via Dropdown-Menu</p></li>
+<li><p>Common BrowserAttributes (e.g. Headless) can be selected via Droddown-Menu</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>SimpleFormat: New command <code class="docutils literal notranslate"><span class="pre">iban</span></code> will create a random IBAN. Powered by Schwifty library.</p></li>
-<li><p>SimpleFormat: New command <code class="docutils literal notranslate"><span class="pre">pdfcompare</span></code> compares a downloaded PDF-File with a reference PDF-File and reports differences. Works also well with parallel sessions.</p></li>
+<li><p>SimpleFormat: New command <code class="docutils literal notranslate"><span class="pre">pdfcompare</span></code> compares a downloaded PDF-File with a reference PDF-File and
+reports differences. Works also well with parallel sessions.</p></li>
 <li><p>All: Variable replacement using Faker module. For instance <code class="docutils literal notranslate"><span class="pre">$(FAKER.email)</span></code> will generate a random E-Mail address</p></li>
+<li><p>All: New flag to export all fields of TestDataDict to result file: <code class="docutils literal notranslate"><span class="pre">TC.ExportAllFields</span></code> = <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
+<li><p>All: Web-Testcases: Screenshots automatically embedded to result file, not only as a link. Makes it easier to share results
+on a communication channel.</p></li>
+<li><p>All: Support of Proxies and rotating Proxies (<code class="docutils literal notranslate"><span class="pre">TC.UseRotatingProxies</span></code> and <code class="docutils literal notranslate"><span class="pre">TC.ReReadProxies</span></code>)</p></li>
+<li><p>All: Support of restarting browser-sessions after each TestCase execution (<code class="docutils literal notranslate"><span class="pre">TC.RestartBrowser</span></code> = <code class="docutils literal notranslate"><span class="pre">True</span></code>)</p></li>
+<li><p>All: CL.* in Globals-File to overwrite standard classes (e.g. BrowserDriver) to custom classes.</p></li>
 <li><p>Appium integration for Android and iOS App tests using Appium Webdriver (see in /examples/App* and globalsApp.json)</p></li>
 <li><p>Subclassing: New commands to identify stale objects on page (HTML-Reload and SPA-Support)</p></li>
 <li><p>Additional way to export data to Excel-Result (can be used for results of scraping) GC.EXPORT_ADDITIONAL_DATA in
+TestRun.additionalExportTabs. For each Tab you want created set up one dict with {&lt;tabname&gt;:&lt;ExportDictContent&gt;}.
+Headers = Fieldnames.</p></li>
+<li><p>New flag to export all fields of TestDataDict to result file: <code class="docutils literal notranslate"><span class="pre">TC.ExportAllFields</span></code> = <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
+<li><p>Web-Testcases: Screenshots automatically embedded to result file, not only as a link. Makes it easier to share results
+on a communication channel.</p></li>
+<li><p>Windows Installer: baangt now works without admin rights on Windows10</p></li>
+<li><p>Support of Proxies and rotating Proxies (<code class="docutils literal notranslate"><span class="pre">TC.UseRotatingProxies</span></code> and <code class="docutils literal notranslate"><span class="pre">TC.ReReadProxies</span></code>)</p></li>
+<li><p>Support of restarting browser-sessions after each TestCase execution (<code class="docutils literal notranslate"><span class="pre">TC.RestartBrowser</span></code> = <code class="docutils literal notranslate"><span class="pre">True</span></code>)</p></li>
+<li><p>Subclassing: Additional way to export data to Excel-Result (can be used for results of scraping) GC.EXPORT_ADDITIONAL_DATA in
 TestRun.additionalExportTabs create one dict with &lt;tabname&gt;:&lt;ExportDictContent&gt;. Headers = Fieldnames.</p></li>
 </ul>
 </div>
@@ -201,14 +268,20 @@ TestRun.additionalExportTabs create one dict with &lt;tabname&gt;:&lt;ExportDict
 <ul class="simple">
 <li><p>Improved browserDriver Download for executables (didn’t work in some cases)</p></li>
 <li><p>Improved database logging of testrun results</p></li>
+<li><p>Dramatically improved speed for reading larger Input files (got rid of Pandas for XLSX-Import)</p></li>
+<li><p>Improved ease of subclassing for TestStepMaster.</p></li>
+<li><p>Improved reaction to common errors on Webpages (Stale element, not accessable, etc.)</p></li>
+<li><p>Improved handling of closed windows and tabs (when e.g. PDF-Download was activated)</p></li>
+<li><p>Support to supply webelement in driver.javaScript() as <code class="docutils literal notranslate"><span class="pre">*args</span></code></p></li>
+<li><p>Added many unit tests, but still not full coverage</p></li>
 </ul>
 </div>
 </div>
-<div class="section" id="id2">
-<h2>2020.03<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id5">
+<h2>2020.03<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <p>Summary: Release Candiate 3 is on the road!</p>
-<div class="section" id="id3">
-<h3>New features<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id6">
+<h3>New features<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Executable files and ZIP-Archives for Mac, Windows and Ubuntu - no more GIT CLONE needed! Simply download, unzip and run.</p></li>
 <li><p>Network logging during WEB-Sessions and export to Excel-Result in separate tab. Use <code class="docutils literal notranslate"><span class="pre">TC.NetworkInfo</span></code> with value <code class="docutils literal notranslate"><span class="pre">True</span></code> (tested on Mac and Windows, most probably works on Linux too).</p></li>
@@ -224,8 +297,8 @@ Multiple calls will create multiple random addresses.</p></li>
 <li><p>Integration with Selenium Grid V4.0 and baangt. See docs for further details. Separate Repository for the Dockerfile</p></li>
 </ul>
 </div>
-<div class="section" id="bugfixes">
-<h3>Bugfixes<a class="headerlink" href="#bugfixes" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id7">
+<h3>Bugfixes<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Reporting: Duration sometimes off by Timezone shift hours</p></li>
 <li><p>Minor fixes for increased stability with Chrome-based browsers</p></li>
@@ -234,8 +307,8 @@ less resources. 10 parallel Firefox sessions on a single MacBook with 16 GB RAM 
 </ul>
 </div>
 </div>
-<div class="section" id="id4">
-<h2>2020.02<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id8">
+<h2>2020.02<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
 <p>Summary: Web- and API-Tests XLSX-SimpleFormat are almost completed. Shouldn’t take much longer to have a production ready version.</p>
 <ul class="simple">
 <li><p>Pypi-Version 2020.02.* deployed</p></li>
@@ -250,8 +323,8 @@ less resources. 10 parallel Firefox sessions on a single MacBook with 16 GB RAM 
 <li><p>Apart from exporting to XLSX it’s now also possible to export testrun results to CSV. In simpleFormat you can set parameter <code class="docutils literal notranslate"><span class="pre">TC.Export</span> <span class="pre">Format</span></code> to the value <code class="docutils literal notranslate"><span class="pre">CSV</span></code>. In baangtDB and full Excel format you can use Testrun property <code class="docutils literal notranslate"><span class="pre">Export</span> <span class="pre">format</span></code></p></li>
 </ul>
 </div>
-<div class="section" id="id5">
-<h2>2020.01<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id9">
+<h2>2020.01<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
 <p>Very first public beta version. Not at all ready for production.</p>
 <ul class="simple">
 <li><p>First version on Pypi (<a class="reference external" href="https://pypi.org/project/baangt/">https://pypi.org/project/baangt/</a>), Docker (<a class="reference external" href="https://gogs.earthsquad.global/athos/baangt-Docker">https://gogs.earthsquad.global/athos/baangt-Docker</a>) and GIT Repository (<a class="reference external" href="https://gogs.earthsquad.global/athos/baangt">https://gogs.earthsquad.global/athos/baangt</a>)</p></li>

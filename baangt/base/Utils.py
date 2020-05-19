@@ -25,7 +25,6 @@ class utils:
     @staticmethod
     def extractFileNameFromFullPath(fileAndPathName):
         return ntpath.basename(fileAndPathName)
-        pass
 
     @staticmethod
     def sanitizeFileName(value):
@@ -88,6 +87,15 @@ class utils:
         with open(fileNameAndPath) as json_file:
             data = json.load(json_file)
         return data
+
+    @staticmethod
+    def setLogLevel(level):
+        logger.info(f"Changing Loglevel from {logger.level} to {level}")
+
+        for logHandler in logger.handlers:
+            logHandler.setLevel(level=level.upper())
+
+        logger.setLevel(level=level.upper())
 
     @staticmethod
     def listToString(completeList):
@@ -223,8 +231,10 @@ class utils:
         if not Path(lFileNameAndPath).exists():
             managedPaths = ManagedPaths()
             root_dir = managedPaths.getOrSetRootPath()
-            if "~" in lFileNameAndPath:
+            if "~" in str(lFileNameAndPath):
                 lFileNameAndPath = Path(lFileNameAndPath).expanduser()
+                if not lFileNameAndPath.exists():
+                    raise Exception(f"Can't find file {fileNameAndPath}")
             elif Path(lBasePath).joinpath(fileNameAndPath).exists():
                 lFileNameAndPath = Path(lBasePath).joinpath(lFileNameAndPath)
                 logger.debug(f"Found file via BasePath {str(lFileNameAndPath)}")
@@ -252,7 +262,7 @@ class utils:
         return str(lFileNameAndPath.absolute())
 
     @staticmethod
-    def anyting2Boolean(valueIn):
+    def anything2Boolean(valueIn):
         if isinstance(valueIn, bool):
             return valueIn
 
@@ -264,5 +274,8 @@ class utils:
                 return True
             else:
                 return False
+
+        if not valueIn:
+            return False
 
         raise TypeError(f"Anything2Boolean had a wrong value: {valueIn}. Don't know how to convert that to boolean")

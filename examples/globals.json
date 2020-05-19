@@ -1,7 +1,13 @@
 {
-    "TC.Lines": "",
-    "TC.dontCloseBrowser": "",
-    "TC.slowExecution": "",
-    "TC.NetworkInfo": "",
-    "TX.DEBUG": "True"
+    "TC.Lines": "1-2",
+    "TC.dontCloseBrowser": "False",
+    "TC.slowExecution": "True",
+    "TC.NetworkInfo": "False",
+    "TX.DEBUG": "False",
+    "TC.Browser": "Chrome",
+    "TC.BrowserAttributes": "",
+    "TC.ParallelRuns": "2",
+    "TC.BrowserWindowSize": "1024x768",
+    "TC.Stage": "other",
+    "TC.LogLevel": "Info"
 }

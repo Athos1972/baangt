@@ -11,17 +11,11 @@ KWARGS_TIMING = "TimingClassInstance"
 KWARGS_SEQUENCENUMBER = "SequenceNumberOfThisTestCase"
 
 CLASSES_TESTCASESEQUENCE = "baangt.TestCaseSequence.TestCaseSequenceMaster.TestCaseSequenceMaster"
-CLASSES_TESTCASESEQUENCE_new = "TestCaseSequenceMaster"
+# CLASSES_TESTCASESEQUENCE_new = "TestCaseSequenceMaster"
 CLASSES_TESTCASE = "baangt.TestCase.TestCaseMaster.TestCaseMaster"
-CLASSES_TESTCASE_new = 'TestCaseMaster'
+# CLASSES_TESTCASE_new = 'TestCaseMaster'
 CLASSES_TESTSTEPMASTER = 'baangt.TestSteps.TestStepMaster.TestStepMaster'
-CLASSES_TESTSTEPMASTER_new = 'TestStepMaster'
-
-EXECUTION_STAGE = 'Stage'
-EXECUTION_STAGE_TEST = 'Test'
-EXECUTION_STAGE_DEVELOPMENT = 'Development'
-EXECUTION_STAGE_PRODUCTION = 'Production'
-EXECUTION_STAGE_QA = 'Quality Assurance'
+# CLASSES_TESTSTEPMASTER_new = 'TestStepMaster'
 
 TIMING_END = "end"
 TIMING_START = "start"
@@ -32,6 +26,8 @@ TIMELOG = "timelog"
 
 GECKO_DRIVER = "geckodriver.exe"
 CHROME_DRIVER = "chromedriver.exe"
+EDGE_DRIVER = "msedgedriver.exe"
+REMOTE_EXECUTE_URL = "http://localhost:4444/wd/hub"
 
 BROWSER_FIREFOX = "FF"
 BROWSER_CHROME = "CHROME"
@@ -43,6 +39,7 @@ BROWSER_APPIUM = 'APPIUM'
 BROWSER_MODE_HEADLESS = "HEADLESS"
 BROWSER_ATTRIBUTES = "BrowserAttributes"
 BROWSER_WINDOW_SIZE = "BrowserWindowSize"
+BROWSER_ZOOM_FACTOR = "BrowserZoomFactor"
 
 CMD_CLICK = "CLICK"
 CMD_SETTEXT = "SETTEXT"
@@ -53,6 +50,8 @@ TESTCASESTATUS_SUCCESS = "OK"
 TESTCASESTATUS_ERROR = "Failed"
 TESTCASESTATUS_WAITING = "Paused"
 TESTCASEERRORLOG = "TCErrorLog"
+TESTCASESTATUS_STOP = "TCStopTestCase"
+TESTCASESTATUS_STOPERROR = "TCStopTestCaseError"
 TESTCASE_EXPECTED_ERROR_FIELD = "TC Expected Error"
 
 DATABASE_FROM_LINE = "FromLine"
@@ -72,7 +71,13 @@ SCREENSHOTS = "Screenshots"
 EXECUTION_DONTCLOSEBROWSER = "dontCloseBrowser"
 EXECUTION_SLOW = "slowExecution"
 EXECUTION_NETWORK_INFO = 'NetworkInfo'
-EXECUTION_STAGE = "Stage"
+EXECUTION_LOGLEVEL = "LogLevel"
+
+EXECUTION_STAGE = 'Stage'
+EXECUTION_STAGE_TEST = 'Test'
+EXECUTION_STAGE_DEVELOPMENT = 'Development'
+EXECUTION_STAGE_PRODUCTION = 'Production'
+EXECUTION_STAGE_QA = 'Quality Assurance'
 
 EXPORT_FORMAT = "ExportFormat"
 EXPORT_ADDITIONAL_DATA = "AdditionalExportTabs"
@@ -116,3 +121,10 @@ CHROME_URL = 'https://chromedriver.storage.googleapis.com/LATEST_RELEASE'
 
 BROWSER_PROXY_PATH = '/browsermob-proxy/bin/browsermob-proxy'
 BROWSER_PROXY_URL = 'https://github.com/lightbody/browsermob-proxy/releases/download/browsermob-proxy/browsermob-proxy-bin.zip'
+
+PROXY_FAILCOUNTER = 3
+
+TESTDATAGENERATOR_OUTPUT_FORMAT = "xlsx"
+TESTDATAGENERATOR_INPUTFILE = "RawTestData.xlsx"
+TESTDATAGENERATOR_OUTPUTFILE_XLSX = "output.xlsx"
+TESTDATAGENERATOR_OUTPUTFILE_CSV = "output.csv"

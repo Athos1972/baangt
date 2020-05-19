@@ -43,6 +43,8 @@ for instance to slowly retest a single testrecord or to not close the browser af
      - If the testcase is WEB-Testing, then you can overwrite the browser, which is defined inside the testrun definition.
        If the testcase is not a Web-Testcase this setting doesn't have any effect.
        Valid values are ``Chrome``, ``FF`` and ``Safari``
+   * - ``TC.BrowserZoomFactor``
+     - Set's the zoom factor for the browser window in the current test case. Values are numeric. Default = 100.
    * - ``TC.ParallelRuns``
      - Number of parallel sessions to be executed. Values depend largely on your hardware and internet connection.
        Debugging works only in a single session.
@@ -68,4 +70,8 @@ for instance to slowly retest a single testrecord or to not close the browser af
        object of a testrun (TestCaseSequence, TestCase, TestStepSequence, TestStep). Here you also have the
        change/define other classes (e.g. BrowserDriver, Timing, etc.), which you subclassed and enhanced for your
        local installation.
+   * - ``TC.LogLevel``
+     - Set the LogLevel to a different value. In baangt standard the file-logger is set to ``debug`` while the console
+       output is set to ``info``. Using this setting you'll set both logger channels to whatever value you provide.
+       In the new UI you'll see a dropdown menu.
 

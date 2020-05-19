@@ -40,12 +40,14 @@ class ExportResults:
         self.stage = self.testRunInstance.globalSettings.get('TC.Stage')
 
         try:
-            self.exportFormat = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.EXPORT_FORMAT)[GC.EXPORT_FORMAT]
+            self.exportFormat = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.EXPORT_FORMAT)
+            if isinstance(self.exportFormat, dict):
+                self.exportFormat = self.exportFormat.get(GC.EXPORT_FORMAT)
+
             if not self.exportFormat:
                 self.exportFormat = GC.EXP_XLSX
         except KeyError:
             self.exportFormat = GC.EXP_XLSX
-
 
         self.fileName = self.__getOutputFileName()
         logger.info("Export-Sheet for results: " + self.fileName)
@@ -449,12 +451,17 @@ class ExportResults:
     def _exportData(self):
         for key, value in self.dataRecords.items():
             # write DB UUID
-            self.worksheet.write(key + 1, 0, str(self.testcase_uuids[key]))
-            # write RESULT fields
-            for (n, column) in enumerate(self.fieldListExport):
-                self.__writeCell(key + 1, n + 1, value, column)
-            # Also write everything as JSON-String into the last column
-            self.worksheet.write(key + 1, len(self.fieldListExport) + 1, json.dumps(value))
+            try:
+                self.worksheet.write(key + 1, 0, str(self.testcase_uuids[key]))
+                # write RESULT fields
+                for (n, column) in enumerate(self.fieldListExport):
+                    self.__writeCell(key + 1, n + 1, value, column)
+                # Also write everything as JSON-String into the last column
+                self.worksheet.write(key + 1, len(self.fieldListExport) + 1, json.dumps(value))
+            except IndexError as e:
+                logger.error(f"List of testcase_uuids didn't have a value for {key}. That shouldn't happen!")
+            except BaseException as e:
+                logger.error(f"Error happened where it shouldn't. Error was {e}")
 
         # Create autofilter
         self.worksheet.autofilter(0, 0, len(self.dataRecords.items()), len(self.fieldListExport))
@@ -476,8 +483,11 @@ class ExportResults:
             if isinstance(testRecordDict[fieldName], dict):
                 self.worksheet.write(line, cellNumber, testRecordDict[fieldName])
             elif isinstance(testRecordDict[fieldName], list):
-                self.worksheet.write(line, cellNumber,
-                                     utils.listToString(testRecordDict[fieldName]))
+                if fieldName == GC.SCREENSHOTS:
+                    self.__attachScreenshotsToExcelCells(cellNumber, fieldName, line, testRecordDict)
+                else:
+                    self.worksheet.write(line, cellNumber,
+                                         utils.listToString(testRecordDict[fieldName]))
             else:
                 if fieldName == GC.TESTCASESTATUS:
                     if testRecordDict[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_SUCCESS:
@@ -485,20 +495,28 @@ class ExportResults:
                     elif testRecordDict[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR:
                         self.worksheet.write(line, cellNumber, testRecordDict[fieldName], self.cellFormatRed)
                 elif fieldName == GC.SCREENSHOTS:
-                    # Place the screenshot images "on" the appropriate cell
-                    if type(testRecordDict[fieldName]) == list:
-                        self.worksheet.insert_image(line, cellNumber, testRecordDict[fieldName][-1], {'x_scale': 0.05,
-                                                                                                      'y_scale': 0.05})
-                        for nm in range(len(testRecordDict[fieldName]) - 1):
-                            self.worksheet.insert_image(line, len(self.fieldListExport) + nm + 1,
-                                                        testRecordDict[fieldName][nm],
-                                                        {'x_scale': 0.05, 'y_scale': 0.05})
-                    else:
-                        self.worksheet.insert_image(line, cellNumber, testRecordDict[fieldName], {'x_scale': 0.05,
-                                                                                                  'y_scale': 0.05})
-                    self.worksheet.set_row(line, 35)
+                    self.__attachScreenshotsToExcelCells(cellNumber, fieldName, line, testRecordDict)
                 else:
                     self.worksheet.write(line, cellNumber, testRecordDict[fieldName])
+
+    def __attachScreenshotsToExcelCells(self, cellNumber, fieldName, line, testRecordDict):
+        # Place the screenshot images "on" the appropriate cell
+        try:
+            if type(testRecordDict[fieldName]) == list:
+
+                self.worksheet.insert_image(line, cellNumber, testRecordDict[fieldName][-1], {'x_scale': 0.05,
+                                                                                              'y_scale': 0.05})
+                for nextScreenshotNumber in range(len(testRecordDict[fieldName]) - 1):
+                    self.worksheet.insert_image(line, len(self.fieldListExport) + nextScreenshotNumber + 1,
+                                                testRecordDict[fieldName][nextScreenshotNumber],
+                                                {'x_scale': 0.05, 'y_scale': 0.05})
+            else:
+                self.worksheet.insert_image(line, cellNumber, testRecordDict[fieldName], {'x_scale': 0.05,
+                                                                               'y_scale': 0.05})
+        except Exception as e:
+            logger.error(f"Problem with screenshots - can't attach them {e}")
+
+        self.worksheet.set_row(line, 35)
 
     def closeExcel(self):
         self.workbook.close()

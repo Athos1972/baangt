@@ -1,10 +1,32 @@
 Change log
 ==========
 
+2020.05
+^^^^^^^
+
+Summary:
+++++++++
+
+While baangtDB is making great progress, we're in the final touches to release Version 1.0 of baangt base.
+
+New features:
++++++++++++++
+
+* Added more parameters for testruns in the new UI (e.g. BrowserZoomFactor)
+* test data generator for complex random and/or multiplying test conditions created
+* All test data from all test runs is now logged in a database. Additionally to results per test run you can compare
+  results over time. Especially usefull when you have the local proxy server activated!
+
+Bugfixes:
++++++++++
+
+
 2020.04
 ^^^^^^^
 
 Summary:
+++++++++
+
 A huge step closer to release 1. Some minor functionalities still need fixing. May May be the release month!
 
 New features
@@ -45,21 +67,24 @@ New features
 
 Changes
 +++++++
+
 * Improved browserDriver Download for executables (didn't work in some cases)
 * Improved database logging of testrun results
 * Dramatically improved speed for reading larger Input files (got rid of Pandas for XLSX-Import)
 * Improved ease of subclassing for TestStepMaster.
 * Improved reaction to common errors on Webpages (Stale element, not accessable, etc.)
 * Improved handling of closed windows and tabs (when e.g. PDF-Download was activated)
-* Support to supply webelement in driver.javaScript() as *args
+* Support to supply webelement in driver.javaScript() as ``*args``
 * Added many unit tests, but still not full coverage
 
 2020.03
 ^^^^^^^
+
 Summary: Release Candiate 3 is on the road!
 
 New features
 ++++++++++++
+
 * Executable files and ZIP-Archives for Mac, Windows and Ubuntu - no more GIT CLONE needed! Simply download, unzip and run.
 * Network logging during WEB-Sessions and export to Excel-Result in separate tab. Use ``TC.NetworkInfo`` with value ``True`` (tested on Mac and Windows, most probably works on Linux too).
 * baangtDB: Import and Export functionality for simpleFormat and complex XLSX-Testrun definitions.
@@ -75,6 +100,7 @@ New features
 
 Bugfixes
 ++++++++
+
 * Reporting: Duration sometimes off by Timezone shift hours
 * Minor fixes for increased stability with Chrome-based browsers
 * Parallel executions on Windows work now, rewrote parallelism (local, without Selenium/Zalenium) completely to run with
@@ -82,6 +108,7 @@ Bugfixes
 
 2020.02
 ^^^^^^^
+
 Summary: Web- and API-Tests XLSX-SimpleFormat are almost completed. Shouldn't take much longer to have a production ready version.
 
 * Pypi-Version 2020.02.* deployed

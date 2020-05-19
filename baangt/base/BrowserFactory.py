@@ -25,7 +25,7 @@ class BrowserFactory:
         self.timing = self.testrun.timing
         self.globalSettings = testrun.globalSettings
         self.browserServer = BrowserFactory.__getBrowserServer() \
-            if self.globalSettings.get('TC.' + GC.EXECUTION_NETWORK_INFO) == 'True' else None
+            if self.globalSettings.get('TC.' + GC.EXECUTION_NETWORK_INFO) == True else None
         self.browsersMobProxies = {}
 
         self.__startRotatingProxies()
@@ -33,10 +33,10 @@ class BrowserFactory:
     def __startRotatingProxies(self):
         if self.globalSettings.get("TC.UseRotatingProxies"):
             reReadProxies = False
-            if self.globalSettings.get("TC.ReReadProxies") == "True":
+            if self.globalSettings.get("TC.ReReadProxies"):
                 reReadProxies = True
             self.rotatingProxiesService = ProxyRotate(reReadProxies=reReadProxies)
-            if self.globalSettings.get("TC.ReReadProxies") == "True":
+            if self.globalSettings.get("TC.ReReadProxies"):
                 self.rotatingProxiesService.recheckProxies(forever=True)
 
     def getBrowser(self, browserInstance=0, browserName=None, browserAttributes=None,
@@ -105,16 +105,19 @@ class BrowserFactory:
                                                                browserProxy=browserMobProxy,
                                                                browserInstance=browserInstance,
                                                                randomProxy=randomProxy)
+
                 if self.globalSettings.get("TC." + GC.EXECUTION_SLOW):
                     self.browser[browserInstance].slowExecutionToggle()
                 if browserWindowSize:
                     self.setBrowserWindowSize(self.browser[browserInstance], browserWindowSize)
-
+                if self.globalSettings.get("TC." + GC.BROWSER_ZOOM_FACTOR):
+                    self.browser[browserInstance].setZoomFactor(self.globalSettings["TC." + GC.BROWSER_ZOOM_FACTOR])
             else:
                 logger.debug(f"Using existing instance of browser {browserInstance}")
             return self.browser[browserInstance]
 
-    def setBrowserWindowSize(self, lBrowserInstance: BrowserDriver, browserWindowSize):
+    @staticmethod
+    def setBrowserWindowSize(lBrowserInstance: BrowserDriver, browserWindowSize):
         lBrowserInstance.setBrowserWindowSize(browserWindowSize)
 
     def _getBrowserInstance(self, browserInstance):
