@@ -25,7 +25,7 @@ class BrowserFactory:
         self.timing = self.testrun.timing
         self.globalSettings = testrun.globalSettings
         self.browserServer = BrowserFactory.__getBrowserServer() \
-            if self.globalSettings.get('TC.' + GC.EXECUTION_NETWORK_INFO) == 'True' else None
+            if self.globalSettings.get('TC.' + GC.EXECUTION_NETWORK_INFO) == True else None
         self.browsersMobProxies = {}
 
         self.__startRotatingProxies()
