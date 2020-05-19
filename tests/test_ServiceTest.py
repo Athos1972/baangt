@@ -87,7 +87,6 @@ def check_browsermob_output(xlsx_file):
     assert book.nrows > 25
 
 
-
 def test_download_browser_drivers():
     # Will delete the pre-existing browsers and download new.
     file_list = glob.glob(str(drivers_folder.joinpath('*')))
@@ -112,6 +111,7 @@ def test_regular_firefox():
     execute(run_file, globals_file)
     new_file = folder_monitor.getNewFiles()
     assert new_file
+    check_output(output_dir.joinpath(new_file[0][0]).as_posix())
     return "Firefox regular test succeed output file =", new_file[0][0]
 
 
@@ -122,6 +122,7 @@ def test_parellel_firefox():
     execute(run_file, globals_file)
     new_file = folder_monitor.getNewFiles()
     assert new_file
+    check_output(output_dir.joinpath(new_file[0][0]).as_posix())
     return "Firefox parellel test succeed output file =", new_file[0][0]
 
 
@@ -132,6 +133,8 @@ def test_browsermob_proxy_firefox():
     execute(run_file, globals_file)
     new_file = folder_monitor.getNewFiles()
     assert new_file
+    check_output(output_dir.joinpath(new_file[0][0]).as_posix())
+    check_browsermob_output(output_dir.joinpath(new_file[0][0]).as_posix())
     return "Firefox Browsermob test succeed output file =", new_file[0][0]
 
 
@@ -142,6 +145,7 @@ def test_headless_firefox():
     execute(run_file, globals_file)
     new_file = folder_monitor.getNewFiles()
     assert new_file
+    check_output(output_dir.joinpath(new_file[0][0]).as_posix())
     return "Firefox headless test succeed output file =", new_file[0][0]
 
 
@@ -164,6 +168,7 @@ def test_regular_chrome():
     execute(run_file, globals_file)
     new_file = folder_monitor.getNewFiles()
     assert new_file
+    check_output(output_dir.joinpath(new_file[0][0]).as_posix())
     return "Chrome regular test succeed output file =", new_file[0][0]
 
 
@@ -174,6 +179,7 @@ def test_parellel_chrome():
     execute(run_file, globals_file)
     new_file = folder_monitor.getNewFiles()
     assert new_file
+    check_output(output_dir.joinpath(new_file[0][0]).as_posix())
     return "Chrome parellel test succeed output file =", new_file[0][0]
 
 
@@ -184,6 +190,8 @@ def test_browsermob_proxy_chrome():
     execute(run_file, globals_file)
     new_file = folder_monitor.getNewFiles()
     assert new_file
+    check_output(output_dir.joinpath(new_file[0][0]).as_posix())
+    check_browsermob_output(output_dir.joinpath(new_file[0][0]).as_posix())
     return "Chrome Browsermob test succeed output file =", new_file[0][0]
 
 
@@ -194,6 +202,7 @@ def test_headless_chrome():
     execute(run_file, globals_file)
     new_file = folder_monitor.getNewFiles()
     assert new_file
+    check_output(output_dir.joinpath(new_file[0][0]).as_posix())
     return "Chrome headless test succeed output file =", new_file[0][0]
 
 
@@ -206,7 +215,3 @@ def test_csv_chrome():
     assert new_file
     assert ".csv" in new_file[0][0]
     return "Chrome Output Format test succeed output file =", new_file[0][0]
-
-t = Thread(target=test_parellel_firefox)
-t.daemon = True
-t.start()

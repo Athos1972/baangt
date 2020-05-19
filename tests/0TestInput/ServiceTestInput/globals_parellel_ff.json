@@ -7,6 +7,5 @@
     "TC.Stage": "test",
     "TC.LogLevel": "Info",
     "TC.DriverPath": "tests/0TestInput/Drivers",
-    "1TestResults": "tests/1Testresults/ServiceTest",
-    "TX.DEBUG": "True"
+    "1TestResults": "tests/1Testresults/ServiceTest"
 }
