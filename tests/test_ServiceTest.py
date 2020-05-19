@@ -215,3 +215,10 @@ def test_csv_chrome():
     assert new_file
     assert ".csv" in new_file[0][0]
     return "Chrome Output Format test succeed output file =", new_file[0][0]
+
+
+def test_full_BaangtWebDemo():
+    run_file = input_dir.join("CompleteBaangtWebdemo.xlsx")
+    execute(run_file, globals_file=Path(input_dir).joinpath("globals_headless_ff.json"))
+    new_file = folder_monitor.getNewFiles()
+    assert new_file
