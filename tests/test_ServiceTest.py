@@ -7,6 +7,7 @@ from baangt.base.BrowserFactory import BrowserDriver
 from baangt.base import GlobalConstants as GC
 from baangt.base.PathManagement import ManagedPaths
 from baangt.base.TestRun.TestRun import TestRun
+from uuid import uuid4
 
 
 # Will Check for the current directory and change it to baangt root dir
@@ -60,8 +61,9 @@ def execute_from_main(run_file, globals_file):
 
 
 def execute(run_file, globals_file):
-    lTestRun = TestRun(run_file, globalSettingsFileNameAndPath=globals_file)
-    del lTestRun
+    lUUID = uuid4()
+    lTestRun = TestRun(run_file, globalSettingsFileNameAndPath=globals_file, uuid=lUUID)
+
 
 def test_download_browser_drivers():
     # Will delete the pre-existing browsers and download new.
