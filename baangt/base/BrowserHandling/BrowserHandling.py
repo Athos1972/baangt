@@ -239,6 +239,8 @@ class BrowserDriver:
         If you're inside an iframe it will go out of the iframe
         """
         if iframe:
+            self.browserData.locatorType="XPATH"
+            self.browserData.locator=iframe
             helper.browserHelper_log(logging.DEBUG, "Going into Iframe: ", self.browserData, **{"iframe": iframe})
             # frame_to_be_availble_and_switch_to_it doesn't work.
             mustEnd = time.time() + 30

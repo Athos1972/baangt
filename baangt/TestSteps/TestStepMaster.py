@@ -151,7 +151,7 @@ class TestStepMaster:
         elif lActivity == "CLICKIF":
             self.browserSession.findByAndClickIf(xpath=xpath, css=css, id=id, timeout=lTimeout, value=lValue)
         elif lActivity == "PAUSE":
-            self.browserSession.sleep(sleepTimeinSeconds=float(lValue))
+            self.browserSession.sleep(seconds=float(lValue))
         elif lActivity == "IF":
             if self.ifActive:
                 raise BaseException("No nested IFs at this point, sorry...")
