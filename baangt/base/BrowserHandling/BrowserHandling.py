@@ -446,7 +446,7 @@ class BrowserDriver:
     def confirmAlertIfAny(self):
         try:
             self.browserData.driver.switch_to().alert().accept()
-        except Exceptions as e:
+        except Exception as e:
             pass
 
     @staticmethod
