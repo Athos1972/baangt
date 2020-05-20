@@ -209,6 +209,8 @@ class TestStepMaster:
             self.doPDFComparison(lValue)
         elif lActivity == 'CHECKLINKS':
             self.checkLinks()
+        elif lActivity == 'ALERTIF':
+            self.browserSession.confirmAlertIfAny()
         else:
             raise BaseException(f"Unknown command in TestStep {lActivity}")
 

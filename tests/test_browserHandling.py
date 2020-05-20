@@ -29,14 +29,13 @@ def test_setZoomFactor(getdriver):
 
 @pytest.mark.parametrize(("driverName", "browserName"), [("geckodriver", GC.BROWSER_FIREFOX), ("chromedriver", GC.BROWSER_CHROME)])
 def test_downloadDriver(getdriver, driverName, browserName):
-    """ check if png file created in path """
     from pathlib import Path
     import os
     from baangt.base.PathManagement import ManagedPaths
 
     # Get Remove Driver File
     path = ManagedPaths().getOrSetDriverPath()
-    fileName = path.joinpath(driverName)
+    fileName = Path(path).joinpath(driverName)
     try: 
         os.remove(fileName)
     except:

@@ -443,6 +443,12 @@ class BrowserDriver:
         else:
             return webDrv.webdriver_doSomething(GC.CMD_CLICK, self.element, timeout=timeout, optional=optional, browserData = self.browserData)
 
+    def confirmAlertIfAny(self):
+        try:
+            self.browserData.driver.switch_to().alert().accept()
+        except Exceptions as e:
+            pass
+
     @staticmethod
     def _isValidKeyValue(value):
         isValid = False

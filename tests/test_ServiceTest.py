@@ -86,22 +86,22 @@ def check_browsermob_output(xlsx_file):
     book = workbook.sheet_by_name("Network")
     assert book.nrows > 25
 
-
-def test_download_browser_drivers():
-    # Will delete the pre-existing browsers and download new.
-    file_list = glob.glob(str(drivers_folder.joinpath('*')))
-    for file in file_list:
-        print(file)
-        os.remove(file)
-    driver_folder_monitor = DownloadFolderMonitoring(str(drivers_folder))
-    BrowserDriver.downloadDriver(GC.BROWSER_FIREFOX)
-    BrowserDriver.downloadDriver(GC.BROWSER_CHROME)
-    new_drivers = driver_folder_monitor.getNewFiles()
-    assert driver_folder_monitor
-    for drivers in new_drivers:
-        print(drivers[0], "downloaded")
-    return "Downloading drivers test succeeded"
-
+# 20.5.2020: This is covered in test_browserHandling.
+# def test_download_browser_drivers():
+#     # Will delete the pre-existing browsers and download new.
+#     file_list = glob.glob(str(drivers_folder.joinpath('*')))
+#     for file in file_list:
+#         print(file)
+#         os.remove(file)
+#     driver_folder_monitor = DownloadFolderMonitoring(str(drivers_folder))
+#     BrowserDriver.downloadDriver(GC.BROWSER_FIREFOX)
+#     BrowserDriver.downloadDriver(GC.BROWSER_CHROME)
+#     new_drivers = driver_folder_monitor.getNewFiles()
+#     assert driver_folder_monitor
+#     for drivers in new_drivers:
+#         print(drivers[0], "downloaded")
+#     return "Downloading drivers test succeeded"
+#
 
 # Firefox testing section
 def test_regular_firefox():
@@ -218,7 +218,7 @@ def test_csv_chrome():
 
 
 def test_full_BaangtWebDemo():
-    run_file = input_dir.join("CompleteBaangtWebdemo.xlsx")
-    execute(run_file, globals_file=Path(input_dir).joinpath("globals_headless_ff.json"))
+    run_file = str(input_dir.joinpath("CompleteBaangtWebdemo.xlsx"))
+    execute(run_file, globals_file=Path(input_dir).joinpath("globals_ff.json"))
     new_file = folder_monitor.getNewFiles()
     assert new_file
