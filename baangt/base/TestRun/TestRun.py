@@ -127,7 +127,6 @@ class TestRun:
         successful, error = self.getSuccessAndError()
         waiting = self.getWaiting()
         self.statistics.update_all(successful, error, waiting)
-        print(self.statistics)
         logger.info(f"Finished execution of Testrun {self.testRunName}. "
                     f"{successful} Testcases successfully executed, {error} errors")
         print(f"Finished execution of Testrun {self.testRunName}. "

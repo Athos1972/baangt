@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 import threading
+import sys
 
 lock = threading.Lock()
 
@@ -30,6 +31,8 @@ class Statistic(metaclass=Singleton):
 
     def total_testcases(self, number):
         self.testcases_total = number
+        sys.stdout.write("||Statistic:"+self.__str__()+"||")
+        sys.stdout.flush()
 
     def update_all(self, success, error, waiting):
         self.testcases_executed = success+error
@@ -37,18 +40,23 @@ class Statistic(metaclass=Singleton):
         self.testcases_paused = waiting
         self.testcases_success = success
         self.testcases_failed = error
+        sys.stdout.write("||Statistic:"+self.__str__()+"||")
+        sys.stdout.flush()
 
     def update_teststep(self):
         self.teststep_executed += 1
+        sys.stdout.write("||Statistic:"+self.__str__()+"||")
+        sys.stdout.flush()
 
     def update_testcase_sequence(self):
         self.testcase_sequence_executed += 1
+        sys.stdout.write("||Statistic:"+self.__str__()+"||")
+        sys.stdout.flush()
 
     def update_teststep_sequence(self):
         self.teststep_sequence_executed += 1
+        sys.stdout.write("||Statistic:"+self.__str__()+"||")
+        sys.stdout.flush()
 
-    @staticmethod
-    def get_update():
-        return Statistic().__str__()
 
 

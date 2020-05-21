@@ -134,9 +134,9 @@ class MainWindow(Ui_MainWindow):
         #self.statistic_thread.daemon = True
         #self.statistic_thread.start()
         #self.worker()
-        self.thread = ReceiveThread(self, self.statistics)
-        self.thread.message_received.connect(self.update_statistics)
-        self.thread.start()
+        #self.thread = ReceiveThread(self, self.statistics)
+        #self.thread.message_received.connect(self.update_statistics)
+        #self.thread.start()
 
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -391,7 +391,7 @@ class MainWindow(Ui_MainWindow):
         # show status in status bar
         self.statusMessage("Executing.....", 4000)
 
-        if self.configContents.get("TX.DEBUG"):
+        if self.configContents.get("TX.DEBUG") == "True":
             from baangt.base.TestRun.TestRun import TestRun
 
             lUUID = uuid4()
@@ -400,13 +400,19 @@ class MainWindow(Ui_MainWindow):
 
         else:
             logger.info(f"Running command: {runCmd}")
-
+            self.logTextBox.clear()
             self.run_process = QtCore.QProcess()
             self.run_process.setProcessChannelMode(QtCore.QProcess.MergedChannels)
+            self.run_process.readyReadStandardOutput.connect(
+                lambda: self.process_stdout(self.run_process.readAllStandardOutput()))
+            self.run_process.readyReadStandardError.connect(
+                lambda: self.logTextBox.appendPlainText(
+                    str(self.run_process.readAllStandardError().data().decode('iso-8859-1'))))
+
             self.run_process.start(runCmd)
             # p = subprocess.run(runCmd, shell=True, close_fds=True)
             # Set status to show Execution is complete
-            buttonReply = QtWidgets.QMessageBox.question(
+            '''buttonReply = QtWidgets.QMessageBox.question(
                                 self.centralwidget,
                                 "Baangt Interactive Starter ",
                                 "Test Run finished !!",
@@ -421,8 +427,17 @@ class MainWindow(Ui_MainWindow):
             os.remove(Path(self.directory).joinpath(self.tempConfigFile))
         except Exception as e:
             logger.warning(f"Tried to remove temporary file but seems to be not there: "
-                           f"{self.directory}/{self.tempConfigFile}")
+                           f"{self.directory}/{self.tempConfigFile}")'''
 
+    def process_stdout(self, obj):
+        text = str(obj.data().decode('iso-8859-1'))
+        if "||Statistic:" in text:
+            start = text.index("||Statistic:")
+            end = text[start:].index("||")+start
+            stats = text[start+12:end-2]
+            text = text[start:end]
+            self.statisticsTextBox.setText(stats)
+        self.logTextBox.appendPlainText(text)
 
     def _getRunCommand(self):
         """
