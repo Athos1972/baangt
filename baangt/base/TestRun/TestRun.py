@@ -285,6 +285,7 @@ class TestRun:
 
         # Set default execution STAGE
         if not self.globalSettings.get(GC.EXECUTION_STAGE, None):
+            logger.debug(f"Execution Stage was not set. Setting to default value {GC.EXECUTION_STAGE_TEST}")
             self.globalSettings[GC.EXECUTION_STAGE] = GC.EXECUTION_STAGE_TEST
 
     def __sanitizeGlobalsValues(self):
