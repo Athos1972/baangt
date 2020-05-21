@@ -37,7 +37,7 @@ class ExportResults:
         self.networkInfo = self._get_network_info(kwargs.get('networkInfo'))
         self.testRunName = self.testRunInstance.testRunName
         self.dataRecords = self.testRunInstance.dataRecords
-        self.stage = self.__getStageFromRecordsOrGlobalSettings()
+        self.stage = self.__getStageFromDataRecordsOrGlobalSettings()
 
         try:
             self.exportFormat = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.EXPORT_FORMAT)
@@ -101,12 +101,20 @@ class ExportResults:
                 lExport.export()
 
     def __getStageFromDataRecordsOrGlobalSettings(self):
+        """
+        If "STAGE" is not provided in the data fields (should actually not happen, but who knows),
+        we shall take it from GlobalSettings. If also not there, take the default Value GC.EXECUTIN_STAGE_TEST
+        :return:
+        """
+        value = None
         for key, value in self.dataRecords.items():
             break
         if not value.get(GC.EXECUTION_STAGE):
-            self.stage = self.testRunInstance.globalSettings.get('TC.Stage', GC.EXECUTION_STAGE_TEST)
+            stage = self.testRunInstance.globalSettings.get('TC.Stage', GC.EXECUTION_STAGE_TEST)
         else:
-            self.stage = value.get(GC.EXECUTION_STAGE)
+            stage = value.get(GC.EXECUTION_STAGE)
+
+        return stage
 
     # -- API support --
     def getSummary(self):
