@@ -10,6 +10,7 @@ from baangt.TestSteps.AddressCreation import AddressCreate
 from baangt.base.PDFCompare import PDFCompare, PDFCompareDetails
 from baangt.base.Faker import Faker as baangtFaker
 from baangt.base.Utils import utils
+from baangt.base.RuntimeStatistics import Statistic
 
 logger = logging.getLogger("pyC")
 
@@ -23,7 +24,7 @@ class TestStepMaster:
         self.ifActive = False
         self.ifIsTrue = True
         self.baangtFaker = None
-
+        self.statistics = Statistic()
         self.kwargs = kwargs
         self.testRunInstance = kwargs.get(GC.KWARGS_TESTRUNINSTANCE)
         self.testcaseDataDict = kwargs.get(GC.KWARGS_DATA)
@@ -63,6 +64,9 @@ class TestStepMaster:
         """
         for index, (key, command) in enumerate(executionCommands.items()):
             self.executeDirectSingle(index, command)
+            self.statistics.update_teststep()
+        self.statistics.update_teststep_sequence()
+
 
     def executeDirectSingle(self, commandNumber, command):
         """

@@ -7,6 +7,25 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+import logging
+
+#logger = logging.getLogger("pyC")
+
+class QPlainTextEditLogger(logging.Handler, QtCore.QObject):
+    appendPlainText = QtCore.pyqtSignal(str)
+    def __init__(self, parent):
+        super().__init__()
+        QtCore.QObject.__init__(self)
+        self.widget =QtWidgets.QPlainTextEdit(parent)
+        self.widget.setReadOnly(True)
+        self.appendPlainText.connect(self.widget.appendPlainText)
+
+    def emit(self, record):
+        #msg = self.format(record)
+        msg = str(record.getMessage())
+        print(msg)
+        self.appendPlainText.emit(msg)
+
 
 class Ui_MainWindow(QtCore.QObject):
     def setupUi(self, MainWindow):
@@ -247,7 +266,27 @@ class Ui_MainWindow(QtCore.QObject):
         self.horizontalLayout_20.addWidget(self.openLogFilePushButton_4)
         self.verticalLayout_8.addLayout(self.horizontalLayout_20)
 
-        self.gridLayout_5.addLayout(self.verticalLayout_8, 0, 0, 1, 1)
+
+        self.horizontalLayout_21 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_21.setSpacing(10)
+        self.horizontalLayout_21.setObjectName("horizontalLayout_21")
+        self.horizontalLayout_22 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_22.setSpacing(10)
+        self.horizontalLayout_22.setObjectName("horizontalLayout_22")
+        self.statisticsTextBox = QtWidgets.QTextEdit(self.mainGroupBox_4)
+        self.statisticsTextBox.setText("Statistics")
+        self.statisticsTextBox.setStyleSheet("background-color: rgb(255, 255, 255); border: 1px solid black;")
+        self.statisticsTextBox.setReadOnly(True)
+        self.horizontalLayout_21.addWidget(self.statisticsTextBox)
+        self.logTextBox = QPlainTextEditLogger(self.mainGroupBox_4)
+        #self.logTextBox.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+        logging.getLogger("pyC").addHandler(self.logTextBox)
+        self.logTextBox.widget.setStyleSheet("background-color: rgb(255, 255, 255); border: 1px solid black;")
+        #self.logTextBox.setReadOnly(True)
+        self.horizontalLayout_21.addWidget(self.logTextBox.widget)
+
+
+        self.gridLayout_5.addLayout(self.verticalLayout_8, 0, 0, 0, 0)
         self.horizontalLayout_13.addWidget(self.mainGroupBox_4)
         self.logo_4 = QtWidgets.QLabel(self.mainPage)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -264,6 +303,8 @@ class Ui_MainWindow(QtCore.QObject):
         self.logo_4.setObjectName("logo_4")
         self.horizontalLayout_13.addWidget(self.logo_4)
         self.verticalLayout_7.addLayout(self.horizontalLayout_13)
+        self.verticalLayout_7.addLayout(self.horizontalLayout_21)
+        #self.verticalLayout_7.addLayout(self.horizontalLayout_22)
         spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_7.addItem(spacerItem)
         self.gridLayout_6.addLayout(self.verticalLayout_7, 0, 0, 1, 1)

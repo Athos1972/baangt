@@ -24,8 +24,28 @@ import platform
 from baangt.base.PathManagement import ManagedPaths
 from uuid import uuid4
 from baangt.base.FilesOpen import FilesOpen
+from baangt.base.RuntimeStatistics import Statistic
+from threading import Thread
+from time import sleep
 
 logger = logging.getLogger("pyC")
+
+
+class ReceiveThread(QtCore.QThread):
+
+    message_received = QtCore.pyqtSignal(str)
+
+    def __init__(self, parent, statistic):
+        super(ReceiveThread, self).__init__(parent)
+        self.toStop = False
+
+    def run(self):
+        while not self.toStop:
+            stat = Statistic()
+            text = str(stat)
+            self.message_received.emit(text)
+            sleep(2)
+
 
 class PyqtKatalonUI(ImportKatalonRecorder):
     """ Subclass of ImportKatalonRecorder :
@@ -108,6 +128,15 @@ class MainWindow(Ui_MainWindow):
         self.savePushButton_2.clicked.connect(self.saveTestCase)
         self.copyClipboard_2.clicked.connect(self.copyFromClipboard)
         self.TextIn_2.textChanged.connect(self.importClipboard)
+
+        self.statistics = Statistic()
+        #self.statistic_thread = Thread(target=self.worker)
+        #self.statistic_thread.daemon = True
+        #self.statistic_thread.start()
+        #self.worker()
+        self.thread = ReceiveThread(self, self.statistics)
+        self.thread.message_received.connect(self.update_statistics)
+        self.thread.start()
 
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -371,8 +400,10 @@ class MainWindow(Ui_MainWindow):
 
         else:
             logger.info(f"Running command: {runCmd}")
+
             self.run_process = QtCore.QProcess()
-            self.run_process.execute(runCmd)
+            self.run_process.setProcessChannelMode(QtCore.QProcess.MergedChannels)
+            self.run_process.start(runCmd)
             # p = subprocess.run(runCmd, shell=True, close_fds=True)
             # Set status to show Execution is complete
             buttonReply = QtWidgets.QMessageBox.question(
@@ -927,6 +958,28 @@ class MainWindow(Ui_MainWindow):
             FilesOpen.openResultFile(filePathName)
         except:
             self.statusbar.showMessage("No file found!")
+
+    @QtCore.pyqtSlot(str)
+    def update_statistics(self, text):
+        self.statisticsTextBox.setText(text)
+
+    def worker(self):
+        for x in range(1000):
+            self.statisticsTextBox.clear()
+            self.statisticsTextBox.setText(Statistic().get_update())
+            self.statisticsTextBox.update()
+            print('updated')
+            sleep(1)
+
+    '''def worker(self):
+        self.work = Worker()
+        self.thread = QtCore.QThread()
+        #self.thread.started.connect(self.worker.work)
+        self.work.newParams.connect(self.update_statistics)
+        self.work.moveToThread(self.thread)
+        self.thread.started.connect(self.work.paramUp)
+        self.thread.start()'''
+
 
 
 # Controller
