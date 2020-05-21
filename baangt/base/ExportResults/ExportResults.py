@@ -461,8 +461,12 @@ class ExportResults:
                 f'looks like we have no data in records: {self.dataRecords}, len of dataRecords: {len(self.dataRecords)}')
 
         # They are added here, because they'll not necessarily appear in the first record of the export data:
-        self.fieldListExport.append(GC.TESTCASEERRORLOG)
-        self.fieldListExport.append(GC.SCREENSHOTS)
+        if not GC.TESTCASEERRORLOG in self.fieldListExport:
+            self.fieldListExport.append(GC.TESTCASEERRORLOG)
+        if not GC.SCREENSHOTS in self.fieldListExport:
+            self.fieldListExport.append(GC.SCREENSHOTS)
+        if not GC.EXECUTION_STAGE in self.fieldListExport:
+            self.fieldListExport.append(GC.EXECUTION_STAGE)
 
     def _exportData(self):
         for key, value in self.dataRecords.items():
