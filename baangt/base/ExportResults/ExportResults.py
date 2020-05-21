@@ -37,7 +37,7 @@ class ExportResults:
         self.networkInfo = self._get_network_info(kwargs.get('networkInfo'))
         self.testRunName = self.testRunInstance.testRunName
         self.dataRecords = self.testRunInstance.dataRecords
-        self.stage = self.testRunInstance.globalSettings.get('TC.Stage')
+        self.stage = self.__getStageFromRecordsOrGlobalSettings()
 
         try:
             self.exportFormat = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.EXPORT_FORMAT)
@@ -99,6 +99,14 @@ class ExportResults:
             for key, value in addExportData.items():
                 lExport = ExportAdditionalDataIntoTab(tabname=key, valueDict=value, outputExcelSheet=self.workbook)
                 lExport.export()
+
+    def __getStageFromDataRecordsOrGlobalSettings(self):
+        for key, value in self.dataRecords.items():
+            break
+        if not value.get(GC.EXECUTION_STAGE):
+            self.stage = self.testRunInstance.globalSettings.get('TC.Stage', GC.EXECUTION_STAGE_TEST)
+        else:
+            self.stage = value.get(GC.EXECUTION_STAGE)
 
     # -- API support --
     def getSummary(self):
