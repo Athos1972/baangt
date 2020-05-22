@@ -10,6 +10,8 @@ from baangt.base.PathManagement import ManagedPaths
 from baangt.base.TestRun.TestRun import TestRun
 from uuid import uuid4
 import psutil
+import pytest
+import platform
 
 # Will Check for the current directory and change it to baangt root dir
 if not os.path.basename(os.getcwd()) == "baangt":
@@ -28,6 +30,7 @@ input_file = str(Path(current_dir).joinpath("tests/0TestInput/ServiceTestInput/s
 input_file_parallel = str(Path(input_dir).joinpath("simpleAutomationpractice.xlsx"))
 drivers_folder = Path(managed_path.getOrSetDriverPath())
 
+isLinux = True if platform.system().upper() == "LINUX" else False
 
 # Creates a copy of your environment
 my_env = os.environ.copy()
@@ -158,6 +161,7 @@ def test_csv_firefox():
 
 
 # Chrome Testing Section
+@pytest.mark.skipif(isLinux, reason="Chrome not stable on Linux")
 def test_regular_chrome():
     # Will run the main program with normal regular globals settings
     run_file = input_file
@@ -171,6 +175,7 @@ def test_regular_chrome():
     return "Chrome regular test succeed output file =", new_file[0][0]
 
 
+@pytest.mark.skipif(isLinux, reason="Chrome not stable on Linux")
 def test_parellel_chrome():
     # Will run the main program with 2 browsers running parallel
     run_file = input_file_parallel
@@ -184,6 +189,7 @@ def test_parellel_chrome():
     return "Chrome parellel test succeed output file =", new_file[0][0]
 
 
+@pytest.mark.skipif(isLinux, reason="Chrome not stable on Linux")
 def test_browsermob_proxy_chrome():
     # Will run the main program with browsermob proxy mode
     run_file = input_file
@@ -198,6 +204,7 @@ def test_browsermob_proxy_chrome():
     return "Chrome Browsermob test succeed output file =", new_file[0][0]
 
 
+@pytest.mark.skipif(isLinux, reason="Chrome not stable on Linux")
 def test_headless_chrome():
     # Will run the main program with headless browser
     for proc in psutil.process_iter():
@@ -215,6 +222,7 @@ def test_headless_chrome():
     return "Chrome headless test succeed output file =", new_file[0][0]
 
 
+@pytest.mark.skipif(isLinux, reason="Chrome not stable on Linux")
 def test_csv_chrome():
     # Will run the main program for csv output
     run_file = input_file
