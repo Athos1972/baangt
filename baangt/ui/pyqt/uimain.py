@@ -31,22 +31,6 @@ from time import sleep
 logger = logging.getLogger("pyC")
 
 
-class ReceiveThread(QtCore.QThread):
-
-    message_received = QtCore.pyqtSignal(str)
-
-    def __init__(self, parent, statistic):
-        super(ReceiveThread, self).__init__(parent)
-        self.toStop = False
-
-    def run(self):
-        while not self.toStop:
-            stat = Statistic()
-            text = str(stat)
-            self.message_received.emit(text)
-            sleep(2)
-
-
 class PyqtKatalonUI(ImportKatalonRecorder):
     """ Subclass of ImportKatalonRecorder :
         Aim : To disable GUI created by PySimpleGui
@@ -130,17 +114,13 @@ class MainWindow(Ui_MainWindow):
         self.TextIn_2.textChanged.connect(self.importClipboard)
 
         self.statistics = Statistic()
-        #self.statistic_thread = Thread(target=self.worker)
-        #self.statistic_thread.daemon = True
-        #self.statistic_thread.start()
-        #self.worker()
-        #self.thread = ReceiveThread(self, self.statistics)
-        #self.thread.message_received.connect(self.update_statistics)
-        #self.thread.start()
 
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-
+    def close(self, event):
+        self.child.terminate()
+        self.child.waitForFinished()
+        event.accept()
 
     def saveInteractiveGuiConfig(self):
         """ Save Interactive Gui Config variables """
@@ -235,6 +215,7 @@ class MainWindow(Ui_MainWindow):
                  )
 
         MainWindow.resize(980, 480)
+
 
     def statusMessage(self, str, duration=1000):
         """ Display status message passed in Status Bar
@@ -408,18 +389,19 @@ class MainWindow(Ui_MainWindow):
             self.run_process.readyReadStandardError.connect(
                 lambda: self.logTextBox.appendPlainText(
                     str(self.run_process.readAllStandardError().data().decode('iso-8859-1'))))
-
+            self.run_process.finished.connect(self.processFinished)
             self.run_process.start(runCmd)
-            # p = subprocess.run(runCmd, shell=True, close_fds=True)
-            # Set status to show Execution is complete
-            '''buttonReply = QtWidgets.QMessageBox.question(
-                                self.centralwidget,
-                                "Baangt Interactive Starter ",
-                                "Test Run finished !!",
-                                QtWidgets.QMessageBox.Ok,
-                                QtWidgets.QMessageBox.Ok
-                                 )
+            self.statusbar.showMessage("Running.....")
 
+    @pyqtSlot()
+    def processFinished(self):
+        buttonReply = QtWidgets.QMessageBox.question(
+            self.centralwidget,
+            "Baangt Interactive Starter ",
+            "Test Run finished !!",
+            QtWidgets.QMessageBox.Ok,
+            QtWidgets.QMessageBox.Ok
+        )
         self.statusMessage(f"Completed ", 3000)
 
         # Remove temporary Configfile, that was created only for this run:
@@ -427,17 +409,28 @@ class MainWindow(Ui_MainWindow):
             os.remove(Path(self.directory).joinpath(self.tempConfigFile))
         except Exception as e:
             logger.warning(f"Tried to remove temporary file but seems to be not there: "
-                           f"{self.directory}/{self.tempConfigFile}")'''
+                           f"{self.directory}/{self.tempConfigFile}")
 
     def process_stdout(self, obj):
-        text = str(obj.data().decode('iso-8859-1'))
+        text = str(obj.data().decode('utf-8'))
         if "||Statistic:" in text:
-            start = text.index("||Statistic:")
-            end = text[start:].index("||")+start
-            stats = text[start+12:end-2]
-            text = text[start:end]
+            lis = text.split('||')
+            stat = lis[1][10:]
+            stat_lis = stat.split('\n')
+            stats = stat_lis[0].strip() + (" " * (60 - len(stat_lis[0].strip()))) + \
+                    stat_lis[1].strip() + (" " * (60 - len(stat_lis[1].strip()))) + \
+                    stat_lis[2].strip() + (" " * (60 - len(stat_lis[2].strip()))) + "\n" + \
+                    stat_lis[3].strip() + (" " * (60 - len(stat_lis[3].strip()))) + \
+                    stat_lis[4].strip() + (" " * (60 - len(stat_lis[4].strip()))) + \
+                    stat_lis[5].strip() + (" " * (60 - len(stat_lis[5].strip()))) + "\n" + \
+                    stat_lis[6].strip() + (" " * (60 - len(stat_lis[6].strip()))) + \
+                    stat_lis[7].strip() + (" " * (60 - len(stat_lis[7].strip()))) + \
+                    stat_lis[8].strip() + (" " * (60 - len(stat_lis[8].strip())))
+            log = '\n'.join([lis[0], lis[2]])
             self.statisticsTextBox.setText(stats)
-        self.logTextBox.appendPlainText(text)
+            self.logTextBox.appendPlainText(log.strip())
+        else:
+            self.logTextBox.appendPlainText(text.strip())
 
     def _getRunCommand(self):
         """
@@ -977,24 +970,6 @@ class MainWindow(Ui_MainWindow):
     @QtCore.pyqtSlot(str)
     def update_statistics(self, text):
         self.statisticsTextBox.setText(text)
-
-    def worker(self):
-        for x in range(1000):
-            self.statisticsTextBox.clear()
-            self.statisticsTextBox.setText(Statistic().get_update())
-            self.statisticsTextBox.update()
-            print('updated')
-            sleep(1)
-
-    '''def worker(self):
-        self.work = Worker()
-        self.thread = QtCore.QThread()
-        #self.thread.started.connect(self.worker.work)
-        self.work.newParams.connect(self.update_statistics)
-        self.work.moveToThread(self.thread)
-        self.thread.started.connect(self.work.paramUp)
-        self.thread.start()'''
-
 
 
 # Controller

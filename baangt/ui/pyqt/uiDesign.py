@@ -9,23 +9,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import logging
 
-#logger = logging.getLogger("pyC")
-
-class QPlainTextEditLogger(logging.Handler, QtCore.QObject):
-    appendPlainText = QtCore.pyqtSignal(str)
-    def __init__(self, parent):
-        super().__init__()
-        QtCore.QObject.__init__(self)
-        self.widget =QtWidgets.QPlainTextEdit(parent)
-        self.widget.setReadOnly(True)
-        self.appendPlainText.connect(self.widget.appendPlainText)
-
-    def emit(self, record):
-        #msg = self.format(record)
-        msg = str(record.getMessage())
-        print(msg)
-        self.appendPlainText.emit(msg)
-
 
 class Ui_MainWindow(QtCore.QObject):
     def setupUi(self, MainWindow):
@@ -276,13 +259,13 @@ class Ui_MainWindow(QtCore.QObject):
         self.statisticsTextBox = QtWidgets.QTextEdit(self.mainGroupBox_4)
         self.statisticsTextBox.setStyleSheet("background-color: rgb(255, 255, 255); border: 1px solid black;")
         self.statisticsTextBox.setReadOnly(True)
+        self.statisticsTextBox.setFixedHeight(62)
+        #self.statisticsTextBox.setMinimumSize(QtCore.QSize(90, 0))
         self.horizontalLayout_21.addWidget(self.statisticsTextBox)
         self.logTextBox = QtWidgets.QPlainTextEdit(self.mainGroupBox_4)
-        #self.logTextBox.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-        #logging.getLogger("pyC").addHandler(self.logTextBox)
         self.logTextBox.setStyleSheet("background-color: rgb(255, 255, 255); border: 1px solid black;")
         self.logTextBox.setReadOnly(True)
-        self.horizontalLayout_21.addWidget(self.logTextBox)
+        self.horizontalLayout_22.addWidget(self.logTextBox)
 
 
         self.gridLayout_5.addLayout(self.verticalLayout_8, 0, 0, 0, 0)
@@ -303,7 +286,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.horizontalLayout_13.addWidget(self.logo_4)
         self.verticalLayout_7.addLayout(self.horizontalLayout_13)
         self.verticalLayout_7.addLayout(self.horizontalLayout_21)
-        #self.verticalLayout_7.addLayout(self.horizontalLayout_22)
+        self.verticalLayout_7.addLayout(self.horizontalLayout_22)
         spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_7.addItem(spacerItem)
         self.gridLayout_6.addLayout(self.verticalLayout_7, 0, 0, 1, 1)
@@ -457,6 +440,11 @@ class Ui_MainWindow(QtCore.QObject):
         self.retranslateUi(MainWindow)
         self.stackedWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def close(self,event):
+        self.child.terminate()
+        self.child.waitForFinished()
+        event.accept()
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate

@@ -27,7 +27,7 @@ class Statistic(metaclass=Singleton):
 
     def __str__(self):
         string = [f"{key.split('_')[0]+' '+key.split('_')[1]}: {self.__dict__[key]}" for key in self.__dict__]
-        return "\n".join(string)
+        return "\n".join(string).upper()
 
     def total_testcases(self, number):
         self.testcases_total = number
