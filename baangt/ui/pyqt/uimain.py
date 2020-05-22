@@ -375,7 +375,7 @@ class MainWindow(Ui_MainWindow):
         # show status in status bar
         self.statusMessage("Executing.....", 4000)
 
-        if self.configContents.get("TX.DEBUG", False):
+        if self.configContents.get("TX.DEBUG", False) == "True":
             from baangt.base.TestRun.TestRun import TestRun
 
             lUUID = uuid4()
