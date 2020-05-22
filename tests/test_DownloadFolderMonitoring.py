@@ -2,7 +2,7 @@ from baangt.base.DownloadFolderMonitoring import DownloadFolderMonitoring
 from datetime import datetime
 import os
 
-directoryToMonitor = "0TestInput"
+directoryToMonitor = os.path.join(os.getcwd(), "tests/0TestInput")
 newFileName = "DownloadFolderMonitoring_test.txt"
 newFile = os.path.join(directoryToMonitor, newFileName)
 

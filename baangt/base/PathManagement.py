@@ -4,7 +4,9 @@ import platform
 from pathlib import Path
 from baangt.base import GlobalConstants as GC
 from baangt.TestSteps import Exceptions as baangtExceptions
+import logging
 
+logger = logging.getLogger("pyC")
 
 class Singleton(type):
     _instances = {}
@@ -234,6 +236,7 @@ class ManagedPaths(metaclass=Singleton):
 
         if not Path(newPath).is_dir():
             baangtExceptions.baangtTestStepException(f"Tried to create folder {newPath} and failed.")
+            logger.debug(f"Tried to create folder {newPath} and failed.")
 
         return None
 
