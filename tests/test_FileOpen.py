@@ -14,7 +14,7 @@ def test_Open_NoFile():
     assert not lResult
 
 
-@pytest.mark.skipif(lIsLinux, reason="Linux")
+@pytest.mark.skipif(lIsLinux, reason="Doesn't work on Linux")
 def test_Open_XLSX():
     lResult = FilesOpen.open(lXLSXFile)
     assert lResult
@@ -25,7 +25,7 @@ def test_Open_LOGFILE():
     assert lResult
 
 
-@pytest.mark.skipif(lIsLinux, reason="Linux")
+@pytest.mark.skipif(lIsLinux, reason="Doesn't work on Linux")
 def test_with_class_resultFile():
     lFilesOpen = FilesOpen.FilesOpen()
     lResult = lFilesOpen.openResultFile(lXLSXFile)
@@ -38,7 +38,7 @@ def test_with_class_LogFile():
     assert lResult
 
 
-@pytest.mark.skipif(lIsLinux, reason="Linux")
+@pytest.mark.skipif(lIsLinux, reason="Doesn't work on Linux")
 def test_with_class_TestRunDefinitionFile():
     lFilesOpen = FilesOpen.FilesOpen()
     lResult = lFilesOpen.openTestRunDefinition(lXLSXFile)

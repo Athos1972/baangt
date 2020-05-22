@@ -121,7 +121,13 @@ class HandleDatabase:
                     temp_dic[keys[col_index]] = repr(temp_dic[keys[col_index]])
                     if temp_dic[keys[col_index]][-2:]==".0":
                         temp_dic[keys[col_index]] = temp_dic[keys[col_index]][:-2]
-            self.dataDict.append(temp_dic)
+
+            lAppend = self.__compareEqualStageInGlobalsAndDataRecord(temp_dic)
+
+            if lAppend:
+                self.dataDict.append(temp_dic)
+            else:
+                logger.debug(f"Skipped record {row_index} due to wrong stage {temp_dic[GC.EXECUTION_STAGE]}")
 
         for temp_dic in self.dataDict:
             new_data_dic ={}
@@ -134,17 +140,28 @@ class HandleDatabase:
                         temp_dic[keys] = temp_dic[keys].replace(
                             temp_dic[keys][start_index:end_index+1], data_to_replace_with
                         )
-                    print(temp_dic[keys])
                     if temp_dic[keys][:4] == "RRD_":
                         rrd_string = self.__process_rrd_string(temp_dic[keys])
                         rrd_data = self.__rrd_string_to_python(rrd_string[4:], fileName)
                         for data in rrd_data:
-                            print(rrd_data)
                             new_data_dic[data] = rrd_data[data]
             for key in new_data_dic:
                 temp_dic[key] = new_data_dic[key]
-            print(temp_dic)
 
+    def __compareEqualStageInGlobalsAndDataRecord(self, currentNewRecordDict:dict) -> bool:
+        """
+        As method name says, compares, whether Stage in Global-settings is equal to stage in Data Record,
+        so that this record might be excluded, if it's for the wrong Stage.
+
+        :param currentNewRecordDict: The current Record
+        :return: Boolean
+        """
+        lAppend = True
+        if self.globals.get(GC.EXECUTION_STAGE):
+            if currentNewRecordDict.get(GC.EXECUTION_STAGE):
+                if currentNewRecordDict[GC.EXECUTION_STAGE] != self.globals[GC.EXECUTION_STAGE]:
+                    lAppend = False
+        return lAppend
 
     def __processRrd(self, sheet_name, data_looking_for, data_to_match: dict):
         """
