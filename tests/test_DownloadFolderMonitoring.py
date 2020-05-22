@@ -1,9 +1,8 @@
 from baangt.base.DownloadFolderMonitoring import DownloadFolderMonitoring
 from datetime import datetime
-from pathlib import Path
 import os
 
-directoryToMonitor = Path(os.getcwd()).joinpath("tests").joinpath("0TestInput")
+directoryToMonitor = os.path.join(os.getcwd(), "tests/0TestInput")
 newFileName = "DownloadFolderMonitoring_test.txt"
 newFile = os.path.join(directoryToMonitor, newFileName)
 

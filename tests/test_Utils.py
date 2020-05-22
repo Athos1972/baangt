@@ -230,11 +230,9 @@ def test_dynamicImportOfClasses_path_className_not_found_class_in_module():
 
 def test_findFileAndPathFromPath_directory():
     directory = "~/baangt/examples"
-    # On Windows Computer after baangt was installed there actually IS a file globals.json in this positions :)
-    if not Path(directory).joinpath("globals.json").exists():
-        fileNameAndPath = Path(directory).joinpath('globals.json')
-        with pytest.raises(Exception):
-            utils.findFileAndPathFromPath(fileNameAndPath, directory)
+    fileNameAndPath = Path(directory).joinpath('global_not_exist.json')
+    with pytest.raises(Exception):
+        utils.findFileAndPathFromPath(fileNameAndPath, directory)
 
 
 def test_findFileAndPathFromPath_only_fileNamePath():

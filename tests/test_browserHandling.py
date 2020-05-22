@@ -27,7 +27,7 @@ def test_setZoomFactor(getdriver):
     assert not getdriver.browserData.driver
 
 
-@pytest.mark.parametrize(("driverName", "browserName"), [("geckodriver", GC.BROWSER_FIREFOX), ("chromedriver", GC.BROWSER_CHROME)])
+@pytest.mark.parametrize(("driverName", "browserName"), [("geckodriver.exe", GC.BROWSER_FIREFOX), ("chromedriver.exe", GC.BROWSER_CHROME)])
 def test_downloadDriver(getdriver, driverName, browserName):
     from pathlib import Path
     import os
@@ -40,11 +40,11 @@ def test_downloadDriver(getdriver, driverName, browserName):
         os.remove(fileName)
     except:
         pass
-    assert False == os.path.isfile(fileName) 
+    assert not os.path.isfile(fileName)
 
     # create browser
     getdriver.downloadDriver(browserName)
-    assert True == os.path.isfile(fileName) 
+    assert os.path.isfile(fileName)
 
 
 def test_findBy_class(getdriver):

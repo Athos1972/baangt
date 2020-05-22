@@ -9,7 +9,7 @@ from baangt.base import GlobalConstants as GC
 from baangt.base.PathManagement import ManagedPaths
 from baangt.base.TestRun.TestRun import TestRun
 from uuid import uuid4
-from threading import Thread
+import psutil
 
 # Will Check for the current directory and change it to baangt root dir
 if not os.path.basename(os.getcwd()) == "baangt":
@@ -21,18 +21,12 @@ if not os.path.basename(os.getcwd()) == "baangt":
 
 # Paths
 current_dir = os.getcwd()
-output_dir = Path(current_dir).joinpath('tests/1Testresults/ServiceTest')
+managed_path = ManagedPaths()
+output_dir = Path(managed_path.getOrSetExportPath())
 input_dir = Path(current_dir).joinpath("tests/0TestInput/ServiceTestInput")
 input_file = str(Path(current_dir).joinpath("tests/0TestInput/ServiceTestInput/simpleAutomationpractice_small.xlsx"))
 input_file_parallel = str(Path(input_dir).joinpath("simpleAutomationpractice.xlsx"))
-drivers_folder = Path(current_dir).joinpath("tests/0TestInput/Drivers")
-
-
-# Make and check dir using ManagePaths method & updating ManagePaths for driver path
-managed_path = ManagedPaths()
-managed_path._ManagedPaths__makeAndCheckDir(output_dir)
-managed_path._ManagedPaths__makeAndCheckDir(drivers_folder)
-managed_path.getOrSetDriverPath(path=str(drivers_folder))
+drivers_folder = Path(managed_path.getOrSetDriverPath())
 
 
 # Creates a copy of your environment
@@ -40,13 +34,6 @@ my_env = os.environ.copy()
 # Use if you get error 'java' command not found even after it is installed in your system
 # Replace the path inside "" to the bin folder of java.
 my_env["PATH"] = r"C:\Program Files (x86)\Java\jre1.8.0_251\bin;" + my_env["PATH"]
-
-
-# Will delete old result files
-files = glob.glob(str(output_dir.joinpath('*')))
-for f in files:
-    if '.xlsx' in f:
-        os.remove(f)
 
 
 # To monitor new download files
@@ -111,7 +98,9 @@ def test_regular_firefox():
     execute(run_file, globals_file)
     new_file = folder_monitor.getNewFiles()
     assert new_file
-    check_output(output_dir.joinpath(new_file[0][0]).as_posix())
+    output_file = output_dir.joinpath(new_file[0][0]).as_posix()
+    check_output(output_file)
+    os.remove(output_file)
     return "Firefox regular test succeed output file =", new_file[0][0]
 
 
@@ -122,7 +111,9 @@ def test_parellel_firefox():
     execute(run_file, globals_file)
     new_file = folder_monitor.getNewFiles()
     assert new_file
-    check_output(output_dir.joinpath(new_file[0][0]).as_posix())
+    output_file = output_dir.joinpath(new_file[0][0]).as_posix()
+    check_output(output_file)
+    os.remove(output_file)
     return "Firefox parellel test succeed output file =", new_file[0][0]
 
 
@@ -133,8 +124,10 @@ def test_browsermob_proxy_firefox():
     execute(run_file, globals_file)
     new_file = folder_monitor.getNewFiles()
     assert new_file
-    check_output(output_dir.joinpath(new_file[0][0]).as_posix())
-    check_browsermob_output(output_dir.joinpath(new_file[0][0]).as_posix())
+    output_file = output_dir.joinpath(new_file[0][0]).as_posix()
+    check_output(output_file)
+    check_browsermob_output(output_file)
+    os.remove(output_file)
     return "Firefox Browsermob test succeed output file =", new_file[0][0]
 
 
@@ -145,7 +138,9 @@ def test_headless_firefox():
     execute(run_file, globals_file)
     new_file = folder_monitor.getNewFiles()
     assert new_file
-    check_output(output_dir.joinpath(new_file[0][0]).as_posix())
+    output_file = output_dir.joinpath(new_file[0][0]).as_posix()
+    check_output(output_file)
+    os.remove(output_file)
     return "Firefox headless test succeed output file =", new_file[0][0]
 
 
@@ -157,6 +152,8 @@ def test_csv_firefox():
     new_file = folder_monitor.getNewFiles()
     assert new_file
     assert ".csv" in new_file[0][0]
+    output_file = output_dir.joinpath(new_file[0][0]).as_posix()
+    os.remove(output_file)
     return "Firefox Output Format test succeed output file =", new_file[0][0]
 
 
@@ -168,7 +165,9 @@ def test_regular_chrome():
     execute(run_file, globals_file)
     new_file = folder_monitor.getNewFiles()
     assert new_file
-    check_output(output_dir.joinpath(new_file[0][0]).as_posix())
+    output_file = output_dir.joinpath(new_file[0][0]).as_posix()
+    check_output(output_file)
+    os.remove(output_file)
     return "Chrome regular test succeed output file =", new_file[0][0]
 
 
@@ -179,7 +178,9 @@ def test_parellel_chrome():
     execute(run_file, globals_file)
     new_file = folder_monitor.getNewFiles()
     assert new_file
-    check_output(output_dir.joinpath(new_file[0][0]).as_posix())
+    output_file = output_dir.joinpath(new_file[0][0]).as_posix()
+    check_output(output_file)
+    os.remove(output_file)
     return "Chrome parellel test succeed output file =", new_file[0][0]
 
 
@@ -190,19 +191,27 @@ def test_browsermob_proxy_chrome():
     execute(run_file, globals_file)
     new_file = folder_monitor.getNewFiles()
     assert new_file
-    check_output(output_dir.joinpath(new_file[0][0]).as_posix())
-    check_browsermob_output(output_dir.joinpath(new_file[0][0]).as_posix())
+    output_file = output_dir.joinpath(new_file[0][0]).as_posix()
+    check_output(output_file)
+    check_browsermob_output(output_file)
+    os.remove(output_file)
     return "Chrome Browsermob test succeed output file =", new_file[0][0]
 
 
 def test_headless_chrome():
     # Will run the main program with headless browser
+    for proc in psutil.process_iter():
+        if proc.name() == "browsermob-proxy":
+            proc.kill()
+
     run_file = input_file
     globals_file = Path(input_dir).joinpath("globals_headless_chrome.json").as_posix()
     execute(run_file, globals_file)
     new_file = folder_monitor.getNewFiles()
     assert new_file
-    check_output(output_dir.joinpath(new_file[0][0]).as_posix())
+    output_file = output_dir.joinpath(new_file[0][0]).as_posix()
+    check_output(output_file)
+    os.remove(output_file)
     return "Chrome headless test succeed output file =", new_file[0][0]
 
 
@@ -222,3 +231,7 @@ def test_full_BaangtWebDemo():
     execute(run_file, globals_file=Path(input_dir).joinpath("globals_ff.json"))
     new_file = folder_monitor.getNewFiles()
     assert new_file
+    output_file = output_dir.joinpath(new_file[0][0]).as_posix()
+    check_output(output_file)
+    os.remove(output_file)
+
