@@ -85,7 +85,7 @@ class ManagedPaths(metaclass=Singleton):
 
         Will return path where downloaded file will be saved.
 
-        Default path will be 1Testresults folder in current working directory.
+        Default path will be 1TestResults folder in current working directory.
 
         :param path: Path to be set for browser downloads if download path didn't exists.
         :return: Download path
@@ -97,7 +97,7 @@ class ManagedPaths(metaclass=Singleton):
         if path:
             self.DownloadPath = path
         else:
-            self.DownloadPath = self.__combineBasePathWithObjectPath("1Testresults")
+            self.DownloadPath = self.__combineBasePathWithObjectPath("1TestResults")
 
         self.__makeAndCheckDir(self.DownloadPath)
         return self.DownloadPath

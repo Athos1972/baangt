@@ -21,7 +21,7 @@ if not os.path.basename(os.getcwd()) == "baangt":
 
 # Paths
 current_dir = os.getcwd()
-output_dir = Path(current_dir).joinpath('tests/1Testresults/ServiceTest')
+output_dir = Path(current_dir).joinpath('tests/1TestResults/ServiceTest')
 input_dir = Path(current_dir).joinpath("tests/0TestInput/ServiceTestInput")
 input_file = str(Path(current_dir).joinpath("tests/0TestInput/ServiceTestInput/simpleAutomationpractice_small.xlsx"))
 input_file_parallel = str(Path(input_dir).joinpath("simpleAutomationpractice.xlsx"))
