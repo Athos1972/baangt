@@ -270,8 +270,8 @@ class TestRun:
 
     def _initTestRunSettingsFromFile(self):
         self.__loadJSONGlobals()
-        self.__sanitizeGlobalsValues()
         self.__setPathsIfNotPredefined()
+        self.__sanitizeGlobalsValues()
 
     def __setPathsIfNotPredefined(self):
         if not self.globalSettings.get(GC.PATH_SCREENSHOTS, None):
@@ -298,6 +298,7 @@ class TestRun:
 
         # Set default execution STAGE
         if not self.globalSettings.get(GC.EXECUTION_STAGE, None):
+            logger.debug(f"Execution Stage was not set. Setting to default value {GC.EXECUTION_STAGE_TEST}")
             self.globalSettings[GC.EXECUTION_STAGE] = GC.EXECUTION_STAGE_TEST
 
     def __sanitizeGlobalsValues(self):

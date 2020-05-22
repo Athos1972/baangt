@@ -230,7 +230,7 @@ def test_dynamicImportOfClasses_path_className_not_found_class_in_module():
 
 def test_findFileAndPathFromPath_directory():
     directory = "~/baangt/examples"
-    fileNameAndPath = Path(directory).joinpath('globals.json')
+    fileNameAndPath = Path(directory).joinpath('global_not_exist.json')
     with pytest.raises(Exception):
         utils.findFileAndPathFromPath(fileNameAndPath, directory)
 

@@ -37,7 +37,7 @@ class ExportResults:
         self.networkInfo = self._get_network_info(kwargs.get('networkInfo'))
         self.testRunName = self.testRunInstance.testRunName
         self.dataRecords = self.testRunInstance.dataRecords
-        self.stage = self.testRunInstance.globalSettings.get('TC.Stage')
+        self.stage = self.__getStageFromDataRecordsOrGlobalSettings()
 
         try:
             self.exportFormat = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.EXPORT_FORMAT)
@@ -99,6 +99,22 @@ class ExportResults:
             for key, value in addExportData.items():
                 lExport = ExportAdditionalDataIntoTab(tabname=key, valueDict=value, outputExcelSheet=self.workbook)
                 lExport.export()
+
+    def __getStageFromDataRecordsOrGlobalSettings(self):
+        """
+        If "STAGE" is not provided in the data fields (should actually not happen, but who knows),
+        we shall take it from GlobalSettings. If also not there, take the default Value GC.EXECUTIN_STAGE_TEST
+        :return:
+        """
+        value = None
+        for key, value in self.dataRecords.items():
+            break
+        if not value.get(GC.EXECUTION_STAGE):
+            stage = self.testRunInstance.globalSettings.get('TC.Stage', GC.EXECUTION_STAGE_TEST)
+        else:
+            stage = value.get(GC.EXECUTION_STAGE)
+
+        return stage
 
     # -- API support --
     def getSummary(self):
@@ -445,8 +461,12 @@ class ExportResults:
                 f'looks like we have no data in records: {self.dataRecords}, len of dataRecords: {len(self.dataRecords)}')
 
         # They are added here, because they'll not necessarily appear in the first record of the export data:
-        self.fieldListExport.append(GC.TESTCASEERRORLOG)
-        self.fieldListExport.append(GC.SCREENSHOTS)
+        if not GC.TESTCASEERRORLOG in self.fieldListExport:
+            self.fieldListExport.append(GC.TESTCASEERRORLOG)
+        if not GC.SCREENSHOTS in self.fieldListExport:
+            self.fieldListExport.append(GC.SCREENSHOTS)
+        if not GC.EXECUTION_STAGE in self.fieldListExport:
+            self.fieldListExport.append(GC.EXECUTION_STAGE)
 
     def _exportData(self):
         for key, value in self.dataRecords.items():
