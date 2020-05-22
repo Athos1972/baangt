@@ -257,8 +257,8 @@ class TestRun:
 
     def _initTestRunSettingsFromFile(self):
         self.__loadJSONGlobals()
-        self.__sanitizeGlobalsValues()
         self.__setPathsIfNotPredefined()
+        self.__sanitizeGlobalsValues()
 
     def __setPathsIfNotPredefined(self):
         if not self.globalSettings.get(GC.PATH_SCREENSHOTS, None):
