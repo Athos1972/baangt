@@ -1,4 +1,5 @@
 import pytest
+import platform
 from baangt.base import GlobalConstants as GC
 
 
@@ -27,8 +28,9 @@ def test_setZoomFactor(getdriver):
     assert not getdriver.browserData.driver
 
 
+@pytest.mark.skipif(platform.system() != "Windows", reason="Windows Test only")
 @pytest.mark.parametrize(("driverName", "browserName"), [("geckodriver.exe", GC.BROWSER_FIREFOX), ("chromedriver.exe", GC.BROWSER_CHROME)])
-def test_downloadDriver(getdriver, driverName, browserName):
+def test_downloadDriver_windows(getdriver, driverName, browserName):
     from pathlib import Path
     import os
     from baangt.base.PathManagement import ManagedPaths
@@ -37,6 +39,26 @@ def test_downloadDriver(getdriver, driverName, browserName):
     path = ManagedPaths().getOrSetDriverPath()
     fileName = Path(path).joinpath(driverName)
     try: 
+        os.remove(fileName)
+    except:
+        pass
+    assert not os.path.isfile(fileName)
+
+    # create browser
+    getdriver.downloadDriver(browserName)
+    assert os.path.isfile(fileName)
+
+@pytest.mark.skipif(platform.system() == "Windows", reason="Test for Linux and Mac")
+@pytest.mark.parametrize(("driverName", "browserName"), [("geckodriver", GC.BROWSER_FIREFOX), ("chromedriver", GC.BROWSER_CHROME)])
+def test_downloadDriver_NonWindows(getdriver, driverName, browserName):
+    from pathlib import Path
+    import os
+    from baangt.base.PathManagement import ManagedPaths
+
+    # Get Remove Driver File
+    path = ManagedPaths().getOrSetDriverPath()
+    fileName = Path(path).joinpath(driverName)
+    try:
         os.remove(fileName)
     except:
         pass
