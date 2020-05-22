@@ -58,6 +58,8 @@ class MainWindow(Ui_MainWindow):
     def __init__(self):
         ''' Init the super class '''
         super().__init__()
+        self.lTestRun = None
+        self.configContents = None
 
     def setupUi(self, MainWindow, directory=None):
         ''' Setup the UI for super class and Implement the
@@ -366,13 +368,14 @@ class MainWindow(Ui_MainWindow):
             return
         if not self.testRunFile:
             self.statusMessage("No test Run File selected", 2000)
+            return
 
         runCmd = self._getRunCommand()
 
         # show status in status bar
         self.statusMessage("Executing.....", 4000)
 
-        if self.configContents.get("TX.DEBUG", False) == True:
+        if self.configContents.get("TX.DEBUG", False):
             from baangt.base.TestRun.TestRun import TestRun
 
             lUUID = uuid4()
