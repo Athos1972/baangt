@@ -161,7 +161,7 @@ def test_csv_firefox():
 
 
 # Chrome Testing Section
-@pytest.mark.skipif(isLinux, reason="Chrome not stable on Linux")
+@pytest.mark.skipif(isLinux, reason="Chrome not stable on Linux in Docker")
 def test_regular_chrome():
     # Will run the main program with normal regular globals settings
     run_file = input_file
@@ -175,7 +175,7 @@ def test_regular_chrome():
     return "Chrome regular test succeed output file =", new_file[0][0]
 
 
-@pytest.mark.skipif(isLinux, reason="Chrome not stable on Linux")
+@pytest.mark.skipif(isLinux, reason="Chrome not stable on Linux in Docker")
 def test_parellel_chrome():
     # Will run the main program with 2 browsers running parallel
     run_file = input_file_parallel
@@ -189,7 +189,7 @@ def test_parellel_chrome():
     return "Chrome parellel test succeed output file =", new_file[0][0]
 
 
-@pytest.mark.skipif(isLinux, reason="Chrome not stable on Linux")
+@pytest.mark.skipif(isLinux, reason="Chrome not stable on Linux in Docker")
 def test_browsermob_proxy_chrome():
     # Will run the main program with browsermob proxy mode
     run_file = input_file
@@ -204,7 +204,7 @@ def test_browsermob_proxy_chrome():
     return "Chrome Browsermob test succeed output file =", new_file[0][0]
 
 
-@pytest.mark.skipif(isLinux, reason="Chrome not stable on Linux")
+@pytest.mark.skipif(isLinux, reason="Chrome not stable on Linux in Docker")
 def test_headless_chrome():
     # Will run the main program with headless browser
     for proc in psutil.process_iter():
@@ -222,7 +222,7 @@ def test_headless_chrome():
     return "Chrome headless test succeed output file =", new_file[0][0]
 
 
-@pytest.mark.skipif(isLinux, reason="Chrome not stable on Linux")
+@pytest.mark.skipif(isLinux, reason="Chrome not stable on Linux in Docker")
 def test_csv_chrome():
     # Will run the main program for csv output
     run_file = input_file
