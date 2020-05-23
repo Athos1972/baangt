@@ -415,25 +415,28 @@ class MainWindow(Ui_MainWindow):
                            f"{self.directory}/{self.tempConfigFile}")
 
     def process_stdout(self, obj):
-        text = str(obj.data().decode('utf-8'))
+        text = str(obj.data().decode('iso-8859-1'))
         if "||Statistic:" in text:
             lis = text.split('||')
             stat = lis[1][10:]
             stat_lis = stat.split('\n')
-            stats = stat_lis[0].strip() + (" " * (60 - len(stat_lis[0].strip()))) + \
-                    stat_lis[1].strip() + (" " * (60 - len(stat_lis[1].strip()))) + \
-                    stat_lis[2].strip() + (" " * (60 - len(stat_lis[2].strip()))) + "\n" + \
-                    stat_lis[3].strip() + (" " * (60 - len(stat_lis[3].strip()))) + \
-                    stat_lis[4].strip() + (" " * (60 - len(stat_lis[4].strip()))) + \
-                    stat_lis[5].strip() + (" " * (60 - len(stat_lis[5].strip()))) + "\n" + \
-                    stat_lis[6].strip() + (" " * (60 - len(stat_lis[6].strip()))) + \
-                    stat_lis[7].strip() + (" " * (60 - len(stat_lis[7].strip()))) + \
-                    stat_lis[8].strip() + (" " * (60 - len(stat_lis[8].strip())))
-            log = '\n'.join([lis[0], lis[2]])
-            self.statisticsTextBox.setText(stats)
-            self.logTextBox.appendPlainText(log.strip())
+            log = ''.join([lis[0], lis[2]])
+            for x in range(9):
+                self.statisticTable.setItem(0, x, QtWidgets.QTableWidgetItem(stat_lis[x].split(': ')[1]))
+                self.statisticTable.item(0,x).setTextAlignment(QtCore.Qt.AlignCenter)
+                if x == 3:
+                    self.statisticTable.item(0, 3).setBackground(QtGui.QBrush(QtCore.Qt.green))
+                elif x == 4:
+                    self.statisticTable.item(0, 4).setBackground(QtGui.QBrush(QtCore.Qt.red))
+                else:
+                    self.statisticTable.item(0, x).setBackground(QtGui.QBrush(QtCore.Qt.white))
+            log.replace('\n', '')
+            if not log.strip() == "":
+                self.logTextBox.appendPlainText(log.strip())
         else:
-            self.logTextBox.appendPlainText(text.strip())
+            text = text.replace('\n', '')
+            if not text.strip() == "":
+                self.logTextBox.appendPlainText(text.strip())
 
     def _getRunCommand(self):
         """
@@ -944,7 +947,7 @@ class MainWindow(Ui_MainWindow):
             self.statusbar.showMessage(f"Opening file {fileName}")
             FilesOpen.openResultFile(filePathName)
         except:
-            self.statusbar.showMessage("No file found!")
+            self.statusMessage("No file found!", 3000)
 
     @QtCore.pyqtSlot()
     def openLogFile(self):
@@ -957,7 +960,7 @@ class MainWindow(Ui_MainWindow):
             self.statusbar.showMessage(f"Opening file {fileName}")
             FilesOpen.openResultFile(filePathName)
         except:
-            self.statusbar.showMessage("No file found!")
+            self.statusMessage("No file found!", 3000)
 
     @QtCore.pyqtSlot()
     def openTestFile(self):
@@ -968,7 +971,7 @@ class MainWindow(Ui_MainWindow):
             self.statusbar.showMessage(f"Opening file {fileName}")
             FilesOpen.openResultFile(filePathName)
         except:
-            self.statusbar.showMessage("No file found!")
+            self.statusMessage("No file found!", 3000)
 
     @QtCore.pyqtSlot(str)
     def update_statistics(self, text):
@@ -993,5 +996,4 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     controller = MainController()
     controller.show_main()
-
     sys.exit(app.exec_())

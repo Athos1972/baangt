@@ -18,11 +18,11 @@ class Statistic(metaclass=Singleton):
     testcases_total: int = 0
     testcases_executed: int = 0
     testcases_remaining: int = 0
-    testcases_paused: int = 0
     testcases_success: int = 0
     testcases_failed: int = 0
-    teststep_executed: int = 0
+    testcases_paused: int = 0
     testcase_sequence_executed: int = 0
+    teststep_executed: int = 0
     teststep_sequence_executed: int = 0
 
     def __str__(self):
@@ -31,6 +31,7 @@ class Statistic(metaclass=Singleton):
 
     def total_testcases(self, number):
         self.testcases_total = number
+        self.testcases_remaining = number
         sys.stdout.write("||Statistic:"+self.__str__()+"||")
         sys.stdout.flush()
 
