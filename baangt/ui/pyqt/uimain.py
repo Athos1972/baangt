@@ -24,8 +24,12 @@ import platform
 from baangt.base.PathManagement import ManagedPaths
 from uuid import uuid4
 from baangt.base.FilesOpen import FilesOpen
+from baangt.base.RuntimeStatistics import Statistic
+from threading import Thread
+from time import sleep
 
 logger = logging.getLogger("pyC")
+
 
 class PyqtKatalonUI(ImportKatalonRecorder):
     """ Subclass of ImportKatalonRecorder :
@@ -111,9 +115,14 @@ class MainWindow(Ui_MainWindow):
         self.copyClipboard_2.clicked.connect(self.copyFromClipboard)
         self.TextIn_2.textChanged.connect(self.importClipboard)
 
+        self.statistics = Statistic()
+
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-
+    def close(self, event):
+        self.child.terminate()
+        self.child.waitForFinished()
+        event.accept()
 
     def saveInteractiveGuiConfig(self):
         """ Save Interactive Gui Config variables """
@@ -208,6 +217,7 @@ class MainWindow(Ui_MainWindow):
                  )
 
         MainWindow.resize(980, 480)
+
 
     def statusMessage(self, str, duration=1000):
         """ Display status message passed in Status Bar
@@ -360,32 +370,43 @@ class MainWindow(Ui_MainWindow):
             self.statusMessage("No test Run File selected", 2000)
             return
 
+        self.clear_logs_and_stats()
+
         runCmd = self._getRunCommand()
 
         # show status in status bar
         self.statusMessage("Executing.....", 4000)
 
-        if self.configContents.get("TX.DEBUG", False):
+        if self.configContents.get("TX.DEBUG", False) == "True":
             from baangt.base.TestRun.TestRun import TestRun
 
             lUUID = uuid4()
             self.lTestRun = TestRun(f"{Path(self.directory).joinpath(self.testRunFile)}",
                  globalSettingsFileNameAndPath=f'{Path(self.directory).joinpath(self.tempConfigFile)}', uuid=lUUID)
+            self.processFinished()
 
         else:
             logger.info(f"Running command: {runCmd}")
             self.run_process = QtCore.QProcess()
-            self.run_process.execute(runCmd)
-            # p = subprocess.run(runCmd, shell=True, close_fds=True)
-            # Set status to show Execution is complete
-            buttonReply = QtWidgets.QMessageBox.question(
-                                self.centralwidget,
-                                "Baangt Interactive Starter ",
-                                "Test Run finished !!",
-                                QtWidgets.QMessageBox.Ok,
-                                QtWidgets.QMessageBox.Ok
-                                 )
+            self.run_process.setProcessChannelMode(QtCore.QProcess.MergedChannels)
+            self.run_process.readyReadStandardOutput.connect(
+                lambda: self.process_stdout(self.run_process.readAllStandardOutput()))
+            self.run_process.readyReadStandardError.connect(
+                lambda: self.logTextBox.appendPlainText(
+                    str(self.run_process.readAllStandardError().data().decode('iso-8859-1'))))
+            self.run_process.finished.connect(self.processFinished)
+            self.run_process.start(runCmd)
+            self.statusbar.showMessage("Running.....")
 
+    @pyqtSlot()
+    def processFinished(self):
+        buttonReply = QtWidgets.QMessageBox.question(
+            self.centralwidget,
+            "Baangt Interactive Starter ",
+            "Test Run finished !!",
+            QtWidgets.QMessageBox.Ok,
+            QtWidgets.QMessageBox.Ok
+        )
         self.statusMessage(f"Completed ", 3000)
 
         # Remove temporary Configfile, that was created only for this run:
@@ -395,6 +416,29 @@ class MainWindow(Ui_MainWindow):
             logger.warning(f"Tried to remove temporary file but seems to be not there: "
                            f"{self.directory}/{self.tempConfigFile}")
 
+    def process_stdout(self, obj):
+        text = str(obj.data().decode('iso-8859-1'))
+        if "||Statistic:" in text:
+            lis = text.split('||')
+            stat = lis[1][10:]
+            stat_lis = stat.split('\n')
+            log = ''.join([lis[0], lis[2]])
+            for x in range(9):
+                self.statisticTable.setItem(0, x, QtWidgets.QTableWidgetItem(stat_lis[x].split(': ')[1]))
+                self.statisticTable.item(0,x).setTextAlignment(QtCore.Qt.AlignCenter)
+                if x == 3:
+                    self.statisticTable.item(0, 3).setBackground(QtGui.QBrush(QtCore.Qt.green))
+                elif x == 4:
+                    self.statisticTable.item(0, 4).setBackground(QtGui.QBrush(QtCore.Qt.red))
+                else:
+                    self.statisticTable.item(0, x).setBackground(QtGui.QBrush(QtCore.Qt.white))
+            log.replace('\n', '')
+            if not log.strip() == "":
+                self.logTextBox.appendPlainText(log.strip())
+        else:
+            text = text.replace('\n', '')
+            if not text.strip() == "":
+                self.logTextBox.appendPlainText(text.strip())
 
     def _getRunCommand(self):
         """
@@ -421,7 +465,7 @@ class MainWindow(Ui_MainWindow):
 
         return f"{lStart} " \
                f"--run='{Path(self.directory).joinpath(self.testRunFile)}' " \
-               f"--globals='{Path(self.directory).joinpath(self.tempConfigFile)}'"
+               f"--globals='{Path(self.directory).joinpath(self.tempConfigFile)}' --gui True"
 
 
     def __makeTempConfigFile(self):
@@ -905,7 +949,7 @@ class MainWindow(Ui_MainWindow):
             self.statusbar.showMessage(f"Opening file {fileName}")
             FilesOpen.openResultFile(filePathName)
         except:
-            self.statusbar.showMessage("No file found!")
+            self.statusMessage("No file found!", 3000)
 
     @QtCore.pyqtSlot()
     def openLogFile(self):
@@ -918,7 +962,7 @@ class MainWindow(Ui_MainWindow):
             self.statusbar.showMessage(f"Opening file {fileName}")
             FilesOpen.openResultFile(filePathName)
         except:
-            self.statusbar.showMessage("No file found!")
+            self.statusMessage("No file found!", 3000)
 
     @QtCore.pyqtSlot()
     def openTestFile(self):
@@ -929,7 +973,15 @@ class MainWindow(Ui_MainWindow):
             self.statusbar.showMessage(f"Opening file {fileName}")
             FilesOpen.openResultFile(filePathName)
         except:
-            self.statusbar.showMessage("No file found!")
+            self.statusMessage("No file found!", 3000)
+
+    @pyqtSlot()
+    def clear_logs_and_stats(self):
+        for x in range(9):
+            self.statisticTable.setItem(0, x, QtWidgets.QTableWidgetItem())
+            self.statisticTable.item(0,x).setBackground(QtGui.QBrush(QtCore.Qt.white))
+        self.logTextBox.clear()
+        QtCore.QCoreApplication.processEvents()
 
 
 # Controller
@@ -950,5 +1002,4 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     controller = MainController()
     controller.show_main()
-
     sys.exit(app.exec_())

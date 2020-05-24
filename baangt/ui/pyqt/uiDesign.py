@@ -7,6 +7,8 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+import logging
+
 
 class Ui_MainWindow(QtCore.QObject):
     def setupUi(self, MainWindow):
@@ -57,6 +59,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.mainGroupBox_4.setAlignment(QtCore.Qt.AlignCenter)
         self.mainGroupBox_4.setFlat(False)
         self.mainGroupBox_4.setObjectName("mainGroupBox_4")
+
         self.gridLayout_5 = QtWidgets.QGridLayout(self.mainGroupBox_4)
         self.gridLayout_5.setSizeConstraint(QtWidgets.QLayout.SetMinAndMaxSize)
         self.gridLayout_5.setContentsMargins(5, 5, 5, 5)
@@ -173,8 +176,8 @@ class Ui_MainWindow(QtCore.QObject):
         self.openTestFilePushButton_4.setIcon(self.openTestFileIcon)
         self.openTestFilePushButton_4.setIconSize(QtCore.QSize(28, 20))
         self.horizontalLayout_15.addWidget(self.openTestFilePushButton_4)
-
         self.verticalLayout_8.addLayout(self.horizontalLayout_15)
+
         self.horizontalLayout_16 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_16.setSpacing(10)
         self.horizontalLayout_16.setObjectName("horizontalLayout_16")
@@ -247,7 +250,43 @@ class Ui_MainWindow(QtCore.QObject):
         self.horizontalLayout_20.addWidget(self.openLogFilePushButton_4)
         self.verticalLayout_8.addLayout(self.horizontalLayout_20)
 
-        self.gridLayout_5.addLayout(self.verticalLayout_8, 0, 0, 1, 1)
+
+        self.horizontalLayout_21 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_21.setSpacing(10)
+        self.horizontalLayout_21.setObjectName("horizontalLayout_21")
+        self.horizontalLayout_22 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_22.setSpacing(10)
+        self.horizontalLayout_22.setObjectName("horizontalLayout_22")
+        self.statisticTable = QtWidgets.QTableWidget(self.mainGroupBox_4)
+        self.statisticTable.setRowCount(1)
+        self.statisticTable.setColumnCount(9)
+        self.statisticTable.setShowGrid(True)
+        self.statisticTable.verticalHeader().hide()
+        self.statisticTable.setStyleSheet("border: 0px;")
+        headerFont = QtGui.QFont()
+        #headerFont.setFamily("Arial")
+        headerFont.setPointSize(9)
+        headerFont.setBold(True)
+        header = self.statisticTable.horizontalHeader()
+        headers = ["TC Total", "TC DONE", "TC Pending", "TC OK", "TC Failed", "TC Paused", "TCS", "TS", "TSS"]
+        self.statisticTable.setFocusPolicy(QtCore.Qt.NoFocus)
+        for x in range(9):
+            self.statisticTable.setItem(0, x, QtWidgets.QTableWidgetItem())
+            self.statisticTable.item(0,x).setBackground(QtGui.QBrush(QtCore.Qt.white))
+            header.setSectionResizeMode(x, QtWidgets.QHeaderView.Stretch)
+            self.statisticTable.setHorizontalHeaderItem(x, QtWidgets.QTableWidgetItem(headers[x]))
+            self.statisticTable.horizontalHeaderItem(x).setFont(headerFont)
+
+        self.statisticTable.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
+        self.statisticTable.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_21.addWidget(self.statisticTable)
+        self.logTextBox = QtWidgets.QPlainTextEdit(self.mainGroupBox_4)
+        self.logTextBox.setStyleSheet("background-color: rgb(255, 255, 255); border: 1px solid black;")
+        self.logTextBox.setReadOnly(True)
+        self.horizontalLayout_22.addWidget(self.logTextBox)
+
+
+        self.gridLayout_5.addLayout(self.verticalLayout_8, 0, 0, 0, 0)
         self.horizontalLayout_13.addWidget(self.mainGroupBox_4)
         self.logo_4 = QtWidgets.QLabel(self.mainPage)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -264,7 +303,9 @@ class Ui_MainWindow(QtCore.QObject):
         self.logo_4.setObjectName("logo_4")
         self.horizontalLayout_13.addWidget(self.logo_4)
         self.verticalLayout_7.addLayout(self.horizontalLayout_13)
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout_7.addLayout(self.horizontalLayout_21)
+        self.verticalLayout_7.addLayout(self.horizontalLayout_22)
+        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Maximum)
         self.verticalLayout_7.addItem(spacerItem)
         self.gridLayout_6.addLayout(self.verticalLayout_7, 0, 0, 1, 1)
         self.stackedWidget.addWidget(self.mainPage)
@@ -417,6 +458,11 @@ class Ui_MainWindow(QtCore.QObject):
         self.retranslateUi(MainWindow)
         self.stackedWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def close(self,event):
+        self.child.terminate()
+        self.child.waitForFinished()
+        event.accept()
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
