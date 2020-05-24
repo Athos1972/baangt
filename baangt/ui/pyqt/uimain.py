@@ -370,6 +370,8 @@ class MainWindow(Ui_MainWindow):
             self.statusMessage("No test Run File selected", 2000)
             return
 
+        self.clear_logs_and_stats()
+
         runCmd = self._getRunCommand()
 
         # show status in status bar
@@ -381,10 +383,10 @@ class MainWindow(Ui_MainWindow):
             lUUID = uuid4()
             self.lTestRun = TestRun(f"{Path(self.directory).joinpath(self.testRunFile)}",
                  globalSettingsFileNameAndPath=f'{Path(self.directory).joinpath(self.tempConfigFile)}', uuid=lUUID)
+            self.processFinished()
 
         else:
             logger.info(f"Running command: {runCmd}")
-            self.logTextBox.clear()
             self.run_process = QtCore.QProcess()
             self.run_process.setProcessChannelMode(QtCore.QProcess.MergedChannels)
             self.run_process.readyReadStandardOutput.connect(
@@ -463,7 +465,7 @@ class MainWindow(Ui_MainWindow):
 
         return f"{lStart} " \
                f"--run='{Path(self.directory).joinpath(self.testRunFile)}' " \
-               f"--globals='{Path(self.directory).joinpath(self.tempConfigFile)}'"
+               f"--globals='{Path(self.directory).joinpath(self.tempConfigFile)}' --gui True"
 
 
     def __makeTempConfigFile(self):
@@ -973,9 +975,13 @@ class MainWindow(Ui_MainWindow):
         except:
             self.statusMessage("No file found!", 3000)
 
-    @QtCore.pyqtSlot(str)
-    def update_statistics(self, text):
-        self.statisticsTextBox.setText(text)
+    @pyqtSlot()
+    def clear_logs_and_stats(self):
+        for x in range(9):
+            self.statisticTable.setItem(0, x, QtWidgets.QTableWidgetItem())
+            self.statisticTable.item(0,x).setBackground(QtGui.QBrush(QtCore.Qt.white))
+        self.logTextBox.clear()
+        QtCore.QCoreApplication.processEvents()
 
 
 # Controller

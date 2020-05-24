@@ -1,9 +1,7 @@
 from dataclasses import dataclass
 
-import threading
 import sys
 
-lock = threading.Lock()
 
 class Singleton(type):
     _instances = {}
@@ -24,16 +22,18 @@ class Statistic(metaclass=Singleton):
     testcase_sequence_executed: int = 0
     teststep_executed: int = 0
     teststep_sequence_executed: int = 0
+    gui: bool = False
 
     def __str__(self):
-        string = [f"{key.split('_')[0]+' '+key.split('_')[1]}: {self.__dict__[key]}" for key in self.__dict__]
+        string = [f"{key.split('_')[0]+' '+key.split('_')[1]}: {self.__dict__[key]}" for key in self.__dict__ if "_" in key]
         return "\n".join(string).upper()
 
     def total_testcases(self, number):
         self.testcases_total = number
         self.testcases_remaining = number
-        sys.stdout.write("||Statistic:"+self.__str__()+"||")
-        sys.stdout.flush()
+        if self.gui:
+            sys.stdout.write("||Statistic:"+self.__str__()+"||")
+            sys.stdout.flush()
 
     def update_all(self, success, error, waiting):
         self.testcases_executed = success+error
@@ -41,23 +41,27 @@ class Statistic(metaclass=Singleton):
         self.testcases_paused = waiting
         self.testcases_success = success
         self.testcases_failed = error
-        sys.stdout.write("||Statistic:"+self.__str__()+"||")
-        sys.stdout.flush()
+        if self.gui:
+            sys.stdout.write("||Statistic:"+self.__str__()+"||")
+            sys.stdout.flush()
 
     def update_teststep(self):
         self.teststep_executed += 1
-        sys.stdout.write("||Statistic:"+self.__str__()+"||")
-        sys.stdout.flush()
+        if self.gui:
+            sys.stdout.write("||Statistic:"+self.__str__()+"||")
+            sys.stdout.flush()
 
     def update_testcase_sequence(self):
         self.testcase_sequence_executed += 1
-        sys.stdout.write("||Statistic:"+self.__str__()+"||")
-        sys.stdout.flush()
+        if self.gui:
+            sys.stdout.write("||Statistic:"+self.__str__()+"||")
+            sys.stdout.flush()
 
     def update_teststep_sequence(self):
         self.teststep_sequence_executed += 1
-        sys.stdout.write("||Statistic:"+self.__str__()+"||")
-        sys.stdout.flush()
+        if self.gui:
+            sys.stdout.write("||Statistic:"+self.__str__()+"||")
+            sys.stdout.flush()
 
 
 
