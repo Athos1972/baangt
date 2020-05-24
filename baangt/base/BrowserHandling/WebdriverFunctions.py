@@ -289,6 +289,8 @@ class WebdriverFunctions:
             logger.debug(f"__doSomething {command} with {value}")
             try:
                 if command.upper() == GC.CMD_SETTEXT:
+                    if not value:
+                        value = ""
                     element.send_keys(value)
                 elif command.upper() == GC.CMD_CLICK:
                     element.click()

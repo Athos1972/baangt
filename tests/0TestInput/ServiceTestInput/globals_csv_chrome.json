@@ -8,5 +8,5 @@
     "TC.LogLevel": "Info",
     "TC.DriverPath": "tests/0TestInput/Drivers",
     "TC.ExportFormat": "CSV",
-    "1TestResults": "tests/1Testresults/ServiceTest"
+    "1TestResults": "tests/1TestResults/ServiceTest"
 }

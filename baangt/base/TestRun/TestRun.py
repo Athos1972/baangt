@@ -21,6 +21,7 @@ from baangt.base.TestRun.ClassesForObjects import ClassesForObjects
 import time
 from baangt.base.PathManagement import ManagedPaths
 from uuid import uuid4
+from baangt.base.RuntimeStatistics import Statistic
 
 logger = logging.getLogger("pyC")
 
@@ -65,6 +66,7 @@ class TestRun:
         # If you want to export additional data, place a Dict with Tabname + Datafields in additionalExportTabs
         # from anywhere within your custom code base.
         self.additionalExportTabs = {}
+        self.statistics = Statistic()
 
         # Initialize other values
         self.timing.takeTime(GC.TIMING_TESTRUN)               # Initialize Testrun Duration
@@ -123,7 +125,8 @@ class TestRun:
 
         self.results = ExportResults(**self.kwargs)  # -- API support: self.results --
         successful, error = self.getSuccessAndError()
-
+        waiting = self.getWaiting()
+        self.statistics.update_all(successful, error, waiting)
         logger.info(f"Finished execution of Testrun {self.testRunName}. "
                     f"{successful} Testcases successfully executed, {error} errors")
         print(f"Finished execution of Testrun {self.testRunName}. "
@@ -142,6 +145,13 @@ class TestRun:
             elif value[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_SUCCESS:
                 lSuccess += 1
         return lSuccess, lError
+
+    def getWaiting(self):
+        lWaiting =0
+        for value in self.dataRecords.values():
+            if value[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_WAITING:
+                lWaiting += 1
+        return lWaiting
 
     def getAllTestRunAttributes(self):
         return self.testRunUtils.getCompleteTestRunAttributes(self.testRunName)
@@ -252,13 +262,16 @@ class TestRun:
                 # Damn! The class is wrong.
                 l_class = TestRun.__dynamicImportClasses(lFullQualified)
                 l_class(**kwargs)
+            success, error = self.getSuccessAndError()
+            waiting = self.getWaiting()
+            self.statistics.update_all(success, error, waiting)
 
         self.kwargs = kwargs
 
     def _initTestRunSettingsFromFile(self):
         self.__loadJSONGlobals()
-        self.__sanitizeGlobalsValues()
         self.__setPathsIfNotPredefined()
+        self.__sanitizeGlobalsValues()
 
     def __setPathsIfNotPredefined(self):
         if not self.globalSettings.get(GC.PATH_SCREENSHOTS, None):
@@ -285,6 +298,7 @@ class TestRun:
 
         # Set default execution STAGE
         if not self.globalSettings.get(GC.EXECUTION_STAGE, None):
+            logger.debug(f"Execution Stage was not set. Setting to default value {GC.EXECUTION_STAGE_TEST}")
             self.globalSettings[GC.EXECUTION_STAGE] = GC.EXECUTION_STAGE_TEST
 
     def __sanitizeGlobalsValues(self):

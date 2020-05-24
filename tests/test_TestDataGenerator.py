@@ -17,6 +17,7 @@ rawTestFile = "tests/0TestInput/RawTestData.xlsx"
 # Create an instance of TestDataGenerator object with sample input file
 
 testDataGenerator = TestDataGenerator(rawTestFile)
+Path(os.getcwd()).joinpath("Tests").joinpath("1TestResults").mkdir(parents=True, exist_ok=True)
 testOutput100xls = str(Path(os.getcwd()).joinpath("Tests").joinpath("1TestResults").joinpath("output100.xlsx"))
 testOutput300csv = str(Path(os.getcwd()).joinpath("Tests").joinpath("1TestResults").joinpath("output300.csv"))
 testOutputFullxls = str(Path(os.getcwd()).joinpath("Tests").joinpath("1TestResults").joinpath("outputFull.xlsx"))
