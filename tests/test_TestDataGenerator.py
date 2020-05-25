@@ -17,6 +17,7 @@ rawTestFile = "tests/0TestInput/RawTestData.xlsx"
 # Create an instance of TestDataGenerator object with sample input file
 
 testDataGenerator = TestDataGenerator(rawTestFile)
+Path(os.getcwd()).joinpath("Tests").joinpath("1TestResults").mkdir(parents=True, exist_ok=True)
 testOutput100xls = str(Path(os.getcwd()).joinpath("Tests").joinpath("1TestResults").joinpath("output100.xlsx"))
 testOutput300csv = str(Path(os.getcwd()).joinpath("Tests").joinpath("1TestResults").joinpath("output300.csv"))
 testOutputFullxls = str(Path(os.getcwd()).joinpath("Tests").joinpath("1TestResults").joinpath("outputFull.xlsx"))
@@ -45,7 +46,7 @@ def test_write_csv_300():
     removeFile(testOutput300csv)
     testDataGenerator.write(OutputFormat="csv", batch_size=250, outputfile=testOutput300csv)
     data = []
-    with open(testOutput300csv, 'r') as raw_file:
+    with open(testOutput300csv, 'r', encoding='utf-8-sig') as raw_file:
         raw = csv.reader(raw_file)
         for row in raw:
             data.append(row)
@@ -68,7 +69,7 @@ def test_write_csv_all():
     removeFile(testOutputFullcsv)
     testDataGenerator.write(OutputFormat="csv", outputfile=testOutputFullcsv)
     data = []
-    with open(testOutputFullcsv, 'r') as raw_file:
+    with open(testOutputFullcsv, 'r', encoding='utf-8-sig') as raw_file:
         raw = csv.reader(raw_file)
         for row in raw:
             data.append(row)

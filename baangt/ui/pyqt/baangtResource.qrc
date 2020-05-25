@@ -5,5 +5,6 @@
         <file alias="baangticon">baangtIcon.ico</file>
         <file alias="executeicon">play.png</file>
         <file alias="testfileicon">glass.png</file>
+        <file alias="stopicon">stop.png</file>
     </qresource>
 </RCC>

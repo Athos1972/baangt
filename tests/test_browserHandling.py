@@ -20,7 +20,7 @@ def test_setZoomFactor(getdriver):
     getdriver.createNewBrowser()
     getdriver.goToUrl("https://www.baangt.org")
     # FInd element by class
-    getdriver.setZoomFactor(lZoomFactor = 200)
+    getdriver.setZoomFactor(lZoomFactor=200)
 
     # TODO add check
 
@@ -29,7 +29,8 @@ def test_setZoomFactor(getdriver):
 
 
 @pytest.mark.skipif(platform.system() != "Windows", reason="Windows Test only")
-@pytest.mark.parametrize(("driverName", "browserName"), [("geckodriver.exe", GC.BROWSER_FIREFOX), ("chromedriver.exe", GC.BROWSER_CHROME)])
+@pytest.mark.parametrize(("driverName", "browserName"),
+                         [("geckodriver.exe", GC.BROWSER_FIREFOX), ("chromedriver.exe", GC.BROWSER_CHROME)])
 def test_downloadDriver_windows(getdriver, driverName, browserName):
     from pathlib import Path
     import os
@@ -38,7 +39,7 @@ def test_downloadDriver_windows(getdriver, driverName, browserName):
     # Get Remove Driver File
     path = ManagedPaths().getOrSetDriverPath()
     fileName = Path(path).joinpath(driverName)
-    try: 
+    try:
         os.remove(fileName)
     except:
         pass
@@ -48,8 +49,10 @@ def test_downloadDriver_windows(getdriver, driverName, browserName):
     getdriver.downloadDriver(browserName)
     assert os.path.isfile(fileName)
 
+
 @pytest.mark.skipif(platform.system() == "Windows", reason="Test for Linux and Mac")
-@pytest.mark.parametrize(("driverName", "browserName"), [("geckodriver", GC.BROWSER_FIREFOX), ("chromedriver", GC.BROWSER_CHROME)])
+@pytest.mark.parametrize(("driverName", "browserName"),
+                         [("geckodriver", GC.BROWSER_FIREFOX), ("chromedriver", GC.BROWSER_CHROME)])
 def test_downloadDriver_NonWindows(getdriver, driverName, browserName):
     from pathlib import Path
     import os
@@ -74,7 +77,7 @@ def test_findBy_class(getdriver):
     # create browser
 
     from baangt.base import GlobalConstants as GC
-    getdriver.createNewBrowser()#(mobileType = 'True', desired_app = desired_app)
+    getdriver.createNewBrowser()  # (mobileType = 'True', desired_app = desired_app)
     getdriver.goToUrl("https://www.baangt.org")
     # FInd element by class
     element, html = getdriver.findBy(class_name="et_pb_menu__wrap", timeout=20, optional=False)
@@ -84,6 +87,7 @@ def test_findBy_class(getdriver):
 
     getdriver.closeBrowser()
     assert not getdriver.browserData.driver
+
 
 def test_findBy_id(getdriver):
     """ check if png file created in path """
@@ -95,11 +99,10 @@ def test_findBy_id(getdriver):
     element, html = getdriver.findBy(id="et_pb_contact_name_0", timeout=20, optional=False)
 
     assert "input" == element.tag_name
-    assert "html" == html.tag_name 
+    assert "html" == html.tag_name
 
     getdriver.closeBrowser()
     assert not getdriver.browserData.driver
-
 
 
 def test_findByAndClick(getdriver):
@@ -158,15 +161,18 @@ def test_setBrowserWindowSizeEmpty(getdriver):
 
     assert result == False
 
-def test_setBrowserWindowSizeReal(getdriver):
-     getdriver.createNewBrowser()
-     result = getdriver.setBrowserWindowSize("800;600")
-     getdriver.closeBrowser()
 
-     assert result["width"] > 750
-     assert result["width"] < 850
-     assert result["height"] > 550
-     assert result["height"] < 650
+@pytest.mark.skipif(platform.system() == "Linux", reason="FF on Linux doesn't resize")
+def test_setBrowserWindowSizeReal(getdriver):
+    getdriver.createNewBrowser()
+    result = getdriver.setBrowserWindowSize("800;600")
+    getdriver.closeBrowser()
+
+    assert result["width"] > 750
+    assert result["width"] < 850
+    assert result["height"] > 550
+    assert result["height"] < 650
+
 
 def test_setBrowserWindowSizeWrong(getdriver):
     getdriver.createNewBrowser()
@@ -174,11 +180,13 @@ def test_setBrowserWindowSizeWrong(getdriver):
     getdriver.closeBrowser()
     assert result == False
 
+
 def test_setBrowserWindowSizeWithLeadingStuff(getdriver):
     getdriver.createNewBrowser()
     result = getdriver.setBrowserWindowSize("--800,--600")
     getdriver.closeBrowser()
     assert isinstance(result, dict)
+
 
 def test_setBrowserWindowSizeWithX(getdriver):
     getdriver.createNewBrowser()

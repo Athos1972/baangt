@@ -97,7 +97,7 @@ class TestDataGenerator:
                 data_lis = self.final_data
         else:
             data_lis = self.final_data
-        with open(outputfile, 'w', newline='\n')as file:
+        with open(outputfile, 'w', newline='\n', encoding='utf-8-sig') as file:
             fl = csv.writer(file)
             fl.writerow(self.headers)
             for dt in data_lis:

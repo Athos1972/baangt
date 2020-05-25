@@ -122,18 +122,13 @@ class HandleDatabase:
                     if temp_dic[keys[col_index]][-2:]==".0":
                         temp_dic[keys[col_index]] = temp_dic[keys[col_index]][:-2]
 
-            lAppend = self.__compareEqualStageInGlobalsAndDataRecord(temp_dic)
-
-            if lAppend:
-                self.dataDict.append(temp_dic)
-            else:
-                logger.debug(f"Skipped record {row_index} due to wrong stage {temp_dic[GC.EXECUTION_STAGE]}")
+            self.dataDict.append(temp_dic)
 
         for temp_dic in self.dataDict:
             new_data_dic ={}
             for keys in temp_dic:
-                if '$(' in temp_dic[keys]:
-                    while '$(' in temp_dic[keys]:
+                if '$(' in str(temp_dic[keys]):
+                    while '$(' in str(temp_dic[keys]):
                         start_index = temp_dic[keys].index('$(')
                         end_index = temp_dic[keys][start_index:].index(')')+start_index
                         data_to_replace_with = temp_dic[temp_dic[keys][start_index+2:end_index]]
@@ -219,7 +214,9 @@ class HandleDatabase:
         if first_value not in self.sheet_dict:
             self.sheet_dict, _ = self.__read_excel(path=fileName)
         processed_datas = self.__processRrd(first_value, second_value, evaluated_dict)
-        assert len(processed_datas)>0, "No matching data for RRD_. Please check the input file"
+        assert len(processed_datas)>0, f"No matching data for RRD_. Please check the input file. Was searching for " \
+                                       f"{first_value}, {second_value} and {str(evaluated_dict)} " \
+                                       f"but didn't find anything"
         return processed_datas[randint(0, len(processed_datas)-1)]
 
     def __process_rrd_string(self, rrd_string):
@@ -283,12 +280,17 @@ class HandleDatabase:
             # the topmost record of the RangeDict (RangeDict was built by the range(s) from the TestRun
             # - 1 because there's a header line in the Excel-Sheet.
             lRecord = self.dataDict[(list(self.rangeDict.keys())[0])]
+            while not self.__compareEqualStageInGlobalsAndDataRecord(lRecord):
+                logger.debug(f"Skipped record {str(lRecord)[:30]} due to wrong stage: {lRecord[GC.EXECUTION_STAGE]} vs. "
+                             f"{self.globals[GC.EXECUTION_STAGE]}")
+                self.rangeDict.pop(list(self.rangeDict.keys())[0])
+                lRecord = self.dataDict[(list(self.rangeDict.keys())[0])]
         except Exception as e:
             logger.debug(f"Couldn't read record from database: {list(self.rangeDict.keys())[0]}")
             self.rangeDict.pop(list(self.rangeDict.keys())[0])
             return None
 
-        # Remove the topmost entry fro the rangeDict, so that next time we read the next entry in the lines above
+        # Remove the topmost entry from the rangeDict, so that next time we read the next entry in the lines above
         self.rangeDict.pop(list(self.rangeDict.keys())[0])
         return self.updateGlobals(lRecord)
 

@@ -144,7 +144,7 @@ class ExportResults:
         Writes CSV-File of datarecords
 
         """
-        f = open(self.fileName, 'w')
+        f = open(self.fileName, 'w', encoding='utf-8-sig', newline='')
         writer = csv.DictWriter(f, self.dataRecords[0].keys())
         writer.writeheader()
         for i in range(0, len(self.dataRecords) - 1):

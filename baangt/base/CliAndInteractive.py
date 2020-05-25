@@ -6,6 +6,7 @@ import baangt.base.GlobalConstants as GC
 from PyQt5 import QtWidgets
 # from baangt.ui.pyqt.uimain import MainWindow
 from baangt.ui.pyqt.uimain import MainController
+from baangt.base.RuntimeStatistics import Statistic
 def print_args():
     print("""
 Call: python baangtIA.py --parameters 
@@ -28,7 +29,8 @@ def args_read(l_search_parameter):
     try:
         opts, args = getopt.getopt(l_args, "", ["run=",
                                                 "globals=",
-                                                "reloadDrivers="
+                                                "reloadDrivers=",
+                                                "gui="
                                                 ])
     except getopt.GetoptError as err_det:
         print("Error in reading parameters:" + str(err_det))
@@ -66,6 +68,9 @@ def run():
     testRunFile = args_read("run")
     if testRunFile:
         print(f"Starting Testrun: {testRunFile}")
+        if args_read("gui"):
+            s = Statistic()
+            s.gui = True
         callTestrun(testRunFile)
     elif args_read("reloadDrivers"):
         from baangt.base.BrowserHandling.BrowserHandling import BrowserDriver

@@ -12,6 +12,7 @@ import logging
 import gevent
 import gevent.queue
 import gevent.pool
+from baangt.base.RuntimeStatistics import Statistic
 
 logger = logging.getLogger("pyC")
 
@@ -32,6 +33,7 @@ class TestCaseSequenceMaster:
         self.testCases = self.testSequenceData[GC.STRUCTURE_TESTCASE]
         self.kwargs = kwargs
         self.timingName = self.timing.takeTime(self.__class__.__name__, forceNew=True)
+        self.statistics = Statistic()
         self.prepareExecution()
         if int(self.testSequenceData.get(GC.EXECUTION_PARALLEL, 0)) > 1:
             self.execute_parallel(self.testSequenceData.get(GC.EXECUTION_PARALLEL, 0))
@@ -56,6 +58,7 @@ class TestCaseSequenceMaster:
                 break
             recordPointer += 1
         logger.info(f"{recordPointer + 1} test records read for processing")
+        self.statistics.total_testcases(recordPointer + 1)
 
     def execute_parallel(self, parallelInstances):
 
@@ -115,6 +118,8 @@ class TestCaseSequenceMaster:
 
             # Write Result back to TestRun for later saving in export format
             self.testRunInstance.setResult(key, value)
+        self.statistics.update_testcase_sequence()
+
 
     def getNextRecord(self):
 
