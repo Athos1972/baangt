@@ -122,12 +122,7 @@ class HandleDatabase:
                     if temp_dic[keys[col_index]][-2:]==".0":
                         temp_dic[keys[col_index]] = temp_dic[keys[col_index]][:-2]
 
-            lAppend = self.__compareEqualStageInGlobalsAndDataRecord(temp_dic)
-
-            if lAppend:
-                self.dataDict.append(temp_dic)
-            else:
-                logger.debug(f"Skipped record {row_index} due to wrong stage {temp_dic[GC.EXECUTION_STAGE]}")
+            self.dataDict.append(temp_dic)
 
         for temp_dic in self.dataDict:
             new_data_dic ={}
@@ -283,12 +278,17 @@ class HandleDatabase:
             # the topmost record of the RangeDict (RangeDict was built by the range(s) from the TestRun
             # - 1 because there's a header line in the Excel-Sheet.
             lRecord = self.dataDict[(list(self.rangeDict.keys())[0])]
+            while not self.__compareEqualStageInGlobalsAndDataRecord(lRecord):
+                logger.debug(f"Skipped record {str(lRecord)[:30]} due to wrong stage: {lRecord[GC.EXECUTION_STAGE]} vs. "
+                             f"{self.globals[GC.EXECUTION_STAGE]}")
+                self.rangeDict.pop(list(self.rangeDict.keys())[0])
+                lRecord = self.dataDict[(list(self.rangeDict.keys())[0])]
         except Exception as e:
             logger.debug(f"Couldn't read record from database: {list(self.rangeDict.keys())[0]}")
             self.rangeDict.pop(list(self.rangeDict.keys())[0])
             return None
 
-        # Remove the topmost entry fro the rangeDict, so that next time we read the next entry in the lines above
+        # Remove the topmost entry from the rangeDict, so that next time we read the next entry in the lines above
         self.rangeDict.pop(list(self.rangeDict.keys())[0])
         return self.updateGlobals(lRecord)
 
