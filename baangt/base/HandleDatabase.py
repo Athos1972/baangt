@@ -214,7 +214,9 @@ class HandleDatabase:
         if first_value not in self.sheet_dict:
             self.sheet_dict, _ = self.__read_excel(path=fileName)
         processed_datas = self.__processRrd(first_value, second_value, evaluated_dict)
-        assert len(processed_datas)>0, "No matching data for RRD_. Please check the input file"
+        assert len(processed_datas)>0, f"No matching data for RRD_. Please check the input file. Was searching for " \
+                                       f"{first_value}, {second_value} and {str(evaluated_dict)} " \
+                                       f"but didn't find anything"
         return processed_datas[randint(0, len(processed_datas)-1)]
 
     def __process_rrd_string(self, rrd_string):
