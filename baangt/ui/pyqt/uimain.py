@@ -25,6 +25,8 @@ from baangt.base.PathManagement import ManagedPaths
 from uuid import uuid4
 from baangt.base.FilesOpen import FilesOpen
 from baangt.base.RuntimeStatistics import Statistic
+from baangt.base.PathManagement import ManagedPaths
+import xlrd
 from threading import Thread
 from time import sleep
 
@@ -77,6 +79,8 @@ class MainWindow(Ui_MainWindow):
         self.testRunFile = None
         self.testRunFiles = []
         self.__execute_button_state = "idle"
+        self.__result_file = ""
+
         # self.refreshNew()
         # self.setupBasePath(self.directory)
         self.readConfig()
@@ -121,6 +125,10 @@ class MainWindow(Ui_MainWindow):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def close(self, event):
+        try:
+            self.run_process.kill()
+        except:
+            pass
         self.child.terminate()
         self.child.waitForFinished()
         event.accept()
@@ -377,6 +385,11 @@ class MainWindow(Ui_MainWindow):
             self.statusMessage("No test Run File selected", 2000)
             return
 
+        self.__execute_button_state = "running"
+        self.stopIcon = QtGui.QIcon(":/baangt/stopicon")
+        self.executePushButton_4.setIcon(self.stopIcon)
+        self.executePushButton_4.setIconSize(QtCore.QSize(28, 20))
+        self.executePushButton_4.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(255, 75, 50);")
         self.clear_logs_and_stats()
 
         runCmd = self._getRunCommand()
@@ -391,14 +404,10 @@ class MainWindow(Ui_MainWindow):
             self.lTestRun = TestRun(f"{Path(self.directory).joinpath(self.testRunFile)}",
                  globalSettingsFileNameAndPath=f'{Path(self.directory).joinpath(self.tempConfigFile)}', uuid=lUUID)
             self.processFinished()
+            self.__result_file = self.lTestRun.results.fileName
 
         else:
             logger.info(f"Running command: {runCmd}")
-            self.__execute_button_state = "running"
-            self.stopIcon = QtGui.QIcon(":/baangt/stopicon")
-            self.executePushButton_4.setIcon(self.stopIcon)
-            self.executePushButton_4.setIconSize(QtCore.QSize(28, 20))
-            self.executePushButton_4.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(255, 75, 50);")
             self.run_process = QtCore.QProcess()
             self.run_process.setProcessChannelMode(QtCore.QProcess.MergedChannels)
             self.run_process.readyReadStandardOutput.connect(
@@ -412,10 +421,6 @@ class MainWindow(Ui_MainWindow):
 
     @pyqtSlot()
     def stopButtonPressed(self):
-        self.executeIcon = QtGui.QIcon(":/baangt/executeicon")
-        self.executePushButton_4.setIcon(self.executeIcon)
-        self.executePushButton_4.setIconSize(QtCore.QSize(28, 20))
-        self.executePushButton_4.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(138, 226, 52);")
         self.run_process.kill()
         self.__execute_button_state = "idle"
 
@@ -429,6 +434,10 @@ class MainWindow(Ui_MainWindow):
             QtWidgets.QMessageBox.Ok
         )
         self.statusMessage(f"Completed ", 3000)
+        self.executeIcon = QtGui.QIcon(":/baangt/executeicon")
+        self.executePushButton_4.setIcon(self.executeIcon)
+        self.executePushButton_4.setIconSize(QtCore.QSize(28, 20))
+        self.executePushButton_4.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(138, 226, 52);")
 
         # Remove temporary Configfile, that was created only for this run:
         try:
@@ -439,6 +448,9 @@ class MainWindow(Ui_MainWindow):
 
     def process_stdout(self, obj):
         text = str(obj.data().decode('iso-8859-1'))
+        if "ExportResults _ __init__ : Export-Sheet for results: " in text:
+            lis = text[text.index("results: "):].split(" ")
+            self.__result_file = lis[1].strip()
         if "||Statistic:" in text:
             lis = text.split('||')
             stat = lis[1][10:]
@@ -969,10 +981,13 @@ class MainWindow(Ui_MainWindow):
     def openResultFile(self):
         """ Uses Files Open class to open Result file """
         try:
-            filePathName = self.lTestRun.results.fileName
-            fileName = os.path.basename(filePathName)
-            self.statusbar.showMessage(f"Opening file {fileName}")
-            FilesOpen.openResultFile(filePathName)
+            if self.__result_file != "":
+                filePathName = self.__result_file
+                fileName = os.path.basename(filePathName)
+                self.statusMessage(f"Opening file {fileName}", 3000)
+                FilesOpen.openResultFile(filePathName)
+            else:
+                self.statusMessage("No file found!", 3000)
         except:
             self.statusMessage("No file found!", 3000)
 
@@ -980,12 +995,15 @@ class MainWindow(Ui_MainWindow):
     def openLogFile(self):
         """ Uses Files Open class to open Log file """
         try:
-            filePathName = [
-                handler.baseFilename for handler in logger.handlers if isinstance(handler, logging.FileHandler)
-            ][0]
-            fileName = os.path.basename(filePathName)
-            self.statusbar.showMessage(f"Opening file {fileName}")
-            FilesOpen.openResultFile(filePathName)
+            if self.__result_file != "":
+                wb = xlrd.open_workbook(self.__result_file)
+                book = wb.sheet_by_name("Summary")
+                filePathName = book.row(7)[1].value.strip()
+                fileName = os.path.basename(filePathName)
+                self.statusMessage(f"Opening file {fileName}", 3000)
+                FilesOpen.openResultFile(filePathName)
+            else:
+                self.statusMessage("No file found!", 3000)
         except:
             self.statusMessage("No file found!", 3000)
 
