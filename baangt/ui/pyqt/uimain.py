@@ -84,6 +84,8 @@ class MainWindow(Ui_MainWindow):
         # self.refreshNew()
         # self.setupBasePath(self.directory)
         self.readConfig()
+        self.logSwitch.setChecked(self.__log_state)
+        self.show_hide_logs()
 
         self.katalonRecorder = PyqtKatalonUI(self.directory)
         # update logo and icon
@@ -119,6 +121,7 @@ class MainWindow(Ui_MainWindow):
         self.savePushButton_2.clicked.connect(self.saveTestCase)
         self.copyClipboard_2.clicked.connect(self.copyFromClipboard)
         self.TextIn_2.textChanged.connect(self.importClipboard)
+        self.logSwitch.clicked.connect(self.show_hide_logs)
 
         self.statistics = Statistic()
 
@@ -140,6 +143,7 @@ class MainWindow(Ui_MainWindow):
                     "path": self.directory,
                     "testrun": self.testRunComboBox_4.currentText(),
                     "globals": self.settingComboBox_4.currentText(),
+                    "logstate": self.__log_state
                     }
         with open(self.managedPaths.getOrSetIni().joinpath("baangt.ini"), "w" ) as configFile:
             config.write(configFile)
@@ -152,6 +156,10 @@ class MainWindow(Ui_MainWindow):
             self.directory = config["Default"]['path']
             self.testRunFile = config["Default"]['testrun']
             self.configFile  = config["Default"]['globals']
+            if 'logstate' in config["Default"]:
+                self.__log_state = int(config["Default"]["logstate"])
+            else:
+                self.__log_state = 0
             self.setupBasePath(self.directory)
             self.readContentofGlobals()
         except Exception as e:
@@ -1025,6 +1033,16 @@ class MainWindow(Ui_MainWindow):
             self.statisticTable.item(0,x).setBackground(QtGui.QBrush(QtCore.Qt.white))
         self.logTextBox.clear()
         QtCore.QCoreApplication.processEvents()
+
+    @pyqtSlot()
+    def show_hide_logs(self):
+        if self.logSwitch.isChecked():
+            self.logTextBox.show()
+            self.__log_state = 1
+        else:
+            self.logTextBox.hide()
+            self.__log_state = 0
+        self.saveInteractiveGuiConfig()
 
 
 # Controller
