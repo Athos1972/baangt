@@ -63,6 +63,7 @@ class MainWindow(Ui_MainWindow):
         super().__init__()
         self.lTestRun = None
         self.configContents = None
+        self.__log_state = 0
 
     def setupUi(self, MainWindow, directory=None):
         ''' Setup the UI for super class and Implement the
