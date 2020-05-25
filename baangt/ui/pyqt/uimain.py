@@ -426,6 +426,10 @@ class MainWindow(Ui_MainWindow):
             for x in range(9):
                 self.statisticTable.setItem(0, x, QtWidgets.QTableWidgetItem(stat_lis[x].split(': ')[1]))
                 self.statisticTable.item(0,x).setTextAlignment(QtCore.Qt.AlignCenter)
+                self.statisticTable.item(0, x).setFlags(
+                    self.statisticTable.item(0, x).flags() ^ QtCore.Qt.ItemIsSelectable)
+                self.statisticTable.item(0, x).setFlags(
+                    self.statisticTable.item(0, x).flags() ^ QtCore.Qt.ItemIsEditable)
                 if x == 3:
                     self.statisticTable.item(0, 3).setBackground(QtGui.QBrush(QtCore.Qt.green))
                 elif x == 4:
