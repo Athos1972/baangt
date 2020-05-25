@@ -132,8 +132,8 @@ class HandleDatabase:
         for temp_dic in self.dataDict:
             new_data_dic ={}
             for keys in temp_dic:
-                if '$(' in temp_dic[keys]:
-                    while '$(' in temp_dic[keys]:
+                if '$(' in str(temp_dic[keys]):
+                    while '$(' in str(temp_dic[keys]):
                         start_index = temp_dic[keys].index('$(')
                         end_index = temp_dic[keys][start_index:].index(')')+start_index
                         data_to_replace_with = temp_dic[temp_dic[keys][start_index+2:end_index]]

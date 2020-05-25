@@ -26,6 +26,7 @@ from uuid import uuid4
 from baangt.base.FilesOpen import FilesOpen
 from baangt.base.RuntimeStatistics import Statistic
 from baangt.base.PathManagement import ManagedPaths
+from baangt.base.DownloadFolderMonitoring import DownloadFolderMonitoring
 import xlrd
 from threading import Thread
 from time import sleep
@@ -80,6 +81,7 @@ class MainWindow(Ui_MainWindow):
         self.testRunFiles = []
         self.__execute_button_state = "idle"
         self.__result_file = ""
+        self.__log_file = ""
 
         # self.refreshNew()
         # self.setupBasePath(self.directory)
@@ -379,6 +381,9 @@ class MainWindow(Ui_MainWindow):
         self.readContentofGlobals()
 
     def executeButtonClicked(self):
+        self.__result_file = ""
+        self.__log_file = ""
+        self.__log_file_monitor = DownloadFolderMonitoring(self.managedPaths.getLogfilePath())
         if self.__execute_button_state == "idle":
             self.runTestRun()
         elif self.__execute_button_state == "running":
@@ -430,7 +435,6 @@ class MainWindow(Ui_MainWindow):
     @pyqtSlot()
     def stopButtonPressed(self):
         self.run_process.kill()
-        self.__execute_button_state = "idle"
 
     @pyqtSlot()
     def processFinished(self):
@@ -446,6 +450,11 @@ class MainWindow(Ui_MainWindow):
         self.executePushButton_4.setIcon(self.executeIcon)
         self.executePushButton_4.setIconSize(QtCore.QSize(28, 20))
         self.executePushButton_4.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(138, 226, 52);")
+        self.__execute_button_state = "idle"
+        try:
+            self.__log_file = self.__log_file_monitor.getNewFiles()[0][0]
+        except:
+            pass
 
         # Remove temporary Configfile, that was created only for this run:
         try:
@@ -458,7 +467,14 @@ class MainWindow(Ui_MainWindow):
         text = str(obj.data().decode('iso-8859-1'))
         if "ExportResults _ __init__ : Export-Sheet for results: " in text:
             lis = text[text.index("results: "):].split(" ")
-            self.__result_file = lis[1].strip()
+            result_file = lis[1].strip()
+            while len(result_file)>4:
+                if result_file[-5:] != ".xlsx":
+                    result_file = result_file[:-1]
+                else:
+                    break
+            if result_file[-5:] == ".xlsx":
+                self.__result_file =result_file
         if "||Statistic:" in text:
             lis = text.split('||')
             stat = lis[1][10:]
@@ -1011,7 +1027,13 @@ class MainWindow(Ui_MainWindow):
                 self.statusMessage(f"Opening file {fileName}", 3000)
                 FilesOpen.openResultFile(filePathName)
             else:
-                self.statusMessage("No file found!", 3000)
+                if self.__log_file != "":
+                    filePathName = self.__log_file
+                    fileName = os.path.basename(filePathName)
+                    self.statusMessage(f"Opening file {fileName}", 3000)
+                    FilesOpen.openResultFile(filePathName)
+                else:
+                    self.statusMessage("No file found!", 3000)
         except:
             self.statusMessage("No file found!", 3000)
 
