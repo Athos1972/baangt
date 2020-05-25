@@ -76,6 +76,7 @@ class MainWindow(Ui_MainWindow):
         self.tempConfigFile = None
         self.testRunFile = None
         self.testRunFiles = []
+        self.__execute_button_state = "idle"
         # self.refreshNew()
         # self.setupBasePath(self.directory)
         self.readConfig()
@@ -98,7 +99,7 @@ class MainWindow(Ui_MainWindow):
         self.AddMorePushButton.clicked.connect(self.addMore)
         self.deleteLastPushButton.clicked.connect(self.deleteLast)
         self.saveAspushButton.clicked.connect(self.saveAsNewFile)
-        self.executePushButton_4.clicked.connect(self.runTestRun)
+        self.executePushButton_4.clicked.connect(self.executeButtonClicked)
 
         # FileOpen buttons
         self.openResultFilePushButton_4.clicked.connect(self.openResultFile)
@@ -361,6 +362,12 @@ class MainWindow(Ui_MainWindow):
         self.statusMessage("Settings changed to: {}".format(self.configFile))
         self.readContentofGlobals()
 
+    def executeButtonClicked(self):
+        if self.__execute_button_state == "idle":
+            self.runTestRun()
+        elif self.__execute_button_state == "running":
+            self.stopButtonPressed()
+
     @pyqtSlot()
     def runTestRun(self):
         if not self.configFile:
@@ -387,6 +394,11 @@ class MainWindow(Ui_MainWindow):
 
         else:
             logger.info(f"Running command: {runCmd}")
+            self.__execute_button_state = "running"
+            self.stopIcon = QtGui.QIcon(":/baangt/stopicon")
+            self.executePushButton_4.setIcon(self.stopIcon)
+            self.executePushButton_4.setIconSize(QtCore.QSize(28, 20))
+            self.executePushButton_4.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(255, 75, 50);")
             self.run_process = QtCore.QProcess()
             self.run_process.setProcessChannelMode(QtCore.QProcess.MergedChannels)
             self.run_process.readyReadStandardOutput.connect(
@@ -397,6 +409,15 @@ class MainWindow(Ui_MainWindow):
             self.run_process.finished.connect(self.processFinished)
             self.run_process.start(runCmd)
             self.statusbar.showMessage("Running.....")
+
+    @pyqtSlot()
+    def stopButtonPressed(self):
+        self.executeIcon = QtGui.QIcon(":/baangt/executeicon")
+        self.executePushButton_4.setIcon(self.executeIcon)
+        self.executePushButton_4.setIconSize(QtCore.QSize(28, 20))
+        self.executePushButton_4.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(138, 226, 52);")
+        self.run_process.kill()
+        self.__execute_button_state = "idle"
 
     @pyqtSlot()
     def processFinished(self):
