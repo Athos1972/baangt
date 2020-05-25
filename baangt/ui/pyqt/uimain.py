@@ -414,6 +414,7 @@ class MainWindow(Ui_MainWindow):
             from baangt.base.TestRun.TestRun import TestRun
 
             lUUID = uuid4()
+            self.lTestRun = ""
             self.lTestRun = TestRun(f"{Path(self.directory).joinpath(self.testRunFile)}",
                  globalSettingsFileNameAndPath=f'{Path(self.directory).joinpath(self.tempConfigFile)}', uuid=lUUID)
             self.processFinished()

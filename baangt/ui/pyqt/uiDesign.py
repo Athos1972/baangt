@@ -375,6 +375,11 @@ class Ui_MainWindow(QtCore.QObject):
         self.verticalLayout_9.addWidget(self.scrollArea)
         self.horizontalLayout_17 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_17.setObjectName("horizontalLayout_17")
+        self.groupBox.setStyleSheet("""QToolTip { 
+                                                   background-color: black; 
+                                                   color: white; 
+                                                   border: black solid 1px
+                                                   }""")
         self.logSwitch = QtWidgets.QPushButton(self.groupBox)
         self.logSwitch.setCheckable(True)
         self.logSwitch.toggle()
