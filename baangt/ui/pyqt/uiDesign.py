@@ -264,18 +264,24 @@ class Ui_MainWindow(QtCore.QObject):
         self.statisticTable.verticalHeader().hide()
         self.statisticTable.setStyleSheet("border: 0px;")
         headerFont = QtGui.QFont()
-        #headerFont.setFamily("Arial")
         headerFont.setPointSize(9)
         headerFont.setBold(True)
         header = self.statisticTable.horizontalHeader()
         headers = ["TC Total", "TC DONE", "TC Pending", "TC OK", "TC Failed", "TC Paused", "TCS", "TS", "TSS"]
+        headers_fullform = [
+            "Total TestCases", "TestCases Done", "TestCases Pending", "TestCases Succeed", "TestCases Failed",
+            "TestCases Paused", "TestCase Sequence Done", "TestStep Done", "TestStep Sequence Done"]
         self.statisticTable.setFocusPolicy(QtCore.Qt.NoFocus)
         for x in range(9):
             self.statisticTable.setItem(0, x, QtWidgets.QTableWidgetItem())
             self.statisticTable.item(0,x).setBackground(QtGui.QBrush(QtCore.Qt.white))
+            self.statisticTable.item(0, x).setFlags(self.statisticTable.item(0, x).flags() ^ QtCore.Qt.ItemIsSelectable)
+            self.statisticTable.item(0, x).setFlags(self.statisticTable.item(0, x).flags() ^ QtCore.Qt.ItemIsEditable)
             header.setSectionResizeMode(x, QtWidgets.QHeaderView.Stretch)
             self.statisticTable.setHorizontalHeaderItem(x, QtWidgets.QTableWidgetItem(headers[x]))
             self.statisticTable.horizontalHeaderItem(x).setFont(headerFont)
+            self.statisticTable.horizontalHeaderItem(x).setToolTip(headers_fullform[x])
+
 
         self.statisticTable.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
         self.statisticTable.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -369,6 +375,13 @@ class Ui_MainWindow(QtCore.QObject):
         self.verticalLayout_9.addWidget(self.scrollArea)
         self.horizontalLayout_17 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_17.setObjectName("horizontalLayout_17")
+        self.logSwitch = QtWidgets.QPushButton(self.groupBox)
+        self.logSwitch.setCheckable(True)
+        self.logSwitch.toggle()
+        self.logSwitch.setText("Show Logs")
+        self.logSwitch.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(115, 210, 22);")
+        self.logSwitch.setObjectName("logSwitch")
+        self.horizontalLayout_17.addWidget(self.logSwitch)
         self.okPushButton = QtWidgets.QPushButton(self.groupBox)
         self.okPushButton.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(52, 101, 164);")
         self.okPushButton.setObjectName("okPushButton")

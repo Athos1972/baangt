@@ -25,6 +25,8 @@ from baangt.base.PathManagement import ManagedPaths
 from uuid import uuid4
 from baangt.base.FilesOpen import FilesOpen
 from baangt.base.RuntimeStatistics import Statistic
+from baangt.base.PathManagement import ManagedPaths
+import xlrd
 from threading import Thread
 from time import sleep
 
@@ -76,9 +78,14 @@ class MainWindow(Ui_MainWindow):
         self.tempConfigFile = None
         self.testRunFile = None
         self.testRunFiles = []
+        self.__execute_button_state = "idle"
+        self.__result_file = ""
+
         # self.refreshNew()
         # self.setupBasePath(self.directory)
         self.readConfig()
+        self.logSwitch.setChecked(self.__log_state)
+        self.show_hide_logs()
 
         self.katalonRecorder = PyqtKatalonUI(self.directory)
         # update logo and icon
@@ -98,7 +105,7 @@ class MainWindow(Ui_MainWindow):
         self.AddMorePushButton.clicked.connect(self.addMore)
         self.deleteLastPushButton.clicked.connect(self.deleteLast)
         self.saveAspushButton.clicked.connect(self.saveAsNewFile)
-        self.executePushButton_4.clicked.connect(self.runTestRun)
+        self.executePushButton_4.clicked.connect(self.executeButtonClicked)
 
         # FileOpen buttons
         self.openResultFilePushButton_4.clicked.connect(self.openResultFile)
@@ -114,12 +121,17 @@ class MainWindow(Ui_MainWindow):
         self.savePushButton_2.clicked.connect(self.saveTestCase)
         self.copyClipboard_2.clicked.connect(self.copyFromClipboard)
         self.TextIn_2.textChanged.connect(self.importClipboard)
+        self.logSwitch.clicked.connect(self.show_hide_logs)
 
         self.statistics = Statistic()
 
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def close(self, event):
+        try:
+            self.run_process.kill()
+        except:
+            pass
         self.child.terminate()
         self.child.waitForFinished()
         event.accept()
@@ -131,6 +143,7 @@ class MainWindow(Ui_MainWindow):
                     "path": self.directory,
                     "testrun": self.testRunComboBox_4.currentText(),
                     "globals": self.settingComboBox_4.currentText(),
+                    "logstate": self.__log_state
                     }
         with open(self.managedPaths.getOrSetIni().joinpath("baangt.ini"), "w" ) as configFile:
             config.write(configFile)
@@ -143,6 +156,10 @@ class MainWindow(Ui_MainWindow):
             self.directory = config["Default"]['path']
             self.testRunFile = config["Default"]['testrun']
             self.configFile  = config["Default"]['globals']
+            if 'logstate' in config["Default"]:
+                self.__log_state = int(config["Default"]["logstate"])
+            else:
+                self.__log_state = 0
             self.setupBasePath(self.directory)
             self.readContentofGlobals()
         except Exception as e:
@@ -361,6 +378,12 @@ class MainWindow(Ui_MainWindow):
         self.statusMessage("Settings changed to: {}".format(self.configFile))
         self.readContentofGlobals()
 
+    def executeButtonClicked(self):
+        if self.__execute_button_state == "idle":
+            self.runTestRun()
+        elif self.__execute_button_state == "running":
+            self.stopButtonPressed()
+
     @pyqtSlot()
     def runTestRun(self):
         if not self.configFile:
@@ -370,6 +393,11 @@ class MainWindow(Ui_MainWindow):
             self.statusMessage("No test Run File selected", 2000)
             return
 
+        self.__execute_button_state = "running"
+        self.stopIcon = QtGui.QIcon(":/baangt/stopicon")
+        self.executePushButton_4.setIcon(self.stopIcon)
+        self.executePushButton_4.setIconSize(QtCore.QSize(28, 20))
+        self.executePushButton_4.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(255, 75, 50);")
         self.clear_logs_and_stats()
 
         runCmd = self._getRunCommand()
@@ -384,6 +412,7 @@ class MainWindow(Ui_MainWindow):
             self.lTestRun = TestRun(f"{Path(self.directory).joinpath(self.testRunFile)}",
                  globalSettingsFileNameAndPath=f'{Path(self.directory).joinpath(self.tempConfigFile)}', uuid=lUUID)
             self.processFinished()
+            self.__result_file = self.lTestRun.results.fileName
 
         else:
             logger.info(f"Running command: {runCmd}")
@@ -399,6 +428,11 @@ class MainWindow(Ui_MainWindow):
             self.statusbar.showMessage("Running.....")
 
     @pyqtSlot()
+    def stopButtonPressed(self):
+        self.run_process.kill()
+        self.__execute_button_state = "idle"
+
+    @pyqtSlot()
     def processFinished(self):
         buttonReply = QtWidgets.QMessageBox.question(
             self.centralwidget,
@@ -408,6 +442,10 @@ class MainWindow(Ui_MainWindow):
             QtWidgets.QMessageBox.Ok
         )
         self.statusMessage(f"Completed ", 3000)
+        self.executeIcon = QtGui.QIcon(":/baangt/executeicon")
+        self.executePushButton_4.setIcon(self.executeIcon)
+        self.executePushButton_4.setIconSize(QtCore.QSize(28, 20))
+        self.executePushButton_4.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(138, 226, 52);")
 
         # Remove temporary Configfile, that was created only for this run:
         try:
@@ -418,6 +456,9 @@ class MainWindow(Ui_MainWindow):
 
     def process_stdout(self, obj):
         text = str(obj.data().decode('iso-8859-1'))
+        if "ExportResults _ __init__ : Export-Sheet for results: " in text:
+            lis = text[text.index("results: "):].split(" ")
+            self.__result_file = lis[1].strip()
         if "||Statistic:" in text:
             lis = text.split('||')
             stat = lis[1][10:]
@@ -426,6 +467,10 @@ class MainWindow(Ui_MainWindow):
             for x in range(9):
                 self.statisticTable.setItem(0, x, QtWidgets.QTableWidgetItem(stat_lis[x].split(': ')[1]))
                 self.statisticTable.item(0,x).setTextAlignment(QtCore.Qt.AlignCenter)
+                self.statisticTable.item(0, x).setFlags(
+                    self.statisticTable.item(0, x).flags() ^ QtCore.Qt.ItemIsSelectable)
+                self.statisticTable.item(0, x).setFlags(
+                    self.statisticTable.item(0, x).flags() ^ QtCore.Qt.ItemIsEditable)
                 if x == 3:
                     self.statisticTable.item(0, 3).setBackground(QtGui.QBrush(QtCore.Qt.green))
                 elif x == 4:
@@ -944,10 +989,13 @@ class MainWindow(Ui_MainWindow):
     def openResultFile(self):
         """ Uses Files Open class to open Result file """
         try:
-            filePathName = self.lTestRun.results.fileName
-            fileName = os.path.basename(filePathName)
-            self.statusbar.showMessage(f"Opening file {fileName}")
-            FilesOpen.openResultFile(filePathName)
+            if self.__result_file != "":
+                filePathName = self.__result_file
+                fileName = os.path.basename(filePathName)
+                self.statusMessage(f"Opening file {fileName}", 3000)
+                FilesOpen.openResultFile(filePathName)
+            else:
+                self.statusMessage("No file found!", 3000)
         except:
             self.statusMessage("No file found!", 3000)
 
@@ -955,12 +1003,15 @@ class MainWindow(Ui_MainWindow):
     def openLogFile(self):
         """ Uses Files Open class to open Log file """
         try:
-            filePathName = [
-                handler.baseFilename for handler in logger.handlers if isinstance(handler, logging.FileHandler)
-            ][0]
-            fileName = os.path.basename(filePathName)
-            self.statusbar.showMessage(f"Opening file {fileName}")
-            FilesOpen.openResultFile(filePathName)
+            if self.__result_file != "":
+                wb = xlrd.open_workbook(self.__result_file)
+                book = wb.sheet_by_name("Summary")
+                filePathName = book.row(7)[1].value.strip()
+                fileName = os.path.basename(filePathName)
+                self.statusMessage(f"Opening file {fileName}", 3000)
+                FilesOpen.openResultFile(filePathName)
+            else:
+                self.statusMessage("No file found!", 3000)
         except:
             self.statusMessage("No file found!", 3000)
 
@@ -982,6 +1033,16 @@ class MainWindow(Ui_MainWindow):
             self.statisticTable.item(0,x).setBackground(QtGui.QBrush(QtCore.Qt.white))
         self.logTextBox.clear()
         QtCore.QCoreApplication.processEvents()
+
+    @pyqtSlot()
+    def show_hide_logs(self):
+        if self.logSwitch.isChecked():
+            self.logTextBox.show()
+            self.__log_state = 1
+        else:
+            self.logTextBox.hide()
+            self.__log_state = 0
+        self.saveInteractiveGuiConfig()
 
 
 # Controller
