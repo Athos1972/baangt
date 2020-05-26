@@ -15,7 +15,7 @@ if __name__ == '__main__':
         url="https://baangt.org",
         packages=setuptools.find_packages(),
         data_files=[('baangt', ["baangt/ressources/baangtLogo.png", "baangt/ressources/baangtLogo2020Small.png"])],
-        package_data={"baangt.ressources": ['*.png',]},
+        package_data={"baangt.ui.pyqt": ['globalSetting.json',]},
         install_requires=["Appium-Python-Client", "beautifulsoup4", "browsermob-proxy",
                           "dataclasses", "dataclasses-json",
                           "faker",  "gevent", "lxml",
