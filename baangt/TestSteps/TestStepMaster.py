@@ -66,8 +66,8 @@ class TestStepMaster:
         """
         for index, (key, command) in enumerate(executionCommands.items()):
             self.executeDirectSingle(index, command)
-            self.statistics.update_teststep()
-
+            # self.statistics.update_teststep()  --> Moved to BrowserHandling into the activities themselves,
+            # so that we can also count for externally (subclassed) activitis
 
 
     def executeDirectSingle(self, commandNumber, command):
