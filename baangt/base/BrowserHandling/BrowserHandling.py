@@ -494,6 +494,9 @@ class BrowserDriver:
 
         self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
 
+        if not self.element:
+            return False
+
         return webDrv.webdriver_doSomething(GC.CMD_FORCETEXT, self.element, value=value, timeout=timeout, optional=optional, browserData = self.browserData)
 
     def setBrowserWindowSize(self, browserWindowSize: str):
