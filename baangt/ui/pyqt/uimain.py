@@ -537,9 +537,9 @@ class MainWindow(Ui_MainWindow):
 
         self.__makeTempConfigFile()
 
-        return f"{lStart} " \
-               f"--run='{Path(self.directory).joinpath(self.testRunFile)}' " \
-               f"--globals='{Path(self.directory).joinpath(self.tempConfigFile)}' --gui True"
+        return f'"{lStart}" ' \
+               f'--run="{Path(self.directory).joinpath(self.testRunFile)}" ' \
+               f'--globals="{Path(self.directory).joinpath(self.tempConfigFile)}" --gui True'
 
 
     def __makeTempConfigFile(self):
