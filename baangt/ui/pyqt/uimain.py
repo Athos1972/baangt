@@ -89,6 +89,7 @@ class MainWindow(Ui_MainWindow):
         self.readConfig()
         self.logSwitch.setChecked(self.__log_state)
         self.show_hide_logs()
+        self.openFilesSwitch.setChecked(self.__open_files)
 
         self.katalonRecorder = PyqtKatalonUI(self.directory)
         # update logo and icon
@@ -125,6 +126,7 @@ class MainWindow(Ui_MainWindow):
         self.copyClipboard_2.clicked.connect(self.copyFromClipboard)
         self.TextIn_2.textChanged.connect(self.importClipboard)
         self.logSwitch.clicked.connect(self.show_hide_logs)
+        self.openFilesSwitch.clicked.connect(self.change_openFiles_state)
 
         self.statistics = Statistic()
 
@@ -146,7 +148,8 @@ class MainWindow(Ui_MainWindow):
                     "path": self.directory,
                     "testrun": self.testRunComboBox_4.currentText(),
                     "globals": self.settingComboBox_4.currentText(),
-                    "logstate": self.__log_state
+                    "logstate": self.__log_state,
+                    "openfiles": self.__open_files
                     }
         with open(self.managedPaths.getOrSetIni().joinpath("baangt.ini"), "w" ) as configFile:
             config.write(configFile)
@@ -163,6 +166,10 @@ class MainWindow(Ui_MainWindow):
                 self.__log_state = int(config["Default"]["logstate"])
             else:
                 self.__log_state = 0
+            if 'openfiles' in config["Default"]:
+                self.__open_files = int(config["Default"]["openfiles"])
+            else:
+                self.__open_files = 0
             self.setupBasePath(self.directory)
             self.readContentofGlobals()
         except Exception as e:
@@ -418,8 +425,7 @@ class MainWindow(Ui_MainWindow):
             self.lTestRun = ""
             self.lTestRun = TestRun(f"{Path(self.directory).joinpath(self.testRunFile)}",
                  globalSettingsFileNameAndPath=f'{Path(self.directory).joinpath(self.tempConfigFile)}', uuid=lUUID)
-            self.processFinished()
-            self.__result_file = self.lTestRun.results.fileName
+            self.processFinished(debug=True)
 
         else:
             logger.info(f"Running command: {runCmd}")
@@ -439,7 +445,7 @@ class MainWindow(Ui_MainWindow):
         self.run_process.kill()
 
     @pyqtSlot()
-    def processFinished(self):
+    def processFinished(self, debug=False):
         buttonReply = QtWidgets.QMessageBox.question(
             self.centralwidget,
             "Baangt Interactive Starter ",
@@ -447,6 +453,8 @@ class MainWindow(Ui_MainWindow):
             QtWidgets.QMessageBox.Ok,
             QtWidgets.QMessageBox.Ok
         )
+        if debug:
+            self.__result_file = self.lTestRun.results.fileName
         self.statusMessage(f"Completed ", 3000)
         self.executeIcon = QtGui.QIcon(":/baangt/executeicon")
         self.executePushButton_4.setIcon(self.executeIcon)
@@ -464,6 +472,9 @@ class MainWindow(Ui_MainWindow):
         except Exception as e:
             logger.warning(f"Tried to remove temporary file but seems to be not there: "
                            f"{self.directory}/{self.tempConfigFile}")
+        if self.__open_files:
+            self.openResultFile()
+            self.openLogFile()
 
     def process_stdout(self, obj):
         text = str(obj.data().decode('iso-8859-1'))
@@ -1066,6 +1077,13 @@ class MainWindow(Ui_MainWindow):
         else:
             self.logTextBox.hide()
             self.__log_state = 0
+        self.saveInteractiveGuiConfig()
+
+    def change_openFiles_state(self):
+        if self.openFilesSwitch.isChecked():
+            self.__open_files = 1
+        else:
+            self.__open_files = 0
         self.saveInteractiveGuiConfig()
 
 
