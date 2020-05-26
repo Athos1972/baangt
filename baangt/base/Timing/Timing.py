@@ -92,9 +92,9 @@ class Timing:
     def returnTimeSegment(self, section: str) -> Tuple[str, str, str]:
         duration = self.timing[section]
         if duration.end:
-            start, end, duration = map(Timing.__format_time, \
-                (duration.start, duration.end, 
-                duration.end - duration.start))
+            start, end = map(Timing.__format_date_time, \
+                (duration.start, duration.end))
+            duration = Timing.__format_time(duration.end - duration.start)
 
             return start, end, duration
 
@@ -115,6 +115,10 @@ class Timing:
     @staticmethod
     def __format_time(elapsed_seconds: float):
         return time.strftime("%H:%M:%S", time.gmtime(elapsed_seconds))
+
+    @staticmethod
+    def __format_date_time(elapsed_seconds: float):
+        return time.strftime("%d-%m-%Y %H:%M:%S", time.gmtime(elapsed_seconds))
 
 if __name__ == '__main__':
     test = Timing()
