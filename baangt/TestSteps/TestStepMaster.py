@@ -56,6 +56,8 @@ class TestStepMaster:
                 # having done anything
                 self.teardown()
 
+        self.statistics.update_teststep_sequence()
+
     def executeDirect(self, executionCommands):
         """
         Executes a sequence of Commands. Will be subclassed in other modules.
@@ -65,7 +67,7 @@ class TestStepMaster:
         for index, (key, command) in enumerate(executionCommands.items()):
             self.executeDirectSingle(index, command)
             self.statistics.update_teststep()
-        self.statistics.update_teststep_sequence()
+
 
 
     def executeDirectSingle(self, commandNumber, command):
