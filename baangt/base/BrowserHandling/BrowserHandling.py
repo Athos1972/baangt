@@ -233,6 +233,7 @@ class BrowserDriver:
             helper.browserHelper_log(logging.DEBUG, f"Stored Screenshot: {lFile}", self.browserData)
         except Exception as e:
             helper.browserHelper_log(logging.INFO, f"Screenshot not possible. Error: {e}", self.browserData)
+            lFile = None
 
         return lFile
 

@@ -3,7 +3,6 @@ import logging
 import json
 import baangt.base.GlobalConstants as GC
 from baangt.base.Timing.Timing import Timing
-import sys
 from baangt.base.Utils import utils
 from pathlib import Path
 from typing import Optional
@@ -13,16 +12,14 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from baangt.base.DataBaseORM import DATABASE_URL, TestrunLog, TestCaseSequenceLog
 from baangt.base.DataBaseORM import TestCaseLog, TestCaseField, GlobalAttribute, TestCaseNetworkInfo
-from baangt.base.PathManagement import ManagedPaths
 from datetime import datetime
 from sqlite3 import IntegrityError
-import time
 from baangt import plugin_manager
 import re
 import csv
 from dateutil.parser import parse
-import os
 from uuid import uuid4
+from pathlib import Path
 
 logger = logging.getLogger("pyC")
 
@@ -524,15 +521,26 @@ class ExportResults:
         try:
             if type(testRecordDict[fieldName]) == list:
 
-                self.worksheet.insert_image(line, cellNumber, testRecordDict[fieldName][-1], {'x_scale': 0.05,
-                                                                                              'y_scale': 0.05})
+                if Path(testRecordDict[fieldName][-1]).exists():
+                    self.worksheet.insert_image(line, cellNumber, testRecordDict[fieldName][-1], {'x_scale': 0.05,
+                                                                                                  'y_scale': 0.05})
+                else:
+                    logger.error(f"Sceenshot file {testRecordDict[fieldName][-1]} can't be found")
+
                 for nextScreenshotNumber in range(len(testRecordDict[fieldName]) - 1):
-                    self.worksheet.insert_image(line, len(self.fieldListExport) + nextScreenshotNumber + 1,
-                                                testRecordDict[fieldName][nextScreenshotNumber],
-                                                {'x_scale': 0.05, 'y_scale': 0.05})
+                    if Path(testRecordDict[fieldName][nextScreenshotNumber]).exists():
+                        self.worksheet.insert_image(line, len(self.fieldListExport) + nextScreenshotNumber + 1,
+                                                    testRecordDict[fieldName][nextScreenshotNumber],
+                                                    {'x_scale': 0.05, 'y_scale': 0.05})
+                    else:
+                        logger.error(f"Screenshot file {testRecordDict[fieldName][nextScreenshotNumber]} can't be found")
             else:
-                self.worksheet.insert_image(line, cellNumber, testRecordDict[fieldName], {'x_scale': 0.05,
-                                                                               'y_scale': 0.05})
+                if Path(testRecordDict[fieldName]).exists():
+                    self.worksheet.insert_image(line, cellNumber, testRecordDict[fieldName], {'x_scale': 0.05,
+                                                                                              'y_scale': 0.05})
+                else:
+                    logger.error(f"Screenshot file {testRecordDict[fieldName]} can't be found")
+
         except Exception as e:
             logger.error(f"Problem with screenshots - can't attach them {e}")
 
