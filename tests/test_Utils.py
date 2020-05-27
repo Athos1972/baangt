@@ -30,7 +30,7 @@ def test_replaceFieldValueWithValueOfConstant_GC_GCG():
     assert utils.replaceFieldValueWithValueOfConstant(
         "GC.BROWSER_CHROME") == "CHROME"
     assert utils.replaceFieldValueWithValueOfConstant(
-        "CGC.VERMITTLER") == "vermittler"
+        "CGC.VERMITTLER") == "Vermittler"
     assert utils.replaceFieldValueWithValueOfConstant(
         "GC.NOT_EXISTENT") == "GC.NOT_EXISTENT"
 
@@ -38,14 +38,14 @@ def test_replaceFieldValueWithValueOfConstant_GC_GCG():
 def test_replaceAllGlobalConstantsInDict_str():
     obj_constants = {
         "GC.BROWSER_CHROME": "GC.BROWSER_CHROME",
-        "CGC.VERMITTLER": "vermittler",
+        "CGC.VERMITTLER": "Vermittler",
         "GC.NOT_EXISTENT": "GC.NOT_EXISTENT"
     }
 
     obj_result = utils.replaceAllGlobalConstantsInDict(obj_constants)
 
     assert obj_result["CHROME"] == "CHROME"
-    assert obj_result["vermittler"] == "vermittler"
+    assert obj_result["Vermittler"] == "Vermittler"
     assert obj_result["GC.NOT_EXISTENT"] == "GC.NOT_EXISTENT"
 
 
@@ -53,7 +53,7 @@ def test_replaceAllGlobalConstantsInDict_dict():
     obj = {
         "constants": {
             "GC.BROWSER_CHROME": "GC.BROWSER_CHROME",
-            "CGC.VERMITTLER": "vermittler",
+            "CGC.VERMITTLER": "Vermittler",
             "GC.NOT_EXISTENT": "GC.NOT_EXISTENT"
         }
     }
@@ -61,7 +61,7 @@ def test_replaceAllGlobalConstantsInDict_dict():
     obj_result = utils.replaceAllGlobalConstantsInDict(obj)
 
     assert obj_result["constants"]["CHROME"] == "CHROME"
-    assert obj_result["constants"]["vermittler"] == "vermittler"
+    assert obj_result["constants"]["Vermittler"] == "Vermittler"
     assert obj_result["constants"]["GC.NOT_EXISTENT"] == "GC.NOT_EXISTENT"
 
 
@@ -73,7 +73,7 @@ def test_replaceAllGlobalConstantsInDict_list():
     obj_result = utils.replaceAllGlobalConstantsInDict(obj)
 
     assert obj_result["constants"][0] == "CHROME"
-    assert obj_result["constants"][1] == "vermittler"
+    assert obj_result["constants"][1] == "Vermittler"
     assert obj_result["constants"][2] == "GC.NOT_EXISTENT"
 
 
@@ -93,7 +93,7 @@ def test_replaceAllGlobalConstantsInDict_loopList_dict():
     obj = {
         "constants": [
             {"GC.BROWSER_CHROME": "GC.BROWSER_CHROME"},
-            {"CGC.VERMITTLER": "vermittler"},
+            {"CGC.VERMITTLER": "Vermittler"},
             {"GC.NOT_EXISTENT": "GC.NOT_EXISTENT"}
         ]
     }
@@ -102,7 +102,7 @@ def test_replaceAllGlobalConstantsInDict_loopList_dict():
     constants = result["constants"]
 
     assert constants[0]["CHROME"] == "CHROME"
-    assert constants[1]["vermittler"] == "vermittler"
+    assert constants[1]["Vermittler"] == "Vermittler"
     assert constants[2]["GC.NOT_EXISTENT"] == "GC.NOT_EXISTENT"
 
 
@@ -117,7 +117,7 @@ def test_replaceAllGlobalConstantsInDict_loopList_list():
     result_list = result["constants"][0]
 
     assert result_list[0] == "CHROME"
-    assert result_list[1] == "vermittler"
+    assert result_list[1] == "Vermittler"
     assert result_list[2] == "GC.NOT_EXISTENT"
 
 
