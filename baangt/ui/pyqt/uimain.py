@@ -529,15 +529,17 @@ class MainWindow(Ui_MainWindow):
             if len(Path(sys.argv[0]).parents) > 1:
                 # This is a system where the path the the script is
                 # given in sys.argv[0]
-                lStart = lStart + f" {sys.argv[0]}"
+                lStart = f'"{lStart}"' + f' "{sys.argv[0]}"'
             else:
                 # this is a system where we need to join os.getcwd()
                 # and sys.argv[0] because the path is not given in sys.argv[0]
-                lStart = lStart + f" {Path(os.getcwd()).joinpath(sys.argv[0])}"
+                lStart = f'"{lStart}"' + f' "{Path(os.getcwd()).joinpath(sys.argv[0])}"'
+        else:
+            lStart = f'"{lStart}"'
 
         self.__makeTempConfigFile()
 
-        return f'"{lStart}" ' \
+        return f'{lStart} ' \
                f'--run="{Path(self.directory).joinpath(self.testRunFile)}" ' \
                f'--globals="{Path(self.directory).joinpath(self.tempConfigFile)}" --gui True'
 
