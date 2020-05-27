@@ -45,13 +45,14 @@ class TestStepMaster:
         self.testCase = self.testRunUtil.getTestCaseByNumber(lSequence, kwargs.get(GC.STRUCTURE_TESTCASE))
         self.testStep = self.testRunUtil.getTestStepByNumber(self.testCase, self.testStepNumber)
 
-        if self.testStep:
+        if self.testStep and len(self.testStep) > 1:
             if not isinstance(self.testStep[1], str) and executeDirect:
                 # This TestStepMaster-Instance should actually do something - activitites are described
-                # in the TestExecutionSteps
+                # in the TestExecutionSteps.
+                # Otherwise there's only a classname in TestStep[0]
                 self.executeDirect(self.testStep[1][GC.STRUCTURE_TESTSTEPEXECUTION])
 
-                # Teardown makes only sense, when we actually executed something directory in here
+                # Teardown makes only sense, when we actually executed something directly in here
                 # Otherwise (if it was 1 or 2 Tab-stops more to the left) we'd take execution time without
                 # having done anything
                 self.teardown()
