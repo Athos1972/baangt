@@ -19,10 +19,15 @@ class TestRunUtils():
         return self.testRunAttributes[testRunName][GC.KWARGS_TESTRUNATTRIBUTES][GC.STRUCTURE_TESTCASESEQUENCE].get(sequence)
 
     def getTestCaseByNumber(self, sequence, testcaseNumber):
-        return sequence[1][GC.STRUCTURE_TESTCASE][testcaseNumber]
+        return sequence[1][GC.STRUCTURE_TESTCASE].get(testcaseNumber) or \
+               sequence[1][GC.STRUCTURE_TESTCASE].get(int(testcaseNumber)) or \
+               sequence[1][GC.STRUCTURE_TESTCASE].get(str(testcaseNumber))
 
     def getTestStepByNumber(self, testCase, testStepNumber):
-        return testCase[2][GC.STRUCTURE_TESTSTEP].get(testStepNumber)
+        return testCase[2][GC.STRUCTURE_TESTSTEP].get(testStepNumber) or \
+               testCase[2][GC.STRUCTURE_TESTSTEP].get(int(testStepNumber)) or \
+               testCase[2][GC.STRUCTURE_TESTSTEP].get(str(testStepNumber))
+
 
     def replaceClasses(self, testRunName, classes:ClassesForObjects, ):
         """
