@@ -83,6 +83,7 @@ class MainWindow(Ui_MainWindow):
         self.__execute_button_state = "idle"
         self.__result_file = ""
         self.__log_file = ""
+        self.__open_files = 0
 
         # self.refreshNew()
         # self.setupBasePath(self.directory)
