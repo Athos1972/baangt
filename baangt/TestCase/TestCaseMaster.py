@@ -138,7 +138,7 @@ class TestCaseMaster:
                             data[GC.SCREENSHOTS] = [lShot, data[GC.SCREENSHOTS]]
                             pass
                         else:
-                            data[GC.SCREENSHOTS].extend(lShot)
+                            data[GC.SCREENSHOTS].extend([lShot])
                     else:
                         data[GC.SCREENSHOTS] = [lShot]
 

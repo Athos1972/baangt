@@ -521,21 +521,21 @@ class ExportResults:
         try:
             if type(testRecordDict[fieldName]) == list:
 
-                if Path(testRecordDict[fieldName][-1]).exists():
+                if Path(testRecordDict[fieldName][-1]).is_file():
                     self.worksheet.insert_image(line, cellNumber, testRecordDict[fieldName][-1], {'x_scale': 0.05,
                                                                                                   'y_scale': 0.05})
                 else:
                     logger.error(f"Sceenshot file {testRecordDict[fieldName][-1]} can't be found")
 
                 for nextScreenshotNumber in range(len(testRecordDict[fieldName]) - 1):
-                    if Path(testRecordDict[fieldName][nextScreenshotNumber]).exists():
+                    if Path(testRecordDict[fieldName][nextScreenshotNumber]).is_file():
                         self.worksheet.insert_image(line, len(self.fieldListExport) + nextScreenshotNumber + 1,
                                                     testRecordDict[fieldName][nextScreenshotNumber],
                                                     {'x_scale': 0.05, 'y_scale': 0.05})
                     else:
                         logger.error(f"Screenshot file {testRecordDict[fieldName][nextScreenshotNumber]} can't be found")
             else:
-                if Path(testRecordDict[fieldName]).exists():
+                if Path(testRecordDict[fieldName]).is_file():
                     self.worksheet.insert_image(line, cellNumber, testRecordDict[fieldName], {'x_scale': 0.05,
                                                                                               'y_scale': 0.05})
                 else:
