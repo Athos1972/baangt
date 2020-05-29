@@ -22,6 +22,7 @@ import time
 from baangt.base.PathManagement import ManagedPaths
 from uuid import uuid4
 from baangt.base.RuntimeStatistics import Statistic
+from baangt.base.SendStatistics import Sender
 
 logger = logging.getLogger("pyC")
 
@@ -129,6 +130,7 @@ class TestRun:
         self.statistics.update_all(successful, error, waiting)
         logger.info(f"Finished execution of Testrun {self.testRunName}. "
                     f"{successful} Testcases successfully executed, {error} errors")
+        Sender(self.globalSettings, self.results.fileName)
         print(f"Finished execution of Testrun {self.testRunName}. "
               f"{successful} Testcases successfully executed, {error} errors")
 

@@ -1,4 +1,3 @@
-!mailer.pyc
 .idea
 logs
 build
@@ -19,4 +18,5 @@ baangt_*.xlsx
 /baangt.egg-info/
 /venv3_6/
 /tests/proxies.csv
-/baangt/base/SendStatistics/mailer.py
+
+!mailer.pyc
