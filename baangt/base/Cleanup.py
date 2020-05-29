@@ -30,7 +30,7 @@ class Cleanup:
                     continue
                 logger.debug(f"{str(file)} deleted")
         if len(removed) == 0:
-            logger.info(f"No log file older than {str(self.threshold)} found")
+            logger.info(f"No log file older than {str(self.threshold)} days found")
         else:
             logger.info(f"{str(len(removed))} Log file deleted")
 
@@ -50,7 +50,7 @@ class Cleanup:
                     continue
                 logger.debug(f"{str(file)} deleted")
         if len(removed) == 0:
-            logger.info(f"No Screenshot older than {str(self.threshold)} found")
+            logger.info(f"No Screenshot older than {str(self.threshold)} days found")
         else:
             logger.info(f"{str(len(removed))} Screenshot deleted")
 
@@ -71,7 +71,7 @@ class Cleanup:
                         continue
                     logger.debug(f"{str(file)} deleted")
         if len(removed) == 0:
-            logger.info(f"No downloads older than {str(self.threshold)} found")
+            logger.info(f"No downloads older than {str(self.threshold)} days found")
         else:
             logger.info(f"{str(len(removed))} downloads deleted")
         sleep(1)
@@ -91,7 +91,7 @@ class Cleanup:
         if len(removed) == 0:
             logger.info(f"No empty folder found inside downloads")
         else:
-            logger.info(f"{str(len(removed))} folder deleted")
+            logger.info(f"{str(len(removed))} empty folder deleted")
 
     def clean_all(self):
         self.clean_logs()
