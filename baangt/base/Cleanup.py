@@ -56,7 +56,7 @@ class Cleanup:
                         logger.debug(f"Cannot remove {str(file)}")
                         continue
                     logger.debug(f"{str(file)} deleted")
-        sleep(2)
+        sleep(1)
         logger.info("Removing empty folders inside download folder.")
         files = Path(downloads_dir).glob('**/*')
         for file in files:

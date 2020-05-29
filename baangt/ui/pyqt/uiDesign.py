@@ -394,6 +394,11 @@ class Ui_MainWindow(QtCore.QObject):
         self.openFilesSwitch.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(115, 210, 22);")
         self.openFilesSwitch.setObjectName("openFilesSwitch")
         self.horizontalLayout_23.addWidget(self.openFilesSwitch)
+        self.cleanupButton = QtWidgets.QPushButton(self.groupBox)
+        self.cleanupButton.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(115, 210, 22);")
+        self.cleanupButton.setObjectName("cleanupButton")
+        self.horizontalLayout_23.addWidget(self.cleanupButton)
+
         self.okPushButton = QtWidgets.QPushButton(self.groupBox)
         self.okPushButton.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(52, 101, 164);")
         self.okPushButton.setObjectName("okPushButton")
@@ -509,6 +514,8 @@ class Ui_MainWindow(QtCore.QObject):
         self.openFilesSwitch.setText(_translate("MainWindow", "Open Files"))
         self.openFilesSwitch.setToolTip(_translate(
             "MainWindow", "Click to open files automatically after complete execution."))
+        self.cleanupButton.setText(_translate("MainWindow", "Cleanup"))
+        self.cleanupButton.setToolTip(_translate("MainWindow", "Click to clean old files."))
         self.okPushButton.setText(_translate("MainWindow", "Ok"))
         self.saveAspushButton.setToolTip(_translate("MainWindow", "Save to New File Name"))
         self.saveAspushButton.setText(_translate("MainWindow", "Save As"))
