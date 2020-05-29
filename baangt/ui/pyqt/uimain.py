@@ -1124,7 +1124,12 @@ class MainWindow(Ui_MainWindow):
 
     def cleanup_button(self):
         self.cleanup_status.showMessage("Cleaning...")
-        c = Cleanup(int(self.cleanup_days.text()))
+        text = self.cleanup_days.text()
+        if len(text) > 0:
+            days = int(text)
+        else:
+            days = 0
+        c = Cleanup(days)
         if self.cleanup_logs.isChecked():
             c.clean_logs()
         if self.cleanup_screenshots.isChecked():
