@@ -27,6 +27,7 @@ from baangt.base.FilesOpen import FilesOpen
 from baangt.base.RuntimeStatistics import Statistic
 from baangt.base.PathManagement import ManagedPaths
 from baangt.base.DownloadFolderMonitoring import DownloadFolderMonitoring
+from baangt.base.Cleanup import Cleanup
 import xlrd
 from threading import Thread
 from time import sleep
@@ -128,6 +129,7 @@ class MainWindow(Ui_MainWindow):
         self.TextIn_2.textChanged.connect(self.importClipboard)
         self.logSwitch.clicked.connect(self.show_hide_logs)
         self.openFilesSwitch.clicked.connect(self.change_openFiles_state)
+        self.cleanupButton.clicked.connect(self.cleanup_dialog)
 
         self.statistics = Statistic()
 
@@ -411,7 +413,7 @@ class MainWindow(Ui_MainWindow):
         self.stopIcon = QtGui.QIcon(":/baangt/stopicon")
         self.executePushButton_4.setIcon(self.stopIcon)
         self.executePushButton_4.setIconSize(QtCore.QSize(28, 20))
-        self.executePushButton_4.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(255, 75, 50);")
+        self.executePushButton_4.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(204, 0, 0);")
         self.clear_logs_and_stats()
 
         runCmd = self._getRunCommand()
@@ -502,9 +504,9 @@ class MainWindow(Ui_MainWindow):
                 self.statisticTable.item(0, x).setFlags(
                     self.statisticTable.item(0, x).flags() ^ QtCore.Qt.ItemIsEditable)
                 if x == 3:
-                    self.statisticTable.item(0, 3).setBackground(QtGui.QBrush(QtCore.Qt.green))
+                    self.statisticTable.item(0, 3).setBackground(QtGui.QColor(115, 210, 22))#QBrush(QtCore.Qt.green))
                 elif x == 4:
-                    self.statisticTable.item(0, 4).setBackground(QtGui.QBrush(QtCore.Qt.red))
+                    self.statisticTable.item(0, 4).setBackground(QtGui.QColor(204, 0, 0))#QBrush(QtCore.Qt.red))
                 else:
                     self.statisticTable.item(0, x).setBackground(QtGui.QBrush(QtCore.Qt.white))
             log.replace('\n', '')
@@ -1088,6 +1090,58 @@ class MainWindow(Ui_MainWindow):
         else:
             self.__open_files = 0
         self.saveInteractiveGuiConfig()
+
+    @pyqtSlot()
+    def cleanup_dialog(self):
+        self.clean_dialog = QtWidgets.QDialog(self.centralwidget)
+        self.clean_dialog.setWindowTitle("Cleanup")
+        vlay = QtWidgets.QVBoxLayout()
+        self.cleanup_logs = QtWidgets.QCheckBox()
+        self.cleanup_logs.setText("Logs")
+        self.cleanup_logs.setChecked(True)
+        self.cleanup_screenshots = QtWidgets.QCheckBox()
+        self.cleanup_screenshots.setText("Screenshots")
+        self.cleanup_screenshots.setChecked(True)
+        self.cleanup_downloads = QtWidgets.QCheckBox()
+        self.cleanup_downloads.setText("Downloads")
+        self.cleanup_downloads.setChecked(True)
+        hlay = QtWidgets.QHBoxLayout()
+        label = QtWidgets.QLabel()
+        label.setText("Days: ")
+        self.cleanup_days = QtWidgets.QLineEdit("31", self.clean_dialog)
+        self.cleanup_days.setValidator(QtGui.QIntValidator())
+        self.cleanup_days.setStyleSheet("background-color: rgb(255, 255, 255);")
+        hlay.addWidget(label)
+        hlay.addWidget(self.cleanup_days)
+        button = QtWidgets.QPushButton("Cleanup", self.clean_dialog)
+        button.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(204, 0, 0);")
+        self.cleanup_status = QtWidgets.QStatusBar()
+        vlay.addWidget(self.cleanup_logs)
+        vlay.addWidget(self.cleanup_screenshots)
+        vlay.addWidget(self.cleanup_downloads)
+        vlay.addLayout(hlay)
+        vlay.addWidget(button)
+        vlay.addWidget(self.cleanup_status)
+        self.clean_dialog.setLayout(vlay)
+        button.clicked.connect(self.cleanup_button)
+        self.clean_dialog.exec_()
+
+
+    def cleanup_button(self):
+        self.cleanup_status.showMessage("Cleaning...")
+        text = self.cleanup_days.text()
+        if len(text) > 0:
+            days = int(text)
+        else:
+            days = 0
+        c = Cleanup(days)
+        if self.cleanup_logs.isChecked():
+            c.clean_logs()
+        if self.cleanup_screenshots.isChecked():
+            c.clean_screenshots()
+        if self.cleanup_downloads.isChecked():
+            c.clean_downloads()
+        self.cleanup_status.showMessage("Cleaning Complete!")
 
 
 # Controller
