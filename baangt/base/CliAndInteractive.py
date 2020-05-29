@@ -30,7 +30,8 @@ def args_read(l_search_parameter):
         opts, args = getopt.getopt(l_args, "", ["run=",
                                                 "globals=",
                                                 "reloadDrivers=",
-                                                "gui="
+                                                "gui=",
+                                                "cleanup="
                                                 ])
     except getopt.GetoptError as err_det:
         print("Error in reading parameters:" + str(err_det))
@@ -78,6 +79,11 @@ def run():
         lDriver.downloadDriver(GC.BROWSER_FIREFOX)
         lDriver.downloadDriver(GC.BROWSER_CHROME)
         print("Latest versions of drivers for Firefox and Chrome were downloaded")
+    elif args_read("cleanup"):
+        from baangt.base.Cleanup import Cleanup
+        days = float(args_read("cleanup"))
+        clean = Cleanup(days)
+        clean.clean_all()
     else:
         app = QtWidgets.QApplication(sys.argv)
         controller = MainController()
