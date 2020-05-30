@@ -84,6 +84,9 @@ class SendMail:
         except Exception as ex:
             logger.debug(ex)
             return None
-        response = json.loads(res.content.decode('utf-8'))
-        for mail in response:
-            logger.info(f"{mail} = {response[mail]}")
+        try:
+            response = json.loads(res.content.decode('utf-8'))
+            for mail in response:
+                logger.info(f"{mail} = {response[mail]}")
+        except:
+            logger.info(res.content.decode('utf-8'))
