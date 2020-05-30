@@ -26,7 +26,10 @@ from uuid import uuid4
 from baangt.base.FilesOpen import FilesOpen
 from baangt.base.RuntimeStatistics import Statistic
 from baangt.base.PathManagement import ManagedPaths
+from baangt.base.DownloadFolderMonitoring import DownloadFolderMonitoring
+from baangt.base.Cleanup import Cleanup
 import xlrd
+from baangt.reports import Reports
 from threading import Thread
 from time import sleep
 
@@ -62,6 +65,7 @@ class MainWindow(Ui_MainWindow):
         super().__init__()
         self.lTestRun = None
         self.configContents = None
+        self.__log_state = 0
 
     def setupUi(self, MainWindow, directory=None):
         ''' Setup the UI for super class and Implement the
@@ -80,12 +84,15 @@ class MainWindow(Ui_MainWindow):
         self.testRunFiles = []
         self.__execute_button_state = "idle"
         self.__result_file = ""
+        self.__log_file = ""
+        self.__open_files = 0
 
         # self.refreshNew()
         # self.setupBasePath(self.directory)
         self.readConfig()
         self.logSwitch.setChecked(self.__log_state)
         self.show_hide_logs()
+        self.openFilesSwitch.setChecked(self.__open_files)
 
         self.katalonRecorder = PyqtKatalonUI(self.directory)
         # update logo and icon
@@ -115,6 +122,9 @@ class MainWindow(Ui_MainWindow):
         # Quit Event
         self.actionExit.triggered.connect(self.quitApplication)
 
+        # Show Report Event
+        self.actionReport.triggered.connect(self.showReport)
+
         # Katalon triggered
         self.actionImport_Katalon.triggered.connect(self.show_katalon)
         self.exitPushButton_3.clicked.connect(self.exitKatalon)
@@ -122,6 +132,8 @@ class MainWindow(Ui_MainWindow):
         self.copyClipboard_2.clicked.connect(self.copyFromClipboard)
         self.TextIn_2.textChanged.connect(self.importClipboard)
         self.logSwitch.clicked.connect(self.show_hide_logs)
+        self.openFilesSwitch.clicked.connect(self.change_openFiles_state)
+        self.cleanupButton.clicked.connect(self.cleanup_dialog)
 
         self.statistics = Statistic()
 
@@ -143,7 +155,8 @@ class MainWindow(Ui_MainWindow):
                     "path": self.directory,
                     "testrun": self.testRunComboBox_4.currentText(),
                     "globals": self.settingComboBox_4.currentText(),
-                    "logstate": self.__log_state
+                    "logstate": self.__log_state,
+                    "openfiles": self.__open_files
                     }
         with open(self.managedPaths.getOrSetIni().joinpath("baangt.ini"), "w" ) as configFile:
             config.write(configFile)
@@ -160,6 +173,10 @@ class MainWindow(Ui_MainWindow):
                 self.__log_state = int(config["Default"]["logstate"])
             else:
                 self.__log_state = 0
+            if 'openfiles' in config["Default"]:
+                self.__open_files = int(config["Default"]["openfiles"])
+            else:
+                self.__open_files = 0
             self.setupBasePath(self.directory)
             self.readContentofGlobals()
         except Exception as e:
@@ -379,6 +396,9 @@ class MainWindow(Ui_MainWindow):
         self.readContentofGlobals()
 
     def executeButtonClicked(self):
+        self.__result_file = ""
+        self.__log_file = ""
+        self.__log_file_monitor = DownloadFolderMonitoring(self.managedPaths.getLogfilePath())
         if self.__execute_button_state == "idle":
             self.runTestRun()
         elif self.__execute_button_state == "running":
@@ -397,7 +417,7 @@ class MainWindow(Ui_MainWindow):
         self.stopIcon = QtGui.QIcon(":/baangt/stopicon")
         self.executePushButton_4.setIcon(self.stopIcon)
         self.executePushButton_4.setIconSize(QtCore.QSize(28, 20))
-        self.executePushButton_4.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(255, 75, 50);")
+        self.executePushButton_4.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(204, 0, 0);")
         self.clear_logs_and_stats()
 
         runCmd = self._getRunCommand()
@@ -409,10 +429,10 @@ class MainWindow(Ui_MainWindow):
             from baangt.base.TestRun.TestRun import TestRun
 
             lUUID = uuid4()
+            self.lTestRun = ""
             self.lTestRun = TestRun(f"{Path(self.directory).joinpath(self.testRunFile)}",
                  globalSettingsFileNameAndPath=f'{Path(self.directory).joinpath(self.tempConfigFile)}', uuid=lUUID)
-            self.processFinished()
-            self.__result_file = self.lTestRun.results.fileName
+            self.processFinished(debug=True)
 
         else:
             logger.info(f"Running command: {runCmd}")
@@ -430,10 +450,9 @@ class MainWindow(Ui_MainWindow):
     @pyqtSlot()
     def stopButtonPressed(self):
         self.run_process.kill()
-        self.__execute_button_state = "idle"
 
     @pyqtSlot()
-    def processFinished(self):
+    def processFinished(self, debug=False):
         buttonReply = QtWidgets.QMessageBox.question(
             self.centralwidget,
             "Baangt Interactive Starter ",
@@ -441,11 +460,18 @@ class MainWindow(Ui_MainWindow):
             QtWidgets.QMessageBox.Ok,
             QtWidgets.QMessageBox.Ok
         )
+        if debug:
+            self.__result_file = self.lTestRun.results.fileName
         self.statusMessage(f"Completed ", 3000)
         self.executeIcon = QtGui.QIcon(":/baangt/executeicon")
         self.executePushButton_4.setIcon(self.executeIcon)
         self.executePushButton_4.setIconSize(QtCore.QSize(28, 20))
         self.executePushButton_4.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(138, 226, 52);")
+        self.__execute_button_state = "idle"
+        try:
+            self.__log_file = self.__log_file_monitor.getNewFiles()[0][0]
+        except:
+            pass
 
         # Remove temporary Configfile, that was created only for this run:
         try:
@@ -453,12 +479,22 @@ class MainWindow(Ui_MainWindow):
         except Exception as e:
             logger.warning(f"Tried to remove temporary file but seems to be not there: "
                            f"{self.directory}/{self.tempConfigFile}")
+        if self.__open_files:
+            self.openResultFile()
+            self.openLogFile()
 
     def process_stdout(self, obj):
         text = str(obj.data().decode('iso-8859-1'))
         if "ExportResults _ __init__ : Export-Sheet for results: " in text:
             lis = text[text.index("results: "):].split(" ")
-            self.__result_file = lis[1].strip()
+            result_file = lis[1].strip()
+            while len(result_file)>4:
+                if result_file[-5:] != ".xlsx":
+                    result_file = result_file[:-1]
+                else:
+                    break
+            if result_file[-5:] == ".xlsx":
+                self.__result_file =result_file
         if "||Statistic:" in text:
             lis = text.split('||')
             stat = lis[1][10:]
@@ -472,9 +508,9 @@ class MainWindow(Ui_MainWindow):
                 self.statisticTable.item(0, x).setFlags(
                     self.statisticTable.item(0, x).flags() ^ QtCore.Qt.ItemIsEditable)
                 if x == 3:
-                    self.statisticTable.item(0, 3).setBackground(QtGui.QBrush(QtCore.Qt.green))
+                    self.statisticTable.item(0, 3).setBackground(QtGui.QColor(115, 210, 22))#QBrush(QtCore.Qt.green))
                 elif x == 4:
-                    self.statisticTable.item(0, 4).setBackground(QtGui.QBrush(QtCore.Qt.red))
+                    self.statisticTable.item(0, 4).setBackground(QtGui.QColor(204, 0, 0))#QBrush(QtCore.Qt.red))
                 else:
                     self.statisticTable.item(0, x).setBackground(QtGui.QBrush(QtCore.Qt.white))
             log.replace('\n', '')
@@ -500,17 +536,19 @@ class MainWindow(Ui_MainWindow):
             if len(Path(sys.argv[0]).parents) > 1:
                 # This is a system where the path the the script is
                 # given in sys.argv[0]
-                lStart = lStart + f" {sys.argv[0]}"
+                lStart = f'"{lStart}"' + f' "{sys.argv[0]}"'
             else:
                 # this is a system where we need to join os.getcwd()
                 # and sys.argv[0] because the path is not given in sys.argv[0]
-                lStart = lStart + f" {Path(os.getcwd()).joinpath(sys.argv[0])}"
+                lStart = f'"{lStart}"' + f' "{Path(os.getcwd()).joinpath(sys.argv[0])}"'
+        else:
+            lStart = f'"{lStart}"'
 
         self.__makeTempConfigFile()
 
-        return f"{lStart} " \
-               f"--run='{Path(self.directory).joinpath(self.testRunFile)}' " \
-               f"--globals='{Path(self.directory).joinpath(self.tempConfigFile)}' --gui True"
+        return f'{lStart} ' \
+               f'--run="{Path(self.directory).joinpath(self.testRunFile)}" ' \
+               f'--globals="{Path(self.directory).joinpath(self.tempConfigFile)}" --gui True'
 
 
     def __makeTempConfigFile(self):
@@ -1011,7 +1049,13 @@ class MainWindow(Ui_MainWindow):
                 self.statusMessage(f"Opening file {fileName}", 3000)
                 FilesOpen.openResultFile(filePathName)
             else:
-                self.statusMessage("No file found!", 3000)
+                if self.__log_file != "":
+                    filePathName = self.__log_file
+                    fileName = os.path.basename(filePathName)
+                    self.statusMessage(f"Opening file {fileName}", 3000)
+                    FilesOpen.openResultFile(filePathName)
+                else:
+                    self.statusMessage("No file found!", 3000)
         except:
             self.statusMessage("No file found!", 3000)
 
@@ -1043,6 +1087,69 @@ class MainWindow(Ui_MainWindow):
             self.logTextBox.hide()
             self.__log_state = 0
         self.saveInteractiveGuiConfig()
+
+    def change_openFiles_state(self):
+        if self.openFilesSwitch.isChecked():
+            self.__open_files = 1
+        else:
+            self.__open_files = 0
+        self.saveInteractiveGuiConfig()
+
+    @pyqtSlot()
+    def cleanup_dialog(self):
+        self.clean_dialog = QtWidgets.QDialog(self.centralwidget)
+        self.clean_dialog.setWindowTitle("Cleanup")
+        vlay = QtWidgets.QVBoxLayout()
+        self.cleanup_logs = QtWidgets.QCheckBox()
+        self.cleanup_logs.setText("Logs")
+        self.cleanup_logs.setChecked(True)
+        self.cleanup_screenshots = QtWidgets.QCheckBox()
+        self.cleanup_screenshots.setText("Screenshots")
+        self.cleanup_screenshots.setChecked(True)
+        self.cleanup_downloads = QtWidgets.QCheckBox()
+        self.cleanup_downloads.setText("Downloads")
+        self.cleanup_downloads.setChecked(True)
+        hlay = QtWidgets.QHBoxLayout()
+        label = QtWidgets.QLabel()
+        label.setText("Days: ")
+        self.cleanup_days = QtWidgets.QLineEdit("31", self.clean_dialog)
+        self.cleanup_days.setValidator(QtGui.QIntValidator())
+        self.cleanup_days.setStyleSheet("background-color: rgb(255, 255, 255);")
+        hlay.addWidget(label)
+        hlay.addWidget(self.cleanup_days)
+        button = QtWidgets.QPushButton("Cleanup", self.clean_dialog)
+        button.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(204, 0, 0);")
+        self.cleanup_status = QtWidgets.QStatusBar()
+        vlay.addWidget(self.cleanup_logs)
+        vlay.addWidget(self.cleanup_screenshots)
+        vlay.addWidget(self.cleanup_downloads)
+        vlay.addLayout(hlay)
+        vlay.addWidget(button)
+        vlay.addWidget(self.cleanup_status)
+        self.clean_dialog.setLayout(vlay)
+        button.clicked.connect(self.cleanup_button)
+        self.clean_dialog.exec_()
+
+
+    def cleanup_button(self):
+        self.cleanup_status.showMessage("Cleaning...")
+        text = self.cleanup_days.text()
+        if len(text) > 0:
+            days = int(text)
+        else:
+            days = 0
+        c = Cleanup(days)
+        if self.cleanup_logs.isChecked():
+            c.clean_logs()
+        if self.cleanup_screenshots.isChecked():
+            c.clean_screenshots()
+        if self.cleanup_downloads.isChecked():
+            c.clean_downloads()
+        self.cleanup_status.showMessage("Cleaning Complete!")
+
+    def showReport(self):
+        r = Reports()
+        r.show_dashboard()
 
 
 # Controller

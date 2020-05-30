@@ -129,15 +129,18 @@ class TestCaseMaster:
         if self.kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR:
             # Try taking a Screenshot
             if self.testCaseType == GC.KWARGS_BROWSER:
-                if data[GC.SCREENSHOTS]:
-                    if isinstance(data[GC.SCREENSHOTS], str):
-                        # From where does this come, damn it?!
-                        data[GC.SCREENSHOTS] = [self.browser.takeScreenshot(), data[GC.SCREENSHOTS]]
-                        pass
+                lShot = self.browser.takeScreenshot()
+                if lShot:    # Otherwise browser was already closed. Nothing we can do...
+                    lShot = lShot.strip()
+                    if data[GC.SCREENSHOTS]:
+                        if isinstance(data[GC.SCREENSHOTS], str):
+                            # From where does this come, damn it?!
+                            data[GC.SCREENSHOTS] = [lShot, data[GC.SCREENSHOTS]]
+                            pass
+                        else:
+                            data[GC.SCREENSHOTS].extend([lShot])
                     else:
-                        data[GC.SCREENSHOTS].append(self.browser.takeScreenshot())
-                else:
-                    data[GC.SCREENSHOTS] = [self.browser.takeScreenshot()]
+                        data[GC.SCREENSHOTS] = [lShot]
 
         # If Testcase-Status was not set, we'll set error. Shouldn't happen anyways.
         if not self.kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS]:

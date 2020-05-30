@@ -89,9 +89,11 @@ class TestCaseSequenceMaster:
                 process.one_sequence(results)
 
         # Create and runconcurrent threads
-        threads = gevent.joinall([
-            gevent.spawn(single_thread, num) for num in range(parallelInstances)
-        ], timeout=1200)
+        # 28.5.2020: We temporarily had a timeout here in Joinall as a few weeks back it looked like sometimes
+        #            the complete job hangs indefinitely. The timeout worked for the whole testun, not for a single
+        #            test case (spawn doesn't accept a timeout). Longer running test runs died - the timeout worked :)
+        threads = gevent.joinall([gevent.spawn(single_thread, num)
+                                  for num in range(parallelInstances)])
 
         # after joining all threads
         while not results.empty():
@@ -105,7 +107,7 @@ class TestCaseSequenceMaster:
         # Execute all Testcases:
         for key, value in self.dataRecords.items():
             self.kwargs[GC.KWARGS_DATA] = value
-            self.kwargs[GC.KWARGS_SEQUENCENUMBER] = 0   # There are no more sequences, so is always 0.
+            self.kwargs[GC.KWARGS_SEQUENCENUMBER] = 0  # There are no more sequences, so is always 0.
             logger.info(f"Starting execution with TestRecord {key}, Details: " +
                         str({k: self.kwargs[GC.KWARGS_DATA][k] for k in list(self.kwargs[GC.KWARGS_DATA])[0:5]}))
 
@@ -119,7 +121,6 @@ class TestCaseSequenceMaster:
             # Write Result back to TestRun for later saving in export format
             self.testRunInstance.setResult(key, value)
         self.statistics.update_testcase_sequence()
-
 
     def getNextRecord(self):
 

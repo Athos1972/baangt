@@ -22,6 +22,7 @@ import platform
 #import ctypes
 import requests
 from baangt.base.PathManagement import ManagedPaths
+from baangt.base.RuntimeStatistics import Statistic
 
 
 logger = logging.getLogger("pyC")
@@ -38,7 +39,7 @@ class BrowserDriver:
     - takeScreenshot: yes, that.
     """
 
-    def __init__(self, timing=None, screenshotPath=None):
+    def __init__(self, timing=None, screenshotPath=None, statistics=None):
         self.iFrame = None
         self.element = None                 
         self.browserData = BrowserDriverData(locatorType=None, locator=None,
@@ -53,6 +54,7 @@ class BrowserDriver:
         # Reference to Selenium "HTML" in order to track page changes. It is set on every interaction with the page
         self.html = None
         self.managedPaths = ManagedPaths()
+        self.statistics = Statistic()
 
         if timing:
             self.timing = timing
@@ -203,6 +205,7 @@ class BrowserDriver:
             return None
 
     def closeBrowser(self):
+        self.statistics.update_teststep()
         try:
             if self.browserData.driver:
                 self.browserData.driver.quit()
@@ -230,6 +233,7 @@ class BrowserDriver:
             helper.browserHelper_log(logging.DEBUG, f"Stored Screenshot: {lFile}", self.browserData)
         except Exception as e:
             helper.browserHelper_log(logging.INFO, f"Screenshot not possible. Error: {e}", self.browserData)
+            lFile = None
 
         return lFile
 
@@ -238,6 +242,7 @@ class BrowserDriver:
         Give an IFRAME and it will try to go into.
         If you're inside an iframe it will go out of the iframe
         """
+        self.statistics.update_teststep()
         if iframe:
             self.browserData.locatorType="XPATH"
             self.browserData.locator=iframe
@@ -271,6 +276,7 @@ class BrowserDriver:
         @param windowNumber: Number of the windowHandle inside this browser session (0 = startwindow(=Tab), 1=Next window
         @param function: "CLOSE", "CLOSEALL"
         """
+        self.statistics.update_teststep()
         if function:
             if "close" == function.lower():
                 self.browserData.driver.close()
@@ -329,6 +335,7 @@ class BrowserDriver:
         @param optional: If set to "True" and the operation can not be executed, just a log entry is written but no error raised
         @return: the text of the element, if element was found
         """
+        self.statistics.update_teststep()
         self.element = None
         returnValue = None
         start = time.time()
@@ -426,6 +433,7 @@ class BrowserDriver:
         Used for forms to call the standard submit-function (similar to pressing "Enter" in Dialogue)
         @return:
         """
+        self.statistics.update_teststep()
         self.element.submit()
 
     def findByAndClick(self, id=None, css=None, xpath=None, class_name=None, iframe=None, timeout=20, optional=False):
@@ -444,6 +452,7 @@ class BrowserDriver:
             return webDrv.webdriver_doSomething(GC.CMD_CLICK, self.element, timeout=timeout, optional=optional, browserData = self.browserData)
 
     def confirmAlertIfAny(self):
+        self.statistics.update_teststep()
         try:
             self.browserData.driver.switch_to().alert().accept()
         except Exception as e:
@@ -486,6 +495,9 @@ class BrowserDriver:
 
         self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
 
+        if not self.element:
+            return False
+
         return webDrv.webdriver_doSomething(GC.CMD_FORCETEXT, self.element, value=value, timeout=timeout, optional=optional, browserData = self.browserData)
 
     def setBrowserWindowSize(self, browserWindowSize: str):
@@ -496,6 +508,7 @@ class BrowserDriver:
         :return: False, if browser wasn't reset,
                  size-Dict when resize worked.
         """
+        self.statistics.update_teststep()
         lIntBrowserWindowSize = browserWindowSize.replace("-","").strip()
         lIntBrowserWindowSize = lIntBrowserWindowSize.replace(";", "/")
         lIntBrowserWindowSize = lIntBrowserWindowSize.replace(",", "/")
@@ -537,6 +550,7 @@ class BrowserDriver:
 
         :return: List of Files since last call
         """
+        self.statistics.update_teststep()
         l_list = self.downloadFolderMonitoring.getNewFiles()
         return l_list
 
@@ -573,6 +587,7 @@ class BrowserDriver:
         @param optional: If set to true and within Timeout we can't find the element, we just return this info. If set to False (=default), an Exception is raised
         @return: True if element was located, False if element couldn't be found.
         """
+        self.statistics.update_teststep()
 
         if self.slowExecution:
             time.sleep(self.slowExecutionTimeoutInSeconds)
@@ -598,6 +613,7 @@ class BrowserDriver:
 
         @return: the current URL/URI of the current Tab of the current Browser
         """
+        self.statistics.update_teststep()
         return self.browserData.driver.current_url
 
 
@@ -607,6 +623,7 @@ class BrowserDriver:
         to disapear before you continue with your script in the main screen.
 
         """
+        self.statistics.update_teststep()
         logger.debug(f"Waiting for Element to disappear: XPATH:{xpath}, timeout: {timeout}")
         time.sleep(0.5)
 
@@ -642,6 +659,7 @@ class BrowserDriver:
 
         :return: List of checked links
         """
+        self.statistics.update_teststep()
         lResult = []
         links = self.browserData.driver.find_elements_by_css_selector("a")
         logger.debug(f"Checking links on page {self.browserData.driver.current_url}")
@@ -675,6 +693,8 @@ class BrowserDriver:
         :param timeout:
         :return:
         """
+
+        self.statistics.update_teststep()
 
         lOldElement = self.element.id
         isValid = False
@@ -718,6 +738,8 @@ class BrowserDriver:
         # For now let it as it is. If users report that as a problem, revisit the subject and
         # e.g. find another way to understand, whether we're still on the same page or not.
 
+        self.statistics.update_teststep()
+
         if not self.html:
             sys.exit("Something is very wrong! self.html didn't exist when waitForPageLoadAfterButtonClick was called")
 
@@ -739,6 +761,7 @@ class BrowserDriver:
         return False    # There was no changed HTML
 
     def goToUrl(self, url):
+        self.statistics.update_teststep()
         helper.browserHelper_log(logging.INFO, f'GoToUrl:{url}', self.browserData)
         try:
             if self.browserName==GC.BROWSER_FIREFOX:
@@ -762,6 +785,7 @@ class BrowserDriver:
         Method to go 1 step back in current tab's browse history
         @return:
         """
+        self.statistics.update_teststep()
         try:
             self.javaScript("window.history.go(-1)")
         except Exception as e:
@@ -769,7 +793,7 @@ class BrowserDriver:
 
     def javaScript(self, jsText, *args):
         """Execute a given JavaScript in the current Session"""
-
+        self.statistics.update_teststep()
         self.browserData.driver.execute_script(jsText, *args)
         
     def _zoomFirefox(self, lZoomKey, lHitKeyTimes):

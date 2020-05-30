@@ -3,7 +3,6 @@ import logging
 import json
 import baangt.base.GlobalConstants as GC
 from baangt.base.Timing.Timing import Timing
-import sys
 from baangt.base.Utils import utils
 from pathlib import Path
 from typing import Optional
@@ -13,16 +12,14 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from baangt.base.DataBaseORM import DATABASE_URL, TestrunLog, TestCaseSequenceLog
 from baangt.base.DataBaseORM import TestCaseLog, TestCaseField, GlobalAttribute, TestCaseNetworkInfo
-from baangt.base.PathManagement import ManagedPaths
 from datetime import datetime
 from sqlite3 import IntegrityError
-import time
 from baangt import plugin_manager
 import re
 import csv
 from dateutil.parser import parse
-import os
 from uuid import uuid4
+from pathlib import Path
 
 logger = logging.getLogger("pyC")
 
@@ -115,29 +112,7 @@ class ExportResults:
             stage = value.get(GC.EXECUTION_STAGE)
 
         return stage
-
-    # -- API support --
-    def getSummary(self):
-        #
-        # returns records status as dict
-        #
-        summary = {'Testrecords': len(self.dataRecords)}
-        summary['Successful'] = len([x for x in self.dataRecords.values()
-                                     if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_SUCCESS])
-        summary['Paused'] = len([x for x in self.dataRecords.values()
-                                 if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_WAITING])
-        summary['Error'] = len([x for x in self.dataRecords.values()
-                                if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR])
-        # logfile
-        summary['Logfile'] = logger.handlers[1].baseFilename
-        # timing
-        timing: Timing = self.testRunInstance.timing
-        summary['Starttime'], summary['Endtime'], summary['Duration'] = timing.returnTimeSegment(GC.TIMING_TESTRUN)
-        summary['Globals'] = {key: value for key, value in self.testRunInstance.globalSettings.items()}
-
-        return summary
-
-    # -- END of API support --
+        
 
     def export2CSV(self):
         """
@@ -186,8 +161,8 @@ class ExportResults:
             id=self.testRunInstance.uuid.bytes,
             testrunName=self.testRunName,
             logfileName=logger.handlers[1].baseFilename,
-            startTime=datetime.strptime(start, "%H:%M:%S"),
-            endTime=datetime.strptime(end, "%H:%M:%S"),
+            startTime=datetime.strptime(start, "%d-%m-%Y %H:%M:%S"),
+            endTime=datetime.strptime(end, "%d-%m-%Y %H:%M:%S"),
             statusOk=success,
             statusFailed=error,
             statusPaused=waiting,
@@ -524,15 +499,26 @@ class ExportResults:
         try:
             if type(testRecordDict[fieldName]) == list:
 
-                self.worksheet.insert_image(line, cellNumber, testRecordDict[fieldName][-1], {'x_scale': 0.05,
-                                                                                              'y_scale': 0.05})
+                if Path(testRecordDict[fieldName][-1]).is_file():
+                    self.worksheet.insert_image(line, cellNumber, testRecordDict[fieldName][-1], {'x_scale': 0.05,
+                                                                                                  'y_scale': 0.05})
+                else:
+                    logger.error(f"Sceenshot file {testRecordDict[fieldName][-1]} can't be found")
+
                 for nextScreenshotNumber in range(len(testRecordDict[fieldName]) - 1):
-                    self.worksheet.insert_image(line, len(self.fieldListExport) + nextScreenshotNumber + 1,
-                                                testRecordDict[fieldName][nextScreenshotNumber],
-                                                {'x_scale': 0.05, 'y_scale': 0.05})
+                    if Path(testRecordDict[fieldName][nextScreenshotNumber]).is_file():
+                        self.worksheet.insert_image(line, len(self.fieldListExport) + nextScreenshotNumber + 1,
+                                                    testRecordDict[fieldName][nextScreenshotNumber],
+                                                    {'x_scale': 0.05, 'y_scale': 0.05})
+                    else:
+                        logger.error(f"Screenshot file {testRecordDict[fieldName][nextScreenshotNumber]} can't be found")
             else:
-                self.worksheet.insert_image(line, cellNumber, testRecordDict[fieldName], {'x_scale': 0.05,
-                                                                               'y_scale': 0.05})
+                if Path(testRecordDict[fieldName]).is_file():
+                    self.worksheet.insert_image(line, cellNumber, testRecordDict[fieldName], {'x_scale': 0.05,
+                                                                                              'y_scale': 0.05})
+                else:
+                    logger.error(f"Screenshot file {testRecordDict[fieldName]} can't be found")
+
         except Exception as e:
             logger.error(f"Problem with screenshots - can't attach them {e}")
 

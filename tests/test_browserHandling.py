@@ -136,7 +136,7 @@ def test_takeScreenshot_exception(getdriver):
     filename = getdriver.takeScreenshot()
     import os
     # the file name should not exist
-    assert not os.path.isfile(filename)
+    assert not filename
 
 
 def test_takeScreenshot_filecheck(getdriver):
