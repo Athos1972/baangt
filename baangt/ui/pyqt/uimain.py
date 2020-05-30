@@ -125,15 +125,19 @@ class MainWindow(Ui_MainWindow):
         # Show Report Event
         self.actionReport.triggered.connect(self.showReport)
 
+        # Cleanup action
+        self.actionCleanup.triggered.connect(self.cleanup_dialog)
+
         # Katalon triggered
         self.actionImport_Katalon.triggered.connect(self.show_katalon)
         self.exitPushButton_3.clicked.connect(self.exitKatalon)
         self.savePushButton_2.clicked.connect(self.saveTestCase)
         self.copyClipboard_2.clicked.connect(self.copyFromClipboard)
         self.TextIn_2.textChanged.connect(self.importClipboard)
+
+        # log & open file switch
         self.logSwitch.clicked.connect(self.show_hide_logs)
         self.openFilesSwitch.clicked.connect(self.change_openFiles_state)
-        self.cleanupButton.clicked.connect(self.cleanup_dialog)
 
         self.statistics = Statistic()
 
