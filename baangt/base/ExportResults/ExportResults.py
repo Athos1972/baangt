@@ -112,29 +112,7 @@ class ExportResults:
             stage = value.get(GC.EXECUTION_STAGE)
 
         return stage
-
-    # -- API support --
-    def getSummary(self):
-        #
-        # returns records status as dict
-        #
-        summary = {'Testrecords': len(self.dataRecords)}
-        summary['Successful'] = len([x for x in self.dataRecords.values()
-                                     if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_SUCCESS])
-        summary['Paused'] = len([x for x in self.dataRecords.values()
-                                 if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_WAITING])
-        summary['Error'] = len([x for x in self.dataRecords.values()
-                                if x[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR])
-        # logfile
-        summary['Logfile'] = logger.handlers[1].baseFilename
-        # timing
-        timing: Timing = self.testRunInstance.timing
-        summary['Starttime'], summary['Endtime'], summary['Duration'] = timing.returnTimeSegment(GC.TIMING_TESTRUN)
-        summary['Globals'] = {key: value for key, value in self.testRunInstance.globalSettings.items()}
-
-        return summary
-
-    # -- END of API support --
+        
 
     def export2CSV(self):
         """

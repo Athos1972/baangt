@@ -19,4 +19,4 @@ baangt_*.xlsx
 /venv3_6/
 /tests/proxies.csv
 
-!mailer.pyc
+baangt/reports/*.html

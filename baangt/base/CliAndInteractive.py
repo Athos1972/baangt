@@ -7,6 +7,8 @@ from PyQt5 import QtWidgets
 # from baangt.ui.pyqt.uimain import MainWindow
 from baangt.ui.pyqt.uimain import MainController
 from baangt.base.RuntimeStatistics import Statistic
+from baangt.reports import Reports
+
 def print_args():
     print("""
 Call: python baangtIA.py --parameters 
@@ -31,7 +33,8 @@ def args_read(l_search_parameter):
                                                 "globals=",
                                                 "reloadDrivers=",
                                                 "gui=",
-                                                "cleanup="
+                                                "cleanup=",
+                                                "reports=",
                                                 ])
     except getopt.GetoptError as err_det:
         print("Error in reading parameters:" + str(err_det))
@@ -84,6 +87,9 @@ def run():
         days = float(args_read("cleanup"))
         clean = Cleanup(days)
         clean.clean_all()
+    elif args_read("reports"):
+        r = Reports()
+        r.show_dashboard()
     else:
         app = QtWidgets.QApplication(sys.argv)
         controller = MainController()
