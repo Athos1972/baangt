@@ -7,6 +7,8 @@ from PyQt5 import QtWidgets
 # from baangt.ui.pyqt.uimain import MainWindow
 from baangt.ui.pyqt.uimain import MainController
 from baangt.base.RuntimeStatistics import Statistic
+from baangt.reports import Reports
+
 def print_args():
     print("""
 Call: python baangtIA.py --parameters 
@@ -31,6 +33,7 @@ def args_read(l_search_parameter):
                                                 "globals=",
                                                 "reloadDrivers=",
                                                 "gui=",
+                                                "reports=",
                                                 "cleanup="
                                                 ])
     except getopt.GetoptError as err_det:
@@ -79,6 +82,10 @@ def run():
         lDriver.downloadDriver(GC.BROWSER_FIREFOX)
         lDriver.downloadDriver(GC.BROWSER_CHROME)
         print("Latest versions of drivers for Firefox and Chrome were downloaded")
+    elif args_read("reports"):
+        r = Reports()
+        r.show_dashboard()
+
     elif args_read("cleanup"):
         from baangt.base.Cleanup import Cleanup
         days = float(args_read("cleanup"))

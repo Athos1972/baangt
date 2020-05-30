@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}
+    BAANGT Dashboard
+{% endblock %}
+
+{% block header %}
+    BAANGT Dashboard {{ created }}
+{% endblock %}
+
+{% block content %}
+
+<main>
+
+<!-- testrun list -->
+<div class="container-fluid mt-2">
+
+    <!-- header -->
+    <div class="row mx-2 mb-2 mt-3">
+        <div class="col-md-3 h3">Testrun</div>
+        <div class="col-md-3 h3">Summary</div>
+        <div class="col-md-3 h3">Results</div>
+        <div class="col-md-3 h3">Duration</div>
+    </div>
+
+    <!-- testrun list -->
+    {% for key, value in data.items() %}
+        <div class="row hovered-item border-top py-3 mx-2" id="{{ key }}">
+            <div class="col-md-3 text-break">
+                <p class="text-primary">{{ key }}</p>
+                <!--p class="text-secondary">Stage</p--> 
+            </div>
+            <div class="col-md-3">
+                <div class="row">
+                    <div class="d-flex col-3">
+                        <canvas class="statusChart" width="100" height="100"></canvas>
+                    </div>
+                    <div class="d-flex flex-column col-2 border-right px-0">
+                        <h2 class="text-center">{{ value.figures.records }}</h2>
+                        <h6 class="text-center">TESTS</h6>
+                    </div>
+                    {% if value.figures.successful > 0  %}
+                        <div class="d-flex flex-column col-2 text-success px-0">
+                            <h2 class="text-center">{{ value.figures.successful }}</h2>
+                            <h6 class="text-center">PASSED</h6>
+                        </div>
+                    {% endif %}
+                    {% if value.figures.error > 0  %}
+                        <div class="d-flex flex-column col-2 text-danger px-0">
+                            <h2 class="text-center">{{ value.figures.error }}</h2>
+                            <h6 class="text-center">FAILED</h6>
+                        </div>
+                    {% endif %}
+                    {% if value.figures.paused > 0  %}
+                        <div class="d-flex flex-column col-2 text-secondary px-0">
+                            <h2 class="text-center">{{ value.figures.paused }}</h2>
+                            <h6 class="text-center">PAUSED</h6>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-3">
+                <canvas class="resultsChart" height="60"></canvas>
+            </div>
+            <div class="col-md-3 text-break">
+                <canvas class="durationChart" height="60"></canvas>
+            </div>
+        </div>
+
+    {% endfor %}
+
+</div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+<script type="text/javascript">
+    {% for key, value in data.items() %}
+        var item_{{ loop.index }} = document.querySelector('#{{ key }}')
+
+        var status_{{ loop.index }} = new Chart(item_{{ loop.index }}.querySelector('.statusChart'), {{ value.status }});
+        var results_{{ loop.index }} = new Chart(item_{{ loop.index }}.querySelector('.resultsChart'), {{ value.results }});
+        var duration_{{ loop.index }} = new Chart(item_{{ loop.index }}.querySelector('.durationChart'), {{ value.duration }});
+    {% endfor %}
+</script>
+
+{% endblock %}

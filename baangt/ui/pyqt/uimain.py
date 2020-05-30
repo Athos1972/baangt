@@ -29,6 +29,7 @@ from baangt.base.PathManagement import ManagedPaths
 from baangt.base.DownloadFolderMonitoring import DownloadFolderMonitoring
 from baangt.base.Cleanup import Cleanup
 import xlrd
+from baangt.reports import Reports
 from threading import Thread
 from time import sleep
 
@@ -120,6 +121,9 @@ class MainWindow(Ui_MainWindow):
 
         # Quit Event
         self.actionExit.triggered.connect(self.quitApplication)
+
+        # Show Report Event
+        self.actionReport.triggered.connect(self.showReport)
 
         # Katalon triggered
         self.actionImport_Katalon.triggered.connect(self.show_katalon)
@@ -1142,6 +1146,10 @@ class MainWindow(Ui_MainWindow):
         if self.cleanup_downloads.isChecked():
             c.clean_downloads()
         self.cleanup_status.showMessage("Cleaning Complete!")
+
+    def showReport(self):
+        r = Reports()
+        r.show_dashboard()
 
 
 # Controller

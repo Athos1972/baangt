@@ -484,7 +484,10 @@ class Ui_MainWindow(QtCore.QObject):
         self.actionExit.setObjectName("actionExit")
         self.actionImport_Katalon = QtWidgets.QAction(MainWindow)
         self.actionImport_Katalon.setObjectName("actionImport_Katalon")
+        self.actionReport = QtWidgets.QAction(MainWindow)
+        self.actionReport.setObjectName("actionReport")
         self.toolBar.addAction(self.actionImport_Katalon)
+        self.toolBar.addAction(self.actionReport)
         self.toolBar.addAction(self.actionExit)
 
         self.retranslateUi(MainWindow)
@@ -534,6 +537,8 @@ class Ui_MainWindow(QtCore.QObject):
         self.actionExit.setText(_translate("MainWindow", "Exit"))
         self.actionImport_Katalon.setText(_translate("MainWindow", "Import Katalon"))
         self.actionImport_Katalon.setToolTip(_translate("MainWindow", "Import Katalon studio"))
+        self.actionReport.setText(_translate("MainWindow", "Report"))
+        self.actionReport.setToolTip(_translate("MainWindow", "Opens report in default browser"))
 
         self.openResultFilePushButton_4.setText(_translate("MainWindow", "Result File"))
         self.openLogFilePushButton_4.setText(_translate("MainWindow", "Log File"))

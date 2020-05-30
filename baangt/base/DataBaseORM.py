@@ -44,6 +44,15 @@ class TestrunLog(base):
 	globalVars = relationship('GlobalAttribute')
 	testcase_sequences = relationship('TestCaseSequenceLog')
 
+	@property
+	def recordCount(self):
+		return self.statusOk + self.statusPaused + self.statusFailed
+
+	@property
+	def duration(self):
+		return (self.endTime - self.startTime).seconds
+	
+
 	def __str__(self):
 		return str(uuid.UUID(bytes=self.id))
 
@@ -52,7 +61,7 @@ class TestrunLog(base):
 			'id': str(self),
 			'Name': self.testrunName,
 			'Summary': {
-				'TestRecords': sum((self.statusOk, self.statusPaused, self.statusFailed)),
+				'TestRecords': self.recordCount,
 				'Successful': self.statusOk,
 				'Paused': self.statusPaused,
 				'Error': self.statusFailed,
