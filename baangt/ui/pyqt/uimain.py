@@ -29,7 +29,7 @@ from baangt.base.PathManagement import ManagedPaths
 from baangt.base.DownloadFolderMonitoring import DownloadFolderMonitoring
 from baangt.base.Cleanup import Cleanup
 import xlrd
-from baangt.reports import Reports
+from baangt.reports import Dashboard, Summary
 from threading import Thread
 from time import sleep
 
@@ -1148,8 +1148,8 @@ class MainWindow(Ui_MainWindow):
         self.cleanup_status.showMessage("Cleaning Complete!")
 
     def showReport(self):
-        r = Reports()
-        r.show_dashboard()
+        r = Dashboard()
+        r.show()
 
 
 # Controller
