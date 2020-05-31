@@ -118,7 +118,6 @@ OS_list_chrome = ['linux32', 'linux64', 'mac64', 'win32']
 GECKO_URL = 'https://api.github.com/repos/mozilla/geckodriver/releases/latest'
 CHROME_URL = 'https://chromedriver.storage.googleapis.com/LATEST_RELEASE'
 
-
 BROWSER_PROXY_PATH = '/browsermob-proxy/bin/browsermob-proxy'
 BROWSER_PROXY_URL = 'https://github.com/lightbody/browsermob-proxy/releases/download/browsermob-proxy/browsermob-proxy-bin.zip'
 
@@ -128,3 +127,5 @@ TESTDATAGENERATOR_OUTPUT_FORMAT = "xlsx"
 TESTDATAGENERATOR_INPUTFILE = "RawTestData.xlsx"
 TESTDATAGENERATOR_OUTPUTFILE_XLSX = "output.xlsx"
 TESTDATAGENERATOR_OUTPUTFILE_CSV = "output.csv"
+
+REPORT_PATH = 'reports'
