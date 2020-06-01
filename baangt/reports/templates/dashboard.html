@@ -12,6 +12,33 @@
 <!-- testrun list -->
 <div class="container-fluid mt-2">
 
+    <!-- filters -->
+    <div class="row mx-2 pt-3 rounded shadow">
+        <div class="col-md-1 h4">Filters:</div>
+        <div class="col-md-3 mb-3 input-group">
+            <div class="input-group-prepend">
+                <label class="input-group-text px-4" for="selectName">Name</label>
+            </div>
+            <select class="custom-select" id="selectName">
+                <option value="0" selected>None</option>
+                {% for name in data.names %}
+                    <option value="{{ loop.index }}">{{ name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3 mb-3 input-group">
+            <div class="input-group-prepend">
+                <label class="input-group-text px-4" for="selectStage">Stage</label>
+            </div>
+            <select class="custom-select" id="selectStage">
+                <option value="0" selected>None</option>
+                {% for stage in data.stages %}
+                    <option value="{{ loop.index }}">{{ stage }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
     <!-- header -->
     <div class="row mx-2 mb-2 mt-3">
         <div class="col-md-3 h3">Testrun</div>
@@ -21,8 +48,8 @@
     </div>
 
     <!-- testrun list -->
-    {% for item in data %}
-        <div class="row hovered-item border-top py-3 mx-2" id="{{ item.id }}">
+    {% for item in data.records %}
+        <div class="row hovered-item border-top py-3 mx-2" id="{{ item.id }}" data-name="{{ item.name }}" data-stage="{{ item.stage }}">
             <div class="col-md-3 text-break">
                 <p class="text-primary">{{ item.name }}</p>
                 <p class="text-secondary">{{ item.stage }}</p> 
@@ -71,8 +98,28 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 <script type="text/javascript">
-    {% for item in data %}
-        var item_{{ loop.index }} = document.querySelector('#{{ item.id }}')
+
+    document.querySelectorAll('select').forEach(select => {
+        select.onchange = () => {
+            // get name
+            const name_index = document.querySelector('#selectName').value;
+            const name = document.querySelector('#selectName').children[name_index].text;
+            // get stage
+            const stage_index = document.querySelector('#selectStage').value;
+            const stage = document.querySelector('#selectStage').children[stage_index].text;
+            // apply filters
+            document.querySelectorAll('.hovered-item').forEach(item => {
+                if ((name_index == "0" || item.dataset['name'] == name) && (stage_index == "0" || item.dataset['stage'] == stage)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        };
+    });
+
+    {% for item in data.records %}
+        var item_{{ loop.index }} = document.querySelector('#{{ item.id }}');
 
         var status_{{ loop.index }} = new Chart(item_{{ loop.index }}.querySelector('.statusChart'), {{ item.status }});
         var results_{{ loop.index }} = new Chart(item_{{ loop.index }}.querySelector('.resultsChart'), {{ item.results }});

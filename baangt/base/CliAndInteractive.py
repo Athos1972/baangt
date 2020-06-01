@@ -33,14 +33,14 @@ def args_read(l_search_parameter):
                                                 "globals=",
                                                 "reloadDrivers=",
                                                 "gui=",
-                                                "cleanup="
+                                                "cleanup=",
                                                 "name=",
                                                 "stage=",
                                                 "id="
                                                 ])
     except getopt.GetoptError as err_det:
         print("Error in reading parameters:" + str(err_det))
-        print_args()
+        #print_args()
         sys.exit("Wrong parameters - exiting")
     if opts:
         for opt, arg in opts:
@@ -87,8 +87,11 @@ def run():
 
     # Reports
     elif args_read("name") or args_read("stage"):
+        if args_read("name") == 'all':
+            name = None
+        
         try:
-            r = Dashboard(name=args_read("name"), stage=args_read("stage"))
+            r = Dashboard(name=name, stage=args_read("stage"))
             r.show()
         except ValueError as e:
             print(f'ERROR: {e}')

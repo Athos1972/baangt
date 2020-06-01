@@ -349,7 +349,7 @@ class Dashboard(Report):
 		#
 
 		db = sessionmaker(bind=engine)()
-		data = []
+		records = []
 
 		if self.name and self.stage:
 			logs = db.query(TestrunLog).order_by(TestrunLog.startTime).filter_by(testrunName=self.name)\
@@ -365,9 +365,9 @@ class Dashboard(Report):
 			for stage in stages:
 				logs = db.query(TestrunLog).order_by(TestrunLog.startTime).filter_by(testrunName=self.name)\
 					.filter(TestrunLog.globalVars.any(and_(GlobalAttribute.name==GC.EXECUTION_STAGE, GlobalAttribute.value==stage))).all()
-				data.append(self.build_charts(logs, stage=stage))
+				records.append(self.build_charts(logs, stage=stage))
 
-			return data
+			return records
 
 		elif self.stage:
 			# get Testrun names
@@ -379,28 +379,34 @@ class Dashboard(Report):
 			for name in names:
 				logs = db.query(TestrunLog).order_by(TestrunLog.startTime).filter_by(testrunName=name)\
 					.filter(TestrunLog.globalVars.any(and_(GlobalAttribute.name==GC.EXECUTION_STAGE, GlobalAttribute.value==self.stage))).all()
-				data.append(self.build_charts(logs, name=name))
+				records.append(self.build_charts(logs, name=name))
 
-			return data
+			return records
 
 		else:
 			# get Testrun names
 			names = db.query(TestrunLog.testrunName)\
 			.group_by(TestrunLog.testrunName).order_by(TestrunLog.testrunName).all()
 			names = [x[0] for x in names]
+			stage_set = set()
 
 			for name in names:
 				# get Testrun stages
 				stages = db.query(GlobalAttribute.value).filter(GlobalAttribute.testrun.has(TestrunLog.testrunName==name))\
 				.filter_by(name=GC.EXECUTION_STAGE).group_by(GlobalAttribute.value).order_by(GlobalAttribute.value).all()
 				stages = [x[0] for x in stages]
+				stage_set.update(stages)
 
 				for stage in stages:
 					logs = db.query(TestrunLog).order_by(TestrunLog.startTime).filter_by(testrunName=name)\
 						.filter(TestrunLog.globalVars.any(and_(GlobalAttribute.name==GC.EXECUTION_STAGE, GlobalAttribute.value==stage))).all()
-					data.append(self.build_charts(logs, name=name, stage=stage))
+					records.append(self.build_charts(logs, name=name, stage=stage))
 
-			return data
+			return {
+				'names': names,
+				'stages': stage_set,
+				'records': records,
+			}
 
 
 	def build_charts(self, logs, name=None, stage=None):
@@ -413,7 +419,7 @@ class Dashboard(Report):
 		
 		if logs:
 			return {
-				'id': f'{"-".join(name.split("."))}-{stage}',
+				'id': f'record-{uuid.uuid4()}',
 				'name': name,
 				'stage': stage,
 				'figures': self.chart_figures(logs[-1]),
