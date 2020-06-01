@@ -354,7 +354,7 @@ class Dashboard(Report):
 		if self.name and self.stage:
 			logs = db.query(TestrunLog).order_by(TestrunLog.startTime).filter_by(testrunName=self.name)\
 				.filter(TestrunLog.globalVars.any(and_(GlobalAttribute.name==GC.EXECUTION_STAGE, GlobalAttribute.value==self.stage))).all()
-			return [self.build_charts(logs)]
+			return {'records': [self.build_charts(logs)]}
 		
 		elif self.name:
 			# get Testrun stages
@@ -367,7 +367,7 @@ class Dashboard(Report):
 					.filter(TestrunLog.globalVars.any(and_(GlobalAttribute.name==GC.EXECUTION_STAGE, GlobalAttribute.value==stage))).all()
 				records.append(self.build_charts(logs, stage=stage))
 
-			return records
+			return {'records': records}
 
 		elif self.stage:
 			# get Testrun names
@@ -381,7 +381,7 @@ class Dashboard(Report):
 					.filter(TestrunLog.globalVars.any(and_(GlobalAttribute.name==GC.EXECUTION_STAGE, GlobalAttribute.value==self.stage))).all()
 				records.append(self.build_charts(logs, name=name))
 
-			return records
+			return {'records': records}
 
 		else:
 			# get Testrun names
@@ -404,7 +404,7 @@ class Dashboard(Report):
 
 			return {
 				'names': names,
-				'stages': stage_set,
+				'stages': list(stage_set),
 				'records': records,
 			}
 

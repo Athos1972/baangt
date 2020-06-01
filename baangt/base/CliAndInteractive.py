@@ -87,8 +87,8 @@ def run():
 
     # Reports
     elif args_read("name") or args_read("stage"):
-        if args_read("name") == 'all':
-            name = None
+        name = args_read("name")
+        name = None if name == 'all' else name 
         
         try:
             r = Dashboard(name=name, stage=args_read("stage"))
