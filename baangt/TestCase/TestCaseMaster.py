@@ -1,6 +1,7 @@
 from baangt.base import GlobalConstants as GC
 from baangt.base.Timing.Timing import Timing
 from baangt.TestSteps.Exceptions import *
+from baangt.base.RuntimeStatistics import Statistic
 
 
 class TestCaseMaster:
@@ -10,7 +11,7 @@ class TestCaseMaster:
         self.testSteps = {}
         self.apiInstance = None
         self.numberOfParallelRuns = None
-
+        self.statistic = Statistic()
         self.kwargs = kwargs
 
         self.timing = Timing()  # Use own instance of the timing class, so that we can record timing also in
@@ -149,6 +150,13 @@ class TestCaseMaster:
             logger.critical("Testcase had no status - setting error")
 
         self._checkAndSetTestcaseStatusIfFailExpected()
+
+        if data[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_SUCCESS:
+            self.statistic.update_success()
+        elif data[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR:
+            self.statistic.update_error()
+        elif data[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_WAITING:
+            self.statistic.update_waiting()
 
         logger.info(
             f"Testcase {self.kwargs.get(GC.STRUCTURE_TESTSTEP, '')} finished with status: {data[GC.TESTCASESTATUS]}")

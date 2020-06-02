@@ -10,8 +10,9 @@
     "TC.BrowserWindowSize": "1024x768",
     "TC.LogLevel": "Debug",
     "Stage": "Test",
+    "SendMailTo": "",
     "MsWebHook": "",
     "SlackWebHook": "",
-    "TelegramBot": "1130436643:AAHWFuYGmtOm5ACnXBSuY6fgp9LAECUAmNM",
-    "TelegramChannel": "baangt"
+    "TelegramBot": "",
+    "TelegramChannel": ""
 }

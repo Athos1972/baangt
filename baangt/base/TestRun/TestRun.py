@@ -268,9 +268,6 @@ class TestRun:
                 # Damn! The class is wrong.
                 l_class = TestRun.__dynamicImportClasses(lFullQualified)
                 l_class(**kwargs)
-            success, error = self.getSuccessAndError()
-            waiting = self.getWaiting()
-            self.statistics.update_all(success, error, waiting)
 
         self.kwargs = kwargs
 
