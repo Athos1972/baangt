@@ -87,6 +87,11 @@ class TestRun:
 
         self.executeTestSequence()
         self.tearDown()
+        send_stats = Sender(self.globalSettings, self.results.fileName)
+        send_stats.sendMail()
+        send_stats.sendMsTeam()
+        send_stats.sendSlack()
+        send_stats.sendTelegram()
 
     def append1DTestCaseEndDateTimes(self, dt):
         self.testCasesEndDateTimes_1D.append(dt)
@@ -130,7 +135,6 @@ class TestRun:
         self.statistics.update_all(successful, error, waiting)
         logger.info(f"Finished execution of Testrun {self.testRunName}. "
                     f"{successful} Testcases successfully executed, {error} errors")
-        Sender(self.globalSettings, self.results.fileName)
         print(f"Finished execution of Testrun {self.testRunName}. "
               f"{successful} Testcases successfully executed, {error} errors")
 
