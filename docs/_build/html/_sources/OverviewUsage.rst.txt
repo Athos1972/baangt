@@ -23,7 +23,7 @@ Testdata definition. This is super fast, very easy even for end-users but has li
 with all features of the higher end solutions like reporting, fault tolerance, screenshots in case of errors and much more.
 
 
-More powerful and still ways:
+More powerful and still simple ways:
 ------------------------------------
 
 As your requirements grow you want to have Testcase and testrun definition separately (e.g. you want to execute the same

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Special functions in datafiles &mdash; baangt 1.1.1 documentation</title>
+  <title>Error &mdash; baangt 1.1.1 documentation</title>
   
 
   
@@ -35,9 +35,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Save Testrun Results to Database" href="SaveResults2Database.html" />
-    <link rel="prev" title="Types of tests" href="TestTypes.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -82,7 +80,7 @@
             
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="Installation.html">   Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="OverviewUsage.html">   Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="simpleExample.html">   First Steps</a></li>
@@ -90,7 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="ParametersConfigFile.html">   Parameters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SimpleAPI.html">   First API Test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="TestTypes.html">   Types of Tests</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">   Data file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DataFile.html">   Data file</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SaveResults2Database.html">   Results in Database</a></li>
 <li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">   History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
@@ -160,13 +158,13 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Special functions in datafiles</li>
+      <li>Error</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/DataFile.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/contents.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -179,35 +177,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="special-functions-in-datafiles">
-<h1>Special functions in datafiles<a class="headerlink" href="#special-functions-in-datafiles" title="Permalink to this headline">¶</a></h1>
-<p>Datafiles (or in Excel Simple format simply a tab “data”) generally hold the data for one or more testcases.</p>
-<p>The first line of the datafile holds the header line. Each cell in the header must have a unique value and acts as variablename,
-which you can use for checking, for IF-Statements or as values to write into fields or compare with assertions.</p>
-<p>Additionally there are some reserved names that deliver the following functionality:</p>
-<table class="colwidths-given docutils align-default" id="id1">
-<caption><span class="caption-text">Field names in Datafiles and their function</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
-<colgroup>
-<col style="width: 25%" />
-<col style="width: 75%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>Field name</p></th>
-<th class="head"><p>Description</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">TC</span> <span class="pre">Expected</span> <span class="pre">Error</span></code> (!sic)</p></td>
-<td><p>When set to value <code class="docutils literal notranslate"><span class="pre">X</span></code>, the Test case is supposed to fail. If it fails (as expected) the status of the testcase is set to OK.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">JSON</span></code></p></td>
-<td><p>Please don’t use this fieldname, as we’re using it internally to store data.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Timelog</span></code></p></td>
-<td><p>Please don’t use this fieldname, as we’re using it internally to store the timelog during execution of the test case.</p></td>
-</tr>
-</tbody>
-</table>
+  <div class="section" id="error">
+<h1>Error<a class="headerlink" href="#error" title="Permalink to this headline">¶</a></h1>
+<p>This shouldn’t be needed! Where is this contents.rst used?</p>
 </div>
 
 
@@ -215,15 +187,6 @@ which you can use for checking, for IF-Statements or as values to write into fie
            
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="SaveResults2Database.html" class="btn btn-neutral float-right" title="Save Testrun Results to Database" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="TestTypes.html" class="btn btn-neutral float-left" title="Types of tests" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>
