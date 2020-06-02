@@ -59,11 +59,11 @@ https://stackoverflow.com/a/33497769/8784795
 Configuring Baangt
 ==================
 
-Once we have all the necessary things we just need to add them in ``main.ini`` which must be inside ``ini`` folder.
+Once we have all the necessary things we just need to add them in ``mail.ini`` which must be inside ``ini`` folder.
 If you have used windows installer to setup ``baangt`` then it must be inside `C:/Users/{username}/baangt` directory,
 else it will be in the root directory of baangt. Once you find the ``ini`` folder their must be a main.ini file inside
-it. If it is not their you can make one. Just create a new file name `main` and extension `ini` which will look like
-``main.ini``. Then you can edit it via any text editor. It should look like.
+it. If it is not their you can make one. Just create a new file name `mail` and extension `ini` which will look like
+``mail.ini``. Then you can edit it via any text editor. It should look like.
 
 
 | [Default]
@@ -91,3 +91,37 @@ take single value containing API token of bot. ``telegramchannel`` may contain s
 above) username of channels. Make sure that all the channels have this bot as administrator.
 
 **Note:- If you don't need to use any of the service out of these four, you can just leave their settings empty**
+
+Override mail.ini
+=================
+
+There are some cases when we don't want to send reports either in few or in all services. Now to overcome this what we
+can do is that we can add the settings directly in globals file. Our program will always first check for settings in
+globals file, if it is not their then it will take settings from ``mail.ini``. Here is an example
+
+| **mail.ini**
+| [Default]
+| sendmailto = example1@gmail.com
+| notificationwithattachment = <True or False>
+| mswebhook = <MsTeam channel webhook url>
+| slackwebhook = <Slack App webhook url>
+| telegrambot = <telegram bot access token>
+| telegramchannel = <telegram channel name>
+
+| **globals.json**
+| {
+|     "TC.dontCloseBrowser": "False",
+|     "TC.NetworkInfo": "False",
+|     "TC.Browser": "Chrome",
+|     "TC.BrowserWindowSize": "1024x768",
+|     "Stage": "Test",
+|     "SendMailTo": "example2@gmail.com, example3@gmail.com",
+|     "NotificationWithAttachment": "False",
+|     "MsWebHook": "",
+|     "SlackWebHook": "",
+| }
+
+Now as we can see the we have override Mail, Ms Teams & Slack settings. So now our program will take mails from globals
+and as the ``NotificationWithAttachment`` parameter is False it won't attach the xlsx file. ``MsWebHook`` & ``SlackWebHook``
+are empty so no report will be sent on those platforms. Here we haven't declared any setting for **Telegram** so the
+program will now look for those settings in ``mail.ini`` and send the report as per that settings.
