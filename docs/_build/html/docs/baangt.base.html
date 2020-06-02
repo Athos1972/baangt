@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>baangt.base package &mdash; baangt 2020.5.2rc5 documentation</title>
+  <title>baangt.base package &mdash; baangt 1.1.1 documentation</title>
   
 
   
@@ -98,6 +98,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../PlannedFeatures.html">   Planned Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../BrowserDrivers.html">   Browser Drivers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Variables.html">   Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SendStatistics.html">   Results</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Datagenerator.html">DataGenerator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Datagenerator.html#input-file">Input File</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Datagenerator.html#data-type">Data Type</a></li>
@@ -413,6 +414,22 @@ XLSX and JSON Config files.</p>
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="baangt.base.TestRunUtils.TestRunUtils.replaceClasses">
+<code class="sig-name descname">replaceClasses</code><span class="sig-paren">(</span><em class="sig-param">testRunName</em>, <em class="sig-param">classes: baangt.base.TestRun.ClassesForObjects.ClassesForObjects</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.TestRunUtils.TestRunUtils.replaceClasses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apart from what is defined in the TestRunDefintion (XLSX or “guessed” by TestRunExcelImporter) the user
+may give new class names in the globals file.</p>
+<p>We shall replace all corresponding appearances with those new class names</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>classes</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>No return parameter. Changes are kept internally</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="baangt.base.TestRunUtils.TestRunUtils.replaceGlobals">
 <code class="sig-name descname">replaceGlobals</code><span class="sig-paren">(</span><em class="sig-param">globals</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.TestRunUtils.TestRunUtils.replaceGlobals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Will go through all testcase-Settings and replace values with values from global settings, if matched</p>
@@ -436,8 +453,8 @@ XLSX and JSON Config files.</p>
 <em class="property">class </em><code class="sig-prename descclassname">baangt.base.Utils.</code><code class="sig-name descname">utils</code><a class="headerlink" href="#baangt.base.Utils.utils" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="method">
-<dt id="baangt.base.Utils.utils.anyting2Boolean">
-<em class="property">static </em><code class="sig-name descname">anyting2Boolean</code><span class="sig-paren">(</span><em class="sig-param">valueIn</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.Utils.utils.anyting2Boolean" title="Permalink to this definition">¶</a></dt>
+<dt id="baangt.base.Utils.utils.anything2Boolean">
+<em class="property">static </em><code class="sig-name descname">anything2Boolean</code><span class="sig-paren">(</span><em class="sig-param">valueIn</em><span class="sig-paren">)</span><a class="headerlink" href="#baangt.base.Utils.utils.anything2Boolean" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">

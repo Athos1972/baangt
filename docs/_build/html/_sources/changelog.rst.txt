@@ -13,9 +13,13 @@ New features:
 +++++++++++++
 
 * Added more parameters for testruns in the new UI (e.g. BrowserZoomFactor)
+* test data generator for complex random and/or multiplying test conditions created
+* All test data from all test runs is now logged in a database. Additionally to results per test run you can compare
+  results over time. Especially usefull when you have the local proxy server activated!
 
 Bugfixes:
 +++++++++
+
 
 2020.04
 ^^^^^^^
