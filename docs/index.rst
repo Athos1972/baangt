@@ -27,6 +27,7 @@ and well documented master functionality.
       Planned Features <PlannedFeatures.rst>
       Browser Drivers <BrowserDrivers.rst>
       Variables <Variables.rst>
+      Results <SendStatistics.rst>
       Datagenerator <Datagenerator.rst>
       For Developers <Developer.rst>
       How2Plugin <baangt-Plugin.rst>
