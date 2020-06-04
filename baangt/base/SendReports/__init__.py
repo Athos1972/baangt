@@ -7,7 +7,7 @@ import pymsteams
 import configparser
 from slack_webhook import Slack
 from baangt.base.PathManagement import ManagedPaths
-from baangt.base.SendStatistics.mailer import SendMail
+from baangt.base.SendReports.mailer import SendMail
 
 logger = logging.getLogger('pyC')
 

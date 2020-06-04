@@ -22,7 +22,7 @@ import time
 from baangt.base.PathManagement import ManagedPaths
 from uuid import uuid4
 from baangt.base.RuntimeStatistics import Statistic
-from baangt.base.SendStatistics import Sender
+from baangt.base.SendReports import Sender
 
 logger = logging.getLogger("pyC")
 

@@ -1,4 +1,4 @@
-from baangt.base.SendStatistics import Sender
+from baangt.base.SendReports import Sender
 from pathlib import Path
 import configparser
 import requests
