@@ -10,5 +10,6 @@
         <file alias="reporticon">report.svg</file>
         <file alias="cleanupicon">cleanup.svg</file>
         <file alias="exiticon">exit.svg</file>
+        <file alias="tdgicon">testdatagenerator.svg</file>
     </qresource>
 </RCC>
