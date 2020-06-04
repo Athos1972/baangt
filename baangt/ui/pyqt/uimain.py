@@ -29,6 +29,7 @@ from baangt.base.PathManagement import ManagedPaths
 from baangt.base.DownloadFolderMonitoring import DownloadFolderMonitoring
 from baangt.base.Cleanup import Cleanup
 import xlrd
+from baangt.reports import Dashboard, Summary
 from baangt.reports import Reports
 from baangt.TestDataGenerator.TestDataGenerator import TestDataGenerator
 from baangt.base.Utils import utils
@@ -151,6 +152,7 @@ class MainWindow(Ui_MainWindow):
         # log & open file switch
         self.logSwitch.clicked.connect(self.show_hide_logs)
         self.openFilesSwitch.clicked.connect(self.change_openFiles_state)
+        self.cleanupButton.clicked.connect(self.cleanup_dialog)
 
         self.statistics = Statistic()
 
@@ -1281,8 +1283,8 @@ class MainWindow(Ui_MainWindow):
         self.cleanup_status.showMessage("Cleaning Complete!")
 
     def showReport(self):
-        r = Reports()
-        r.show_dashboard()
+        r = Dashboard()
+        r.show()
 
     def testDataGenerator(self):
         if len(self.ResultLengthInput.text()) > 0:

@@ -7,7 +7,7 @@ from PyQt5 import QtWidgets
 # from baangt.ui.pyqt.uimain import MainWindow
 from baangt.ui.pyqt.uimain import MainController
 from baangt.base.RuntimeStatistics import Statistic
-from baangt.reports import Reports
+from baangt.reports import Dashboard, Summary
 
 def print_args():
     print("""
@@ -33,12 +33,14 @@ def args_read(l_search_parameter):
                                                 "globals=",
                                                 "reloadDrivers=",
                                                 "gui=",
-                                                "reports=",
-                                                "cleanup="
+                                                "cleanup=",
+                                                "name=",
+                                                "stage=",
+                                                "id="
                                                 ])
     except getopt.GetoptError as err_det:
         print("Error in reading parameters:" + str(err_det))
-        print_args()
+        #print_args()
         sys.exit("Wrong parameters - exiting")
     if opts:
         for opt, arg in opts:
@@ -82,9 +84,27 @@ def run():
         lDriver.downloadDriver(GC.BROWSER_FIREFOX)
         lDriver.downloadDriver(GC.BROWSER_CHROME)
         print("Latest versions of drivers for Firefox and Chrome were downloaded")
-    elif args_read("reports"):
-        r = Reports()
-        r.show_dashboard()
+
+    # Reports
+    elif args_read("name") or args_read("stage"):
+        name = args_read("name")
+        name = None if name == 'all' else name 
+        
+        try:
+            r = Dashboard(name=name, stage=args_read("stage"))
+            r.show()
+        except ValueError as e:
+            print(f'ERROR: {e}')
+            sys.exit('Exiting...')
+    
+    elif args_read("id"):
+        try:
+            r = Summary(args_read("id"))
+            r.show()
+        except ValueError as e:
+            print(f'ERROR: {e}')
+            sys.exit('Exiting...')
+        
 
     elif args_read("cleanup"):
         from baangt.base.Cleanup import Cleanup
