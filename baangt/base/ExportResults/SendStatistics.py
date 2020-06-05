@@ -115,5 +115,5 @@ class Statistics(metaclass=Singleton):
 
     def send_statistics(self):
         payload = self.to_json()
-        res = requests.post("http://127.0.0.1:5000", json=payload)
+        res = requests.post("https://stats.baangt.org", json=payload)
         logger.debug(f"Statistics sent to server = {json.dumps(payload)}")
