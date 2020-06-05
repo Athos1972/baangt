@@ -20,6 +20,7 @@ import csv
 from dateutil.parser import parse
 from uuid import uuid4
 from pathlib import Path
+from baangt.base.ExportResults.SendStatistics import Statistics
 
 logger = logging.getLogger("pyC")
 
@@ -35,7 +36,8 @@ class ExportResults:
         self.testRunName = self.testRunInstance.testRunName
         self.dataRecords = self.testRunInstance.dataRecords
         self.stage = self.__getStageFromDataRecordsOrGlobalSettings()
-
+        self.statistics = Statistics()
+        self.statistics.update_data(kwargs)
         try:
             self.exportFormat = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.EXPORT_FORMAT)
             if isinstance(self.exportFormat, dict):
@@ -84,6 +86,12 @@ class ExportResults:
             self.closeExcel()
         elif self.exportFormat == GC.EXP_CSV:
             self.export2CSV()
+        if self.testRunInstance.globalSettings.get("DeactivateStatistics") == "True":
+            logger.debug("Send Statistics to server is deactive")
+        elif self.testRunInstance.globalSettings.get("DeactivateStatistics") is True:
+            logger.debug("Send Statistics to server is deactive")
+        else:
+            self.statistics.send_statistics()
         #self.exportToDataBase()
 
     def exportAdditionalData(self):
@@ -152,7 +160,10 @@ class ExportResults:
                 error += 1
             if value[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_WAITING:
                 waiting += 1
-
+        self.statistics.update_attribute_with_value("TestCasePassed", success)
+        self.statistics.update_attribute_with_value("TestCaseFailed", error)
+        self.statistics.update_attribute_with_value("TestCasePaused", waiting)
+        self.statistics.update_attribute_with_value("TestCaseExecuted", success + error + waiting)
         # get documents
         datafiles = self.fileName
 
@@ -344,6 +355,8 @@ class ExportResults:
         # Timing
         timing: Timing = self.testRunInstance.timing
         start, end, duration = timing.returnTimeSegment(GC.TIMING_TESTRUN)
+        self.statistics.update_attribute_with_value("Duration", duration)
+        self.statistics.update_attribute_with_value("TestRunUUID", str(self.testRunInstance.uuid))
         self.__writeSummaryCell("Starttime", start, row=10)
         # get start end during time my
         self.testList.append(start)

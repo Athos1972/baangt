@@ -14,5 +14,6 @@
     "MsWebHook": "",
     "SlackWebHook": "",
     "TelegramBot": "",
-    "TelegramChannel": ""
+    "TelegramChannel": "",
+    "DeactivateStatistics": ""
 }
