@@ -76,10 +76,20 @@ class Statistics(metaclass=Singleton):
     comparision_dict = {"=": "equalTo", "!=": "notEqualTo", ">": "greaterThan", "<": "smallerThan"}
 
     def update_data(self, dic):
-        self.SequenceClass = dic["TESTRUNEXECUTIONPARAMETERS"]["TESTSEQUENCE"][1][1]["SequenceClass"]
-        self.TestCaseClass = dic["TESTRUNEXECUTIONPARAMETERS"]["TESTSEQUENCE"][1][1]["TESTCASE"][1][0]
-        self.update_attribute(dic["TESTRUNEXECUTIONPARAMETERS"]["TESTSEQUENCE"][1][1]["TESTCASE"][1][1]["TestCaseType"])
-        TestStep = dic["TESTRUNEXECUTIONPARAMETERS"]["TESTSEQUENCE"][1][1]["TESTCASE"][1][2]["TestStep"][1][1]["TestStepExecutionParameters"]
+        try:
+            self.SequenceClass = dic["TESTRUNEXECUTIONPARAMETERS"]["TESTSEQUENCE"]['1'][1]["SequenceClass"]
+            self.TestCaseClass = dic["TESTRUNEXECUTIONPARAMETERS"]["TESTSEQUENCE"]['1'][1]["TESTCASE"]['1'][0]
+            self.update_attribute(
+                dic["TESTRUNEXECUTIONPARAMETERS"]["TESTSEQUENCE"]['1'][1]["TESTCASE"]['1'][1]["TestCaseType"])
+            TestStep = dic["TESTRUNEXECUTIONPARAMETERS"]["TESTSEQUENCE"]['1'][1]["TESTCASE"]['1'][2]["TestStep"]['1'][1][
+                "TestStepExecutionParameters"]
+        except KeyError:
+            self.SequenceClass = dic["TESTRUNEXECUTIONPARAMETERS"]["TESTSEQUENCE"][1][1]["SequenceClass"]
+            self.TestCaseClass = dic["TESTRUNEXECUTIONPARAMETERS"]["TESTSEQUENCE"][1][1]["TESTCASE"][1][0]
+            self.update_attribute(
+                dic["TESTRUNEXECUTIONPARAMETERS"]["TESTSEQUENCE"][1][1]["TESTCASE"][1][1]["TestCaseType"])
+            TestStep = dic["TESTRUNEXECUTIONPARAMETERS"]["TESTSEQUENCE"][1][1]["TESTCASE"][1][2]["TestStep"][1][1][
+                "TestStepExecutionParameters"]
         for key in TestStep:
             self.update_attribute(TestStep[key]["Activity"].upper(), prefix="Activity_")
             if len(TestStep[key]["LocatorType"]) > 0:
