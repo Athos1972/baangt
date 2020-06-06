@@ -86,7 +86,7 @@ class Statistics(metaclass=Singleton):
                 self.update_attribute(TestStep[key]["LocatorType"].upper())
             if len(TestStep[key]["Comparison"]) > 0:
                 self.update_attribute(self.comparision_dict[TestStep[key]["Comparison"]])
-            if len(TestStep[key]["Timeout"]) > 0:
+            if len(str(TestStep[key]["Timeout"])) > 0:
                 self.update_attribute("timeout")
             if len(TestStep[key]["Optional"]) > 0:
                 self.update_attribute("optional")
