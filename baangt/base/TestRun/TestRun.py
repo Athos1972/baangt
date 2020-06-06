@@ -87,11 +87,12 @@ class TestRun:
 
         self.executeTestSequence()
         self.tearDown()
-        send_stats = Sender(self.globalSettings, self.results.fileName)
-        send_stats.sendMail()
-        send_stats.sendMsTeam()
-        send_stats.sendSlack()
-        send_stats.sendTelegram()
+        if self.results.fileName[-4:] == "xlsx":
+            send_stats = Sender(self.globalSettings, self.results.fileName)
+            send_stats.sendMail()
+            send_stats.sendMsTeam()
+            send_stats.sendSlack()
+            send_stats.sendTelegram()
 
     def append1DTestCaseEndDateTimes(self, dt):
         self.testCasesEndDateTimes_1D.append(dt)
