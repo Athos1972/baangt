@@ -84,12 +84,18 @@ class Statistics(metaclass=Singleton):
             TestStep = dic["TESTRUNEXECUTIONPARAMETERS"]["TESTSEQUENCE"]['1'][1]["TESTCASE"]['1'][2]["TestStep"]['1'][1][
                 "TestStepExecutionParameters"]
         except KeyError:
-            self.SequenceClass = dic["TESTRUNEXECUTIONPARAMETERS"]["TESTSEQUENCE"][1][1]["SequenceClass"]
-            self.TestCaseClass = dic["TESTRUNEXECUTIONPARAMETERS"]["TESTSEQUENCE"][1][1]["TESTCASE"][1][0]
-            self.update_attribute(
-                dic["TESTRUNEXECUTIONPARAMETERS"]["TESTSEQUENCE"][1][1]["TESTCASE"][1][1]["TestCaseType"])
-            TestStep = dic["TESTRUNEXECUTIONPARAMETERS"]["TESTSEQUENCE"][1][1]["TESTCASE"][1][2]["TestStep"][1][1][
-                "TestStepExecutionParameters"]
+            try:
+                self.SequenceClass = dic["TESTRUNEXECUTIONPARAMETERS"]["TESTSEQUENCE"][1][1]["SequenceClass"]
+                self.TestCaseClass = dic["TESTRUNEXECUTIONPARAMETERS"]["TESTSEQUENCE"][1][1]["TESTCASE"][1][0]
+                self.update_attribute(
+                    dic["TESTRUNEXECUTIONPARAMETERS"]["TESTSEQUENCE"][1][1]["TESTCASE"][1][1]["TestCaseType"])
+                TestStep = dic["TESTRUNEXECUTIONPARAMETERS"]["TESTSEQUENCE"][1][1]["TESTCASE"][1][2]["TestStep"][1][1][
+                    "TestStepExecutionParameters"]
+            except Exception as ex:
+                with open("SendStatisticsError.json", "w")as file:
+                    json.dump(dic, file)
+                logger.debug("Statistics not send to server because of error")
+                raise ex
         for key in TestStep:
             self.update_attribute(TestStep[key]["Activity"].upper(), prefix="Activity_")
             if len(TestStep[key]["LocatorType"]) > 0:
