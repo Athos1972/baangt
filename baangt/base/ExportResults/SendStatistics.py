@@ -103,17 +103,21 @@ class Statistics(metaclass=Singleton):
     def update_attribute_with_value(self, string, value):
         setattr(self, string, value)
 
-    def to_json(self):
+    def to_dict(self):
         removeable = []
         dic = asdict(self)
         for key in dic:
+            if key[0] == "-":
+                continue
             if dic[key] == 0 or dic[key] == "":
                 removeable.append(key)
         for key in removeable:
             del dic[key]
         return dic
 
-    def send_statistics(self):
-        payload = self.to_json()
+    def send_statistics(self, test=False):
+        payload = self.to_dict()
         res = requests.post("https://stats.baangt.org", json=payload)
+        if test:
+            return res
         logger.debug(f"Statistics sent to server = {json.dumps(payload)}")
