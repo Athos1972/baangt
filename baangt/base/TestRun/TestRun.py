@@ -105,7 +105,7 @@ class TestRun:
             self.results.summaryRow = 0
             self.results.makeSummaryExcel()
             self.results.closeExcel()
-            send_stats = Sender(self.globalSettings, temp_file)
+            send_stats = Sender(self.globalSettings, temp_file, self.results.fileName)
             os.remove(temp_file)
         else:
             send_stats = Sender(self.globalSettings, self.results.fileName)

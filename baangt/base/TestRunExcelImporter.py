@@ -104,12 +104,13 @@ class TestRunExcelImporter:
                                      "TestCaseClass": GC.CLASSES_TESTCASE}}
             # If there's no defaults in the testrun definition, we need to make some assumptions:
             else:
+                browser = self.get_browser()
                 if global_settings.get('TC.Mobile'):
                     lTestCaseDict = {1: {"TestCaseSequenceNumber": 1,
                                          "TestCaseNumber": 1,
                                          "TestCaseType": GC.KWARGS_BROWSER,
                                          "TestCaseClass": GC.CLASSES_TESTCASE,
-                                         GC.KWARGS_BROWSER: GC.BROWSER_FIREFOX,
+                                         GC.KWARGS_BROWSER: browser,
                                          GC.BROWSER_ATTRIBUTES: "",
                                          GC.KWARGS_MOBILE: "",
                                          GC.KWARGS_MOBILE_APP: "",
@@ -125,7 +126,7 @@ class TestRunExcelImporter:
                                      "TestCaseNumber": 1,
                                      "TestCaseType": GC.KWARGS_BROWSER,
                                      "TestCaseClass": GC.CLASSES_TESTCASE,
-                                     GC.KWARGS_BROWSER: GC.BROWSER_FIREFOX,
+                                     GC.KWARGS_BROWSER: browser,
                                      GC.BROWSER_ATTRIBUTES: "",
                                      GC.BROWSER_WINDOW_SIZE: "1900x1200"}}
         # Now we either have data by assumptions or from the testun definition. We'll take it into internal format:
@@ -189,6 +190,63 @@ class TestRunExcelImporter:
             lTestStep[1][GC.STRUCTURE_TESTSTEPEXECUTION][lStepExecutionNumber] = {}
             for lkey, value in execLine.items():
                 lTestStep[1][GC.STRUCTURE_TESTSTEPEXECUTION][lStepExecutionNumber][lkey] = value
+
+    def get_browser(self):
+        """If no browser is given in globals file then this method will first look for installed browsers in system.
+        First priority will be given to firefox & then chrome."""
+        import platform, sys, os
+        browsers = []
+        if platform.system() == "Windows": # Checks registery for browsers
+            import winreg
+            REG_PATH = "SOFTWARE\Clients\StartMenuInternet"
+            registry_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, REG_PATH, 0, winreg.KEY_READ)
+            for x in range(0, 10):
+                try:
+                    browsers.append(winreg.EnumKey(registry_key, x).lower())
+                except:
+                    pass
+        elif platform.system() == "Linux": # Checks installed packages in system then find browser among them
+            import subprocess as sp
+            redhat = False
+            debian = False
+            files = os.listdir('/etc/')
+            for file in files:
+                if "redhat-release" in file: # Checks if the linux system is redhat(RPM) based
+                    redhat = True
+                    break
+                elif "debian_version" in file: # Checks if the linux system is debian based
+                    debian = True
+            if debian:
+                cmd = ['dpkg', '--get-selections']
+            elif redhat:
+                cmd = ['yum', 'list', 'installed']
+            else:
+                logger.info("Please mention installed browser in globals file.")
+                sys.exit()
+            process = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
+            stdout, stderr = process.communicate()
+            packages = [x.split()[0] for x in stdout.decode().replace('\t', ' ').split('\n')[-1]]
+            for package in packages:
+                if "firefox" in package.lower():
+                    browsers.append(package)
+                elif "chrome" in package.lower():
+                    browsers.append(package)
+        elif platform.system() == "Darwin": # Checks for browser in installed application
+            packages = os.listdir("/Applications")
+            for package in packages:
+                if "firefox" in package.lower():
+                    browsers.append(package)
+                elif "chrome" in package.lower():
+                    browsers.append(package)
+        for browser in browsers:
+            if 'firefox' in browser:
+                return GC.BROWSER_FIREFOX
+        for browser in browsers:
+            if 'chrome' in browser:
+                return GC.BROWSER_CHROME
+        logger.info("Please mention installed browser in globals file.")
+        sys.exit()
+
 
     def __iterateStepExecutionNumber(self, numberFromDefinition):
         if numberFromDefinition:

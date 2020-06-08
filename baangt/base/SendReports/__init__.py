@@ -14,15 +14,16 @@ logger = logging.getLogger('pyC')
 
 
 class Sender:
-    def __init__(self, settings, filename):
+    def __init__(self, settings, filename, attach_file=""):
         self.defaultSettings = settings
         self.xlsx_file = filename
+        self.attach_file = attach_file
         self.subject, self.body = self.create_body()
 
     def sendMail(self):
         self.set_globalSettings(self.defaultSettings, "SendMailTo")
         if len(self.globalSettings.get("SendMailTo")) > 0:
-            SendMail(self.globalSettings, self.xlsx_file, self.subject, self.body)
+            SendMail(self.globalSettings, self.xlsx_file, self.subject, self.body, self.attach_file)
 
     def sendMsTeam(self):
         self.set_globalSettings(self.defaultSettings, "MsWebHook")
