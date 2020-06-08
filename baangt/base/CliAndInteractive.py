@@ -8,6 +8,7 @@ from PyQt5 import QtWidgets
 from baangt.ui.pyqt.uimain import MainController
 from baangt.base.RuntimeStatistics import Statistic
 from baangt.reports import Dashboard, Summary
+import platform
 
 def print_args():
     print("""
@@ -113,6 +114,8 @@ def run():
         clean.clean_all()
     else:
         app = QtWidgets.QApplication(sys.argv)
+        if platform.system() != "Windows":
+            QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
         controller = MainController()
         controller.show_main()
         sys.exit(app.exec_())
