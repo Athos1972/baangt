@@ -225,7 +225,7 @@ class TestRunExcelImporter:
                 sys.exit()
             process = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
             stdout, stderr = process.communicate()
-            packages = [x.split()[0] for x in stdout.decode().replace('\t', ' ').split('\n')[-1]]
+            packages = [x.split()[0] for x in stdout.decode().replace('\t', ' ').split('\n')[:-1]]
             for package in packages:
                 if "firefox" in package.lower():
                     browsers.append(package)

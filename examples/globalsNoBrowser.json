@@ -14,7 +14,7 @@
     "SlackWebHook": "",
     "TelegramBot": "",
     "TelegramChannel": "",
-    "TC.ExportFormat": "XLSX",
+    "TC.ExportFormat": "",
     "DeactivateStatistics": "False",
     "NotificationWithAttachment": "True"
 }
