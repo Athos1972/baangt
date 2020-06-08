@@ -239,10 +239,10 @@ class TestRunExcelImporter:
                 elif "chrome" in package.lower():
                     browsers.append(package)
         for browser in browsers:
-            if 'firefox' in browser:
+            if 'firefox' in browser.lower():
                 return GC.BROWSER_FIREFOX
         for browser in browsers:
-            if 'chrome' in browser:
+            if 'chrome' in browser.lower():
                 return GC.BROWSER_CHROME
         logger.info("Please mention installed browser in globals file.")
         sys.exit()
