@@ -6,5 +6,10 @@
         <file alias="executeicon">play.png</file>
         <file alias="testfileicon">glass.png</file>
         <file alias="stopicon">stop.png</file>
+        <file alias="katalonicon">katalon.svg</file>
+        <file alias="reporticon">report.svg</file>
+        <file alias="cleanupicon">cleanup.svg</file>
+        <file alias="exiticon">exit.svg</file>
+        <file alias="tdgicon">testdatagenerator.svg</file>
     </qresource>
 </RCC>

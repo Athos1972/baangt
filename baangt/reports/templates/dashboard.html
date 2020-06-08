@@ -4,9 +4,6 @@
     BAANGT Dashboard
 {% endblock %}
 
-{% block header %}
-    BAANGT Dashboard {{ created }}
-{% endblock %}
 
 {% block content %}
 
@@ -14,6 +11,35 @@
 
 <!-- testrun list -->
 <div class="container-fluid mt-2">
+
+    <!-- filters -->
+    {% if data.names %}
+    <div class="row mx-2 pt-3 rounded shadow">
+        <div class="col-md-1 h4">Filters:</div>
+        <div class="col-md-3 mb-3 input-group">
+            <div class="input-group-prepend">
+                <label class="input-group-text px-4" for="selectName">Name</label>
+            </div>
+            <select class="custom-select" id="selectName">
+                <option value="0" selected>None</option>
+                {% for name in data.names %}
+                    <option value="{{ loop.index }}">{{ name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3 mb-3 input-group">
+            <div class="input-group-prepend">
+                <label class="input-group-text px-4" for="selectStage">Stage</label>
+            </div>
+            <select class="custom-select" id="selectStage">
+                <option value="0" selected>None</option>
+                {% for stage in data.stages %}
+                    <option value="{{ loop.index }}">{{ stage }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    {% endif %}
 
     <!-- header -->
     <div class="row mx-2 mb-2 mt-3">
@@ -24,11 +50,11 @@
     </div>
 
     <!-- testrun list -->
-    {% for key, value in data.items() %}
-        <div class="row hovered-item border-top py-3 mx-2" id="{{ key }}">
+    {% for item in data.records %}
+        <div class="row hovered-item border-top py-3 mx-2" id="{{ item.id }}" data-name="{{ item.name }}" data-stage="{{ item.stage }}">
             <div class="col-md-3 text-break">
-                <p class="text-primary">{{ key }}</p>
-                <!--p class="text-secondary">Stage</p--> 
+                <p class="text-primary">{{ item.name }}</p>
+                <p class="text-secondary">{{ item.stage }}</p> 
             </div>
             <div class="col-md-3">
                 <div class="row">
@@ -36,24 +62,24 @@
                         <canvas class="statusChart" width="100" height="100"></canvas>
                     </div>
                     <div class="d-flex flex-column col-2 border-right px-0">
-                        <h2 class="text-center">{{ value.figures.records }}</h2>
+                        <h2 class="text-center">{{ item.figures.records }}</h2>
                         <h6 class="text-center">TESTS</h6>
                     </div>
-                    {% if value.figures.successful > 0  %}
+                    {% if item.figures.successful > 0  %}
                         <div class="d-flex flex-column col-2 text-success px-0">
-                            <h2 class="text-center">{{ value.figures.successful }}</h2>
+                            <h2 class="text-center">{{ item.figures.successful }}</h2>
                             <h6 class="text-center">PASSED</h6>
                         </div>
                     {% endif %}
-                    {% if value.figures.error > 0  %}
+                    {% if item.figures.error > 0  %}
                         <div class="d-flex flex-column col-2 text-danger px-0">
-                            <h2 class="text-center">{{ value.figures.error }}</h2>
+                            <h2 class="text-center">{{ item.figures.error }}</h2>
                             <h6 class="text-center">FAILED</h6>
                         </div>
                     {% endif %}
-                    {% if value.figures.paused > 0  %}
+                    {% if item.figures.paused > 0  %}
                         <div class="d-flex flex-column col-2 text-secondary px-0">
-                            <h2 class="text-center">{{ value.figures.paused }}</h2>
+                            <h2 class="text-center">{{ item.figures.paused }}</h2>
                             <h6 class="text-center">PAUSED</h6>
                         </div>
                     {% endif %}
@@ -74,12 +100,32 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 <script type="text/javascript">
-    {% for key, value in data.items() %}
-        var item_{{ loop.index }} = document.querySelector('#{{ key }}')
 
-        var status_{{ loop.index }} = new Chart(item_{{ loop.index }}.querySelector('.statusChart'), {{ value.status }});
-        var results_{{ loop.index }} = new Chart(item_{{ loop.index }}.querySelector('.resultsChart'), {{ value.results }});
-        var duration_{{ loop.index }} = new Chart(item_{{ loop.index }}.querySelector('.durationChart'), {{ value.duration }});
+    document.querySelectorAll('select').forEach(select => {
+        select.onchange = () => {
+            // get name
+            const name_index = document.querySelector('#selectName').value;
+            const name = document.querySelector('#selectName').children[name_index].text;
+            // get stage
+            const stage_index = document.querySelector('#selectStage').value;
+            const stage = document.querySelector('#selectStage').children[stage_index].text;
+            // apply filters
+            document.querySelectorAll('.hovered-item').forEach(item => {
+                if ((name_index == "0" || item.dataset['name'] == name) && (stage_index == "0" || item.dataset['stage'] == stage)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        };
+    });
+
+    {% for item in data.records %}
+        var item_{{ loop.index }} = document.querySelector('#{{ item.id }}');
+
+        var status_{{ loop.index }} = new Chart(item_{{ loop.index }}.querySelector('.statusChart'), {{ item.status }});
+        var results_{{ loop.index }} = new Chart(item_{{ loop.index }}.querySelector('.resultsChart'), {{ item.results }});
+        var duration_{{ loop.index }} = new Chart(item_{{ loop.index }}.querySelector('.durationChart'), {{ item.duration }});
     {% endfor %}
 </script>
 

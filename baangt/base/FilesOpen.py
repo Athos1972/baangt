@@ -21,6 +21,7 @@ def open(filenameAndPath: str):
         return False
     elif platform.system() == "Windows":
         try:
+            filenameAndPath = f'"{filenameAndPath}"'
             os.startfile(filenameAndPath)
             return True
         except Exception as errorcode:
@@ -31,12 +32,14 @@ def open(filenameAndPath: str):
                 return False
 
     elif platform.system() == "Linux":
+        filenameAndPath = f'"{filenameAndPath}"'
         status = subprocess.call(["xdg-open", str(filenameAndPath)])
         if status == 0:
             return True
         else:
             return False
     elif platform.system() == "Darwin":
+        filenameAndPath = f'"{filenameAndPath}"'
         status = os.system("open " + str(filenameAndPath))
         if status == 0:
             return True

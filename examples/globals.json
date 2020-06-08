@@ -8,6 +8,12 @@
     "TC.BrowserAttributes": "",
     "TC.ParallelRuns": "1",
     "TC.BrowserWindowSize": "1024x768",
-    "TC.LogLevel": "Info",
-    "Stage": "Test"
+    "TC.LogLevel": "Debug",
+    "Stage": "Test",
+    "SendMailTo": "",
+    "MsWebHook": "",
+    "SlackWebHook": "",
+    "TelegramBot": "",
+    "TelegramChannel": "",
+    "DeactivateStatistics": ""
 }

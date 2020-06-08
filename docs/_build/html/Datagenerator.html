@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>DataGenerator &mdash; baangt 2020.5.2rc5 documentation</title>
+  <title>DataGenerator &mdash; baangt 1.1.1 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Developer guidelines for custom enhancements" href="Developer.html" />
-    <link rel="prev" title="Dealing with variables" href="Variables.html" /> 
+    <link rel="prev" title="SendStatistics" href="SendStatistics.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -98,6 +98,7 @@
 <li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="BrowserDrivers.html">   Browser Drivers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Variables.html">   Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SendStatistics.html">   Results</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">DataGenerator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#input-file">Input File</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#data-type">Data Type</a></li>
@@ -196,8 +197,9 @@ containing all data.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">RND_1,10,2</span></code>: <code class="docutils literal notranslate"><span class="pre">RND_</span></code> prefix is also used here but with a range.</p></li>
 <li><p>Simple range.</p></li>
 <li><p>List of header.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">FKR_</span></code> keyword is used here.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">FKR_</span></code> keyword is used here with a new integer value 0 in end.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FKR_</span></code> prefix is used here.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FKR_</span></code> prefix is used here with a new integer value 0 in end.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RRD_</span></code> prefix is used here.</p></li>
 </ol>
 </dd>
 </dl>
@@ -254,6 +256,24 @@ Now this will generate list of 8 fake email and on every data any random email w
 simply use 0 number at the position of list length.
 Example:- <code class="docutils literal notranslate"><span class="pre">FKR_(email,</span> <span class="pre">EN_US,</span> <span class="pre">0)</span></code>
 Now this will generate new email for every data in the output.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RRD_</span></code> is used when we have multiple sheets in a input file and we need to take value which are matching conditions
+from that sheet.
+Format:- <code class="docutils literal notranslate"><span class="pre">RRD_(&lt;sheetName&gt;,&lt;TargetData&gt;,[Header1:[Value1],Header2:[Value1,Value2]])</span></code>
+Here sheetName is the name of the sheet where our TargetData is located. A dictionary of TargetData is generated with all
+the data which are matching from our Header: Value pair. A header with multiple value list is than converted to all
+possible value as mentioned in above explanation. At last a random value is selected from TargetData dictionary for every
+output data.
+If TargetData = <code class="docutils literal notranslate"><span class="pre">*</span></code> then all the values of the matched row will be treated as TargetData.
+If Header:Value List = <code class="docutils literal notranslate"><span class="pre">[]</span></code> then the defined TargetData will be collected from every row of the defined sheet.
+i.e.
+For all value in matching row <code class="docutils literal notranslate"><span class="pre">RRD_(sheetName,*,[Header1:[Value1],Header2:[Value1,Value2]])</span></code>
+For TargetData from whole Sheet <code class="docutils literal notranslate"><span class="pre">RRD_(sheetName,TargetData,[])</span></code>
+For all data inside sheet <code class="docutils literal notranslate"><span class="pre">RRD_(sheetName,*,[])</span></code>
+If a input sheet has multiple cells using <code class="docutils literal notranslate"><span class="pre">RRD_</span></code> prefix with a matching data (=header of excel column) in TargetData
+then they will be treated as one unit. In the output file there will be only one column of that matching header and while
+selecting random data only the rows which have same value of that header will be considered.
+i.e. First <code class="docutils literal notranslate"><span class="pre">RRD_</span></code> cell has value “x” for the header while selected randomly, then the second cell will select data
+randomly only from the rows which have “x” value for the same header.</p></li>
 </ol>
 </dd>
 </dl>
@@ -261,13 +281,14 @@ Now this will generate new email for every data in the output.</p></li>
 <div class="section" id="all-data-types-format">
 <h1>All Data Types Format<a class="headerlink" href="#all-data-types-format" title="Permalink to this headline">¶</a></h1>
 <ol class="arabic simple">
-<li><p>Value             = <code class="docutils literal notranslate"><span class="pre">value</span></code></p></li>
+<li><p>Value             = <code class="docutils literal notranslate"><span class="pre">&lt;value&gt;</span></code></p></li>
 <li><p>list of values    = <code class="docutils literal notranslate"><span class="pre">[&lt;value1&gt;,&lt;value2&gt;]</span></code></p></li>
 <li><p>range             = <code class="docutils literal notranslate"><span class="pre">&lt;start&gt;-&lt;end&gt;,&lt;step&gt;</span></code></p></li>
 <li><p>random            = <code class="docutils literal notranslate"><span class="pre">RND_[list]</span></code></p></li>
 <li><p>random from range = <code class="docutils literal notranslate"><span class="pre">RND_&lt;start&gt;-&lt;end&gt;,&lt;step&gt;</span></code></p></li>
-<li><p>List of header    = <code class="docutils literal notranslate"><span class="pre">[title1,</span> <span class="pre">title2,</span> <span class="pre">title3]</span></code></p></li>
-<li><p>Faker Prefix      = <code class="docutils literal notranslate"><span class="pre">FKR_(type,</span> <span class="pre">locale,</span> <span class="pre">number_of_data)</span></code></p></li>
+<li><p>List of header    = <code class="docutils literal notranslate"><span class="pre">[&lt;title1&gt;,</span> <span class="pre">&lt;title2&gt;,</span> <span class="pre">&lt;title3&gt;]</span></code></p></li>
+<li><p>Faker Prefix      = <code class="docutils literal notranslate"><span class="pre">FKR_(&lt;type&gt;,</span> <span class="pre">&lt;locale&gt;,</span> <span class="pre">&lt;number_of_data&gt;)</span></code></p></li>
+<li><p>RRD Prefix        = <code class="docutils literal notranslate"><span class="pre">RRD_(&lt;sheetName&gt;,&lt;TargetData&gt;,[&lt;Header1&gt;:[&lt;Value1&gt;],&lt;Header2&gt;:[&lt;Value1&gt;,&lt;Value2&gt;]])</span></code></p></li>
 </ol>
 </div>
 
@@ -282,7 +303,7 @@ Now this will generate new email for every data in the output.</p></li>
         <a href="Developer.html" class="btn btn-neutral float-right" title="Developer guidelines for custom enhancements" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="Variables.html" class="btn btn-neutral float-left" title="Dealing with variables" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="SendStatistics.html" class="btn btn-neutral float-left" title="SendStatistics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

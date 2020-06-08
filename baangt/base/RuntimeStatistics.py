@@ -45,6 +45,30 @@ class Statistic(metaclass=Singleton):
             sys.stdout.write("||Statistic:"+self.__str__()+"||")
             sys.stdout.flush()
 
+    def update_success(self):
+        self.testcases_success += 1
+        self.testcases_executed = self.testcases_success + self.testcases_failed
+        self.testcases_remaining = self.testcases_total - self.testcases_executed
+        if self.gui:
+            sys.stdout.write("||Statistic:" + self.__str__() + "||")
+            sys.stdout.flush()
+
+    def update_error(self):
+        self.testcases_failed += 1
+        self.testcases_executed = self.testcases_success + self.testcases_failed
+        self.testcases_remaining = self.testcases_total - self.testcases_executed
+        if self.gui:
+            sys.stdout.write("||Statistic:" + self.__str__() + "||")
+            sys.stdout.flush()
+
+    def update_waiting(self):
+        self.testcases_paused += 1
+        self.testcases_executed = self.testcases_success + self.testcases_failed
+        self.testcases_remaining = self.testcases_total - self.testcases_executed
+        if self.gui:
+            sys.stdout.write("||Statistic:" + self.__str__() + "||")
+            sys.stdout.flush()
+
     def update_teststep(self):
         self.teststep_executed += 1
         if self.gui:

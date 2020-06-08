@@ -29,7 +29,9 @@ from baangt.base.PathManagement import ManagedPaths
 from baangt.base.DownloadFolderMonitoring import DownloadFolderMonitoring
 from baangt.base.Cleanup import Cleanup
 import xlrd
-from baangt.reports import Reports
+from baangt.reports import Dashboard, Summary
+from baangt.TestDataGenerator.TestDataGenerator import TestDataGenerator
+from baangt.base.Utils import utils
 from threading import Thread
 from time import sleep
 
@@ -86,6 +88,7 @@ class MainWindow(Ui_MainWindow):
         self.__result_file = ""
         self.__log_file = ""
         self.__open_files = 0
+        self.TDGResult = ""
 
         # self.refreshNew()
         # self.setupBasePath(self.directory)
@@ -101,6 +104,12 @@ class MainWindow(Ui_MainWindow):
         # initialize Katalon Importer and Global Setting Page
         # Add Button Signals and Slot here
         self.browsePushButton_4.clicked.connect(self.browsePathSlot)
+        self.InputFileButton.clicked.connect(self.inputFileSlot)
+        self.OutputFileButton.clicked.connect(self.outputFileSlot)
+        self.exitPushButton_4.clicked.connect(self.mainPageView)
+        self.TDGButton.clicked.connect(self.testDataGenerator)
+        self.ResultButton.clicked.connect(self.openTDGResult)
+        self.SheetCombo.activated.connect(self.updateSheet)
         # self.executePushButton.clicked(self.executeTest)
 
         # Setting Page actions and triggered
@@ -118,6 +127,7 @@ class MainWindow(Ui_MainWindow):
         self.openResultFilePushButton_4.clicked.connect(self.openResultFile)
         self.openLogFilePushButton_4.clicked.connect(self.openLogFile)
         self.openTestFilePushButton_4.clicked.connect(self.openTestFile)
+        self.InputFileOpen.clicked.connect(self.openInputFile)
 
         # Quit Event
         self.actionExit.triggered.connect(self.quitApplication)
@@ -125,15 +135,22 @@ class MainWindow(Ui_MainWindow):
         # Show Report Event
         self.actionReport.triggered.connect(self.showReport)
 
+        # Cleanup action
+        self.actionCleanup.triggered.connect(self.cleanup_dialog)
+
+        # TestDataGenerator
+        self.actionTestDataGen.triggered.connect(self.show_tdg)
+
         # Katalon triggered
         self.actionImport_Katalon.triggered.connect(self.show_katalon)
         self.exitPushButton_3.clicked.connect(self.exitKatalon)
         self.savePushButton_2.clicked.connect(self.saveTestCase)
         self.copyClipboard_2.clicked.connect(self.copyFromClipboard)
         self.TextIn_2.textChanged.connect(self.importClipboard)
+
+        # log & open file switch
         self.logSwitch.clicked.connect(self.show_hide_logs)
         self.openFilesSwitch.clicked.connect(self.change_openFiles_state)
-        self.cleanupButton.clicked.connect(self.cleanup_dialog)
 
         self.statistics = Statistic()
 
@@ -208,6 +225,12 @@ class MainWindow(Ui_MainWindow):
         """ Display katalon panel for Test case preparation """
         self.stackedWidget.setCurrentIndex(2)
         self.statusMessage("Katalon Studio is triggered", 1000)
+
+    @QtCore.pyqtSlot()
+    def show_tdg(self):
+        """ Display katalon panel for Test case preparation """
+        self.stackedWidget.setCurrentIndex(3)
+        self.statusMessage("TestDataGenerator is triggered", 1000)
 
     def updateLogoAndIcon(self, MainWindow):
         """ This function initialize logo and icon """
@@ -355,6 +378,46 @@ class MainWindow(Ui_MainWindow):
         self.getSettingsAndTestFilesInDirectory(dirPath)
         self.statusMessage("Current Path: {} ".format(dirPath), 2000)
 
+    def setupFilePath(self, filePath=()):
+        """ Setup Base path of Execution as per directory Path"""
+
+        if os.path.exists(filePath[0]):
+            dirPath = filePath[0]
+            self.InputFileEdit.setText(dirPath)
+            self.directory = dirPath
+            self.getSheets(dirPath)
+            self.OutputFileEdit.setText(os.path.dirname(dirPath))
+            self.statusMessage("Current File: {} ".format(dirPath), 2000)
+
+    def getSheets(self, dirName):
+        """ Scan for *.xlsx files and *.json files and
+        update the testRunComboBox and settingsComboBox items
+        """
+        wb = xlrd.open_workbook(dirName)
+        self.Sheets = wb.sheet_names()
+        self.SheetCombo.clear()
+        # Add files in Combo Box
+        self.SheetCombo.addItems(self.Sheets)
+        # set default selection to 0
+
+        if len(self.Sheets) > 0:
+            try:
+                index = self.testRunComboBox_4.findText(
+                                     self.selectedSheet,
+                                     QtCore.Qt.MatchFixedString
+                                     )
+            except:
+                self.selectedSheet = ""
+                index = 0
+            if self.selectedSheet not in self.Sheets:
+                self.SheetCombo.setCurrentIndex(0)
+                self.selectedSheet = self.SheetCombo.currentText()
+            else:
+                self.SheetCombo.setCurrentIndex(index)
+            self.statusMessage("Sheet: {}".format(self.selectedSheet), 3000)
+            # Activate the Execute Button
+            self.TDGButton.setEnabled(True)
+
     @pyqtSlot()
     def quitApplication(self):
         """ This function will close the UI """
@@ -394,6 +457,13 @@ class MainWindow(Ui_MainWindow):
         self.saveInteractiveGuiConfig()
         self.statusMessage("Settings changed to: {}".format(self.configFile))
         self.readContentofGlobals()
+
+    @pyqtSlot()
+    def updateSheet(self):
+        """ this file will update the testRunFile selection
+        """
+        self.selectedSheet = self.SheetCombo.currentText()
+        self.statusMessage("Selected Sheet: {}".format(self.selectedSheet))
 
     def executeButtonClicked(self):
         self.__result_file = ""
@@ -608,6 +678,48 @@ class MainWindow(Ui_MainWindow):
         if dirName:
             # self.pathLineEdit.insert(dirName)
             self.setupBasePath(dirName)
+
+    @pyqtSlot()
+    def inputFileSlot(self):
+        """ Browse Folder Containing *.xlsx file for execution. And
+           globals.json file for Test specific settings
+        """
+        # get path from pathLineEdit
+        basepath = self.InputFileEdit.text()
+        if not basepath:
+            basepath = "./"
+        options = QtWidgets.QFileDialog.Options()
+        options |= QtWidgets.QFileDialog.DontUseNativeDialog
+        fileName = QtWidgets.QFileDialog.getOpenFileName(
+            None,
+            "Select File ",
+            basepath,
+            "(*.xlsx)",
+            options=options
+        )
+        if fileName:
+            self.setupFilePath(fileName)
+
+    @pyqtSlot()
+    def outputFileSlot(self):
+        """ Browse Folder Containing *.xlsx file for execution. And
+           globals.json file for Test specific settings
+        """
+        # get path from pathLineEdit
+        basepath = self.OutputFileEdit.text()
+        if not basepath:
+            basepath = "./"
+        options = QtWidgets.QFileDialog.Options()
+        options |= QtWidgets.QFileDialog.DontUseNativeDialog
+        dirName = QtWidgets.QFileDialog.getExistingDirectory(
+            None,
+            "Select Directory ",
+            basepath,
+            options=options
+        )
+        if dirName:
+            # self.pathLineEdit.insert(dirName)
+            self.OutputFileEdit.setText(dirName)
 
     # Settings Page
     # All action and function related to Setting page is below
@@ -1065,10 +1177,31 @@ class MainWindow(Ui_MainWindow):
         try:
             filePathName = f"{Path(self.directory).joinpath(self.testRunFile)}"
             fileName = os.path.basename(filePathName)
-            self.statusbar.showMessage(f"Opening file {fileName}")
+            self.statusMessage(f"Opening file {fileName}", 3000)
             FilesOpen.openResultFile(filePathName)
         except:
             self.statusMessage("No file found!", 3000)
+
+    @QtCore.pyqtSlot()
+    def openInputFile(self):
+        """ Uses Files Open class to open Log file """
+        filePathName = self.InputFileEdit.text()
+        if len(filePathName) > 0:
+            fileName = os.path.basename(filePathName)
+            self.statusMessage(f"Opening file {fileName}", 3000)
+            FilesOpen.openResultFile(filePathName)
+        else:
+            self.statusMessage("Please select a file", 3000)
+
+    @QtCore.pyqtSlot()
+    def openTDGResult(self):
+        """ Uses Files Open class to open Log file """
+        if os.path.exists(self.TDGResult):
+            fileName = os.path.basename(self.TDGResult)
+            self.statusMessage(f"Opening file {fileName}", 3000)
+            FilesOpen.openResultFile(self.TDGResult)
+        else:
+            self.statusMessage("No result file found!", 3000)
 
     @pyqtSlot()
     def clear_logs_and_stats(self):
@@ -1148,9 +1281,24 @@ class MainWindow(Ui_MainWindow):
         self.cleanup_status.showMessage("Cleaning Complete!")
 
     def showReport(self):
-        r = Reports()
-        r.show_dashboard()
+        r = Dashboard()
+        r.show()
 
+    def testDataGenerator(self):
+        if len(self.ResultLengthInput.text()) > 0:
+            batch_size = int(self.ResultLengthInput.text())
+        else:
+            batch_size = 0
+        input_file = self.InputFileEdit.text()
+        input_file_name = os.path.basename(input_file)
+        tdg = TestDataGenerator(input_file, self.selectedSheet)
+        outputfile = os.path.join(
+            self.OutputFileEdit.text(),
+            f"{input_file_name}_{self.selectedSheet}_{utils.datetime_return()}.xlsx"
+        )
+        tdg.write(outputfile=outputfile, batch_size=batch_size)
+        self.TDGResult = outputfile
+        self.statusMessage(f"Data Generated Successfully: {outputfile}", 3000)
 
 # Controller
 class MainController:

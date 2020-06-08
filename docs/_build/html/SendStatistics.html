@@ -1,0 +1,316 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>SendStatistics &mdash; baangt 1.1.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="DataGenerator" href="Datagenerator.html" />
+    <link rel="prev" title="Dealing with variables" href="Variables.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> baangt
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Installation.html">   Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="OverviewUsage.html">   Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simpleExample.html">   First Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Structure.html">   Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ParametersConfigFile.html">   Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SimpleAPI.html">   First API Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TestTypes.html">   Types of Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DataFile.html">   Data file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SaveResults2Database.html">   Results in Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="HistoryAndReasons.html">   History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributors.html">   Contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">   Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PlannedFeatures.html">   Planned Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BrowserDrivers.html">   Browser Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Variables.html">   Variables</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">   Results</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#email">Email</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ms-teams">Ms Teams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#slack">Slack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#telegram">Telegram</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuring-baangt">Configuring Baangt</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html">DataGenerator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html#input-file">Input File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html#data-type">Data Type</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Datagenerator.html#all-data-types-format">All Data Types Format</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Developer.html">   For Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html">What is a baangt-plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html#how-to-make-a-baangt-plugin">how to make a baangt-plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html#how-the-baangt-plugin-work">how the baangt-plugin work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="baangt-Plugin.html#how-to-replace-the-existing-plugin-by-your-own-one">how to replace the existing plugin by your own one</a></li>
+<li class="toctree-l1"><a class="reference internal" href="articles/Articles.html">   :subheader: Articles</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://www.baangt.org">   Web</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Autodocs:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="docs/baangt.base.html">Autodocs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">baangt</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>SendStatistics</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/SendStatistics.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="sendstatistics">
+<h1>SendStatistics<a class="headerlink" href="#sendstatistics" title="Permalink to this headline">¶</a></h1>
+<p>While running tests on <code class="docutils literal notranslate"><span class="pre">baangt</span></code> we might need to share the report to multiple persons in a team. To do this one might
+have to be present in front of screen and wait for completion of the test. But to overcome this issue we have added a
+functionality in <code class="docutils literal notranslate"><span class="pre">baangt</span></code> to send the reports in various platform automatically, thus you don’t need to waste your
+time in front of screen just for waiting of completion, our program will take care of that.</p>
+<p>Their are 4 different services where we can send test reports. They are:</p>
+<ol class="arabic simple">
+<li><p>Email</p></li>
+<li><p>Ms Teams</p></li>
+<li><p>Slack</p></li>
+<li><p>Telegram</p></li>
+</ol>
+<p>Lets first discuss things we need to use this services in our program one by one.</p>
+<p><strong>Note :- If you don’t need to use any service from the following you just skip that part</strong></p>
+<div class="section" id="email">
+<h2>Email<a class="headerlink" href="#email" title="Permalink to this headline">¶</a></h2>
+<p>We don’t need anything(except recipients email ids).</p>
+</div>
+<div class="section" id="ms-teams">
+<h2>Ms Teams<a class="headerlink" href="#ms-teams" title="Permalink to this headline">¶</a></h2>
+<p>We need webhook url of Ms Teams channel where we need to send reports. If you need any help in getting webhook url you can
+refer to this link:- <a class="reference external" href="https://docs.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/connectors-using#setting-up-a-custom-incoming-webhook">https://docs.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/connectors-using#setting-up-a-custom-incoming-webhook</a></p>
+</div>
+<div class="section" id="slack">
+<h2>Slack<a class="headerlink" href="#slack" title="Permalink to this headline">¶</a></h2>
+<p>We need incoming webhook url for the app which has permission to post message in your group. For further assistance you
+can refer to “<cite>Set up Incoming Webhooks</cite>” section of <a class="reference external" href="https://slack.com/intl/en-in/help/articles/115005265063-Incoming-webhooks-for-Slack">https://slack.com/intl/en-in/help/articles/115005265063-Incoming-webhooks-for-Slack</a></p>
+</div>
+<div class="section" id="telegram">
+<h2>Telegram<a class="headerlink" href="#telegram" title="Permalink to this headline">¶</a></h2>
+<p>To send message in telegram channel we need channel username and a bot’s HTTP API token who has administrator privilage
+in your channel.</p>
+<p>First, to get username of the channel you can simply go to info section of your channel where you will find invite link
+which will look like <cite>t.me/your_channel_username</cite> here your_channel_username is what we need.</p>
+<p>Now to get HTTP API token of bot, first we need to create a bot. To create a new bot you need to search for <cite>&#64;botfather</cite> in
+telegram. If you are first time user of BotFather then you will see an introduction and a start button in the bottom. If
+you don’t see start button but seeing a text area in bottom you can just type <code class="docutils literal notranslate"><span class="pre">/start</span></code> then to create a new bot you
+have to select or type <code class="docutils literal notranslate"><span class="pre">/newbot</span></code> after that it will ask a name for your bot. You can name it anything but I for best
+practice we will use <cite>ChannelName bot</cite> after that it will ask a username for your bot which must be unique and the
+username must end with <cite>bot</cite> word so we can use <cite>ChannelName_bot</cite> after sending this you should get a congratulations
+message which means your bot is created. In this congratulation message you will get <cite>HTTP API access token</cite> we will
+need this further in our program.</p>
+<p>Our next step is to add the bot in our channel as administrator. Please visit this link for further assistance :-
+<a class="reference external" href="https://stackoverflow.com/a/33497769/8784795">https://stackoverflow.com/a/33497769/8784795</a></p>
+</div>
+<div class="section" id="configuring-baangt">
+<h2>Configuring Baangt<a class="headerlink" href="#configuring-baangt" title="Permalink to this headline">¶</a></h2>
+<p>Once we have all the necessary things we just need to add them in <code class="docutils literal notranslate"><span class="pre">main.ini</span></code> which must be inside <code class="docutils literal notranslate"><span class="pre">ini</span></code> folder.
+If you have used windows installer to setup <code class="docutils literal notranslate"><span class="pre">baangt</span></code> then it must be inside <cite>C:/Users/{username}/baangt</cite> directory,
+else it will be in the root directory of baangt. Once you find the <code class="docutils literal notranslate"><span class="pre">ini</span></code> folder their must be a main.ini file inside
+it. If it is not their you can make one. Just create a new file name <cite>main</cite> and extension <cite>ini</cite> which will look like
+<code class="docutils literal notranslate"><span class="pre">main.ini</span></code>. Then you can edit it via any text editor. It should look like.</p>
+<div class="line-block">
+<div class="line">[Default]</div>
+<div class="line">sendmailto = &lt;email&gt;</div>
+<div class="line">notificationwithattachment = &lt;True or False&gt;</div>
+<div class="line">mswebhook = &lt;MsTeam channel webhook url&gt;</div>
+<div class="line">slackwebhook = &lt;Slack App webhook url&gt;</div>
+<div class="line">telegrambot = &lt;telegram bot access token&gt;</div>
+<div class="line">telegramchannel = &lt;telegram channel name&gt;</div>
+</div>
+<p>Configurations of mail:- <code class="docutils literal notranslate"><span class="pre">sendmailto</span></code> and <code class="docutils literal notranslate"><span class="pre">notificationwithattachment</span></code> are the settings for email. <code class="docutils literal notranslate"><span class="pre">sendmailto</span></code>
+can contain single recipients or multiple recipients which would look like.
+<strong>sendmailto = example1&#64;xyz.com, example2&#64;xyz.com, example3&#64;xyz.com</strong> inshort they should be comma seperated.
+<strong>notificationwithattachment</strong> should be True if you want to send xlsx result file as attachment in the mail else it
+should be False.</p>
+<p>Configuration of MsTeam:- <code class="docutils literal notranslate"><span class="pre">mswebhook</span></code> takes single or multiple(comma seperated as above) webhook url and will send
+report in them.</p>
+<p>Configuration of Slack:- <code class="docutils literal notranslate"><span class="pre">slackwebhook</span></code> takes single or multiple(comma seperated as above) webhook url and will send
+report in them.</p>
+<p>Configurations of Telegram:- <code class="docutils literal notranslate"><span class="pre">telegrambot</span></code> and <code class="docutils literal notranslate"><span class="pre">telegramchannel</span></code> are the settings for telegram. <code class="docutils literal notranslate"><span class="pre">telegrambot</span></code> will
+take single value containing API token of bot. <code class="docutils literal notranslate"><span class="pre">telegramchannel</span></code> may contain single or multiple(comma seperated as
+above) username of channels. Make sure that all the channels have this bot as administrator.</p>
+<p><strong>Note:- If you don’t need to use any of the service out of these four, you can just leave their settings empty</strong></p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Datagenerator.html" class="btn btn-neutral float-right" title="DataGenerator" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Variables.html" class="btn btn-neutral float-left" title="Dealing with variables" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Bernhard Buhl
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
