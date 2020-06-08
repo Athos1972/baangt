@@ -1,9 +1,10 @@
-from sqlalchemy import Column, String, Integer, DateTime, Boolean, Table, ForeignKey, LargeBinary
-#from sqlalchemy.types import Binary, TypeDecorator
+from sqlalchemy import Column, String, Integer, DateTime, Boolean, Table, ForeignKey
+#from sqlalchemy.types import Binary(16), TypeDecorator
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 import os
+import re
 import uuid
 from baangt.base.PathManagement import ManagedPaths
 
@@ -11,8 +12,14 @@ from baangt.base.PathManagement import ManagedPaths
 managedPaths = ManagedPaths()
 DATABASE_URL = os.getenv('DATABASE_URL') or 'sqlite:///'+str(managedPaths.derivePathForOSAndInstallationOption().joinpath('testrun.db'))
 
-engine = create_engine(DATABASE_URL)
+# handle sqlalchemy dialects
+dialect = re.match(r'\w+', DATABASE_URL)
+if dialect.group() == 'mysql':
+	from sqlalchemy.dialects.mysql import BINARY as Binary
+else:
+	from sqlalchemy import LargeBinary as Binary
 
+engine = create_engine(DATABASE_URL)
 base = declarative_base()
 
 #
@@ -31,12 +38,12 @@ class TestrunLog(base):
 	#
 	__tablename__ = "testruns"
 	# columns
-	id = Column(LargeBinary, primary_key=True, default=uuidAsBytes)
-	testrunName = Column(String, nullable=False)
-	logfileName = Column(String, nullable=False)
+	id = Column(Binary(16), primary_key=True, default=uuidAsBytes)
+	testrunName = Column(String(32), nullable=False)
+	logfileName = Column(String(1024), nullable=False)
 	startTime = Column(DateTime, nullable=False)
 	endTime = Column(DateTime, nullable=False)
-	dataFile = Column(String, nullable=True)
+	dataFile = Column(String(1024), nullable=True)
 	statusOk = Column(Integer, nullable=False)
 	statusFailed = Column(Integer, nullable=False)
 	statusPaused = Column(Integer, nullable=False)
@@ -83,9 +90,9 @@ class GlobalAttribute(base):
 	__tablename__ = 'globals'
 	# columns
 	id = Column(Integer, primary_key=True)
-	name = Column(String, nullable=False)
-	value = Column(String, nullable=True)
-	testrun_id = Column(LargeBinary, ForeignKey('testruns.id'), nullable=False)
+	name = Column(String(64), nullable=False)
+	value = Column(String(1024), nullable=True)
+	testrun_id = Column(Binary(16), ForeignKey('testruns.id'), nullable=False)
 	# relationships
 	testrun = relationship('TestrunLog', foreign_keys=[testrun_id])
 
@@ -101,8 +108,8 @@ class TestCaseSequenceLog(base):
 
 	__tablename__ = 'testCaseSequences'
 	# columns
-	id = Column(LargeBinary, primary_key=True, default=uuidAsBytes)
-	testrun_id = Column(LargeBinary, ForeignKey('testruns.id'), nullable=False)
+	id = Column(Binary(16), primary_key=True, default=uuidAsBytes)
+	testrun_id = Column(Binary(16), ForeignKey('testruns.id'), nullable=False)
 	# relationships
 	testrun = relationship('TestrunLog', foreign_keys=[testrun_id])
 	testcases = relationship('TestCaseLog')
@@ -127,8 +134,8 @@ class TestCaseLog(base):
 	#
 	__tablename__ = 'testCases'
 	# columns
-	id = Column(LargeBinary, primary_key=True, default=uuidAsBytes)
-	testcase_sequence_id = Column(LargeBinary, ForeignKey('testCaseSequences.id'), nullable=False)
+	id = Column(Binary(16), primary_key=True, default=uuidAsBytes)
+	testcase_sequence_id = Column(Binary(16), ForeignKey('testCaseSequences.id'), nullable=False)
 	# relationships
 	testcase_sequence = relationship('TestCaseSequenceLog', foreign_keys=[testcase_sequence_id])
 	fields = relationship('TestCaseField')
@@ -152,9 +159,9 @@ class TestCaseField(base):
 	__tablename__ = 'testCaseFields'
 	# columns
 	id = Column(Integer, primary_key=True)
-	name = Column(String, nullable=False)
-	value = Column(String, nullable=True)
-	testcase_id = Column(LargeBinary, ForeignKey('testCases.id'), nullable=False)
+	name = Column(String(64), nullable=False)
+	value = Column(String(1024), nullable=True)
+	testcase_id = Column(Binary(16), ForeignKey('testCases.id'), nullable=False)
 	# relationships
 	testcase = relationship('TestCaseLog', foreign_keys=[testcase_id])
 
@@ -165,18 +172,18 @@ class TestCaseNetworkInfo(base):
 	__tablename__ = 'networkInfo'
 	# columns
 	id = Column(Integer, primary_key=True)
-	browserName = Column(String, nullable=True)
+	browserName = Column(String(64), nullable=True)
 	status = Column(Integer, nullable=True)
-	method = Column(String, nullable=True)
-	url = Column(String, nullable=True)
-	contentType = Column(String, nullable=True)
+	method = Column(String(16), nullable=True)
+	url = Column(String(256), nullable=True)
+	contentType = Column(String(64), nullable=True)
 	contentSize = Column(Integer, nullable=True)
-	headers = Column(String, nullable=True)
-	params = Column(String, nullable=True)
-	response = Column(String, nullable=True)
+	headers = Column(String(4096), nullable=True)
+	params = Column(String(1024), nullable=True)
+	response = Column(String(4096), nullable=True)
 	startDateTime = Column(DateTime, nullable=True)
 	duration = Column(Integer, nullable=True)
-	testcase_id = Column(LargeBinary, ForeignKey('testCases.id'), nullable=True)
+	testcase_id = Column(Binary(16), ForeignKey('testCases.id'), nullable=True)
 	# relationships
 	testcase = relationship('TestCaseLog', foreign_keys=[testcase_id])
 

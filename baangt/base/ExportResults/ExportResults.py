@@ -35,6 +35,7 @@ class ExportResults:
         self.testRunName = self.testRunInstance.testRunName
         self.dataRecords = self.testRunInstance.dataRecords
         self.stage = self.__getStageFromDataRecordsOrGlobalSettings()
+        self.logfile = logger.handlers[1].baseFilename
 
         try:
             self.exportFormat = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.EXPORT_FORMAT)
@@ -153,20 +154,17 @@ class ExportResults:
             if value[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_WAITING:
                 waiting += 1
 
-        # get documents
-        datafiles = self.fileName
-
         # create testrun object
         tr_log = TestrunLog(
             id=self.testRunInstance.uuid.bytes,
             testrunName=self.testRunName,
-            logfileName=logger.handlers[1].baseFilename,
+            logfileName=self.logfile,
             startTime=datetime.strptime(start, "%d-%m-%Y %H:%M:%S"),
             endTime=datetime.strptime(end, "%d-%m-%Y %H:%M:%S"),
             statusOk=success,
             statusFailed=error,
             statusPaused=waiting,
-            dataFile=datafiles,
+            dataFile=self.fileName,
         )
         # add to DataBase
         session.add(tr_log)
@@ -180,7 +178,7 @@ class ExportResults:
             )
             session.add(globalVar)
 
-        self.__save_commit(session)
+        #self.__save_commit(session)
 
         # create testcase sequence instance
         tcs_log = TestCaseSequenceLog(testrun=tr_log)
@@ -226,6 +224,7 @@ class ExportResults:
 
         self.__save_commit(session)
 
+    
     def __save_commit(self, session):
         try:
             session.commit()
@@ -233,6 +232,7 @@ class ExportResults:
             logger.critical(f"Integrity Error during commit to database: {e}")
         except Exception as e:
             logger.critical(f"Unknown error during database commit: {e}")
+    
 
     def _get_test_case_num(self, start_date_time, browser_name):
         d_t = parse(start_date_time)
