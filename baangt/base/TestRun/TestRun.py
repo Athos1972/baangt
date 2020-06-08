@@ -91,6 +91,8 @@ class TestRun:
         self.tearDown()
 
         if ".csv" in self.results.fileName:
+            # If output file is of CSV Format then we are creating a temporary xlsx file which is just used to
+            # send reports and get deleted after that.
             temp_file = self.results.fileName + ".xlsx"
             self.results.workbook = xlsxwriter.Workbook(temp_file)
             self.results.summarySheet = self.results.workbook.add_worksheet("Summary")
