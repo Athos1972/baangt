@@ -38,6 +38,8 @@ class ExportResults:
         self.stage = self.__getStageFromDataRecordsOrGlobalSettings()
         self.statistics = Statistics()
         self.statistics.update_data(kwargs)
+        self.logfile = logger.handlers[1].baseFilename
+
         try:
             self.exportFormat = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.EXPORT_FORMAT)
             if isinstance(self.exportFormat, dict):
@@ -171,13 +173,13 @@ class ExportResults:
         tr_log = TestrunLog(
             id=self.testRunInstance.uuid.bytes,
             testrunName=self.testRunName,
-            logfileName=logger.handlers[1].baseFilename,
+            logfileName=self.logfile,
             startTime=datetime.strptime(start, "%d-%m-%Y %H:%M:%S"),
             endTime=datetime.strptime(end, "%d-%m-%Y %H:%M:%S"),
             statusOk=success,
             statusFailed=error,
             statusPaused=waiting,
-            dataFile=datafiles,
+            dataFile=self.fileName,
         )
         # add to DataBase
         session.add(tr_log)
