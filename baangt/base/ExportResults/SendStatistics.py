@@ -1,7 +1,8 @@
 import json
 import logging
 import requests
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
+from typing import Dict
 
 
 logger = logging.getLogger("pyC")
@@ -15,8 +16,12 @@ class Singleton(type):
         return cls._instances[cls]
 
 
+def default_field(obj):
+    return field(default_factory=lambda: obj)
+
 @dataclass
 class Statistics(metaclass=Singleton):
+    Activity: Dict[str, int] = default_field({})
     # TestCaseType
     Browser: int = 0
     api: int = 0
@@ -29,35 +34,6 @@ class Statistics(metaclass=Singleton):
     TestCaseFailed: int = 0
     TestCasePaused: int = 0
     TestCaseClass: str = ""
-    # Activity
-    Activity_GOTOURL: int = 0
-    Activity_SETTEXT: int = 0
-    Activity_SETTEXTIF: int = 0
-    Activity_FORCETEXT: int = 0
-    Activity_SETANCHOR: int = 0
-    Activity_HANDLEIFRAME: int = 0
-    Activity_SWITCHWINDOW: int = 0
-    Activity_CLICK: int = 0
-    Activity_CLICKIF: int = 0
-    Activity_PAUSE: int = 0
-    Activity_IF: int = 0
-    Activity_ENDIF: int = 0
-    Activity_GOBACK: int = 0
-    Activity_APIURL: int = 0
-    Activity_ENDPOINT: int = 0
-    Activity_POST: int = 0
-    Activity_GET: int = 0
-    Activity_HEADER: int = 0
-    Activity_SAVE: int = 0
-    Activity_CLEAR: int = 0
-    Activity_SAVETO: int = 0
-    Activity_SUBMIT: int = 0
-    Activity_ADDRESS_CREATE: int = 0
-    Activity_ASSERT: int = 0
-    Activity_IBAN: int = 0
-    Activity_PDFCOMPARE: int = 0
-    Activity_CHECKLINKS: int = 0
-    Activity_ALERTIF: int = 0
     # LocatorType
     XPATH: int = 0
     CSS: int = 0
@@ -118,9 +94,14 @@ class Statistics(metaclass=Singleton):
 
     def update_attribute(self, string, prefix=""):
         string = prefix+string
-        var = getattr(self, string)
-        var += 1
-        setattr(self, string, var)
+        if prefix == "Activity_":
+            if string not in self.Activity:
+                self.Activity[string] = 0
+            self.Activity[string] += 1
+        else:
+            var = getattr(self, string)
+            var += 1
+            setattr(self, string, var)
 
     def update_attribute_with_value(self, string, value):
         setattr(self, string, value)
@@ -128,14 +109,20 @@ class Statistics(metaclass=Singleton):
     def to_dict(self):
         removeable = []
         dic = asdict(self)
+        new_dic = {}
         for key in dic:
             if key[0] == "-":
-                continue
+                removeable.append(key)
             if dic[key] == 0 or dic[key] == "":
                 removeable.append(key)
-        for key in removeable:
-            del dic[key]
-        return dic
+            if type(dic[key]) == dict:
+                for ky in dic[key]:
+                    new_dic[ky] = dic[key][ky]
+                removeable.append(key)
+        for key in dic:
+            if key not in removeable:
+                new_dic[key] = dic[key]
+        return new_dic
 
     def send_statistics(self, test=False):
         payload = self.to_dict()
