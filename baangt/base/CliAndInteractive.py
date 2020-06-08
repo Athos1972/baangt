@@ -117,7 +117,7 @@ def run():
         if platform.system() == "Linux":
             QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
         elif platform.system() == "Darwin":
-            QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('macintosh'))
+            QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Windows'))
         controller = MainController()
         controller.show_main()
         sys.exit(app.exec_())
