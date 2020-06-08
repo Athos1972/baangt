@@ -11,6 +11,8 @@ from baangt.TestCase.TestCaseMaster import TestCaseMaster
 from baangt.TestCaseSequence.TestCaseSequenceMaster import TestCaseSequenceMaster
 from baangt.base.ProxyRotate import ProxyRotate
 from baangt.base.FilesOpen import FilesOpen
+import xlsxwriter
+import os
 import json
 import logging
 from pathlib import Path
@@ -87,12 +89,28 @@ class TestRun:
 
         self.executeTestSequence()
         self.tearDown()
-        if self.results.fileName[-4:] == "xlsx":
+
+        if ".csv" in self.results.fileName:
+            temp_file = self.results.fileName + ".xlsx"
+            self.results.workbook = xlsxwriter.Workbook(temp_file)
+            self.results.summarySheet = self.results.workbook.add_worksheet("Summary")
+            self.results.cellFormatGreen = self.results.workbook.add_format()
+            self.results.cellFormatGreen.set_bg_color('green')
+            self.results.cellFormatRed = self.results.workbook.add_format()
+            self.results.cellFormatRed.set_bg_color('red')
+            self.results.cellFormatBold = self.results.workbook.add_format()
+            self.results.cellFormatBold.set_bold(bold=True)
+            self.results.summaryRow = 0
+            self.results.makeSummaryExcel()
+            self.results.closeExcel()
+            send_stats = Sender(self.globalSettings, temp_file)
+            os.remove(temp_file)
+        else:
             send_stats = Sender(self.globalSettings, self.results.fileName)
-            send_stats.sendMail()
-            send_stats.sendMsTeam()
-            send_stats.sendSlack()
-            send_stats.sendTelegram()
+        send_stats.sendMail()
+        send_stats.sendMsTeam()
+        send_stats.sendSlack()
+        send_stats.sendTelegram()
 
     def append1DTestCaseEndDateTimes(self, dt):
         self.testCasesEndDateTimes_1D.append(dt)

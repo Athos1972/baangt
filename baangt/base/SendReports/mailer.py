@@ -1,5 +1,5 @@
 import requests
-import xlrd
+import os
 import json
 import hashlib
 import logging
@@ -43,11 +43,14 @@ class SendMail:
 
     def generate_files(self):
         """Create Files parameter for request, will send json along with xlsx(attachment) file"""
-        if self.attachment == "True" or self.attachment is True:
-            self.files = {'xlsx': (self.filename,
-                              open(self.filename, 'rb'),
-                              'application/vnd.ms-excel', {'Expires': '0'}),
-                     'json': ('json', self.json_data, 'application/json')}
+        if os.path.exists(self.filename):
+            if self.attachment == "True" or self.attachment is True:
+                self.files = {'xlsx': (self.filename,
+                                  open(self.filename, 'rb'),
+                                  'application/vnd.ms-excel', {'Expires': '0'}),
+                        'json': ('json', self.json_data, 'application/json')}
+            else:
+                self.files = {'json': ('json', self.json_data, 'application/json')}
         else:
             self.files = {'json': ('json', self.json_data, 'application/json')}
 
