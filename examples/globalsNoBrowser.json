@@ -9,7 +9,7 @@
     "TC.BrowserWindowSize": "1024x768",
     "TC.LogLevel": "Debug",
     "Stage": "Test",
-    "SendMailTo": "randomthings2206@gmail.com",
+    "SendMailTo": "",
     "MsWebHook": "",
     "SlackWebHook": "",
     "TelegramBot": "",
