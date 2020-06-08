@@ -91,6 +91,8 @@ class TestRun:
         self.tearDown()
 
         if ".csv" in self.results.fileName:
+            # If output file is of CSV Format then we are creating a temporary xlsx file which is just used to
+            # send reports and get deleted after that.
             temp_file = self.results.fileName + ".xlsx"
             self.results.workbook = xlsxwriter.Workbook(temp_file)
             self.results.summarySheet = self.results.workbook.add_worksheet("Summary")
@@ -103,7 +105,7 @@ class TestRun:
             self.results.summaryRow = 0
             self.results.makeSummaryExcel()
             self.results.closeExcel()
-            send_stats = Sender(self.globalSettings, temp_file)
+            send_stats = Sender(self.globalSettings, temp_file, self.results.fileName)
             os.remove(temp_file)
         else:
             send_stats = Sender(self.globalSettings, self.results.fileName)

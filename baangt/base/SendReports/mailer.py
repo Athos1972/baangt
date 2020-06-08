@@ -9,9 +9,13 @@ logger = logging.getLogger('pyC')
 
 
 class SendMail:
-    def __init__(self, settings, filename, subject, body):
+    def __init__(self, settings, filename, subject, body, attach_file=""):
         self.globalSettings = settings
         self.filename = filename
+        if attach_file == "":
+            self.attach_file = filename
+        else:
+            self.attach_file = attach_file
         self.attachment = self.globalSettings.get("NotificationWithAttachment")
         self.url = "https://mgw.baangt.org"
         self.subject = subject
@@ -43,15 +47,18 @@ class SendMail:
 
     def generate_files(self):
         """Create Files parameter for request, will send json along with xlsx(attachment) file"""
-        if os.path.exists(self.filename):
+        if os.path.exists(self.attach_file):
             if self.attachment == "True" or self.attachment is True:
-                self.files = {'xlsx': (self.filename,
-                                  open(self.filename, 'rb'),
+                self.files = {'xlsx': (self.attach_file,
+                                  open(self.attach_file, 'rb'),
                                   'application/vnd.ms-excel', {'Expires': '0'}),
                         'json': ('json', self.json_data, 'application/json')}
+                print(f"sending {self.attach_file}")
             else:
+                print("no attachment")
                 self.files = {'json': ('json', self.json_data, 'application/json')}
         else:
+            logger.info(f"File not exist {self.attach_file}")
             self.files = {'json': ('json', self.json_data, 'application/json')}
 
     def send_mail(self):

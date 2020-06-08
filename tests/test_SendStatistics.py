@@ -16,13 +16,13 @@ kwargs_file.close()
 
 def test_update_data():
     stats.update_data(kwargs)
-    assert stats.Activity_CLICK == 30
+    assert stats.Activity["Activity_CLICK"] == 30
 
 
 def test_update_attribute():
     stats.update_attribute("CLICK", prefix="Activity_")
     stats.update_attribute("Browser")
-    assert stats.Activity_CLICK == 31 and stats.Browser == 2
+    assert stats.Activity["Activity_CLICK"] == 31 and stats.Browser == 2
 
 
 def test_to_dict():

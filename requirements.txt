@@ -10,7 +10,7 @@ openpyxl>=3.0.3
 Pillow>=7.1.2
 pyperclip>=1.8.0
 pluggy>=0.13.1
-PyQt5>=5.1.14
+PyQt5==5.14.2
 requests>=2.23.0
 requests-toolbelt>=0.9.1
 schwifty>=2020.5.2

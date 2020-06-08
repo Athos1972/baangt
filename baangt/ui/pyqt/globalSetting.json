@@ -141,12 +141,49 @@
             "default": "",
             "displayText": "Datafile"
         },
-        "TC.LogLevel": {
-            "hint": "Set the level of logging. Standard = 'debug'. For production you might want to change to another value",
-            "type": "select",
+        "SendMailTo": {
+            "hint": "Email address where you want to send mail. Empty for no usage. If multiple addresses then use comma as seperator.\nE.g. = example1@xyz.com, example2@xyz.com",
+            "type": "text",
             "default": "",
-            "options": ["", "Debug", "Info", "Warning", "Error"],
-            "displayText": "LogLevel"
+            "displayText": "Recipient(s)"
+        },
+        "NotificationWithAttachment": {
+            "hint": "True if you want to attach report file with mail.",
+            "type": "bool",
+            "default": "False",
+            "options": ["True", "False" ],
+            "displayText": "Attach Report file"
+        },
+        "MsWebHook": {
+            "hint": "Webhook URL of your MsTeam channel where you want to send the report. Empty for no usage",
+            "type": "text",
+            "default": "",
+            "displayText": "MsTeam"
+        },
+        "SlackWebHook": {
+            "hint": "Webhook URL of your slack channel where you want to send the report. Empty for no usage",
+            "type": "text",
+            "default": "",
+            "displayText": "Slack"
+        },
+        "TelegramBot": {
+            "hint": "Api token of telegram bot which is administrator of all channels where you need to send report. Empty for no usage.",
+            "type": "text",
+            "default": "",
+            "displayText": "Telegram Bot"
+        },
+        "TelegramChannel": {
+            "hint": "Name of telegram channel where you want to send the report. If multiple channels then seperate them from comma.\nE.g. = channel_1, channel_2",
+            "type": "text",
+            "default": "",
+            "displayText": "Telgram Channel(s)"
+        },
+        "DeactivateStatistics": {
+            "hint": "We send statistics to our server containing only type of run to know where we should focus & improve more.\nWe don't send any personal data. You can see the data sent to server in logs(debug) for further reference.\nTrue for deactivating it.",
+            "type": "bool",
+            "default": "False",
+            "options": ["True", "False" ],
+            "displayText": "DeactivateStatistics"
         }
     }
 }
