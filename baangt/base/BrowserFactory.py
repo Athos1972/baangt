@@ -156,6 +156,10 @@ class BrowserFactory:
             for browserInstance in self.browser.keys():
                 self.browser[browserInstance].closeBrowser()
 
+        elif self.globalSettings.get("TC." + GC.EXECUTION_DONTCLOSEBROWSER) == "False":
+            for browserInstance in self.browser.keys():
+                self.browser[browserInstance].closeBrowser()
+
         if self.browserServer:
             network_info = [info.har if info else {} for info in self.browsersMobProxies.values()]
             self.browserServer.stop()

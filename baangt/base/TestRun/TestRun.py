@@ -86,9 +86,13 @@ class TestRun:
         self._loadExcelTestRunDefinitions()
 
         self.browserFactory = BrowserFactory(self)
+        try:
+            self.executeTestSequence()
+            self.tearDown()
+        except:
+            logger.info("Exception block executed")
+            self.browserFactory.teardown()
 
-        self.executeTestSequence()
-        self.tearDown()
 
         if ".csv" in self.results.fileName:
             # If output file is of CSV Format then we are creating a temporary xlsx file which is just used to

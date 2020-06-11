@@ -208,6 +208,7 @@ class BrowserDriver:
         self.statistics.update_teststep()
         try:
             if self.browserData.driver:
+                self.browserData.driver.close()
                 self.browserData.driver.quit()
                 self.browserData.driver = None
         except Exception as ex:

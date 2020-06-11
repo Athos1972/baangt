@@ -21,6 +21,7 @@ from dateutil.parser import parse
 from uuid import uuid4
 from pathlib import Path
 from baangt.base.ExportResults.SendStatistics import Statistics
+from baangt.base.RuntimeStatistics import Statistic
 
 logger = logging.getLogger("pyC")
 
@@ -38,6 +39,7 @@ class ExportResults:
         self.stage = self.__getStageFromDataRecordsOrGlobalSettings()
         self.statistics = Statistics()
         self.statistics.update_data(kwargs)
+        self.statistics.update_runtimeStatistic()
         self.logfile = logger.handlers[1].baseFilename
 
         try:

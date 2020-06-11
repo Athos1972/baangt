@@ -519,7 +519,69 @@ class MainWindow(Ui_MainWindow):
 
     @pyqtSlot()
     def stopButtonPressed(self):
-        self.run_process.kill()
+        if platform.system() == "Windows":
+            self.signalCtrl(self.run_process)
+            try:
+                os.remove(Path(self.directory).joinpath(self.tempConfigFile))
+            except Exception as e:
+                logger.warning(f"Tried to remove temporary file but seems to be not there: "
+                               f"{self.directory}/{self.tempConfigFile}")
+            QtWidgets.QApplication.exit()
+        else:
+            self.run_process.terminate()
+            self.run_process.waitForFinished(3000)
+            self.run_process.kill()
+
+
+    def signalCtrl(self, qProcess, ctrlEvent=None):
+        import win32console, win32process, win32api, win32con
+        if ctrlEvent is None:
+            ctrlEvent = win32con.CTRL_C_EVENT
+
+        has_console = False
+        try:
+            win32console.AllocConsole()
+        except win32api.error:
+            has_console = True
+        if not has_console:
+            # free the dummy console
+            try:
+                win32console.FreeConsole()
+            except win32api.error:
+                return False
+
+        if has_console:
+            # preserve the console in a dummy process
+            try:
+                hProc, _, pid, _ = win32process.CreateProcess(
+                    None, "cmd.exe", None, None, True, win32con.DETACHED_PROCESS,
+                    None, 'c:\\', win32process.STARTUPINFO())
+                win32console.FreeConsole()
+            except win32api.error:
+                return False
+
+        try:
+            # attach to the process's console and generate the event
+            win32console.AttachConsole(qProcess.processId())
+            # Add a fake Ctrl-C handler for avoid instant kill is this console
+            win32api.SetConsoleCtrlHandler(None, True)
+            win32console.GenerateConsoleCtrlEvent(ctrlEvent, 0)
+            win32console.FreeConsole()
+        except win32api.error:
+            return False
+
+        if not has_console:
+            # we have no console to restore
+            return True
+
+        try:
+            # attach to the dummy process's console and end the process
+            win32console.AttachConsole(pid)
+            win32process.TerminateProcess(hProc, 1)
+        except Exception as ex:
+            return False
+        return True
+
 
     @pyqtSlot()
     def processFinished(self, debug=False):

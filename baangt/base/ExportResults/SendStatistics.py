@@ -3,6 +3,7 @@ import logging
 import requests
 from dataclasses import dataclass, asdict, field
 from typing import Dict
+from baangt.base.RuntimeStatistics import Statistic
 
 
 logger = logging.getLogger("pyC")
@@ -34,6 +35,10 @@ class Statistics(metaclass=Singleton):
     TestCaseFailed: int = 0
     TestCasePaused: int = 0
     TestCaseClass: str = ""
+    TestStepMaster: Dict[str, int] = default_field({})
+    TestStepSequences: int = 0
+    TestSteps: int = 0
+    TestCaseSequences: int = 0
     # LocatorType
     XPATH: int = 0
     CSS: int = 0
@@ -56,6 +61,12 @@ class Statistics(metaclass=Singleton):
         self.TestCaseClass = Statistics.get_value(dic, "TestCaseClass")
         TestCaseType = Statistics.get_value(dic, "TestCaseType")
         TestStep = Statistics.get_value(dic, "TestStepExecutionParameters")
+        TestStepMaster_lis = Statistics.get_value(dic, "TestStepClass", lis=True)
+        for value in TestStepMaster_lis:
+            if value not in self.TestStepMaster:
+                self.TestStepMaster[value] = 1
+            else:
+                self.TestStepMaster[value] += 1
 
         if len(TestCaseType) > 0:
             self.update_attribute(TestCaseType)
@@ -105,6 +116,12 @@ class Statistics(metaclass=Singleton):
 
     def update_attribute_with_value(self, string, value):
         setattr(self, string, value)
+        
+    def update_runtimeStatistic(self):
+        runtimeStats = Statistic()
+        self.TestCaseSequences = runtimeStats.testcase_sequence_executed
+        self.TestSteps = runtimeStats.teststep_executed
+        self.TestStepSequences = runtimeStats.teststep_sequence_executed
 
     def to_dict(self):
         removeable = []
@@ -115,7 +132,7 @@ class Statistics(metaclass=Singleton):
                 removeable.append(key)
             if dic[key] == 0 or dic[key] == "":
                 removeable.append(key)
-            if type(dic[key]) == dict:
+            if key == "Activity":
                 for ky in dic[key]:
                     new_dic[ky] = dic[key][ky]
                 removeable.append(key)
@@ -126,7 +143,8 @@ class Statistics(metaclass=Singleton):
 
     def send_statistics(self, test=False):
         payload = self.to_dict()
-        res = requests.post("https://stats.baangt.org", json=payload)
+        #res = requests.post("https://stats.baangt.org", json=payload)
+        res = requests.post("http://127.0.0.1:5000", json=payload)
         if test:
             return res
         logger.debug(f"Statistics sent to server = {json.dumps(payload)}")
@@ -146,8 +164,15 @@ class Statistics(metaclass=Singleton):
                 yield key, value
 
     @staticmethod
-    def get_value(dictionary, get_key):
+    def get_value(dictionary, get_key, lis=False):
+        if lis:
+            dic_lis = []
         for key, value in Statistics.recursive_items(dictionary):
             if key == get_key:
-                return value
+                if lis:
+                    dic_lis.append(value)
+                else:
+                    return value
+        if lis:
+            return dic_lis
         return ""
