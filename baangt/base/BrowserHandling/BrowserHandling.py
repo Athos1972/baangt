@@ -212,6 +212,7 @@ class BrowserDriver:
                 self.browserData.driver.quit()
                 self.browserData.driver = None
         except Exception as ex:
+            logger.debug(ex)
             pass  # If the driver is already dead, it's fine.
 
 

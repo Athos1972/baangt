@@ -2,6 +2,7 @@ import os
 import csv
 import xlrd
 import json
+import xlsxwriter
 import logging
 import requests
 import pymsteams
@@ -161,5 +162,43 @@ class Sender:
         lis = string.split(',')
         lis = [data.strip() for data in lis]
         return lis
+
+    @staticmethod
+    def send_all(results, globalSettings):
+        if ".csv" in results.fileName:
+            # If output file is of CSV Format then we are creating a temporary xlsx file which is just used to
+            # send reports and get deleted after that.
+            temp_file = results.fileName + ".xlsx"
+            results.workbook = xlsxwriter.Workbook(temp_file)
+            results.summarySheet = results.workbook.add_worksheet("Summary")
+            results.cellFormatGreen = results.workbook.add_format()
+            results.cellFormatGreen.set_bg_color('green')
+            results.cellFormatRed = results.workbook.add_format()
+            results.cellFormatRed.set_bg_color('red')
+            results.cellFormatBold = results.workbook.add_format()
+            results.cellFormatBold.set_bold(bold=True)
+            results.summaryRow = 0
+            results.makeSummaryExcel()
+            results.closeExcel()
+            send_stats = Sender(globalSettings, temp_file, results.fileName)
+            os.remove(temp_file)
+        else:
+            send_stats = Sender(globalSettings, results.fileName)
+        try:
+            send_stats.sendMail()
+        except Exception as ex:
+            logger.debug(ex)
+        try:
+            send_stats.sendMsTeam()
+        except Exception as ex:
+            logger.debug(ex)
+        try:
+            send_stats.sendSlack()
+        except Exception as ex:
+            logger.debug(ex)
+        try:
+            send_stats.sendTelegram()
+        except Exception as ex:
+            logger.debug(ex)
 
 

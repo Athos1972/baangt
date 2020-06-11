@@ -93,30 +93,10 @@ class TestRun:
             logger.info("Exception block executed")
             self.browserFactory.teardown()
 
-
-        if ".csv" in self.results.fileName:
-            # If output file is of CSV Format then we are creating a temporary xlsx file which is just used to
-            # send reports and get deleted after that.
-            temp_file = self.results.fileName + ".xlsx"
-            self.results.workbook = xlsxwriter.Workbook(temp_file)
-            self.results.summarySheet = self.results.workbook.add_worksheet("Summary")
-            self.results.cellFormatGreen = self.results.workbook.add_format()
-            self.results.cellFormatGreen.set_bg_color('green')
-            self.results.cellFormatRed = self.results.workbook.add_format()
-            self.results.cellFormatRed.set_bg_color('red')
-            self.results.cellFormatBold = self.results.workbook.add_format()
-            self.results.cellFormatBold.set_bold(bold=True)
-            self.results.summaryRow = 0
-            self.results.makeSummaryExcel()
-            self.results.closeExcel()
-            send_stats = Sender(self.globalSettings, temp_file, self.results.fileName)
-            os.remove(temp_file)
-        else:
-            send_stats = Sender(self.globalSettings, self.results.fileName)
-        send_stats.sendMail()
-        send_stats.sendMsTeam()
-        send_stats.sendSlack()
-        send_stats.sendTelegram()
+        try:
+            Sender.send_all(self.results, self.globalSettings)
+        except Exception as ex:
+            logger.debug(ex)
 
     def append1DTestCaseEndDateTimes(self, dt):
         self.testCasesEndDateTimes_1D.append(dt)

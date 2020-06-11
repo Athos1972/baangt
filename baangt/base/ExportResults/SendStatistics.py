@@ -143,8 +143,7 @@ class Statistics(metaclass=Singleton):
 
     def send_statistics(self, test=False):
         payload = self.to_dict()
-        #res = requests.post("https://stats.baangt.org", json=payload)
-        res = requests.post("http://127.0.0.1:5000", json=payload)
+        res = requests.post("https://stats.baangt.org", json=payload)
         if test:
             return res
         logger.debug(f"Statistics sent to server = {json.dumps(payload)}")

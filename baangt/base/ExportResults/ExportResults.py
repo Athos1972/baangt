@@ -95,7 +95,10 @@ class ExportResults:
         elif self.testRunInstance.globalSettings.get("DeactivateStatistics") is True:
             logger.debug("Send Statistics to server is deactive")
         else:
-            self.statistics.send_statistics()
+            try:
+                self.statistics.send_statistics()
+            except Exception as ex:
+                logger.debug(ex)
         #self.exportToDataBase()
 
     def exportAdditionalData(self):
