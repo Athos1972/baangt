@@ -89,8 +89,8 @@ class TestRun:
         try:
             self.executeTestSequence()
             self.tearDown()
-        except:
-            logger.info("Exception block executed")
+        except Exception as e:
+            logger.info(f"Exception block executed. Exception was: {e}")
             self.browserFactory.teardown()
 
         try:
