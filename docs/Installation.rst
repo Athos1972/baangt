@@ -7,7 +7,7 @@ Run the executables
 -------------------
 
 Installing the executables for your operating system (MacOS, Windows, Ubuntu) is simple. Head over to
-https://github.com/Athos1972/baangt/tree/master/executables select the archive for your operating system,
+https://github.com/Athos1972/baangt-executables select the archive for your operating system,
 download to your local computer and unzip.
 
 In the new folder you'll find ``baangt`` executable. Click on it and explore examples in ``/examples`` folder.

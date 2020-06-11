@@ -184,6 +184,13 @@
             "default": "False",
             "options": ["True", "False" ],
             "displayText": "DeactivateStatistics"
+        },
+        "TC.LogLevel": {
+            "hint": "Set the level of logging. Standard = 'debug'. For production you might want to change to another value",
+            "type": "select",
+            "default": "",
+            "options": ["", "Debug", "Info", "Warning", "Error"],
+            "displayText": "LogLevel"
         }
     }
 }
