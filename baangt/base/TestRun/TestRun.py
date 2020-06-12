@@ -72,6 +72,7 @@ class TestRun:
         self.additionalExportTabs = {}
         self.statistics = Statistic()
         signal.signal(signal.SIGINT, self.exit_signal_handler)
+        signal.signal(signal.SIGTERM, self.exit_signal_handler)
 
         # Initialize other values
         self.timing.takeTime(GC.TIMING_TESTRUN)               # Initialize Testrun Duration
