@@ -372,6 +372,8 @@ class BrowserDriver:
         Please see documentation in findBy and __doSomething
         """
         self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
+        if not self.element:
+            return False
 
         return webDrv.webdriver_doSomething(GC.CMD_SETTEXT, self.element, value=value, timeout=timeout, optional=optional, browserData = self.browserData)
 
