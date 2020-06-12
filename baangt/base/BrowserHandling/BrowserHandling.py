@@ -95,8 +95,9 @@ class BrowserDriver:
             if utils.anything2Boolean(mobileType):
                 self.browserData.driver = self._mobileConnectAppium(browserName, desired_app, mobileApp, mobile_app_setting)
             elif GC.BROWSER_FIREFOX == browserName:
-                self.browserData.driver  = self._browserFirefoxRun(browserName, lCurPath, browserProxy, randomProxy, desiredCapabilities)
+                self.browserData.driver = self._browserFirefoxRun(browserName, lCurPath, browserProxy, randomProxy, desiredCapabilities)
                 helper.browserHelper_startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance, browserProxy=browserProxy)
+                self.bpid = self.browserData.driver.capabilities.get("moz:processID")
             elif GC.BROWSER_CHROME == browserName:
                 self.browserData.driver = self._browserChromeRun(browserName, lCurPath, browserProxy, randomProxy, desiredCapabilities)
                 helper.browserHelper_startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance, browserProxy=browserProxy)
@@ -208,11 +209,16 @@ class BrowserDriver:
         self.statistics.update_teststep()
         try:
             if self.browserData.driver:
+                try:
+                    import signal
+                    os.kill(self.bpid, signal.SIGINT)
+                except Exception as ex:
+                    logger.info(ex)
                 self.browserData.driver.close()
-                self.browserData.driver.quit()
                 self.browserData.driver = None
+
         except Exception as ex:
-            logger.debug(ex)
+            logger.info(ex)
             pass  # If the driver is already dead, it's fine.
 
 

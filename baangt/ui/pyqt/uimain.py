@@ -526,7 +526,8 @@ class MainWindow(Ui_MainWindow):
             except Exception as e:
                 logger.warning(f"Tried to remove temporary file but seems to be not there: "
                                f"{self.directory}/{self.tempConfigFile}")
-            QtWidgets.QApplication.exit()
+            self.run_process.kill()
+            QtWidgets.QApplication.quit()
         else:
             self.run_process.terminate()
             self.run_process.waitForFinished(3000)
@@ -565,6 +566,8 @@ class MainWindow(Ui_MainWindow):
             win32console.AttachConsole(qProcess.processId())
             # Add a fake Ctrl-C handler for avoid instant kill is this console
             win32api.SetConsoleCtrlHandler(None, True)
+            win32console.GenerateConsoleCtrlEvent(ctrlEvent, 0)
+            sleep(1)
             win32console.GenerateConsoleCtrlEvent(ctrlEvent, 0)
             win32console.FreeConsole()
         except win32api.error:

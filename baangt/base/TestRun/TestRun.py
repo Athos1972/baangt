@@ -25,6 +25,7 @@ from baangt.base.PathManagement import ManagedPaths
 from uuid import uuid4
 from baangt.base.RuntimeStatistics import Statistic
 from baangt.base.SendReports import Sender
+import signal
 
 logger = logging.getLogger("pyC")
 
@@ -70,6 +71,7 @@ class TestRun:
         # from anywhere within your custom code base.
         self.additionalExportTabs = {}
         self.statistics = Statistic()
+        signal.signal(signal.SIGINT, self.exit_signal_handler)
 
         # Initialize other values
         self.timing.takeTime(GC.TIMING_TESTRUN)               # Initialize Testrun Duration
@@ -78,6 +80,9 @@ class TestRun:
         # during Unit-Tests we don't want this behaviour:
         if executeDirect:
             self.executeTestRun()
+
+    def exit_signal_handler(self, signal, frame):
+        self.browserFactory.teardown()
 
     def executeTestRun(self):
         self._initTestRunSettingsFromFile()  # Loads the globals*.json file
