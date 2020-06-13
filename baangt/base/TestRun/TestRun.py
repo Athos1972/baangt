@@ -84,6 +84,7 @@ class TestRun:
 
     def exit_signal_handler(self, signal, frame):
         self.browserFactory.teardown()
+        raise KeyboardInterrupt
 
     def executeTestRun(self):
         self._initTestRunSettingsFromFile()  # Loads the globals*.json file
@@ -92,12 +93,8 @@ class TestRun:
         self._loadExcelTestRunDefinitions()
 
         self.browserFactory = BrowserFactory(self)
-        try:
-            self.executeTestSequence()
-            self.tearDown()
-        except Exception as e:
-            logger.info(f"Exception block executed. Exception was: {e}")
-            self.browserFactory.teardown()
+        self.executeTestSequence()
+        self.tearDown()
 
         try:
             Sender.send_all(self.results, self.globalSettings)
