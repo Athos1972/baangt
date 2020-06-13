@@ -528,6 +528,9 @@ class MainWindow(Ui_MainWindow):
                                f"{self.directory}/{self.tempConfigFile}")
             self.run_process.kill()
             QtWidgets.QApplication.quit()
+        elif platform.system() == "Darwin":
+            import signal
+            os.kill(self.run_process.processId(), signal.SIGINT)
         else:
             self.run_process.terminate()
             self.run_process.waitForFinished(3000)
