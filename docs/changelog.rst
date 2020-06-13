@@ -1,6 +1,35 @@
 Change log
 ==========
 
+1.1.4
+^^^^^^^
+This is the version, that was released as first publicly downloadable version.
+
+Summary:
+++++++++
+Version 1.1.5 includes additional features (collection of everything since 2020.05, including all
+0.9.x and 1.0.x features and bug fixes):
+
+* UI for TestDataGenerator introduced in 2020.05. Reachable directly from baangt UI via cool new button
+* UI: changes to look even better
+* UI: Direct status information about the current test run, including TestSteps, TestStepSequences and log-display
+  (via switch in Testrun-Details).
+* UI: Cleanup-Functionality: Clean files, folders, logs older than a number of days
+* UI: Stop-Button to stop a test run once it was started
+* Possibility to set a switch in TestRun-Details which will show log- and result-file automatically after test run was
+  finished
+* Send test results automatically
+    * via Mail (with/without result file as attachment)
+    * to Microsoft Teams channel
+    * to Telegram channel
+    * to Slack channel
+* Datafiles: RemoteRead implementation to read data randomly from another tab in the same XLSX
+* TDG (TestDataGenerator): Additional features and settings, e.g. Faker-Integration
+* Statistics dashboard showing all your testruns, iterations, OK/NOK/Paused, durations, etc.
+* Switch from default browser Firefox to automatic detection of installed browser if now browser was defined. First we
+  try to detect Firefox, then Chrome.  If none of those two are installed you'll have to download drivers yourself or
+  set the browser to Safari.
+
 2020.05
 ^^^^^^^
 
