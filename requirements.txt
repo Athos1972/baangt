@@ -26,5 +26,3 @@ jinja2>=2.11
 pymsteams>=0.1.12
 slack-webhook>=1.0.3
 psutil>=5.7.0
-pywin32>=227
-pywin32-ctypes==0.2.0
