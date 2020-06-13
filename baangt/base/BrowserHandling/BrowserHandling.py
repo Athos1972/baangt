@@ -103,9 +103,12 @@ class BrowserDriver:
             elif GC.BROWSER_CHROME == browserName:
                 self.browserData.driver = self._browserChromeRun(browserName, lCurPath, browserProxy, randomProxy, desiredCapabilities)
                 helper.browserHelper_startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance, browserProxy=browserProxy)
-                for process in psutil.process_iter():
-                    if process.name() == 'chrome.exe' and '--test-type=webdriver' in process.cmdline():
-                        self.bpid.append(process.pid)
+                try:
+                    port = self.browserData.driver.capabilities['goog:chromeOptions']["debuggerAddress"].split(":")[1]
+                    fp = os.popen(f"lsof -nP -iTCP:{port} | grep LISTEN")
+                    self.bpid.append(int(fp.readlines()[-1].split()[1]))
+                except Exception as ex:
+                    logger.info(ex)
             elif GC.BROWSER_EDGE == browserName:
                 self.browserData.driver = webDrv.BROWSER_DRIVERS[browserName](executable_path = helper.browserHelper_findBrowserDriverPaths(GC.EDGE_DRIVER))
             elif GC.BROWSER_SAFARI == browserName:
