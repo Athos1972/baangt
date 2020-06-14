@@ -218,6 +218,10 @@ class TestStepMaster:
             self.checkLinks()
         elif lActivity == 'ALERTIF':
             self.browserSession.confirmAlertIfAny()
+        elif lActivity == GC.TESTCASESTATUS_STOP.upper():
+            self.testcaseDataDict[GC.TESTCASESTATUS_STOP] = "X"              # will stop the test case
+        elif lActivity == GC.TESTCASESTATUS_STOPERROR.upper():
+            self.testcaseDataDict[GC.TESTCASESTATUS_STOPERROR] = "X"         # will stop the test case and set error
         else:
             raise BaseException(f"Unknown command in TestStep {lActivity}")
 

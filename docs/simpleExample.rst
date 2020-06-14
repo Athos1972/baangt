@@ -251,6 +251,10 @@ More details on Activities
 
             While an anchor is set, ALL location attempts of elements happen within the anchor's children. If you want
             to avoid that, use ```///``` (= 3 slashes instead of 2) to signal the logic to ignore the anchor.
+   * - TCStopTestCase
+     - Will stop the current test case from further execution
+   * - TCStopTestCaseError
+     - Will stop the current test case and set it's status to NOK
    * - address_create
      - provide an easy and easily extendable way to generate address data for a test case
        The following fields variable are stored in testcaseDataDict:
