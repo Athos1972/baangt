@@ -34,6 +34,7 @@ from baangt.TestDataGenerator.TestDataGenerator import TestDataGenerator
 from baangt.base.Utils import utils
 from threading import Thread
 from time import sleep
+import signal
 
 logger = logging.getLogger("pyC")
 
@@ -528,14 +529,10 @@ class MainWindow(Ui_MainWindow):
                                f"{self.directory}/{self.tempConfigFile}")
             self.run_process.kill()
             QtWidgets.QApplication.quit()
-        elif platform.system() == "Darwin":
-            import signal
-            os.kill(self.run_process.processId(), signal.SIGINT)
         else:
-            self.run_process.terminate()
+            os.kill(self.run_process.processId(), signal.SIGINT)
             self.run_process.waitForFinished(3000)
             self.run_process.kill()
-
 
     def signalCtrl(self, qProcess, ctrlEvent=None):
         import win32console, win32process, win32api, win32con

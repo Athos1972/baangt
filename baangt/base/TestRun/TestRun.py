@@ -84,7 +84,6 @@ class TestRun:
 
     def exit_signal_handler(self, signal, frame):
         self.browserFactory.teardown()
-        raise KeyboardInterrupt
 
     def executeTestRun(self):
         self._initTestRunSettingsFromFile()  # Loads the globals*.json file
