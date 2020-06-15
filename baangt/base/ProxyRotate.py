@@ -220,7 +220,7 @@ class ProxyRotate(metaclass=Singleton):
                 self.proxies[proxy.ip] = proxy
                 if proxy.ip not in self.all_proxies:
                     self.all_proxies[proxy.ip] = proxy
-            elif proxy.failed<=GC.PROXY_FAILCOUNTER:
+            elif proxy.failed <= GC.PROXY_FAILCOUNTER:
                 self.proxies[proxy.ip] = proxy
 
         logger.info(f"Total proxies in list currently = {str(len(self.all_proxies))}")
@@ -313,8 +313,8 @@ class ProxyRotate(metaclass=Singleton):
     def remove_proxy(self, ip, port=None, type=None):
         try:
             logger.debug(f"Increase fail count on Proxy with type {type}: {ip}:{port}")
-            self.proxies[ip].Failed()
-            if self.proxies[ip].failed >= GC.PROXY_FAILCOUNTER:
+            self.all_proxies[ip].Failed()
+            if self.all_proxies[ip].failed >= GC.PROXY_FAILCOUNTER:
                 del self.proxies[ip]
                 logger.debug(f"Ip {ip} removed successfully.")
         except Exception as ex:
