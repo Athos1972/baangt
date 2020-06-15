@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 # This Python file uses the following encoding: utf-8
 
 
@@ -57,7 +58,7 @@ class GlobalSettings:
                 globalFile = os.path.join(dirpath, 'globalSetting.json')
             if not os.path.isfile(globalFile):
                 # package attempt is failed
-                dirpath = os.getcwd()
+                dirpath = os.path.realpath(sys.modules['__main__'].__file__)
                 globalFile = os.path.join(os.path.dirname(dirpath), 'globalSetting.json')
             # alert on console if globalSettings not found
             if not os.path.isfile(globalFile):
