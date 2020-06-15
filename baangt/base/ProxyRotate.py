@@ -232,7 +232,10 @@ class ProxyRotate(metaclass=Singleton):
         except Exception as ex:
             logger.debug(f"Proxy not reacting: {proxy}")
             return False
-        if response.status_code >= 400:
+        try:
+            if response.status_code >= 400:
+                return False
+        except:
             return False
         return response
 
