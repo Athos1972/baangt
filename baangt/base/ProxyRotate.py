@@ -204,6 +204,7 @@ class ProxyRotate(metaclass=Singleton):
             for proxy in proxy_lis[:(lineCount + 1)]: 
                 if proxy not in removable:
                     self.proxies[proxy.ip] = proxy
+                    self.all_proxies[proxy.ip] = proxy
                 else:
                     self.__temp_proxies.remove(proxy)
             logger.info(f"Total proxies in list currently = {str(len(self.all_proxies))}")

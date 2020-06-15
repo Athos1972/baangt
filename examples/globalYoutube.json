@@ -1,15 +1,16 @@
 {
     "exportFilesBasePath": "",
     "TC.Lines": "",
-    "TC.dontCloseBrowser": "",
-    "TC.slowExecution": "",
-    "TC.NetworkInfo": "",
-    "TX.DEBUG": "True",
+    "TC.dontCloseBrowser": "False",
+    "TC.slowExecution": "False",
+    "TC.NetworkInfo": "False",
+    "TX.DEBUG": "False",
     "TC.ExportAllFields": "True",
     "TC.RestartBrowser": "True",
     "TC.UseRotatingProxies": "True",
     "TC.ReReadProxies": "True",
-    "TC.BrowserAttributes": "{\"HEADLESS\":\"True\"}",
+    "TC.BrowserAttributes": "",
     "TC.Browser": "",
-    "TC.ParallelRuns": "2"
+    "TC.ParallelRuns": "2",
+    "TC.LogLevel": "Debug"
 }
