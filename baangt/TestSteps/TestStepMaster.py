@@ -78,7 +78,8 @@ class TestStepMaster:
 
         # when we have an IF-condition and it's condition was not TRUE, then skip whatever comes here until we
         # reach Endif
-        if not self.ifIsTrue and command["Activity"] != "ENDIF":
+        if not self.ifIsTrue and command["Activity"].upper() != "ENDIF":
+            logger.debug(f"Ignoring TestStepDetail {commandNumber} due to IF-condition")
             return
         lActivity = command["Activity"].upper()
         if lActivity == "COMMENT":
