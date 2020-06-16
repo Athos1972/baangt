@@ -181,7 +181,6 @@ class TestStepMaster:
         elif lActivity == "PAUSE":
             self.browserSession.sleep(seconds=float(lValue))
         elif lActivity == "IF":
-            self.ifActive = True
             # Originally we had only Comparisons. Now we also want to check for existance of Field
             if not lValue and lLocatorType and lLocator:
                 lValue = self.browserSession.findBy(xpath=xpath, css=css, id=id, optional=lOptional,
@@ -194,9 +193,6 @@ class TestStepMaster:
                 self.manageNestedCondition(condition=lActivity)
                 logger.debug("Executing ELSE-condition")
         elif lActivity == "ENDIF":
-#            if not self.ifActive:
-#                raise BaseException("ENDIF without IF")
-            self.ifActive = False
             self.ifIsTrue = True
             self.elseIsTrue = False
         elif lActivity == 'GOBACK':

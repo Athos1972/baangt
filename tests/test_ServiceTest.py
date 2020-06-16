@@ -243,3 +243,11 @@ def test_full_BaangtWebDemo():
     check_output(output_file)
     os.remove(output_file)
 
+def test_NestedIfElse_with_NoBrowser():
+    run_file = str(input_dir.joinpath("CompleteBaangtWebdemo_else.xlsx"))
+    execute(run_file, globals_file=Path(input_dir).joinpath("globalsNoBrowser.json"))
+    new_file = folder_monitor.getNewFiles()
+    assert new_file
+    output_file = output_dir.joinpath(new_file[0][0]).as_posix()
+    check_output(output_file)
+    os.remove(output_file)
