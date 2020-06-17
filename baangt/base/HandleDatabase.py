@@ -140,6 +140,11 @@ class HandleDatabase:
                         rrd_data = self.__rrd_string_to_python(rrd_string[4:], fileName)
                         for data in rrd_data:
                             new_data_dic[data] = rrd_data[data]
+                    if temp_dic[keys][:4] == "RRE_":
+                        rrd_string = self.__process_rre_string(temp_dic[keys])
+                        rrd_data = self.__rre_string_to_python(rrd_string[4:])
+                        for data in rrd_data:
+                            new_data_dic[data] = rrd_data[data]
             for key in new_data_dic:
                 temp_dic[key] = new_data_dic[key]
 
@@ -158,7 +163,7 @@ class HandleDatabase:
                     lAppend = False
         return lAppend
 
-    def __processRrd(self, sheet_name, data_looking_for, data_to_match: dict):
+    def __processRrd(self, sheet_name, data_looking_for, data_to_match: dict, sheet_dict=None, caller="RRD_"):
         """
         For more detail please refer to TestDataGenerator.py
         :param sheet_name:
@@ -166,9 +171,11 @@ class HandleDatabase:
         :param data_to_match:
         :return: dictionary of TargetData
         """
+        sheet_dict = self.sheet_dict if sheet_dict is None else sheet_dict
         matching_data = [list(x) for x in itertools.product(*[data_to_match[key] for key in data_to_match])]
-        assert sheet_name in self.sheet_dict, f"Excel file doesn't contain {sheet_name} sheet. Please recheck. Called in 'RRD_'"
-        base_sheet = self.sheet_dict[sheet_name]
+        assert sheet_name in sheet_dict, \
+            f"Excel file doesn't contain {sheet_name} sheet. Please recheck. Called in '{caller}'"
+        base_sheet = sheet_dict[sheet_name]
         data_lis = []
         if type(data_looking_for) == str:
             data_looking_for = data_looking_for.split(",")
@@ -218,6 +225,53 @@ class HandleDatabase:
                                        f"{first_value}, {second_value} and {str(evaluated_dict)} " \
                                        f"but didn't find anything"
         return processed_datas[randint(0, len(processed_datas)-1)]
+
+    def __rre_string_to_python(self, raw_data):
+        """
+        Convert string to python data types
+        :param raw_data:
+        :return:
+        """
+        file_name = raw_data[1:-1].split(',')[0].strip()
+        sheet_dict, _ = self.__read_excel(file_name)
+        first_value = raw_data[1:-1].split(',')[1].strip()
+        second_value = raw_data[1:-1].split(',')[2].strip()
+        if second_value[0] == "[":
+            second_value = ','.join(raw_data[1:-1].split(',')[2:]).strip()
+            second_value = second_value[:second_value.index(']') + 1]
+            third_value = [x.strip() for x in ']'.join(raw_data[1:-1].split(']')[1:]).split(',')[1:]]
+        else:
+            third_value = [x.strip() for x in raw_data[1:-1].split(',')[3:]]
+        evaluated_list = ']],'.join(','.join(third_value)[1:-1].strip().split('],')).split('],')
+        if evaluated_list[0] == "":
+            evaluated_dict = {}
+        else:
+            evaluated_dict = {
+                splited_data.split(':')[0]: self.__splitList(splited_data.split(':')[1]) for splited_data in
+                evaluated_list
+            }
+        if second_value[0] == "[" and second_value[-1] == "]":
+            second_value = self.__splitList(second_value)
+        processed_datas = self.__processRrd(first_value, second_value, evaluated_dict, sheet_dict, caller="RRE_")
+        assert len(processed_datas)>0, f"No matching data for RRD_. Please check the input file. Was searching for " \
+                                       f"{first_value}, {second_value} and {str(evaluated_dict)} " \
+                                       f"but didn't find anything"
+        return processed_datas[randint(0, len(processed_datas)-1)]
+
+    def __process_rre_string(self, rre_string):
+        """
+        For more detail please refer to TestDataGenerator.py
+        :param rre_string:
+        :return:
+        """
+        processed_string = ','.join([word.strip() for word in rre_string.split(', ')])
+        match = re.match(
+            r"(RRE_(\(|\[))[\w\d\s\-./\\]+\.(xlsx|xls),[a-zA-z0-9\s]+,(\[?[a-zA-z\s,]+\]?|)|\*,\[([a-zA-z0-9\s]+:\[[a-zA-z0-9,\s]+\](,?))*\]",
+            processed_string)
+        err_string = f"{rre_string} not matching pattern RRE_(fileName, sheetName, TargetData," \
+                     f"[Header1:[Value1],Header2:[Value1,Value2]])"
+        assert match, err_string
+        return processed_string
 
     def __process_rrd_string(self, rrd_string):
         """
