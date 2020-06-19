@@ -175,6 +175,8 @@ class ProxyRotate(metaclass=Singleton):
                     return f"Error code 400 or greater in {proxi}"
                 if proxi.ip in self.all_proxies:
                     self.remove_proxy(proxi.ip)
+                if proxi in self.__temp_proxies:
+                    self.__temp_proxies.remove(proxi)
                 continue
 
             try:
@@ -206,6 +208,8 @@ class ProxyRotate(metaclass=Singleton):
                     return f"Proxy not usable for Youtube: {proxi}, Exception: {ex}"
                 if proxi.ip in self.all_proxies:
                     self.remove_proxy(proxi.ip)
+                if proxi in self.__temp_proxies:
+                    self.__temp_proxies.remove(proxi)
             self.__write_proxies()
         logger.info(f"Total proxies in list currently = {str(len(self.all_proxies))}")
         logger.info(f"Identified {len(self.proxies)} working proxies")
