@@ -108,3 +108,31 @@ def test_rrd_no_data_to_match():
     for data in rrd_output_dict:
         print(data)
 
+def test_rre_simple_input():
+    # Checks __processRrd to get dict to target data
+    rrd_output_dict = testDataGenerator._TestDataGenerator__data_generators(
+        "RRE_[examples/CompleteBaangtWebdemo.xlsx,CustomerData,[NameFirst,NameLast],[Stage:[Test]]]"
+    )
+    assert len(rrd_output_dict) == 5
+    for data in rrd_output_dict:
+        print(data)
+
+
+def test_rre_target_data_all():
+    # Checks __processRrd to get dict to for all data of matching values
+    rrd_output_dict = testDataGenerator._TestDataGenerator__data_generators(
+        "RRE_[examples/CompleteBaangtWebdemo.xlsx,CustomerData,*,[Stage:[Test]]]"
+    )
+    assert len(rrd_output_dict) == 5
+    for data in rrd_output_dict:
+        print(data)
+
+
+def test_rre_no_data_to_match():
+    # Checks __processRrd to get dict to for all data of when no value of matching is given
+    rrd_output_dict = testDataGenerator._TestDataGenerator__data_generators(
+        "RRE_[examples/CompleteBaangtWebdemo.xlsx,CustomerData,*,[]"
+    )
+    assert len(rrd_output_dict) == 10
+    for data in rrd_output_dict:
+        print(data)

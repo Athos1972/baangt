@@ -194,8 +194,8 @@ More details on Activities
        bulletproof test cases.
    * - goBack
      - Trigger the "back"-Button of the browser.
-   * - If/Endif
-     - The block between IF and ENDIF is only executed when the condition evaluated by ``value|comparator|value2`` is
+   * - If/Else/Endif
+     - The block between IF, ELSE and ENDIF is only executed when the condition evaluated by ``value|comparator|value2`` is
        true, for instance:
 
             $(POSTCODE) = 7040
@@ -208,6 +208,8 @@ More details on Activities
 
        Another use of the If-Statement is with ``LocatorType`` and ``Locator`` and comparison. This can be used when you
        want conditional execution of a larger block of statements depending on an element present or not present.
+
+       ``Else`` statement is only executed when if statement is not true.
 
    * - assert
      - Will retrieve value of element specified by ``locator`` and compare with reference value from ``value``.
