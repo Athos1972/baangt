@@ -23,6 +23,10 @@ class TestStepMaster:
         self.testCaseStatus = None
         self.ifActive = False
         self.ifIsTrue = True
+        self.elseIsTrue = False
+        self.ifLis = [self.ifIsTrue]
+        self.elseLis = [self.elseIsTrue]
+        self.ifConditions = 0
         self.baangtFaker = None
         self.statistics = Statistic()
         self.kwargs = kwargs
@@ -70,6 +74,22 @@ class TestStepMaster:
             # self.statistics.update_teststep()  --> Moved to BrowserHandling into the activities themselves,
             # so that we can also count for externally (subclassed) activitis
 
+    def manageNestedCondition(self, condition="", ifis=False):
+        if condition.upper() == "IF":
+            self.ifConditions += 1
+            self.ifLis.append(ifis)
+            self.elseLis.append(False)
+        elif condition.upper() == "ELSE":
+            self.elseLis[-1] = True
+        elif condition.upper() == "ENDIF":
+            self.ifConditions -= 1
+            if self.ifConditions < 0:
+                raise BaseException("Numbers of ENDIF are greater than IF.")
+            self.ifLis.pop()
+            self.elseLis.pop()
+        assert len(self.ifLis) == self.ifConditions + 1 and len(self.elseLis) == self.ifConditions + 1
+        self.ifIsTrue = self.ifLis[-1]
+        self.elseIsTrue = self.elseLis[-1]
 
     def executeDirectSingle(self, commandNumber, command):
         """
@@ -78,8 +98,9 @@ class TestStepMaster:
 
         # when we have an IF-condition and it's condition was not TRUE, then skip whatever comes here until we
         # reach Endif
-        if not self.ifIsTrue and command["Activity"] != "ENDIF":
-            return
+        if not self.ifIsTrue and not self.elseIsTrue:
+            if command["Activity"].upper() != "ELSE" and command["Activity"].upper() != "ENDIF":
+                return
         lActivity = command["Activity"].upper()
         if lActivity == "COMMENT":
             return  # Comment's are ignored
@@ -160,9 +181,6 @@ class TestStepMaster:
         elif lActivity == "PAUSE":
             self.browserSession.sleep(seconds=float(lValue))
         elif lActivity == "IF":
-            if self.ifActive:
-                raise BaseException("No nested IFs at this point, sorry...")
-            self.ifActive = True
             # Originally we had only Comparisons. Now we also want to check for existance of Field
             if not lValue and lLocatorType and lLocator:
                 lValue = self.browserSession.findBy(xpath=xpath, css=css, id=id, optional=lOptional,
@@ -170,11 +188,13 @@ class TestStepMaster:
 
             self.__doComparisons(lComparison=lComparison, value1=lValue, value2=lValue2)
             logger.debug(f"IF-condition {lValue} {lComparison} {lValue2} evaluated to: {self.ifIsTrue} ")
+        elif lActivity == "ELSE":
+            if not self.ifIsTrue:
+                self.manageNestedCondition(condition=lActivity)
+                logger.debug("Executing ELSE-condition")
         elif lActivity == "ENDIF":
-            if not self.ifActive:
-                raise BaseException("ENDIF without IF")
-            self.ifActive = False
             self.ifIsTrue = True
+            self.elseIsTrue = False
         elif lActivity == 'GOBACK':
             self.browserSession.goBack()
         elif lActivity == 'APIURL':
@@ -218,6 +238,10 @@ class TestStepMaster:
             self.checkLinks()
         elif lActivity == 'ALERTIF':
             self.browserSession.confirmAlertIfAny()
+        elif lActivity == GC.TESTCASESTATUS_STOP.upper():
+            self.testcaseDataDict[GC.TESTCASESTATUS_STOP] = "X"              # will stop the test case
+        elif lActivity == GC.TESTCASESTATUS_STOPERROR.upper():
+            self.testcaseDataDict[GC.TESTCASESTATUS_STOPERROR] = "X"         # will stop the test case and set error
         else:
             raise BaseException(f"Unknown command in TestStep {lActivity}")
 
@@ -346,23 +370,24 @@ class TestStepMaster:
 
         if lComparison == "=":
             if value1 == value2:
-                self.ifIsTrue = True
+                self.manageNestedCondition(condition="IF", ifis=True)
             else:
-                self.ifIsTrue = False
+                self.manageNestedCondition(condition="IF", ifis=False)
         elif lComparison == "!=":
             self.ifIsTrue = False if value1 == value2 else True
         elif lComparison == ">":
             if value1 > value2:
-                self.ifIsTrue = True
+                self.manageNestedCondition(condition="IF", ifis=True)
             else:
-                self.ifIsTrue = False
+                self.manageNestedCondition(condition="IF", ifis=False)
         elif lComparison == "<":
             if value1 < value2:
-                self.ifIsTrue = True
+                self.manageNestedCondition(condition="IF", ifis=True)
             else:
-                self.ifIsTrue = False
+                self.manageNestedCondition(condition="IF", ifis=False)
         elif not lComparison:  # Check only, if Value1 has a value.
-            self.ifIsTrue = True if value1 else False
+            val = True if value1 else False
+            self.manageNestedCondition(condition="IF", ifis=val)
         else:
             raise BaseException(f"Comparison Operator not supported/unknown {lComparison}")
 

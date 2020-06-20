@@ -194,8 +194,8 @@ More details on Activities
        bulletproof test cases.
    * - goBack
      - Trigger the "back"-Button of the browser.
-   * - If/Endif
-     - The block between IF and ENDIF is only executed when the condition evaluated by ``value|comparator|value2`` is
+   * - If/Else/Endif
+     - The block between IF, ELSE and ENDIF is only executed when the condition evaluated by ``value|comparator|value2`` is
        true, for instance:
 
             $(POSTCODE) = 7040
@@ -208,6 +208,8 @@ More details on Activities
 
        Another use of the If-Statement is with ``LocatorType`` and ``Locator`` and comparison. This can be used when you
        want conditional execution of a larger block of statements depending on an element present or not present.
+
+       ``Else`` statement is only executed when if statement is not true.
 
    * - assert
      - Will retrieve value of element specified by ``locator`` and compare with reference value from ``value``.
@@ -251,6 +253,10 @@ More details on Activities
 
             While an anchor is set, ALL location attempts of elements happen within the anchor's children. If you want
             to avoid that, use ```///``` (= 3 slashes instead of 2) to signal the logic to ignore the anchor.
+   * - TCStopTestCase
+     - Will stop the current test case from further execution
+   * - TCStopTestCaseError
+     - Will stop the current test case and set it's status to NOK
    * - address_create
      - provide an easy and easily extendable way to generate address data for a test case
        The following fields variable are stored in testcaseDataDict:

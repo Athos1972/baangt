@@ -21,6 +21,7 @@ This image is an example input file. Different types of data types supported are
   7. ``FKR_`` prefix is used here.
   8. ``FKR_`` prefix is used here with a new integer value 0 in end.
   9. ``RRD_`` prefix is used here.
+  10. ``RRE_`` prefix is used here.
 
 Using these data type we will generate all possible values.
 Here is a simple example with simple value and value of list.
@@ -98,6 +99,10 @@ We will use the reference of above image and assigned number to learn about it i
      selecting random data only the rows which have same value of that header will be considered.
      i.e. First ``RRD_`` cell has value "x" for the header while selected randomly, then the second cell will select data
      randomly only from the rows which have "x" value for the same header.
+  10. ``RRE_`` is same as ``RRD_`` only change is that in rrd we take data from same file and different sheet but, in
+     this ``RRE_`` prefix we can take data from another file. The only change in its structure is that filename comes
+     before sheetname.
+     i.e. ``RRE_[fileName,sheetName,Targetdata,[key:value]]``
 
 
 All Data Types Format
@@ -111,3 +116,4 @@ All Data Types Format
 6. List of header    = ``[<title1>, <title2>, <title3>]``
 7. Faker Prefix      = ``FKR_(<type>, <locale>, <number_of_data>)``
 8. RRD Prefix        = ``RRD_(<sheetName>,<TargetData>,[<Header1>:[<Value1>],<Header2>:[<Value1>,<Value2>]])``
+9. RRE Prefix        = ``RRE_(<fileName>,<sheetName>,<TargetData>,[<Header1>:[<Value1>],<Header2>:[<Value1>,<Value2>]])``

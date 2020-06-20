@@ -310,7 +310,7 @@ class WebdriverFunctions:
                 if counter < COUNTER_LIMIT_RETRY:
                     time.sleep(0.2)
                 elif counter < COUNTER_LIMIT_ELEMENT_REF:
-                    element, begin = WebdriverFunctions.webdriver_refindElementAfterError(browserData, timeout)
+                    begin, element = WebdriverFunctions.webdriver_refindElementAfterError(browserData, timeout)
                 else:
                     raise Exceptions.baangtTestStepException(e)
             except NoSuchElementException as e:
@@ -325,7 +325,7 @@ class WebdriverFunctions:
                     time.sleep(0.2)
                 elif counter < COUNTER_LIMIT_ELEMENT_NOT_INTERACT:
                     logger.debug(f"Element not interactable {browserData.locatorType} {browserData.locator}, re-finding element")
-                    element, begin = WebdriverFunctions.webdriver_refindElementAfterError(browserData, timeout)
+                    begin, element = WebdriverFunctions.webdriver_refindElementAfterError(browserData, timeout)
                 else:
                     helper.browserHelper_log(logging.ERROR, f"Element not interactable {e}", browserData)
                     raise Exceptions.baangtTestStepException(e)

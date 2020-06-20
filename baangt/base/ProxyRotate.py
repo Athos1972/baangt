@@ -149,10 +149,10 @@ class ProxyRotate(metaclass=Singleton):
             return self.__temp_proxies
 
         self.__verify_proxies(self.__temp_proxies)
-        self.__write_proxies()
 
     def __verify_proxies(self, proxy_lis, test=False):
         removable = []
+        goodProxies = 0
         links = ["https://www.youtube.com/watch?v=FghBQsZJg4U", "https://gogs.earthsquad.global"]
         headers = {
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36'
@@ -171,9 +171,12 @@ class ProxyRotate(metaclass=Singleton):
                 responses.append(res)
             if False in responses:
                 logger.debug(f"Error code 400 or greater in {proxi}")
-                removable.append(proxi)
                 if test:
                     return f"Error code 400 or greater in {proxi}"
+                if proxi.ip in self.all_proxies:
+                    self.remove_proxy(proxi.ip)
+                if proxi in self.__temp_proxies:
+                    self.__temp_proxies.remove(proxi)
                 continue
 
             try:
@@ -187,43 +190,30 @@ class ProxyRotate(metaclass=Singleton):
                 logger.debug(f"Proxy can be used for Youtube: {proxi}")
                 if test:
                     return f"Proxy can be used for Youtube: {proxi}"
+                if proxi.ip not in self.proxies:
+                    self.proxies[proxi.ip] = proxi
+                    if proxi.ip not in self.all_proxies:
+                        self.all_proxies[proxi.ip] = proxi
+                elif proxi.failed <= GC.PROXY_FAILCOUNTER:
+                    self.proxies[proxi.ip] = proxi
+                # Check, if we have at least 4 proxies in the first run of the function.
+                # If yes, exit, as the function will re-run soon.
+                goodProxies += 1
+                if goodProxies >= self.MIN_PROXIES_FOR_FIRST_RUN and self.firstRun:
+                    self.firstRun = False
+                    break
             except Exception as ex:
                 logger.debug(f"Proxy not usable for Youtube: {proxi}, Exception: {ex}")
                 if test:
                     return f"Proxy not usable for Youtube: {proxi}, Exception: {ex}"
-                removable.append(proxi)
-
-            # Check, if we have at least 4 proxies in the first run of the function.
-            # If yes, exit, as the function will re-run soon.
-            goodProxies = lineCount + 1- len(removable) 
-            if goodProxies >= self.MIN_PROXIES_FOR_FIRST_RUN and self.firstRun:
-                break
-
-        if len(removable)<len(proxy_lis) and self.firstRun:
-            self.firstRun = False
-            for proxy in proxy_lis[:(lineCount + 1)]: 
-                if proxy not in removable:
-                    self.proxies[proxy.ip] = proxy
-                else:
-                    self.__temp_proxies.remove(proxy)
-            logger.info(f"Total proxies in list currently = {str(len(self.all_proxies))}")
-            logger.info(f"Identified {len(self.proxies)} working proxies")
-            return None
-
-        for rm in removable:
-            if rm.ip in self.proxies:
-                self.remove_proxy(rm.ip)
-            proxy_lis.remove(rm)
-        for proxy in proxy_lis:
-            if proxy.ip not in self.proxies:
-                self.proxies[proxy.ip] = proxy
-                if proxy.ip not in self.all_proxies:
-                    self.all_proxies[proxy.ip] = proxy
-            elif proxy.failed<=GC.PROXY_FAILCOUNTER:
-                self.proxies[proxy.ip] = proxy
-
+                if proxi.ip in self.all_proxies:
+                    self.remove_proxy(proxi.ip)
+                if proxi in self.__temp_proxies:
+                    self.__temp_proxies.remove(proxi)
+            self.__write_proxies()
         logger.info(f"Total proxies in list currently = {str(len(self.all_proxies))}")
         logger.info(f"Identified {len(self.proxies)} working proxies")
+        self.__write_proxies()
 
     def __get_response(self, link, proxy, headers):
         try:
@@ -231,7 +221,10 @@ class ProxyRotate(metaclass=Singleton):
         except Exception as ex:
             logger.debug(f"Proxy not reacting: {proxy}")
             return False
-        if response.status_code >= 400:
+        try:
+            if response.status_code >= 400:
+                return False
+        except:
             return False
         return response
 
@@ -274,12 +267,13 @@ class ProxyRotate(metaclass=Singleton):
             logger.debug(str(ex))
 
     def __write_proxies(self):
-        with open("proxies.csv", 'w', newline='\n')as file:
-            fl = csv.DictWriter(file, self.proxies[list(self.proxies.keys())[0]].to_dict().keys())
-            fl.writeheader()
-            for proxy in self.all_proxies:
-                fl.writerow(self.all_proxies[proxy].to_dict())
-        logger.debug(f"Wrote list of {len(self.proxies)} proxies to CSV-File")
+        if len(self.all_proxies) > 0:
+            with open("proxies.csv", 'w', newline='\n')as file:
+                fl = csv.DictWriter(file, self.all_proxies[list(self.all_proxies.keys())[0]].to_dict().keys())
+                fl.writeheader()
+                for proxy in self.all_proxies:
+                    fl.writerow(self.all_proxies[proxy].to_dict())
+            logger.debug(f"Wrote list of {len(self.proxies)} proxies to CSV-File")
 
     def __getProxy(self):
         lMaxCount = 600
@@ -309,8 +303,8 @@ class ProxyRotate(metaclass=Singleton):
     def remove_proxy(self, ip, port=None, type=None):
         try:
             logger.debug(f"Increase fail count on Proxy with type {type}: {ip}:{port}")
-            self.proxies[ip].Failed()
-            if self.proxies[ip].failed >= GC.PROXY_FAILCOUNTER:
+            self.all_proxies[ip].Failed()
+            if self.all_proxies[ip].failed >= GC.PROXY_FAILCOUNTER:
                 del self.proxies[ip]
                 logger.debug(f"Ip {ip} removed successfully.")
         except Exception as ex:

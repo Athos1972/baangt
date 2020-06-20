@@ -365,6 +365,29 @@ class TestDataGenerator:
             processed_datas = self.__processRrd(first_value, second_value,evaluated_dict)
             processed_datas = data_type(processed_datas)
 
+        elif prefix == "Rre":
+            file_name = raw_data[1:-1].split(',')[0].strip()
+            sheet_dict, _ = self.__read_excel(file_name)
+            first_value = raw_data[1:-1].split(',')[1].strip()
+            second_value = raw_data[1:-1].split(',')[2].strip()
+            if second_value[0] == "[":
+                second_value = ','.join(raw_data[1:-1].split(',')[2:]).strip()
+                second_value = second_value[:second_value.index(']')+1]
+                third_value = [x.strip() for x in ']'.join(raw_data[1:-1].split(']')[1:]).split(',')[1:]]
+            else:
+                third_value = [x.strip() for x in raw_data[1:-1].split(',')[3:]]
+            evaluated_list = ']],'.join(','.join(third_value)[1:-1].strip().split('],')).split('],')
+            if evaluated_list[0] == "":
+                evaluated_dict = {}
+            else:
+                evaluated_dict = {
+                    splited_data.split(':')[0]: self.__splitList(splited_data.split(':')[1])  for splited_data in evaluated_list
+                }
+            if second_value[0] == "[" and second_value[-1] == "]":
+                second_value = self.__splitList(second_value)
+            processed_datas = self.__processRrd(first_value, second_value, evaluated_dict, sheet_dict)
+            processed_datas = data_type(processed_datas)
+
         elif "-" in raw_data:
             raw_data = raw_data.split('-')
             start = raw_data[0].strip()
@@ -419,6 +442,11 @@ class TestDataGenerator:
                     raw_string = self.__process_rrd_string(raw_string)
                     raw_string = raw_string[4:]
                     data_type = tuple
+                elif raw_string[:4].lower() == "rre_":         # Remote Random (Remote = other sheet)
+                    prefix = "Rre"
+                    raw_string = self.__process_rre_string(raw_string)
+                    raw_string = raw_string[4:]
+                    data_type = tuple
                 else:
                     data_type = list
             else:
@@ -469,7 +497,7 @@ class TestDataGenerator:
         proccesed_datas = [data.strip() for data in raw_data[1:-1].split(",")]
         return proccesed_datas
 
-    def __processRrd(self, sheet_name, data_looking_for, data_to_match: dict):
+    def __processRrd(self, sheet_name, data_looking_for, data_to_match: dict, sheet_dict=None, caller="RRD_"):
         """
         This function is internal function to process the data wil RRD_ prefix.
         The General input in excel file is like ``RRD_[sheetName,TargetData,[Header:[values**],Header:[values**]]]``
@@ -493,9 +521,11 @@ class TestDataGenerator:
         :param data_to_match:
         :return: dictionary of TargetData
         """
+        sheet_dict = self.sheet_dict if sheet_dict is None else sheet_dict
         matching_data = [list(x) for x in itertools.product(*[data_to_match[key] for key in data_to_match])]
-        assert sheet_name in self.sheet_dict, f"Excel file doesn't contain {sheet_name} sheet. Please recheck. Called in 'RRD_'"
-        base_sheet = self.sheet_dict[sheet_name]
+        assert sheet_name in sheet_dict, \
+            f"Excel file doesn't contain {sheet_name} sheet. Please recheck. Called in '{caller}'"
+        base_sheet = sheet_dict[sheet_name]
         data_lis = []
         if type(data_looking_for) == str:
             data_looking_for = data_looking_for.split(",")
@@ -535,6 +565,31 @@ class TestDataGenerator:
         processed_string = ','.join([word.strip() for word in rrd_string.split(', ')])
         match = re.match(r"(RRD_(\(|\[))[a-zA-z0-9\s]+,(\[?[a-zA-z\s,]+\]?|)|\*,\[([a-zA-z0-9\s]+:\[[a-zA-z0-9,\s]+\](,?))*\]",processed_string)
         err_string = f"{rrd_string} not matching pattern RRD_(sheetName,TargetData," \
+                     f"[Header1:[Value1],Header2:[Value1,Value2]])"
+        assert match, err_string
+        return processed_string
+
+    def __process_rre_string(self, rrd_string):
+        """
+        This method is used to validate rrd_strings provided by the user.
+        If their will be any error in string this fuction will immediately create an error and will stop further execution.
+        Also these function will remove empty spaces around the commas in string.
+        Regex supporting formats in this method are:
+        ``RRE_[fileName,sheetName,TargetData,[Header:[values**],Header:[values**]]]``
+        ``RRE_[fileName,sheetName,[TargetData**],[Header:[values**],Header:[values**]]]``
+        ``RRE_(fileName,sheetName,[TargetData**],[Header:[values**],Header:[values**]])``
+        ``RRE_[fileName,sheetName,*,[Header:[values**],Header:[values**]]]``
+        ``RRE_[fileName,sheetName,*,[Header:[values**],Header:[values**]]]``
+        ``RRE_[fileName,sheetName,TargetData,[]]``
+        ``RRE_(fileName,sheetName,TargetData,[])``
+        ``RRE_(fileName,sheetName,*,[])``
+        ``RRE_[fileName,sheetName,*,[]]``
+        :param rrd_string:
+        :return:
+        """
+        processed_string = ','.join([word.strip() for word in rrd_string.split(', ')])
+        match = re.match(r"(RRE_(\(|\[))[\w\d\s\-./\\]+\.(xlsx|xls),[a-zA-z0-9\s]+,(\[?[a-zA-z\s,]+\]?|)|\*,\[([a-zA-z0-9\s]+:\[[a-zA-z0-9,\s]+\](,?))*\]",processed_string)
+        err_string = f"{rrd_string} not matching pattern RRE_(fileName, sheetName, TargetData," \
                      f"[Header1:[Value1],Header2:[Value1,Value2]])"
         assert match, err_string
         return processed_string

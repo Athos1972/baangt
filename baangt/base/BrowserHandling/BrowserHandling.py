@@ -23,6 +23,8 @@ import platform
 import requests
 from baangt.base.PathManagement import ManagedPaths
 from baangt.base.RuntimeStatistics import Statistic
+import psutil
+import signal
 
 
 logger = logging.getLogger("pyC")
@@ -84,7 +86,7 @@ class BrowserDriver:
         self.takeTime("Browser Start")
         self.randomProxy = randomProxy
         self.browserName = browserName
-
+        self.bpid = []
         lCurPath = Path(self.managedPaths.getOrSetDriverPath())
 
         if browserName in webDrv.BROWSER_DRIVERS:
@@ -95,11 +97,18 @@ class BrowserDriver:
             if utils.anything2Boolean(mobileType):
                 self.browserData.driver = self._mobileConnectAppium(browserName, desired_app, mobileApp, mobile_app_setting)
             elif GC.BROWSER_FIREFOX == browserName:
-                self.browserData.driver  = self._browserFirefoxRun(browserName, lCurPath, browserProxy, randomProxy, desiredCapabilities)
+                self.browserData.driver = self._browserFirefoxRun(browserName, lCurPath, browserProxy, randomProxy, desiredCapabilities)
                 helper.browserHelper_startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance, browserProxy=browserProxy)
+                self.bpid.append(self.browserData.driver.capabilities.get("moz:processID"))
             elif GC.BROWSER_CHROME == browserName:
                 self.browserData.driver = self._browserChromeRun(browserName, lCurPath, browserProxy, randomProxy, desiredCapabilities)
                 helper.browserHelper_startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance, browserProxy=browserProxy)
+                try:
+                    port = self.browserData.driver.capabilities['goog:chromeOptions']["debuggerAddress"].split(":")[1]
+                    fp = os.popen(f"lsof -nP -iTCP:{port} | grep LISTEN")
+                    self.bpid.append(int(fp.readlines()[-1].split()[1]))
+                except Exception as ex:
+                    logger.info(ex)
             elif GC.BROWSER_EDGE == browserName:
                 self.browserData.driver = webDrv.BROWSER_DRIVERS[browserName](executable_path = helper.browserHelper_findBrowserDriverPaths(GC.EDGE_DRIVER))
             elif GC.BROWSER_SAFARI == browserName:
@@ -208,9 +217,15 @@ class BrowserDriver:
         self.statistics.update_teststep()
         try:
             if self.browserData.driver:
+                self.browserData.driver.close()
                 self.browserData.driver.quit()
                 self.browserData.driver = None
+                if len(self.bpid) > 0:
+                    for bpid in self.bpid:
+                        os.kill(bpid, signal.SIGINT)
+
         except Exception as ex:
+            logger.info(ex)
             pass  # If the driver is already dead, it's fine.
 
 
@@ -370,6 +385,8 @@ class BrowserDriver:
         Please see documentation in findBy and __doSomething
         """
         self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
+        if not self.element:
+            return False
 
         return webDrv.webdriver_doSomething(GC.CMD_SETTEXT, self.element, value=value, timeout=timeout, optional=optional, browserData = self.browserData)
 
