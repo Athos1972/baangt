@@ -11,6 +11,7 @@ from baangt.base.PDFCompare import PDFCompare, PDFCompareDetails
 from baangt.base.Faker import Faker as baangtFaker
 from baangt.base.Utils import utils
 from baangt.base.RuntimeStatistics import Statistic
+import random
 
 logger = logging.getLogger("pyC")
 
@@ -27,6 +28,12 @@ class TestStepMaster:
         self.ifLis = [self.ifIsTrue]
         self.elseLis = [self.elseIsTrue]
         self.ifConditions = 0
+        self.repeatIsTrue = [False]
+        self.repeatDict = []
+        self.repeatData = []
+        self.repeatCount = []
+        self.repeatActive = 0
+        self.repeatDone = 0
         self.baangtFaker = None
         self.statistics = Statistic()
         self.kwargs = kwargs
@@ -70,7 +77,10 @@ class TestStepMaster:
         :return:
         """
         for index, (key, command) in enumerate(executionCommands.items()):
-            self.executeDirectSingle(index, command)
+            try:
+                self.executeDirectSingle(index, command)
+            except Exception as ex:
+                logger.info(ex)
             # self.statistics.update_teststep()  --> Moved to BrowserHandling into the activities themselves,
             # so that we can also count for externally (subclassed) activitis
 
@@ -101,12 +111,76 @@ class TestStepMaster:
         if not self.ifIsTrue and not self.elseIsTrue:
             if command["Activity"].upper() != "ELSE" and command["Activity"].upper() != "ENDIF":
                 return
+        if self.repeatIsTrue[-1]:
+            if command["Activity"].upper() == "REPEAT":
+                self.repeatActive += 1
+            if command["Activity"].upper() != "REPEAT-DONE":
+                self.repeatDict[-1][commandNumber] = command
+                return
+            else:
+                self.repeatDone += 1
+                if self.repeatDone <= self.repeatActive:
+                    self.repeatDict[-1][commandNumber] = command
+                    logger.info(command)
+                    return
+                self.repeatIsTrue[-1] = False
+                logger.info(self.repeatIsTrue)
+                if self.repeatData[-1] or self.repeatData[-1] == "":
+                    data_list = self.repeatData[-1]
+                    if len(self.repeatCount) > 0 and self.repeatCount[-1]:
+                        try:
+                            data_list = random.sample(data_list, int(self.repeatCount[-1]))
+                        except:
+                            pass
+                    if data_list != "":
+                        for data in data_list:
+                            temp_dic = dict(self.repeatDict[-1])
+                            for key in temp_dic:
+                                try:
+                                    processed_data = dict(temp_dic[key])
+                                except Exception as ex:
+                                    logger.info(ex)
+                                for ky in processed_data:
+                                    try:
+                                        processed_data[ky] = self.replaceVariables(processed_data[ky], data)
+                                    except Exception as ex:
+                                        logger.info(ex)
+                                try:
+                                    self.executeDirectSingle(key, processed_data)
+                                except Exception as ex:
+                                    logger.info(ex)
+                    else:
+                        temp_dic = dict(self.repeatDict[-1])
+                        for key in temp_dic:
+                            try:
+                                processed_data = dict(temp_dic[key])
+                            except Exception as ex:
+                                logger.debug(ex)
+                            for ky in processed_data:
+                                try:
+                                    processed_data[ky] = self.replaceVariables(processed_data[ky])
+                                except Exception as ex:
+                                    logger.info(ex)
+                            try:
+                                self.executeDirectSingle(key, processed_data)
+                            except Exception as ex:
+                                logger.info(ex)
+                del self.repeatIsTrue[-1]
+                del self.repeatDict[-1]
+                del self.repeatData[-1]
+                del self.repeatCount[-1]
+                self.repeatDone -= 1
+                self.repeatActive -= 1
+                return
         lActivity = command["Activity"].upper()
         if lActivity == "COMMENT":
             return  # Comment's are ignored
 
         lLocatorType = command["LocatorType"].upper()
-        lLocator = self.replaceVariables(command["Locator"])
+        try:
+            lLocator = self.replaceVariables(command["Locator"])
+        except Exception as ex:
+            logger.info(ex)
 
         if lLocator and not lLocatorType:  # If locatorType is empty, default it to XPATH
             lLocatorType = 'XPATH'
@@ -195,6 +269,11 @@ class TestStepMaster:
         elif lActivity == "ENDIF":
             self.ifIsTrue = True
             self.elseIsTrue = False
+        elif lActivity == "REPEAT":
+            self.repeatIsTrue.append(True)
+            self.repeatDict.append({})
+            self.repeatData.append(lValue)
+            self.repeatCount.append(lValue2)
         elif lActivity == 'GOBACK':
             self.browserSession.goBack()
         elif lActivity == 'APIURL':
@@ -266,10 +345,13 @@ class TestStepMaster:
 
     def replaceAllVariables(self, lValue, lValue2):
         # Replace variables from data file
-        if len(lValue) > 0:
-            lValue = self.replaceVariables(lValue)
-        if len(lValue2) > 0:
-            lValue2 = self.replaceVariables(lValue2)
+        try:
+            if len(lValue) > 0:
+                lValue = self.replaceVariables(lValue)
+            if len(lValue2) > 0:
+                lValue2 = self.replaceVariables(lValue2)
+        except Exception as ex:
+            logger.info(ex)
         return lValue, lValue2
 
     def __getIBAN(self, lValue, lValue2):
@@ -411,7 +493,7 @@ class TestStepMaster:
 
         self.timing.takeTime(self.timingName)
 
-    def replaceVariables(self, expression):
+    def replaceVariables(self, expression, data=None):
         """
         The syntax for variables is currently $(<column_name_from_data_file>). Multiple variables can be assigned
         in one cell, for instance perfectly fine: "http://$(BASEURL)/$(ENDPOINT)"
@@ -446,7 +528,16 @@ class TestStepMaster:
                 dictVariable = center.split(".")[0]
                 dictValue = center.split(".")[1]
 
-                if dictVariable == 'ANSWER_CONTENT':
+                if data:
+                    if dictValue in data:
+                        startingValue = data
+                        for dt in center.split('.')[1:]:
+                            try:
+                                startingValue = startingValue.get(dt)
+                            except:
+                                raise KeyError(f"{data} key not inside {startingValue}")
+                        centerValue = startingValue
+                elif dictVariable == 'ANSWER_CONTENT':
                     centerValue = self.apiSession.session[1].answerJSON.get(dictValue, "Empty")
                 elif dictVariable == 'FAKER':
                     # This is to call Faker Module with the Method, that is given after the .
@@ -460,8 +551,12 @@ class TestStepMaster:
                     return None
                 else:
                     raise BaseException(f"Variable not found: {center}, input parameter was: {expression}")
-
-            expression = "".join([left_part, centerValue, right_part])
+            try:
+                expression = "".join([left_part, centerValue, right_part])
+            except:
+                expression = centerValue
+                if type(expression) == float or type(expression) == int:
+                    expression = str(int(expression))
         return expression
 
     def __getFakerData(self, fakerMethod):
