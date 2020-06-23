@@ -127,6 +127,8 @@ class HandleDatabase:
         for temp_dic in self.dataDict:
             new_data_dic = {}
             for keys in temp_dic:
+                if type(temp_dic[keys]) != str:
+                    continue
                 if '$(' in str(temp_dic[keys]):
                     while '$(' in str(temp_dic[keys]):
                         start_index = temp_dic[keys].index('$(')
