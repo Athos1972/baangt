@@ -7,6 +7,7 @@ import os
 import re
 import uuid
 from baangt.base.PathManagement import ManagedPaths
+from baangt.base.GlobalConstants import EXECUTION_STAGE
 
 
 managedPaths = ManagedPaths()
@@ -58,7 +59,14 @@ class TestrunLog(base):
 	@property
 	def duration(self):
 		return (self.endTime - self.startTime).seconds
-	
+
+	@property
+	def stage(self):
+		for gv in self.globalVars:
+			if gv.name == EXECUTION_STAGE:
+				return gv.value
+
+		return None
 
 	def __str__(self):
 		return str(uuid.UUID(bytes=self.id))
