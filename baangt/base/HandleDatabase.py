@@ -148,9 +148,7 @@ class HandleDatabase:
                     for data in rre_data:
                         new_data_dic[data] = rre_data[data]
                 elif temp_dic[keys][:4] == "RLP_":
-                    rlp_string = self.__process_rlp_string(temp_dic[keys])[5:-1]
-                    rlp_data = self.__rlp_string_to_python(rlp_string, fileName)
-                    temp_dic[keys] = rlp_data
+                    temp_dic[keys] = self.rlp_process(temp_dic[keys], fileName)
                 else:
                     try:
                         js = json.loads(temp_dic[keys])
@@ -159,6 +157,34 @@ class HandleDatabase:
                         pass
             for key in new_data_dic:
                 temp_dic[key] = new_data_dic[key]
+
+    def rlp_process(self, string, fileName):
+        # Will get real data from rlp_ prefix string
+        rlp_string = self.__process_rlp_string(string)[5:-1]
+        rlp_data = self.__rlp_string_to_python(rlp_string, fileName)
+        data = rlp_data
+        self.rlp_iterate(data, fileName)
+        return data
+
+    def rlp_iterate(self, data, fileName):
+        # Rlp datas are stored in either json or list. This function will loop on every data and convert every
+        # Rlp string to data
+        if type(data) is list:
+            for dt in data:
+                if type(dt) is str:
+                    dt = self.rlp_iterate(dt, fileName)
+                elif type(dt) is dict or type(dt) is list:
+                    dt = self.rlp_iterate(dt, fileName)
+        elif type(data) is dict:
+            for key in data:
+                if type(data[key]) is list or type(data[key]) is dict:
+                    data[key] = self.rlp_iterate(data[key], fileName)
+                elif type(data[key]) is str:
+                    data[key] = self.rlp_iterate(data[key], fileName)
+        elif type(data) is str:
+            if data[:4] == "RLP_":
+                data = self.rlp_process(data, fileName)
+        return data
 
     def __compareEqualStageInGlobalsAndDataRecord(self, currentNewRecordDict:dict) -> bool:
         """
@@ -271,6 +297,7 @@ class HandleDatabase:
         return processed_datas[randint(0, len(processed_datas)-1)]
 
     def __rlp_string_to_python(self, raw_data, fileName):
+        # will convert rlp string to python
         sheetName = raw_data.split(',')[0].strip()
         headerName = raw_data.split(',')[1].strip().split('=')[0].strip()
         headerValue = raw_data.split(',')[1].strip().split('=')[1].strip()
@@ -360,6 +387,8 @@ class HandleDatabase:
         else:
             assert sheet_name in sheet_dict, f"Excel file doesn't contain {sheet_name} sheet. Please recheck."
             base_sheet = sheet_dict[sheet_name]
+        self.sheet_dict = sheet_dict
+        self.base_sheet = base_sheet
         return sheet_dict, base_sheet
 
     def readNextRecord(self):

@@ -60,6 +60,7 @@ class TestRun:
         self.kwargs = {}
         self.dataRecords = {}
         self.globalSettings = {}
+        self.json_dict = {} # Used to maintain records of RLP_ data which will be used will exporting results
         self.managedPaths = ManagedPaths()
         self.classesForObjects = ClassesForObjects()         # Dynamically loaded classes
         self.timing = Timing()

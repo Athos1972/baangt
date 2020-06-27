@@ -251,3 +251,16 @@ def test_NestedIfElse_with_NoBrowser():
     output_file = output_dir.joinpath(new_file[0][0]).as_posix()
     check_output(output_file)
     os.remove(output_file)
+
+def test_NestedLoops_and_repeat():
+    run_file = str(input_dir.joinpath("CompleteBaangtWebdemo_nested.xlsx"))
+    execute(run_file, globals_file=Path(input_dir).joinpath("globalsNoBrowser.json"))
+    new_file = folder_monitor.getNewFiles()
+    assert new_file
+    output_file = output_dir.joinpath(new_file[0][0]).as_posix()
+    wb = xlrd.open_workbook(output_file)
+    sheet1 = wb.sheet_by_name("Test_textarea2")
+    sheet2 = wb.sheet_by_name("Test_textarea2.nested")
+    assert sheet1.nrows == 3
+    assert sheet2.nrows == 3
+    os.remove(output_file)

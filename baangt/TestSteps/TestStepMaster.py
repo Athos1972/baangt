@@ -12,6 +12,7 @@ from baangt.base.Faker import Faker as baangtFaker
 from baangt.base.Utils import utils
 from baangt.base.RuntimeStatistics import Statistic
 import random
+import itertools
 
 logger = logging.getLogger("pyC")
 
@@ -29,10 +30,10 @@ class TestStepMaster:
         self.elseLis = [self.elseIsTrue]
         self.ifConditions = 0
         self.repeatIsTrue = [False]
-        self.repeatDict = []
-        self.repeatData = []
-        self.repeatCount = []
-        self.repeatActive = 0
+        self.repeatDict = [] # used to store steps command of repeat data
+        self.repeatData = [] # used to store RLP_ data to be looped in repeat
+        self.repeatCount = [] # Used to store count of randomdata in loop
+        self.repeatActive = 0 # to sync active repeat counts with repeat done and will be execute when both are equal
         self.repeatDone = 0
         self.baangtFaker = None
         self.statistics = Statistic()
@@ -101,7 +102,7 @@ class TestStepMaster:
         self.ifIsTrue = self.ifLis[-1]
         self.elseIsTrue = self.elseLis[-1]
 
-    def executeDirectSingle(self, commandNumber, command):
+    def executeDirectSingle(self, commandNumber, command, replaceFromDict=None):
         """
         This will execute a single instruction
         """
@@ -111,42 +112,50 @@ class TestStepMaster:
         if not self.ifIsTrue and not self.elseIsTrue:
             if command["Activity"].upper() != "ELSE" and command["Activity"].upper() != "ENDIF":
                 return
-        if self.repeatIsTrue[-1]:
-            if command["Activity"].upper() == "REPEAT":
+        if self.repeatIsTrue[-1]: # If repeat statement is active then execute this
+            if command["Activity"].upper() == "REPEAT": # To sync active repeat with repeat done
                 self.repeatActive += 1
-            if command["Activity"].upper() != "REPEAT-DONE":
+            if command["Activity"].upper() != "REPEAT-DONE": # store command in repeatDict
                 self.repeatDict[-1][commandNumber] = command
                 return
             else:
-                self.repeatDone += 1
-                if self.repeatDone <= self.repeatActive:
+                self.repeatDone += 1 # to sync repeat done with active repeat
+                if self.repeatDone < self.repeatActive: # if all repeat-done are not synced with repeat store the data
                     self.repeatDict[-1][commandNumber] = command
                     logger.info(command)
                     return
                 self.repeatIsTrue[-1] = False
-                logger.info(self.repeatIsTrue)
-                if self.repeatData[-1] or self.repeatData[-1] == "":
-                    data_list = self.repeatData[-1]
-                    if len(self.repeatCount) > 0 and self.repeatCount[-1]:
+                if self.repeatData[-1]:
+                    data_list = []
+                    if type(self.repeatData[-1]) is list:
+                        for data_dic in self.repeatData[-1]:
+                            keys, values = zip(*data_dic.items())
+                            final_values = []
+                            for value in values: # coverting none list values to list. Useful in make all possible data using itertools
+                                if type(value) is not list:
+                                    final_values.append([value])
+                                else:
+                                    final_values.append(value)
+                            data_l = [dict(zip(keys, v)) for v in itertools.product(*final_values)] # itertools to make all possible combinations
+                            data_list.extend(data_l)
+                    else:
+                        data_list = [self.repeatData[-1]]
+                    if len(self.repeatCount) > 0 and self.repeatCount[-1]: # get random data from list of data
                         try:
                             data_list = random.sample(data_list, int(self.repeatCount[-1]))
                         except:
                             pass
-                    if data_list != "":
+                    if data_list:
                         for data in data_list:
                             temp_dic = dict(self.repeatDict[-1])
+                            processed_data = {}
                             for key in temp_dic:
                                 try:
                                     processed_data = dict(temp_dic[key])
                                 except Exception as ex:
-                                    logger.info(ex)
-                                for ky in processed_data:
-                                    try:
-                                        processed_data[ky] = self.replaceVariables(processed_data[ky], data)
-                                    except Exception as ex:
-                                        logger.info(ex)
+                                    logger.debug(ex)
                                 try:
-                                    self.executeDirectSingle(key, processed_data)
+                                    self.executeDirectSingle(key, processed_data, replaceFromDict=data)
                                 except Exception as ex:
                                     logger.info(ex)
                     else:
@@ -211,8 +220,8 @@ class TestStepMaster:
         logger.info(
             f"Executing TestStepDetail {commandNumber} with parameters: act={lActivity}, lType={lLocatorType}, loc={lLocator}, "
             f"Val1={lValue}, comp={lComparison}, Val2={lValue2}, Optional={lOptional}, timeout={lTimeout}")
-
-        lValue, lValue2 = self.replaceAllVariables(lValue, lValue2)
+        original_value = lValue # used as key to make rlp json dict and will be used further to make sheet name
+        lValue, lValue2 = self.replaceAllVariables(lValue, lValue2, replaceFromDict=replaceFromDict)
 
         if not TestStepMaster.ifQualifyForExecution(self.globalRelease, lRelease):
             logger.debug(f"we skipped this line due to {lRelease} disqualifies according to {self.globalRelease} ")
@@ -270,8 +279,12 @@ class TestStepMaster:
             self.ifIsTrue = True
             self.elseIsTrue = False
         elif lActivity == "REPEAT":
+            self.repeatActive += 1
             self.repeatIsTrue.append(True)
             self.repeatDict.append({})
+            if original_value not in self.testRunInstance.json_dict:
+                self.testRunInstance.json_dict[original_value] = []
+            self.testRunInstance.json_dict[original_value].append(lValue)
             self.repeatData.append(lValue)
             self.repeatCount.append(lValue2)
         elif lActivity == 'GOBACK':
@@ -343,13 +356,13 @@ class TestStepMaster:
             self.testcaseDataDict[lFieldnameForResults + "_Status"] = lDict[""].Status
             self.testcaseDataDict[lFieldnameForResults + "_Results"] = lDict[""].StatusText
 
-    def replaceAllVariables(self, lValue, lValue2):
+    def replaceAllVariables(self, lValue, lValue2, replaceFromDict=None):
         # Replace variables from data file
         try:
             if len(lValue) > 0:
-                lValue = self.replaceVariables(lValue)
+                lValue = self.replaceVariables(lValue, replaceFromDict=replaceFromDict)
             if len(lValue2) > 0:
-                lValue2 = self.replaceVariables(lValue2)
+                lValue2 = self.replaceVariables(lValue2, replaceFromDict=replaceFromDict)
         except Exception as ex:
             logger.info(ex)
         return lValue, lValue2
@@ -493,7 +506,7 @@ class TestStepMaster:
 
         self.timing.takeTime(self.timingName)
 
-    def replaceVariables(self, expression, data=None):
+    def replaceVariables(self, expression, replaceFromDict=None):
         """
         The syntax for variables is currently $(<column_name_from_data_file>). Multiple variables can be assigned
         in one cell, for instance perfectly fine: "http://$(BASEURL)/$(ENDPOINT)"
@@ -519,8 +532,17 @@ class TestStepMaster:
             center = center.split(")")[0]
 
             right_part = expression[len(left_part) + len(center) + 3:]
+            centerValue = ""
 
-            if "." not in center:
+            if replaceFromDict: # json is supplied with repeat tag, that json is used here to get main data
+                    dic = replaceFromDict
+                    for key in center.split('.')[-1:]:
+                        dic = self.iterate_json(dic, key)
+                    centerValue = dic
+
+            if centerValue: # if we got value from the passed json then bypass this if else conditions
+                pass
+            elif "." not in center:
                 # Replace the variable with the value from data structure
                 centerValue = self.testcaseDataDict.get(center)
             else:
@@ -528,20 +550,16 @@ class TestStepMaster:
                 dictVariable = center.split(".")[0]
                 dictValue = center.split(".")[1]
 
-                if data:
-                    if dictValue in data:
-                        startingValue = data
-                        for dt in center.split('.')[1:]:
-                            try:
-                                startingValue = startingValue.get(dt)
-                            except:
-                                raise KeyError(f"{data} key not inside {startingValue}")
-                        centerValue = startingValue
-                elif dictVariable == 'ANSWER_CONTENT':
+                if dictVariable == 'ANSWER_CONTENT':
                     centerValue = self.apiSession.session[1].answerJSON.get(dictValue, "Empty")
                 elif dictVariable == 'FAKER':
                     # This is to call Faker Module with the Method, that is given after the .
                     centerValue = self.__getFakerData(dictValue)
+                elif self.testcaseDataDict.get(dictVariable):
+                    dic = self.testcaseDataDict.get(dictVariable)
+                    for key in center.split('.')[1:]:
+                        dic = self.iterate_json(dic, key)
+                    centerValue = dic
                 else:
                     raise BaseException(f"Missing code to replace value for: {center}")
 
@@ -558,6 +576,18 @@ class TestStepMaster:
                 if type(expression) == float or type(expression) == int:
                     expression = str(int(expression))
         return expression
+
+    def iterate_json(self, data, key):
+        # itereate through list of json and create list of data from dictionary inside those list
+        if type(data) is list:
+            lis = []
+            for dt in data:
+                dt = self.iterate_json(dt, key)
+                lis.append(dt)
+            return lis
+        elif type(data) is dict:
+            return data.get(key)
+
 
     def __getFakerData(self, fakerMethod):
         if not self.baangtFaker:

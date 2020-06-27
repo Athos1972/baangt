@@ -78,6 +78,7 @@ class ExportResults:
             self.exportResultExcel()
             self.exportJsonExcel()
             self.exportAdditionalData()
+            self.write_json_sheet()
             self.exportTiming = ExportTiming(self.dataRecords,
                                              self.timingSheet)
             if self.networkInfo:
@@ -171,6 +172,11 @@ class ExportResults:
         self.statistics.update_attribute_with_value("TestCaseFailed", error)
         self.statistics.update_attribute_with_value("TestCasePaused", waiting)
         self.statistics.update_attribute_with_value("TestCaseExecuted", success + error + waiting)
+        try:
+            json_data = json.loads(self.testRunInstance.json_dict)
+        except Exception as ex:
+            logger.info(f"RLP Json error while updating in db : {str(ex)}")
+            json_data = ""
         # get documents
         datafiles = self.fileName
 
@@ -185,6 +191,7 @@ class ExportResults:
             statusFailed=error,
             statusPaused=waiting,
             dataFile=self.fileName,
+            RLPJson=json_data,
         )
         # add to DataBase
         session.add(tr_log)
@@ -328,6 +335,55 @@ class ExportResults:
         for n in range(len(headers)):
             ExcelSheetHelperFunctions.set_column_autowidth(self.jsonSheet, n)
 
+    def write_json_sheet(self):
+        # Used to write rlp_ json in individual sheets
+        dic = self.testRunInstance.json_dict
+        for js in dic:
+            if not js:
+                continue
+            elif js[:2] == "$(":
+                name = js[2:-1]
+            else:
+                name = js
+            jsonSheet = self.workbook.add_worksheet(f"{self.stage}_{name}")
+            if type(dic[js][0]) == dict: # Condition to get dictionary or dictionary inside list to write headers
+                data_dic = dic[js][0]
+            elif type(dic[js][0][0]) == dict:
+                data_dic = dic[js][0][0]
+            else:
+                logger.debug(f"{dic[js]} is not json convertible.")
+                continue
+            remove_header = []
+            for key in data_dic: # Removing headers which consist nested data
+                if type(data_dic[key]) == list or type(data_dic[key]) == dict:
+                    remove_header.append(key)
+            for key in remove_header:
+                del data_dic[key]
+            headers = []
+            for index, header in enumerate(data_dic):
+                jsonSheet.write(0, index, header)
+                headers.append(header)
+            row = 1
+            for data in dic[js]:
+                if not data:
+                    continue
+                dt = {}
+                for y, dt in enumerate(data):
+                    if type(dt) != dict: # for single dictionary data
+                        jsonSheet.write(row, y, data[dt])
+                    else: # if dictionaries are inside list
+                        column = 0 # used to update individual column
+                        for d in dt:
+                            if d not in headers:
+                                continue
+                            try:
+                                jsonSheet.write(row, column, dt[d])
+                            except Exception as ex:
+                                print(ex)
+                            column += 1
+                        row += 1
+                if type(dt) != dict:
+                    row += 1
 
     def makeSummaryExcel(self):
 
