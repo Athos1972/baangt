@@ -23,7 +23,7 @@ if __name__ == '__main__':
                           "Pillow", "pluggy", "pyperclip",  "pyQT5",
                           "requests", "requests-toolbelt",
                           "schwifty", "selenium", "sqlalchemy",
-                          "urllib3",
+                          "urllib3", "psutil",
                           "xl2dict", "xlrd", "xlsxwriter",
                            ],
         classifiers=[
