@@ -173,7 +173,11 @@ class ExportResults:
         self.statistics.update_attribute_with_value("TestCasePaused", waiting)
         self.statistics.update_attribute_with_value("TestCaseExecuted", success + error + waiting)
         try:
-            json_data = json.dumps(self.testRunInstance.json_dict)
+            dic = {}
+            for key in self.testRunInstance.json_dict:
+                if "$(" in key:
+                    dic[key[2:-1]] = self.testRunInstance.json_dict[key]
+            json_data = json.dumps(dic)
         except Exception as ex:
             logger.info(f"RLP Json error while updating in db : {str(ex)}")
             json_data = ""

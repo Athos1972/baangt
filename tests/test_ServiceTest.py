@@ -12,6 +12,11 @@ from uuid import uuid4
 import psutil
 import pytest
 import platform
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+import uuid
+from baangt.base.DataBaseORM import TestrunLog
+import json
 
 # Will Check for the current directory and change it to baangt root dir
 if not os.path.basename(os.getcwd()) == "baangt":
@@ -255,6 +260,9 @@ def test_NestedIfElse_with_NoBrowser():
 def test_NestedLoops_and_repeat():
     run_file = str(input_dir.joinpath("CompleteBaangtWebdemo_nested.xlsx"))
     execute(run_file, globals_file=Path(input_dir).joinpath("globalsNoBrowser.json"))
+    managedPaths = ManagedPaths()
+    DATABASE_URL = os.getenv('DATABASE_URL') or 'sqlite:///' + str(
+        managedPaths.derivePathForOSAndInstallationOption().joinpath('testrun.db'))
     new_file = folder_monitor.getNewFiles()
     assert new_file
     output_file = output_dir.joinpath(new_file[0][0]).as_posix()
@@ -263,4 +271,11 @@ def test_NestedLoops_and_repeat():
     sheet2 = wb.sheet_by_name("Test_textarea2.nested")
     assert sheet1.nrows == 3
     assert sheet2.nrows == 3
+    TestRunSheet = wb.sheet_by_name("Summary")
+    TestRunUUID = TestRunSheet.cell_value(8, 1)
+    engine = create_engine(DATABASE_URL)
+    Session = sessionmaker(bind=engine)
+    s = Session()
+    data = s.query(TestrunLog).get(uuid.UUID(TestRunUUID).bytes)
+    assert "textarea2" in json.loads(data.RLPJson)
     os.remove(output_file)
