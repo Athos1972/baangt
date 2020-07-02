@@ -3,11 +3,10 @@ from sqlalchemy import Column, String, Integer, DateTime, Boolean, Table, Foreig
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-import os
-import re
-import uuid
+import os, re, uuid
+from datetime import timedelta
 from baangt.base.PathManagement import ManagedPaths
-from baangt.base.GlobalConstants import EXECUTION_STAGE
+from baangt.base.GlobalConstants import EXECUTION_STAGE, TIMING_DURATION, TESTCASESTATUS
 
 
 managedPaths = ManagedPaths()
@@ -148,6 +147,34 @@ class TestCaseLog(base):
 	testcase_sequence = relationship('TestCaseSequenceLog', foreign_keys=[testcase_sequence_id])
 	fields = relationship('TestCaseField')
 	networkInfo = relationship('TestCaseNetworkInfo')
+
+	@property
+	def status(self):
+		#
+		# testcase status
+		#
+
+		for field in self.fields:
+			if field.name == TESTCASESTATUS:
+				return field.value
+
+		return None	
+
+	@property
+	def duration(self):
+		#
+		# duration as timedelta
+		#
+
+		for field in self.fields:
+			if field.name == TIMING_DURATION:
+				# parse value from H:M:S.microseconds
+				m = re.search(r'(?P<hours>\d+):(?P<minutes>\d+):(?P<seconds>\d[\.\d+]*)', field.value)
+				if m:
+					duration = {key: float(value) for key, value in m.groupdict().items()}
+					return timedelta(**duration)
+
+		return None
 
 	def __str__(self):
 		return str(uuid.UUID(bytes=self.id))

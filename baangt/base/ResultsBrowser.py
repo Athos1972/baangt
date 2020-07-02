@@ -86,5 +86,21 @@ class ResultsBrowser:
 
 		return records
 
+	def getTestCases(self, name, stage, start_date=None, end_date=None):
+		#
+		# retuns data on the specified testrun stages
+		#
+
+		# get records
+		records = self.getResults(name, stage, start_date, end_date)
+
+		print(f'Records read: {len(records)}')
+		for r in records:
+			for tc in r.testcase_sequences[0].testcases:
+				print(f'{tc.duration}:\t{tc.status}\t{tc}')
+
+		#return [{'duration': tc.duration, 'status': tc.status for tc in r.testcase_sequences[0].testcases} for r in records]
+		
+
 
 
