@@ -49,7 +49,7 @@ class RandomValues:
             return flt
 
         elif self.RandomizationType.lower() == "date":
-            self.format = self.format or "%d/%m/%y"
+            self.format = self.format or "%d/%m/%Y"
             if self.min:
                 try:
                     self.min = datetime.datetime.strptime(self.min, self.format).timestamp()

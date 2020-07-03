@@ -323,7 +323,7 @@ other optional fields as they are use less for it. You can see fields and types 
      - date, time are the only types supporting format field. In above date examples date is in %d/%m/%Y format and
        time is in %H:%M:%S format. Here "%d" stands for the day, "%m" stands for month, "%Y" stands for year including
        century e.g.- 2020, if you want only year you can use "%y" e.g. 20. If you use min and max fields in date, time
-       then you must input its written format in format field, default will be ""%d/%m/%y" for date. Now if you want
+       then you must input its written format in format field, default will be ""%d/%m/%Y" for date. Now if you want
        date with "-" as seperator you can write format as "%d-%m-%Y" so the output would be like "31-01-2020".
 
        `examples`
