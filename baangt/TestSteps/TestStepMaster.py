@@ -557,7 +557,7 @@ class TestStepMaster:
                     centerValue = self.apiSession.session[1].answerJSON.get(dictValue, "Empty")
                 elif dictVariable == 'FAKER':
                     # This is to call Faker Module with the Method, that is given after the .
-                    centerValue = self.__getFakerData(dictValue)
+                    centerValue = self._getFakerData(dictValue)
                 elif self.testcaseDataDict.get(dictVariable):
                     dic = self.testcaseDataDict.get(dictVariable)
                     for key in center.split('.')[1:]:
@@ -594,7 +594,7 @@ class TestStepMaster:
             return data.get(key)
 
 
-    def __getFakerData(self, fakerMethod):
+    def _getFakerData(self, fakerMethod):
         if not self.baangtFaker:
             self.baangtFaker = baangtFaker()
 
