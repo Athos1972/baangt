@@ -217,17 +217,18 @@ class BrowserDriver:
         self.statistics.update_teststep()
         try:
             if self.browserData.driver:
+                try:
+                    if len(self.bpid) > 0:
+                        for bpid in self.bpid:
+                            os.kill(bpid, signal.SIGINT)
+                except:
+                    pass
                 self.browserData.driver.close()
                 self.browserData.driver.quit()
-                self.browserData.driver = None
-                if len(self.bpid) > 0:
-                    for bpid in self.bpid:
-                        os.kill(bpid, signal.SIGINT)
-
         except Exception as ex:
             logger.info(ex)
             pass  # If the driver is already dead, it's fine.
-
+        self.browserData.driver = None
 
     def refresh(self):
         self.browserData.driver.execute_script("window.location.reload()")
