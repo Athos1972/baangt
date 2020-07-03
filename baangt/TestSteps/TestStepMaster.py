@@ -13,6 +13,8 @@ from baangt.base.Utils import utils
 from baangt.base.RuntimeStatistics import Statistic
 import random
 import itertools
+import json
+from baangt.TestSteps.RandomValues import RandomValues
 
 logger = logging.getLogger("pyC")
 
@@ -56,6 +58,7 @@ class TestStepMaster:
                                                          sequence=kwargs.get(GC.STRUCTURE_TESTCASESEQUENCE))
         self.testCase = self.testRunUtil.getTestCaseByNumber(lSequence, kwargs.get(GC.STRUCTURE_TESTCASE))
         self.testStep = self.testRunUtil.getTestStepByNumber(self.testCase, self.testStepNumber)
+        self.randomValues = RandomValues()
 
         if self.testStep and len(self.testStep) > 1:
             if not isinstance(self.testStep[1], str) and executeDirect:
@@ -358,13 +361,18 @@ class TestStepMaster:
 
     def replaceAllVariables(self, lValue, lValue2, replaceFromDict=None):
         # Replace variables from data file
-        try:
-            if len(lValue) > 0:
+        if len(lValue) > 0:
+            try:
                 lValue = self.replaceVariables(lValue, replaceFromDict=replaceFromDict)
-            if len(lValue2) > 0:
+            except Exception as ex:
+                logger.info(f"Exception in {lValue}")
+                logger.info(ex)
+        if len(lValue2) > 0:
+            try:
                 lValue2 = self.replaceVariables(lValue2, replaceFromDict=replaceFromDict)
-        except Exception as ex:
-            logger.info(ex)
+            except Exception as ex:
+                logger.info(f"Exception in {lValue2}")
+                logger.info(ex)
         return lValue, lValue2
 
     def __getIBAN(self, lValue, lValue2):
@@ -539,8 +547,19 @@ class TestStepMaster:
                     for key in center.split('.')[-1:]:
                         dic = self.iterate_json(dic, key)
                     centerValue = dic
+            if "random{" in center.lower() and "}" in center:  # random keyword is processed here
+                args = json.loads(center[6:])
+                # dictionary used in converting data in to real parameters which are used by the method
+                change_args = {"type": "RandomizationType", "min": "mini", "max": "maxi", "format": "format"}
+                data = {}  # dictionary containing arguments for method and will be used as **args
+                for keys in args:
+                    if keys not in change_args:  # if key is not a valid argument for method
+                        logger.info(f'"{keys}" is not a valid argument for Random data generator. So it is not used')
+                    else:
+                        data[change_args[keys]] = args[keys]
+                centerValue = self.randomValues.retrieveRandomValue(**data)
 
-            if centerValue: # if we got value from the passed json then bypass this if else conditions
+            if centerValue:  # if we got value from the passed json then bypass this if else conditions
                 pass
             elif "." not in center:
                 # Replace the variable with the value from data structure
@@ -573,8 +592,10 @@ class TestStepMaster:
                 expression = "".join([left_part, centerValue, right_part])
             except:
                 expression = centerValue
-                if type(expression) == float or type(expression) == int:
+                if type(expression) == int:
                     expression = str(int(expression))
+                elif type(expression) == float:
+                    expression = str(float(expression))
         return expression
 
     def iterate_json(self, data, key):
