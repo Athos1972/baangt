@@ -135,16 +135,17 @@ class HandleDatabase:
                         temp_dic[keys] = temp_dic[keys].replace(
                             temp_dic[keys][start_index:end_index+1], data_to_replace_with
                         )
-                    if temp_dic[keys][:4] == "RRD_":
-                        rrd_string = self.__process_rrd_string(temp_dic[keys])
-                        rrd_data = self.__rrd_string_to_python(rrd_string[4:], fileName)
-                        for data in rrd_data:
-                            new_data_dic[data] = rrd_data[data]
-                    if temp_dic[keys][:4] == "RRE_":
-                        rrd_string = self.__process_rre_string(temp_dic[keys])
-                        rrd_data = self.__rre_string_to_python(rrd_string[4:])
-                        for data in rrd_data:
-                            new_data_dic[data] = rrd_data[data]
+
+                if str(temp_dic[keys])[:4] == "RRD_":
+                    rrd_string = self.__process_rrd_string(temp_dic[keys])
+                    rrd_data = self.__rrd_string_to_python(rrd_string[4:], fileName)
+                    for data in rrd_data:
+                        new_data_dic[data] = rrd_data[data]
+                if str(temp_dic[keys])[:4] == "RRE_":
+                    rrd_string = self.__process_rre_string(temp_dic[keys])
+                    rrd_data = self.__rre_string_to_python(rrd_string[4:])
+                    for data in rrd_data:
+                        new_data_dic[data] = rrd_data[data]
             for key in new_data_dic:
                 temp_dic[key] = new_data_dic[key]
 
@@ -296,6 +297,7 @@ class HandleDatabase:
         :param raw_data: string of list
         :return: Python list
         """
+
         proccesed_datas = [data.strip() for data in raw_data[1:-1].split(",")]
         return proccesed_datas
 

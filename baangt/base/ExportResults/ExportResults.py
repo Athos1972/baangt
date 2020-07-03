@@ -492,8 +492,10 @@ class ExportResults:
                 testRecordDict[fieldName] = "True" if testRecordDict[fieldName] else "False"
 
             # Remove leading New-Line:
-            if '\n' in testRecordDict[fieldName][0:5] or strip:
-                testRecordDict[fieldName] = testRecordDict[fieldName].strip()
+            if isinstance(testRecordDict[fieldName], str):
+                if '\n' in testRecordDict[fieldName][0:5] or strip:
+                    testRecordDict[fieldName] = testRecordDict[fieldName].strip()
+
             # Do different stuff for Dicts and Lists:
             if isinstance(testRecordDict[fieldName], dict):
                 self.worksheet.write(line, cellNumber, testRecordDict[fieldName])
@@ -506,13 +508,13 @@ class ExportResults:
             else:
                 if fieldName == GC.TESTCASESTATUS:
                     if testRecordDict[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_SUCCESS:
-                        self.worksheet.write(line, cellNumber, testRecordDict[fieldName], self.cellFormatGreen)
+                        self.worksheet.write(line, cellNumber, str(testRecordDict[fieldName]), self.cellFormatGreen)
                     elif testRecordDict[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR:
-                        self.worksheet.write(line, cellNumber, testRecordDict[fieldName], self.cellFormatRed)
+                        self.worksheet.write(line, cellNumber, str(testRecordDict[fieldName]), self.cellFormatRed)
                 elif fieldName == GC.SCREENSHOTS:
                     self.__attachScreenshotsToExcelCells(cellNumber, fieldName, line, testRecordDict)
                 else:
-                    self.worksheet.write(line, cellNumber, testRecordDict[fieldName])
+                    self.worksheet.write(line, cellNumber, str(testRecordDict[fieldName]))
 
     def __attachScreenshotsToExcelCells(self, cellNumber, fieldName, line, testRecordDict):
         # Place the screenshot images "on" the appropriate cell
