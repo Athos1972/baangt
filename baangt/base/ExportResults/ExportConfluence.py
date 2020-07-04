@@ -4,12 +4,11 @@ from atlassian import Confluence
 
 
 class ExportConfluence:
-    def __init__(self, url, space, pageTitle, pageLabels, fileNameAndPathToResultXLSX, username, password, rootPage=None):
+    def __init__(self, url, space, pageTitle, fileNameAndPathToResultXLSX, username, password, rootPage=None):
         self.url = url
         self.space = space
         self.rootPage = rootPage
         self.pageTitle = pageTitle
-        self.pageLabels = pageLabels
         self.fileNameAndPathToResultXLSX = fileNameAndPathToResultXLSX
         self.username = username
         self.password = password
