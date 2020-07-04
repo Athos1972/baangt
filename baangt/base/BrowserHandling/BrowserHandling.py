@@ -481,7 +481,7 @@ class BrowserDriver:
         isValid = False
         if not value:
             pass
-        elif len(value) == 0 or str(value) == "0":
+        elif len(str(value)) == 0 or str(value) == "0":
             pass
         else:
             isValid = True

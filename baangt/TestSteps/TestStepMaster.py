@@ -572,14 +572,9 @@ class TestStepMaster:
                     centerValue = ""
                 else:
                     raise BaseException(f"Variable not found: {center}, input parameter was: {expression}")
-            try:
-                expression = "".join([left_part, centerValue, right_part])
-            except:
-                expression = centerValue
-                if type(expression) == float or type(expression) == int:
-                    expression = str(int(expression))
-                else:
-                    expression = str(expression)
+
+            expression = "".join([left_part, str(centerValue), right_part])
+
         return expression
 
     def iterate_json(self, data, key):
