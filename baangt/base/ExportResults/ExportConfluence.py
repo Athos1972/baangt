@@ -40,7 +40,7 @@ class ExportConfluence:
                 td = tds.find_all("td")
                 td[json_index].decompose()
         for tag in output_text():
-            del tag["style"]
+            tag.attrs = {}  # remove all attributes from html
         output_html = str(output_text).replace("", "")
         return output_html
 
@@ -50,7 +50,7 @@ class ExportConfluence:
         summary_text = bs(summary.read(), "html.parser").find("table")
         summary_text["border"] = 1
         for tag in summary_text():
-            del tag["style"]
+            tag.attrs = {}
         summary_html = str(summary_text).replace("", "")
         return summary_html
 
