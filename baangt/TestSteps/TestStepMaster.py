@@ -334,6 +334,9 @@ class TestStepMaster:
             self.testcaseDataDict[GC.TESTCASESTATUS_STOP] = "X"              # will stop the test case
         elif lActivity == GC.TESTCASESTATUS_STOPERROR.upper():
             self.testcaseDataDict[GC.TESTCASESTATUS_STOPERROR] = "X"         # will stop the test case and set error
+        elif lActivity[0:3] == "ZZ_":
+            # custom command. Do nothing and return
+            return
         else:
             raise BaseException(f"Unknown command in TestStep {lActivity}")
 
@@ -554,7 +557,7 @@ class TestStepMaster:
                     centerValue = self.apiSession.session[1].answerJSON.get(dictValue, "Empty")
                 elif dictVariable == 'FAKER':
                     # This is to call Faker Module with the Method, that is given after the .
-                    centerValue = self.__getFakerData(dictValue)
+                    centerValue = self._getFakerData(dictValue)
                 elif self.testcaseDataDict.get(dictVariable):
                     dic = self.testcaseDataDict.get(dictVariable)
                     for key in center.split('.')[1:]:
@@ -566,15 +569,12 @@ class TestStepMaster:
             if not centerValue:
                 if center in self.testcaseDataDict.keys():
                     # The variable exists, but has no value.
-                    return None
+                    centerValue = ""
                 else:
                     raise BaseException(f"Variable not found: {center}, input parameter was: {expression}")
-            try:
-                expression = "".join([left_part, centerValue, right_part])
-            except:
-                expression = centerValue
-                if type(expression) == float or type(expression) == int:
-                    expression = str(int(expression))
+
+            expression = "".join([left_part, str(centerValue), right_part])
+
         return expression
 
     def iterate_json(self, data, key):
@@ -589,7 +589,7 @@ class TestStepMaster:
             return data.get(key)
 
 
-    def __getFakerData(self, fakerMethod):
+    def _getFakerData(self, fakerMethod):
         if not self.baangtFaker:
             self.baangtFaker = baangtFaker()
 

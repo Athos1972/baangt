@@ -137,17 +137,18 @@ class HandleDatabase:
                         temp_dic[keys] = temp_dic[keys].replace(
                             temp_dic[keys][start_index:end_index+1], data_to_replace_with
                         )
-                if temp_dic[keys][:4] == "RRD_":
+
+                if str(temp_dic[keys])[:4] == "RRD_":
                     rrd_string = self.__process_rrd_string(temp_dic[keys])
                     rrd_data = self.__rrd_string_to_python(rrd_string[4:], fileName)
                     for data in rrd_data:
                         new_data_dic[data] = rrd_data[data]
-                elif temp_dic[keys][:4] == "RRE_":
+                elif str(temp_dic[keys][:4]) == "RRE_":
                     rre_string = self.__process_rre_string(temp_dic[keys])
                     rre_data = self.__rre_string_to_python(rre_string[4:])
                     for data in rre_data:
                         new_data_dic[data] = rre_data[data]
-                elif temp_dic[keys][:4] == "RLP_":
+                elif str(temp_dic[keys][:4]) == "RLP_":
                     temp_dic[keys] = self.rlp_process(temp_dic[keys], fileName)
                 else:
                     try:
