@@ -70,7 +70,6 @@ class ExportConfluence:
                                page_id=self.rootPage, title=self.pageTitle, space=self.space, comment=None)
         link = f'<ac:link><ri:attachment ri:filename="{fileName}" />\
         <ac:plain-text-link-body><![CDATA[{attach["_links"]["download"]}]]></ac:plain-text-link-body></ac:link>'
+        link = f'<a href="{"/confluence"+attach["_links"]["download"]}">{fileName}</a>'
         html = "<h1>Original file</h1>"+link
-        print(attach["title"])
-        print(attach["_links"]["download"])
         return html
