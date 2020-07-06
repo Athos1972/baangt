@@ -68,7 +68,9 @@ class ExportConfluence:
         fileName = os.path.basename(self.fileNameAndPathToResultXLSX)
         attach = confluence.attach_file(self.fileNameAndPathToResultXLSX, name=fileName, content_type=None,
                                page_id=self.rootPage, title=self.pageTitle, space=self.space, comment=None)
-        link = f'<ac:link><ri:attachment ri:filename="{attach["title"]}" />\
+        link = f'<ac:link><ri:attachment ri:filename="{fileName}" />\
         <ac:plain-text-link-body><![CDATA[{attach["_links"]["download"]}]]></ac:plain-text-link-body></ac:link>'
         html = "<h1>Original file</h1>"+link
+        print(attach["title"])
+        print(attach["_links"]["download"])
         return html
