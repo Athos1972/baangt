@@ -15,7 +15,9 @@ class ExportConfluence:
         self.password = password
         self.remove_headers = [headers.lower() for headers in remove_headers]
         self.html = self.makeBody()
-        self.update_confluence()
+        #self.update_confluence()
+        with open("test.html", 'w') as file:
+            file.write(self.html)
 
     def makeBody(self):
         output = self.xlsx2html(self.fileNameAndPathToResultXLSX, sheet="Output")
@@ -38,14 +40,19 @@ class ExportConfluence:
         for row in range(sht.nrows):
             dt = []
             for column in range(sht.ncols):
+                value = sht.cell_value(row, column)
+                if type(value) == float:
+                    if repr(value)[-2:] == '.0':
+                        value = int(value)
+                value = str(value)
                 if row == 0:
-                    if str(sht.cell_value(row, column)).lower() in self.remove_headers:
+                    if value.lower() in self.remove_headers:
                         remove_index.append(column)  # storing column number of removable headers in a list
                     else:
-                        dt.append(escape(str(sht.cell_value(row, column))))
+                        dt.append(escape(value))
                 else:
                     if column not in remove_index:  # if column is not in remove_header list than add the data in html
-                        dt.append(escape(str(sht.cell_value(row, column))))
+                        dt.append(escape(value))
             data.append('<td>' + '</td>\n<td>'.join(dt) + '</td>')  # joining individual data of a row in single row
         html = '<table>' + '<tr>' + '</tr>\n<tr>'.join(data) + '</tr>' + '</table>'  # joining list of rows to make html
         return html
