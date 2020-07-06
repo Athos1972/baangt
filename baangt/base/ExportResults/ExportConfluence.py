@@ -1,4 +1,3 @@
-from bs4 import BeautifulSoup as bs
 from atlassian import Confluence
 from html import escape
 import xlrd
@@ -16,9 +15,7 @@ class ExportConfluence:
         self.password = password
         self.remove_headers = [headers.lower() for headers in remove_headers]
         self.html = self.makeBody()
-        #self.update_confluence()
-        with open("test.html", 'w')as file:
-            file.write(self.html)
+        self.update_confluence()
 
     def makeBody(self):
         output = self.xlsx2html(self.fileNameAndPathToResultXLSX, sheet="Output")
@@ -28,7 +25,7 @@ class ExportConfluence:
         return html
 
     def update_confluence(self):
-        confluence = Confluence(url=self.url, username=self.username, password=self.password)
+        confluence = Confluence(url=self.url, username=self.username, password=self.password)  # Confluence login
         confluence.create_page(
             self.space, self.pageTitle, self.html, parent_id=self.rootPage, type='page', representation='storage'
         )
@@ -36,19 +33,19 @@ class ExportConfluence:
     def xlsx2html(self, filePath, sheet):
         wb = xlrd.open_workbook(filePath)
         sht = wb.sheet_by_name(sheet)
-        data = []
-        remove_index = []
+        data = []  # used to store rows, which are later joined to make complete html
+        remove_index = []  # used to store columns which are removable
         for row in range(sht.nrows):
             dt = []
             for column in range(sht.ncols):
                 if row == 0:
                     if str(sht.cell_value(row, column)).lower() in self.remove_headers:
-                        remove_index.append(column)
+                        remove_index.append(column)  # storing column number of removable headers in a list
                     else:
                         dt.append(escape(str(sht.cell_value(row, column))))
                 else:
-                    if column not in remove_index:
+                    if column not in remove_index:  # if column is not in remove_header list than add the data in html
                         dt.append(escape(str(sht.cell_value(row, column))))
-            data.append('<td>' + '</td>\n<td>'.join(dt) + '</td>')
-        html = '<table>' + '<tr>' + '</tr>\n<tr>'.join(data) + '</tr>' + '</table>'
+            data.append('<td>' + '</td>\n<td>'.join(dt) + '</td>')  # joining individual data of a row in single row
+        html = '<table>' + '<tr>' + '</tr>\n<tr>'.join(data) + '</tr>' + '</table>'  # joining list of rows to make html
         return html
