@@ -26,5 +26,4 @@ jinja2>=2.11
 pymsteams>=0.1.12
 slack-webhook>=1.0.3
 psutil>=5.7.0
-xlsx2html>=0.1.11
 atlassian-python-api>=1.16.0
