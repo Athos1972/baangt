@@ -15,9 +15,7 @@ class ExportConfluence:
         self.password = password
         self.remove_headers = [headers.lower() for headers in remove_headers]
         self.html = self.makeBody()
-        #self.update_confluence()
-        with open("test.html", 'w') as file:
-            file.write(self.html)
+        self.update_confluence()
 
     def makeBody(self):
         output = self.xlsx2html(self.fileNameAndPathToResultXLSX, sheet="Output")
