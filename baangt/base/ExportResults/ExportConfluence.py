@@ -28,12 +28,14 @@ class ExportConfluence:
 
     def update_confluence(self):
         confluence = Confluence(url=self.url, username=self.username, password=self.password)  # Confluence login
-        confluence.create_page(
-            self.space, self.pageTitle, self.html, parent_id=self.rootPage, type='page', representation='storage'
-        )
         if self.uploadOriginalFile:
             file = self.attach_file(confluence)
             html = file + "<br /><br /><h1>Original file</h1>" + self.html
+        else:
+            html = self.html
+        confluence.create_page(
+            self.space, self.pageTitle, html, parent_id=self.rootPage, type='page', representation='storage'
+        )
 
     def xlsx2html(self, filePath, sheet):
         wb = xlrd.open_workbook(filePath)
@@ -66,11 +68,7 @@ class ExportConfluence:
         fileName = os.path.basename(self.fileNameAndPathToResultXLSX)
         attach = confluence.attach_file(self.fileNameAndPathToResultXLSX, name=fileName, content_type=None,
                                page_id=self.rootPage, title=self.pageTitle, space=self.space, comment=None)
-        history = confluence.get_attachments_from_content(self.rootPage, start=0, limit=50, expand=None, filename=fileName,
-                                                media_type=None)
-        link = f'<ac:link><ri:attachment ri:filename="{fileName}" />\
-        <ac:plain-text-link-body><![CDATA[]]></ac:plain-text-link-body></ac:link>'
+        link = f'<ac:link><ri:attachment ri:filename="{attach["title"]}" />\
+        <ac:plain-text-link-body><![CDATA[{attach["_links"]["download"]}]]></ac:plain-text-link-body></ac:link>'
         html = "<h1>Original file</h1>"+link
-        print(attach)
-        print(history)
-        return ""
+        return html
