@@ -1,6 +1,7 @@
-from xlsx2html import xlsx2html
 from bs4 import BeautifulSoup as bs
 from atlassian import Confluence
+from html import escape
+import xlrd
 
 
 class ExportConfluence:
@@ -15,50 +16,39 @@ class ExportConfluence:
         self.password = password
         self.remove_headers = [headers.lower() for headers in remove_headers]
         self.html = self.makeBody()
-        self.update_confluence()
+        #self.update_confluence()
+        with open("test.html", 'w')as file:
+            file.write(self.html)
 
     def makeBody(self):
-        output_html = self.makeOutput()
-        summary_html = self.makeSummary()
-        html = "<h1>Summary</h1>" + summary_html + "<br /><br /><h1>Output</h1>" + output_html
+        output = self.xlsx2html(self.fileNameAndPathToResultXLSX, sheet="Output")
+        summary = self.xlsx2html(self.fileNameAndPathToResultXLSX, sheet="Summary")
+        html = "<h1>Summary</h1>" + summary + "<br /><br /><h1>Output</h1>" + output
         html = html.replace('\\',  '\\\\')
         return html
-
-    def makeOutput(self):
-        output = xlsx2html(self.fileNameAndPathToResultXLSX, sheet="Output")
-        output.seek(0)
-        output_soup = bs(output.read(), "html.parser")
-        output_text = output_soup.find("table")
-        output_text.attrs = {}
-        tr = output_text.find("tr")
-        td = tr.find_all("td")
-        json_index = []
-        for x in range(len(td)):
-            if td[x].text.strip().lower() in self.remove_headers:
-                json_index.append(x)
-        json_index.sort(reverse=True)
-        for index in json_index:
-            td[index].decompose()
-        trs = output_text.find_all("tr")[1:]
-        for index in json_index:
-            for tds in trs:
-                td = tds.find_all("td")
-                td[index].decompose()
-        for tag in output_text():
-            tag.attrs = {}  # remove all attributes from html
-        return str(output_text)
-
-    def makeSummary(self):
-        summary = xlsx2html(self.fileNameAndPathToResultXLSX, sheet="Summary")
-        summary.seek(0)
-        summary_text = bs(summary.read(), "html.parser").find("table")
-        summary_text.attrs = {}
-        for tag in summary_text():
-            tag.attrs = {}
-        return str(summary_text)
 
     def update_confluence(self):
         confluence = Confluence(url=self.url, username=self.username, password=self.password)
         confluence.create_page(
             self.space, self.pageTitle, self.html, parent_id=self.rootPage, type='page', representation='storage'
         )
+
+    def xlsx2html(self, filePath, sheet):
+        wb = xlrd.open_workbook(filePath)
+        sht = wb.sheet_by_name(sheet)
+        data = []
+        remove_index = []
+        for row in range(sht.nrows):
+            dt = []
+            for column in range(sht.ncols):
+                if row == 0:
+                    if str(sht.cell_value(row, column)).lower() in self.remove_headers:
+                        remove_index.append(column)
+                    else:
+                        dt.append(escape(str(sht.cell_value(row, column))))
+                else:
+                    if column not in remove_index:
+                        dt.append(escape(str(sht.cell_value(row, column))))
+            data.append('<td>' + '</td>\n<td>'.join(dt) + '</td>')
+        html = '<table>' + '<tr>' + '</tr>\n<tr>'.join(data) + '</tr>' + '</table>'
+        return html
