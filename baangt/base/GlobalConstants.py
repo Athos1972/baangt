@@ -85,6 +85,7 @@ EXP_FIELDLIST = "Fieldlist"
 EXP_XLSX = "XLSX"
 EXP_CSV = "CSV"
 
+PATH_QUERIES = '2ResultQueries'
 PATH_EXPORT = '1TestResults'
 PATH_IMPORT = '0TestInput'
 PATH_SCREENSHOTS = 'Screenshots'

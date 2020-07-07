@@ -10,7 +10,7 @@ name = 'heartbeat.json'
 stage = 'HF'
 #stage = 'PQA'
 start_time = datetime.strptime("2020-06-10 00:00", "%Y-%m-%d %H:%M")
-end_time = datetime.strptime("2020-06-11 00:00", "%Y-%m-%d %H:%M")
+end_time = datetime.strptime("2020-07-11 00:00", "%Y-%m-%d %H:%M")
 
 def print_logs(logs):
 	for index, log in enumerate(logs):
@@ -22,6 +22,7 @@ def print_logs(logs):
 r = ResultsBrowser()
 #r.getTestCases(name=name, stage=stage)
 
+'''
 print('\n***** Get All Records')
 logs = r.getResults()
 print_logs(logs)
@@ -42,11 +43,12 @@ print('\n***** Filter By Name and Date')
 logs = r.getResults(name=name, start_date=start_time, end_date=end_time)
 print_logs(logs)
 '''
+'''
 id = 'eff78fa9-83b7-484a-a8ab-5e30cf0f12cc'
 print(f'\n****** GET BY ID: {id}')
 print_logs([r.get(id)])
 '''
-
+'''
 def draw_seconds(t):
 	if t is None:
 		return '\033[35mnan\033[0m'
@@ -84,6 +86,14 @@ for log in logs:
 	for tc in log.testcase_sequences[0].testcases:
 		print(draw_seconds(tc.duration), end=' ')
 	print()
+'''
+
+r.query(name=name, stage=stage, start_date=start_time, end_date=end_time)
+#r.query(name=name, start_date=start_time)
+f = r.export()
+
+
+#print(f'Exported to: {f}')
 
 
 

@@ -121,6 +121,15 @@ class TestCaseSequenceLog(base):
 	testrun = relationship('TestrunLog', foreign_keys=[testrun_id])
 	testcases = relationship('TestCaseLog')
 
+	@property
+	def duration(self):
+		#
+		# duration in seconds
+		#
+
+		return sum([tc.duration for tc in self.testcases])
+
+
 	def __str__(self):
 		return str(uuid.UUID(bytes=self.id))
 
@@ -163,7 +172,7 @@ class TestCaseLog(base):
 	@property
 	def duration(self):
 		#
-		# duration as timedelta
+		# duration in seconds
 		#
 
 		for field in self.fields:
@@ -171,8 +180,14 @@ class TestCaseLog(base):
 				# parse value from H:M:S.microseconds
 				m = re.search(r'(?P<hours>\d+):(?P<minutes>\d+):(?P<seconds>\d[\.\d+]*)', field.value)
 				if m:
-					duration = {key: float(value) for key, value in m.groupdict().items()}
-					return timedelta(**duration)
+					factors = {
+						'hours': 3600,
+						'minutes': 60,
+						'seconds': 1,
+					}
+					#duration = {key: float(value) for key, value in m.groupdict().items()}
+					#return timedelta(**duration)
+					return sum([factors[key]*float(value) for key, value in m.groupdict().items()])
 
 		return None
 

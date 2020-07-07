@@ -1,0 +1,390 @@
+2020-07-04 19:56:57,840 _ DEBUG _ __init__ _ <module> : Value of sys._MEIPASS None
+2020-07-04 19:56:57,841 _ DEBUG _ __init__ _ <module> : Value of __file__: /home/aguryev/freelancer/baangt/baangt/__init__.py
+2020-07-04 19:56:57,842 _ DEBUG _ __init__ _ <module> : Value of sys.executable: /home/aguryev/freelancer/baangt/venv/bin/python
+2020-07-04 19:56:57,842 _ DEBUG _ __init__ _ <module> : Value of sys.argv[0]: baangt.py
+2020-07-04 19:56:57,842 _ DEBUG _ __init__ _ <module> : Value of sys.path: ['/home/aguryev/freelancer/baangt', '/home/aguryev/freelancer/baangt/venv/lib/python36.zip', '/home/aguryev/freelancer/baangt/venv/lib/python3.6', '/home/aguryev/freelancer/baangt/venv/lib/python3.6/lib-dynload', '/usr/lib/python3.6', '/home/aguryev/freelancer/baangt/venv/lib/python3.6/site-packages']
+2020-07-04 19:56:57,843 _ DEBUG _ __init__ _ <module> : Value of os.path: <module 'posixpath' from '/home/aguryev/freelancer/baangt/venv/lib/python3.6/posixpath.py'>
+2020-07-04 19:56:57,843 _ DEBUG _ __init__ _ <module> : Value of os.getcwd(): /home/aguryev/freelancer/baangt
+2020-07-04 19:56:57,844 _ DEBUG _ __init__ _ <module> : Value of Path.cwd(): /home/aguryev/freelancer/baangt
+2020-07-04 19:56:57,844 _ DEBUG _ __init__ _ <module> : running in a normal Python process
+2020-07-04 19:57:01,584 _ INFO _ TestRun _ __init__ : Init Testrun, uuid is 771fe3a3-6b79-4f69-8470-a794e9ff9f47
+2020-07-04 19:57:01,585 _ INFO _ Utils _ openJson : Reading Definition from examples/globals_headless.json
+2020-07-04 19:57:01,585 _ DEBUG _ Utils _ findFileAndPathFromPath : Main Path to search for files: .
+2020-07-04 19:57:01,586 _ DEBUG _ Utils _ findFileAndPathFromPath : New Main Path to search for files: /home/aguryev/freelancer/baangt/venv/bin
+2020-07-04 19:57:01,644 _ DEBUG _ TestRun _ __loadJSONGlobals : Execution Stage was not set. Setting to default value Test
+2020-07-04 19:57:01,646 _ INFO _ TestRun _ _loadExcelTestRunDefinitions : Reading Definition from examples/CompleteBaangtWebdemo.xlsx
+2020-07-04 19:57:02,636 _ INFO _ TestRunUtils _ getCompleteTestRunAttributes : get into getCompleteTestRunAttributes, testRunName is CompleteBaangtWebdemo.xlsx
+2020-07-04 19:57:02,671 _ INFO _ BrowserFactory _ __getBrowserServer : Starting browsermob proxy
+2020-07-04 19:57:03,423 _ INFO _ TestRunUtils _ _recursive_replace : Due to Globals replaced value  of BrowserAttributes with value {'HEADLESS': 'True'}
+2020-07-04 19:57:03,426 _ INFO _ TestRunUtils _ getCompleteTestRunAttributes : get into getCompleteTestRunAttributes, testRunName is CompleteBaangtWebdemo.xlsx
+2020-07-04 19:57:03,426 _ INFO _ TestRun _ executeDictSequenceOfClasses : Starting TESTSEQUENCE: 1
+2020-07-04 19:57:03,431 _ DEBUG _ Utils _ dynamicImportOfClasses : Imported class baangt.TestCaseSequence.TestCaseSequenceMaster, result was <module 'baangt.TestCaseSequence' from '/home/aguryev/freelancer/baangt/baangt/TestCaseSequence/__init__.py'>
+2020-07-04 19:57:03,999 _ DEBUG _ Utils _ findFileAndPathFromPath : Found file via BasePath examples/CompleteBaangtWebdemo.xlsx
+2020-07-04 19:57:04,000 _ DEBUG _ Utils _ findFileAndPathFromPath : Main Path to search for files: .
+2020-07-04 19:57:04,000 _ DEBUG _ Utils _ findFileAndPathFromPath : New Main Path to search for files: /home/aguryev/freelancer/baangt/venv/bin
+2020-07-04 19:57:04,128 _ DEBUG _ HandleDatabase _ readNextRecord : Skipped record {'Stage': 'PQA', 'RemoteReadEx due to wrong stage: PQA vs. Test
+2020-07-04 19:57:04,155 _ DEBUG _ HandleDatabase _ readNextRecord : Skipped record {'Stage': 'PQA', 'RemoteReadEx due to wrong stage: PQA vs. Test
+2020-07-04 19:57:04,182 _ DEBUG _ HandleDatabase _ readNextRecord : Skipped record {'Stage': 'PQA', 'RemoteReadEx due to wrong stage: PQA vs. Test
+2020-07-04 19:57:04,208 _ DEBUG _ HandleDatabase _ readNextRecord : Skipped record {'Stage': 'FQA', 'RemoteReadEx due to wrong stage: FQA vs. Test
+2020-07-04 19:57:04,236 _ DEBUG _ HandleDatabase _ readNextRecord : Skipped record {'Stage': 'FQA', 'RemoteReadEx due to wrong stage: FQA vs. Test
+2020-07-04 19:57:04,263 _ DEBUG _ HandleDatabase _ readNextRecord : Skipped record {'Stage': 'FQA', 'RemoteReadEx due to wrong stage: FQA vs. Test
+2020-07-04 19:57:04,303 _ DEBUG _ HandleDatabase _ readNextRecord : Couldn't read record from database: 9
+2020-07-04 19:57:04,316 _ INFO _ TestCaseSequenceMaster _ prepareExecution : 3 test records read for processing
+2020-07-04 19:57:04,316 _ INFO _ TestCaseSequenceMaster _ execute : Starting execution with TestRecord 0, Details: {'Stage': 'Test', 'RemoteReadExample': 'RRD_[CustomerData,*,[Stage:[Test],Country:[USA],IsActive:[X]]]', 'textarea1': 'test area. Yeah!', 'url1': 'https://webdemo.baangt.org/', 'InputText': 'this is an input'}
+2020-07-04 19:57:04,316 _ INFO _ TestRun _ executeDictSequenceOfClasses : Starting TESTCASE: 1
+2020-07-04 19:57:04,317 _ DEBUG _ Utils _ dynamicImportOfClasses : Imported class baangt.TestCase.TestCaseMaster.TestCaseMaster, result was <module 'baangt.TestCase.TestCaseMaster' from '/home/aguryev/freelancer/baangt/baangt/TestCase/TestCaseMaster.py'>
+2020-07-04 19:57:04,317 _ INFO _ TestCaseMaster _ __getBrowserForTestCase : Settings for this TestCase: ['baangt.TestCase.TestCaseMaster.TestCaseMaster', {'TestCaseType': 'Browser', 'Browser': 'FF', 'Brow
+2020-07-04 19:57:04,317 _ INFO _ BrowserFactory _ getBrowser : opening new instance 0 of browser FF
+2020-07-04 19:57:04,317 _ DEBUG _ Utils _ dynamicImportOfClasses : Imported class baangt.base.BrowserHandling.BrowserHandling.BrowserDriver, result was <module 'baangt.base.BrowserHandling.BrowserHandling' from '/home/aguryev/freelancer/baangt/baangt/base/BrowserHandling/BrowserHandling.py'>
+2020-07-04 19:57:07,536 _ DEBUG _ BrowserHelperFunction _ browserHelper_setBrowserDownloadDirRandom : Directory for download /home/aguryev/freelancer/baangt/1TestResults/TestDownloads/a76c3665-56ae-4253-98db-5dd425372073
+2020-07-04 19:57:07,537 _ DEBUG _ BrowserHandling _ _browserFirefoxRun : Firefox Profile as follows:/tmp/tmp8v4bcc25/user.js
+2020-07-04 19:57:07,537 _ DEBUG _ WebdriverFunctions _ webdriver_createBrowserOptions : Starting in Headless mode
+2020-07-04 19:57:07,537 _ DEBUG _ BrowserHelperFunction _ browserHelper_findBrowserDriverPaths : Path for BrowserDrivers: /home/aguryev/freelancer/baangt/browserDrivers/geckodriver
+2020-07-04 19:58:15,244 _ DEBUG _ BrowserHandling _ setBrowserWindowSize : Resized browser window to width want/is: 1900/1900, height want/is: 1200/1200
+2020-07-04 19:58:16,073 _ INFO _ TestRun _ executeDictSequenceOfClasses : Starting TestStep: 1
+2020-07-04 19:58:16,146 _ DEBUG _ Utils _ dynamicImportOfClasses : Imported class baangt.TestSteps.TestStepMaster.TestStepMaster, result was <module 'baangt.TestSteps.TestStepMaster' from '/home/aguryev/freelancer/baangt/baangt/TestSteps/TestStepMaster.py'>
+2020-07-04 19:58:16,147 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 0 with parameters: act=GOTOURL, lType=XPATH, loc=, Val1=$(url1), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:16,147 _ INFO _ BrowserHelperFunction _ browserHelper_log : GoToUrl:https://webdemo.baangt.org/
+2020-07-04 19:58:21,244 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 1 with parameters: act=CLICK, lType=XPATH, loc=//span, Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:21,244 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //span
+2020-07-04 19:58:22,588 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:58:24,727 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 2 with parameters: act=PAUSE, lType=, loc=, Val1=1, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:25,805 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 3 with parameters: act=CLICK, lType=XPATH, loc=//*[@id='navbarDropdown'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:25,806 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //*[@id='navbarDropdown']
+2020-07-04 19:58:26,384 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:58:26,629 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 4 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Action')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:26,630 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Action')]
+2020-07-04 19:58:27,209 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:58:27,244 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 5 with parameters: act=CLICK, lType=XPATH, loc=//*[@id='navbarDropdown'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:27,244 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //*[@id='navbarDropdown']
+2020-07-04 19:58:27,797 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:58:28,014 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 6 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Another action')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:28,015 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Another action')]
+2020-07-04 19:58:28,588 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:58:28,810 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 7 with parameters: act=CLICK, lType=XPATH, loc=//*[@id='navbarDropdown'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:28,811 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //*[@id='navbarDropdown']
+2020-07-04 19:58:29,341 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:58:29,556 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 8 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Something else here')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:29,557 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Something else here')]
+2020-07-04 19:58:30,085 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:58:30,301 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 9 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Multiple Buttons')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:30,301 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Multiple Buttons')]
+2020-07-04 19:58:30,865 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:58:31,861 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 10 with parameters: act=CLICK, lType=XPATH, loc=//*[@id='yesBtn'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:31,861 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //*[@id='yesBtn']
+2020-07-04 19:58:32,427 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:58:33,451 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 11 with parameters: act=ALERTIF, lType=, loc=, Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:33,451 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 12 with parameters: act=SWITCHWINDOW, lType=, loc=, Val1=0, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:33,562 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 13 with parameters: act=CLICK, lType=XPATH, loc=//*[@id='textarea'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:33,562 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //*[@id='textarea']
+2020-07-04 19:58:34,215 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:58:35,797 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 14 with parameters: act=SETTEXT, lType=XPATH, loc=//*[@id='textarea'], Val1=$(textarea1), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:35,797 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //*[@id='textarea']
+2020-07-04 19:58:36,573 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething SETTEXT with test area. Yeah!
+2020-07-04 19:58:36,815 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 15 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Back')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:36,815 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Back')]
+2020-07-04 19:58:37,379 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:58:37,669 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 16 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Input')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:37,669 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Input')]
+2020-07-04 19:58:38,248 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:58:38,460 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 17 with parameters: act=CLICK, lType=XPATH, loc=//input[contains(@name,'input')], Val1=$(InputText), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:38,461 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //input[contains(@name,'input')]
+2020-07-04 19:58:39,029 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:58:39,260 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 18 with parameters: act=SETTEXT, lType=XPATH, loc=//input[contains(@name,'input')], Val1=$(InputText), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:39,260 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //input[contains(@name,'input')]
+2020-07-04 19:58:39,806 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething SETTEXT with this is an input
+2020-07-04 19:58:39,830 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 19 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Back')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:39,830 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Back')]
+2020-07-04 19:58:40,390 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:58:40,630 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 20 with parameters: act=CLICK, lType=XPATH, loc=(//a[contains(text(),'Dropdown')])[2], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:40,630 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = (//a[contains(text(),'Dropdown')])[2]
+2020-07-04 19:58:41,198 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:58:41,458 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 21 with parameters: act=CLICK, lType=XPATH, loc=//select[@id='dropdown'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:41,458 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //select[@id='dropdown']
+2020-07-04 19:58:42,022 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:58:42,317 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 22 with parameters: act=CLICK, lType=XPATH, loc=//option[@value='Strawberry'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:42,318 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //option[@value='Strawberry']
+2020-07-04 19:58:42,846 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:58:43,078 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 23 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Back')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:43,078 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Back')]
+2020-07-04 19:58:43,645 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:58:43,888 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 24 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Form')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:43,888 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Form')]
+2020-07-04 19:58:44,435 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:58:45,237 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 25 with parameters: act=CLICK, lType=XPATH, loc=//*[@id='firstName'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:45,237 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //*[@id='firstName']
+2020-07-04 19:58:45,797 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:58:46,033 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 26 with parameters: act=SETTEXT, lType=XPATH, loc=//*[@id='firstName'], Val1=$(FAKER.name), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:47,677 _ DEBUG _ TestStepMaster _ __getFakerData : Calling faker with method: name
+2020-07-04 19:58:47,700 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //*[@id='firstName']
+2020-07-04 19:58:48,243 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething SETTEXT with Lori Kennedy
+2020-07-04 19:58:48,263 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 27 with parameters: act=SETTEXT, lType=XPATH, loc=//*[@id='lastName'], Val1=$(NameLast), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:48,263 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //*[@id='lastName']
+2020-07-04 19:58:48,822 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething SETTEXT with Albers
+2020-07-04 19:58:48,841 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 28 with parameters: act=CLICKIF, lType=XPATH, loc=//select[@id='country'], Val1=$(Country), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:48,842 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //select[@id='country']
+2020-07-04 19:58:49,396 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:58:49,614 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 29 with parameters: act=CLICKIF, lType=XPATH, loc=//option[@value='USA'], Val1=$(Country), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:49,615 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //option[@value='USA']
+2020-07-04 19:58:50,148 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:58:50,362 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 30 with parameters: act=CLICK, lType=XPATH, loc=//textarea[@name='message'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:50,362 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //textarea[@name='message']
+2020-07-04 19:58:50,895 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:58:51,109 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 31 with parameters: act=IBAN, lType=, loc=, Val1=DE, comp=, Val2=ibanGenerated, Optional=False, timeout=20
+2020-07-04 19:58:51,501 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 32 with parameters: act=SETTEXT, lType=XPATH, loc=//textarea[@name='message'], Val1=$(ibanGenerated), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:51,501 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //textarea[@name='message']
+2020-07-04 19:58:52,063 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething SETTEXT with GB81ACOU98468392601242
+2020-07-04 19:58:52,093 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 33 with parameters: act=SUBMIT, lType=XPATH, loc=//input[@value='Send'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:52,253 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 34 with parameters: act=SAVETO, lType=XPATH, loc=//div[contains(@id,'results')], Val1=formResult, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:52,254 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //div[contains(@id,'results')]
+2020-07-04 19:58:53,421 _ DEBUG _ TestStepMaster _ doSaveData : Saved {'firstName': 'Lori Kennedy', 'lastName': 'Albers', 'email': '', 'iban': '', 'bic': '', 'country': 'USA', 'message': 'GB81ACOU98468392601242'} to formResult
+2020-07-04 19:58:53,421 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 35 with parameters: act=ASSERT, lType=XPATH, loc=//div[contains(@id,'results')], Val1=, comp=!=, Val2="", Optional=False, timeout=20
+2020-07-04 19:58:53,421 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //div[contains(@id,'results')]
+2020-07-04 19:58:54,476 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 36 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Back')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:54,477 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Back')]
+2020-07-04 19:58:55,034 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:58:55,246 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 37 with parameters: act=IF, lType=, loc=, Val1=$(doIframe), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:55,246 _ DEBUG _ TestStepMaster _ executeDirectSingle : IF-condition None   evaluated to: False 
+2020-07-04 19:58:55,246 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 49 with parameters: act=ENDIF, lType=, loc=, Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:55,246 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 50 with parameters: act=GOBACK, lType=, loc=, Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:55,250 _ INFO _ TestCaseMaster _ tearDown : Testcase  finished with status: OK
+2020-07-04 19:58:55,251 _ INFO _ TestCaseSequenceMaster _ execute : execute append1DTestCaseEndDateTimes, param is 2020-07-04 19:58:55.251003
+2020-07-04 19:58:55,251 _ DEBUG _ TestRun _ setResult : Received new result for Testrecord 0
+2020-07-04 19:58:55,251 _ INFO _ TestCaseSequenceMaster _ execute : Starting execution with TestRecord 1, Details: {'Stage': 'Test', 'RemoteReadExample': 'RRD_[CustomerData,*,[Stage:[Test],Country:[Canada],IsActive:[X]]]', 'textarea1': 'Wonderful baangt!', 'url1': 'https://webdemo.baangt.org/', 'InputText': ''}
+2020-07-04 19:58:55,251 _ INFO _ TestRun _ executeDictSequenceOfClasses : Starting TESTCASE: 1
+2020-07-04 19:58:55,251 _ DEBUG _ Utils _ dynamicImportOfClasses : Imported class baangt.TestCase.TestCaseMaster.TestCaseMaster, result was <module 'baangt.TestCase.TestCaseMaster' from '/home/aguryev/freelancer/baangt/baangt/TestCase/TestCaseMaster.py'>
+2020-07-04 19:58:55,251 _ INFO _ TestCaseMaster _ __getBrowserForTestCase : Settings for this TestCase: ['baangt.TestCase.TestCaseMaster.TestCaseMaster', {'TestCaseType': 'Browser', 'Browser': 'FF', 'Brow
+2020-07-04 19:58:55,251 _ DEBUG _ BrowserFactory _ getBrowser : Using existing instance of browser 0
+2020-07-04 19:58:55,251 _ INFO _ TestRun _ executeDictSequenceOfClasses : Starting TestStep: 1
+2020-07-04 19:58:55,251 _ DEBUG _ Utils _ dynamicImportOfClasses : Imported class baangt.TestSteps.TestStepMaster.TestStepMaster, result was <module 'baangt.TestSteps.TestStepMaster' from '/home/aguryev/freelancer/baangt/baangt/TestSteps/TestStepMaster.py'>
+2020-07-04 19:58:55,252 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 0 with parameters: act=GOTOURL, lType=XPATH, loc=, Val1=$(url1), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:55,252 _ INFO _ BrowserHelperFunction _ browserHelper_log : GoToUrl:https://webdemo.baangt.org/ Locator: xpath = //a[contains(., 'Back')]
+2020-07-04 19:58:55,895 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 1 with parameters: act=CLICK, lType=XPATH, loc=//span, Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:55,895 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //span
+2020-07-04 19:58:56,460 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:58:56,708 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 2 with parameters: act=PAUSE, lType=, loc=, Val1=1, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:57,709 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 3 with parameters: act=CLICK, lType=XPATH, loc=//*[@id='navbarDropdown'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:57,710 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //*[@id='navbarDropdown']
+2020-07-04 19:58:58,274 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:58:58,501 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 4 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Action')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:58,501 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Action')]
+2020-07-04 19:58:59,067 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:58:59,092 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 5 with parameters: act=CLICK, lType=XPATH, loc=//*[@id='navbarDropdown'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:59,093 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //*[@id='navbarDropdown']
+2020-07-04 19:58:59,656 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:58:59,872 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 6 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Another action')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:58:59,872 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Another action')]
+2020-07-04 19:59:00,467 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:00,687 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 7 with parameters: act=CLICK, lType=XPATH, loc=//*[@id='navbarDropdown'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:00,688 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //*[@id='navbarDropdown']
+2020-07-04 19:59:01,255 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:01,474 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 8 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Something else here')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:01,475 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Something else here')]
+2020-07-04 19:59:02,034 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:02,253 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 9 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Multiple Buttons')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:02,253 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Multiple Buttons')]
+2020-07-04 19:59:02,822 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:02,999 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 10 with parameters: act=CLICK, lType=XPATH, loc=//*[@id='yesBtn'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:02,999 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //*[@id='yesBtn']
+2020-07-04 19:59:03,571 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:03,949 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 11 with parameters: act=ALERTIF, lType=, loc=, Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:03,949 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 12 with parameters: act=SWITCHWINDOW, lType=, loc=, Val1=0, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:03,955 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 13 with parameters: act=CLICK, lType=XPATH, loc=//*[@id='textarea'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:03,956 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //*[@id='textarea']
+2020-07-04 19:59:04,519 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:04,741 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 14 with parameters: act=SETTEXT, lType=XPATH, loc=//*[@id='textarea'], Val1=$(textarea1), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:04,741 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //*[@id='textarea']
+2020-07-04 19:59:05,319 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething SETTEXT with Wonderful baangt!
+2020-07-04 19:59:05,346 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 15 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Back')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:05,346 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Back')]
+2020-07-04 19:59:05,961 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:06,188 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 16 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Input')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:06,189 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Input')]
+2020-07-04 19:59:06,739 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:06,921 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 17 with parameters: act=CLICK, lType=XPATH, loc=//input[contains(@name,'input')], Val1=$(InputText), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:06,921 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //input[contains(@name,'input')]
+2020-07-04 19:59:07,489 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:07,720 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 18 with parameters: act=SETTEXT, lType=XPATH, loc=//input[contains(@name,'input')], Val1=$(InputText), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:07,720 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //input[contains(@name,'input')]
+2020-07-04 19:59:08,270 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething SETTEXT with None
+2020-07-04 19:59:08,276 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 19 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Back')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:08,276 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Back')]
+2020-07-04 19:59:08,840 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:09,071 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 20 with parameters: act=CLICK, lType=XPATH, loc=(//a[contains(text(),'Dropdown')])[2], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:09,072 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = (//a[contains(text(),'Dropdown')])[2]
+2020-07-04 19:59:09,645 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:09,850 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 21 with parameters: act=CLICK, lType=XPATH, loc=//select[@id='dropdown'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:09,850 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //select[@id='dropdown']
+2020-07-04 19:59:10,419 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:10,652 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 22 with parameters: act=CLICK, lType=XPATH, loc=//option[@value='Strawberry'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:10,653 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //option[@value='Strawberry']
+2020-07-04 19:59:11,219 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:11,435 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 23 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Back')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:11,435 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Back')]
+2020-07-04 19:59:12,011 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:12,223 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 24 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Form')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:12,223 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Form')]
+2020-07-04 19:59:12,812 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:13,044 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 25 with parameters: act=CLICK, lType=XPATH, loc=//*[@id='firstName'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:13,044 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //*[@id='firstName']
+2020-07-04 19:59:13,577 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:13,811 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 26 with parameters: act=SETTEXT, lType=XPATH, loc=//*[@id='firstName'], Val1=$(FAKER.name), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:13,849 _ DEBUG _ TestStepMaster _ __getFakerData : Calling faker with method: name
+2020-07-04 19:59:13,850 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //*[@id='firstName']
+2020-07-04 19:59:14,435 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething SETTEXT with Steven Hamilton
+2020-07-04 19:59:14,464 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 27 with parameters: act=SETTEXT, lType=XPATH, loc=//*[@id='lastName'], Val1=$(NameLast), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:14,465 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //*[@id='lastName']
+2020-07-04 19:59:14,992 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething SETTEXT with Meier
+2020-07-04 19:59:15,009 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 28 with parameters: act=CLICKIF, lType=XPATH, loc=//select[@id='country'], Val1=$(Country), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:15,009 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //select[@id='country']
+2020-07-04 19:59:15,556 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:15,780 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 29 with parameters: act=CLICKIF, lType=XPATH, loc=//option[@value='Canada'], Val1=$(Country), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:15,780 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //option[@value='Canada']
+2020-07-04 19:59:16,328 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:16,544 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 30 with parameters: act=CLICK, lType=XPATH, loc=//textarea[@name='message'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:16,544 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //textarea[@name='message']
+2020-07-04 19:59:17,105 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:17,323 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 31 with parameters: act=IBAN, lType=, loc=, Val1=DE, comp=, Val2=ibanGenerated, Optional=False, timeout=20
+2020-07-04 19:59:17,365 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 32 with parameters: act=SETTEXT, lType=XPATH, loc=//textarea[@name='message'], Val1=$(ibanGenerated), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:17,365 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //textarea[@name='message']
+2020-07-04 19:59:17,923 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething SETTEXT with GB26TYTX19936745785281
+2020-07-04 19:59:17,955 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 33 with parameters: act=SUBMIT, lType=XPATH, loc=//input[@value='Send'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:17,967 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 34 with parameters: act=SAVETO, lType=XPATH, loc=//div[contains(@id,'results')], Val1=formResult, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:17,967 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //div[contains(@id,'results')]
+2020-07-04 19:59:19,074 _ DEBUG _ TestStepMaster _ doSaveData : Saved {'firstName': 'Steven Hamilton', 'lastName': 'Meier', 'email': '', 'iban': '', 'bic': '', 'country': 'Canada', 'message': 'GB26TYTX19936745785281'} to formResult
+2020-07-04 19:59:19,074 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 35 with parameters: act=ASSERT, lType=XPATH, loc=//div[contains(@id,'results')], Val1=, comp=!=, Val2="", Optional=False, timeout=20
+2020-07-04 19:59:19,074 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //div[contains(@id,'results')]
+2020-07-04 19:59:20,189 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 36 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Back')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:20,190 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Back')]
+2020-07-04 19:59:20,741 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:20,963 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 37 with parameters: act=IF, lType=, loc=, Val1=$(doIframe), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:20,964 _ DEBUG _ TestStepMaster _ executeDirectSingle : IF-condition None   evaluated to: False 
+2020-07-04 19:59:20,964 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 49 with parameters: act=ENDIF, lType=, loc=, Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:20,964 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 50 with parameters: act=GOBACK, lType=, loc=, Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:20,987 _ INFO _ TestCaseMaster _ tearDown : Testcase  finished with status: OK
+2020-07-04 19:59:20,987 _ INFO _ TestCaseSequenceMaster _ execute : execute append1DTestCaseEndDateTimes, param is 2020-07-04 19:59:20.987355
+2020-07-04 19:59:20,987 _ DEBUG _ TestRun _ setResult : Received new result for Testrecord 1
+2020-07-04 19:59:20,987 _ INFO _ TestCaseSequenceMaster _ execute : Starting execution with TestRecord 2, Details: {'Stage': 'Test', 'RemoteReadExample': 'RRD_[CustomerData,*,[Stage:[Test],Country:[USA],IsActive:[X]]]', 'textarea1': 'This is perfect!', 'url1': 'https://webdemo.baangt.org/', 'InputText': 'Another input, how cool!'}
+2020-07-04 19:59:20,987 _ INFO _ TestRun _ executeDictSequenceOfClasses : Starting TESTCASE: 1
+2020-07-04 19:59:20,988 _ DEBUG _ Utils _ dynamicImportOfClasses : Imported class baangt.TestCase.TestCaseMaster.TestCaseMaster, result was <module 'baangt.TestCase.TestCaseMaster' from '/home/aguryev/freelancer/baangt/baangt/TestCase/TestCaseMaster.py'>
+2020-07-04 19:59:20,988 _ INFO _ TestCaseMaster _ __getBrowserForTestCase : Settings for this TestCase: ['baangt.TestCase.TestCaseMaster.TestCaseMaster', {'TestCaseType': 'Browser', 'Browser': 'FF', 'Brow
+2020-07-04 19:59:20,988 _ DEBUG _ BrowserFactory _ getBrowser : Using existing instance of browser 0
+2020-07-04 19:59:20,988 _ INFO _ TestRun _ executeDictSequenceOfClasses : Starting TestStep: 1
+2020-07-04 19:59:20,988 _ DEBUG _ Utils _ dynamicImportOfClasses : Imported class baangt.TestSteps.TestStepMaster.TestStepMaster, result was <module 'baangt.TestSteps.TestStepMaster' from '/home/aguryev/freelancer/baangt/baangt/TestSteps/TestStepMaster.py'>
+2020-07-04 19:59:20,989 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 0 with parameters: act=GOTOURL, lType=XPATH, loc=, Val1=$(url1), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:20,989 _ INFO _ BrowserHelperFunction _ browserHelper_log : GoToUrl:https://webdemo.baangt.org/ Locator: xpath = //a[contains(., 'Back')]
+2020-07-04 19:59:21,195 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 1 with parameters: act=CLICK, lType=XPATH, loc=//span, Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:21,195 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //span
+2020-07-04 19:59:21,739 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:21,984 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 2 with parameters: act=PAUSE, lType=, loc=, Val1=1, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:22,985 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 3 with parameters: act=CLICK, lType=XPATH, loc=//*[@id='navbarDropdown'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:22,986 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //*[@id='navbarDropdown']
+2020-07-04 19:59:23,567 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:23,798 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 4 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Action')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:23,799 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Action')]
+2020-07-04 19:59:24,365 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:24,396 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 5 with parameters: act=CLICK, lType=XPATH, loc=//*[@id='navbarDropdown'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:24,397 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //*[@id='navbarDropdown']
+2020-07-04 19:59:24,961 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:25,179 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 6 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Another action')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:25,180 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Another action')]
+2020-07-04 19:59:25,717 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:25,936 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 7 with parameters: act=CLICK, lType=XPATH, loc=//*[@id='navbarDropdown'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:25,937 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //*[@id='navbarDropdown']
+2020-07-04 19:59:26,506 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:26,725 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 8 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Something else here')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:26,726 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Something else here')]
+2020-07-04 19:59:27,286 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:27,506 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 9 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Multiple Buttons')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:27,507 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Multiple Buttons')]
+2020-07-04 19:59:28,076 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:28,278 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 10 with parameters: act=CLICK, lType=XPATH, loc=//*[@id='yesBtn'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:28,279 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //*[@id='yesBtn']
+2020-07-04 19:59:28,846 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:29,241 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 11 with parameters: act=ALERTIF, lType=, loc=, Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:29,242 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 12 with parameters: act=SWITCHWINDOW, lType=, loc=, Val1=0, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:29,252 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 13 with parameters: act=CLICK, lType=XPATH, loc=//*[@id='textarea'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:29,252 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //*[@id='textarea']
+2020-07-04 19:59:29,818 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:30,035 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 14 with parameters: act=SETTEXT, lType=XPATH, loc=//*[@id='textarea'], Val1=$(textarea1), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:30,035 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //*[@id='textarea']
+2020-07-04 19:59:30,598 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething SETTEXT with This is perfect!
+2020-07-04 19:59:30,628 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 15 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Back')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:30,628 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Back')]
+2020-07-04 19:59:31,196 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:31,422 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 16 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Input')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:31,422 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Input')]
+2020-07-04 19:59:31,996 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:32,164 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 17 with parameters: act=CLICK, lType=XPATH, loc=//input[contains(@name,'input')], Val1=$(InputText), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:32,164 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //input[contains(@name,'input')]
+2020-07-04 19:59:32,722 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:32,953 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 18 with parameters: act=SETTEXT, lType=XPATH, loc=//input[contains(@name,'input')], Val1=$(InputText), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:32,954 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //input[contains(@name,'input')]
+2020-07-04 19:59:33,520 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething SETTEXT with Another input, how cool!
+2020-07-04 19:59:33,554 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 19 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Back')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:33,554 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Back')]
+2020-07-04 19:59:34,112 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:34,349 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 20 with parameters: act=CLICK, lType=XPATH, loc=(//a[contains(text(),'Dropdown')])[2], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:34,350 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = (//a[contains(text(),'Dropdown')])[2]
+2020-07-04 19:59:34,933 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:35,114 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 21 with parameters: act=CLICK, lType=XPATH, loc=//select[@id='dropdown'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:35,114 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //select[@id='dropdown']
+2020-07-04 19:59:35,688 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:35,922 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 22 with parameters: act=CLICK, lType=XPATH, loc=//option[@value='Strawberry'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:35,922 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //option[@value='Strawberry']
+2020-07-04 19:59:36,485 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:36,700 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 23 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Back')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:36,701 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Back')]
+2020-07-04 19:59:37,283 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:37,491 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 24 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Form')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:37,492 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Form')]
+2020-07-04 19:59:38,078 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:38,281 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 25 with parameters: act=CLICK, lType=XPATH, loc=//*[@id='firstName'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:38,281 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //*[@id='firstName']
+2020-07-04 19:59:38,854 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:39,100 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 26 with parameters: act=SETTEXT, lType=XPATH, loc=//*[@id='firstName'], Val1=$(FAKER.name), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:39,138 _ DEBUG _ TestStepMaster _ __getFakerData : Calling faker with method: name
+2020-07-04 19:59:39,139 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //*[@id='firstName']
+2020-07-04 19:59:39,717 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething SETTEXT with Erika Allen
+2020-07-04 19:59:39,743 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 27 with parameters: act=SETTEXT, lType=XPATH, loc=//*[@id='lastName'], Val1=$(NameLast), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:39,744 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //*[@id='lastName']
+2020-07-04 19:59:40,302 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething SETTEXT with Albers
+2020-07-04 19:59:40,321 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 28 with parameters: act=CLICKIF, lType=XPATH, loc=//select[@id='country'], Val1=$(Country), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:40,321 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //select[@id='country']
+2020-07-04 19:59:40,885 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:41,110 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 29 with parameters: act=CLICKIF, lType=XPATH, loc=//option[@value='USA'], Val1=$(Country), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:41,110 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //option[@value='USA']
+2020-07-04 19:59:41,690 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:41,908 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 30 with parameters: act=CLICK, lType=XPATH, loc=//textarea[@name='message'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:41,909 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //textarea[@name='message']
+2020-07-04 19:59:42,448 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:42,664 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 31 with parameters: act=IBAN, lType=, loc=, Val1=DE, comp=, Val2=ibanGenerated, Optional=False, timeout=20
+2020-07-04 19:59:42,707 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 32 with parameters: act=SETTEXT, lType=XPATH, loc=//textarea[@name='message'], Val1=$(ibanGenerated), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:42,707 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //textarea[@name='message']
+2020-07-04 19:59:43,267 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething SETTEXT with GB74FKOL53186741071526
+2020-07-04 19:59:43,297 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 33 with parameters: act=SUBMIT, lType=XPATH, loc=//input[@value='Send'], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:43,312 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 34 with parameters: act=SAVETO, lType=XPATH, loc=//div[contains(@id,'results')], Val1=formResult, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:43,312 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //div[contains(@id,'results')]
+2020-07-04 19:59:44,428 _ DEBUG _ TestStepMaster _ doSaveData : Saved {'firstName': 'Erika Allen', 'lastName': 'Albers', 'email': '', 'iban': '', 'bic': '', 'country': 'USA', 'message': 'GB74FKOL53186741071526'} to formResult
+2020-07-04 19:59:44,429 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 35 with parameters: act=ASSERT, lType=XPATH, loc=//div[contains(@id,'results')], Val1=, comp=!=, Val2="", Optional=False, timeout=20
+2020-07-04 19:59:44,429 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //div[contains(@id,'results')]
+2020-07-04 19:59:45,528 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 36 with parameters: act=CLICK, lType=XPATH, loc=//a[contains(., 'Back')], Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:45,528 _ DEBUG _ BrowserHandling _ findBy : Locating Element xpath = //a[contains(., 'Back')]
+2020-07-04 19:59:46,094 _ DEBUG _ WebdriverFunctions _ webdriver_doSomething : __doSomething CLICK with None
+2020-07-04 19:59:46,308 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 37 with parameters: act=IF, lType=, loc=, Val1=$(doIframe), comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:46,308 _ DEBUG _ TestStepMaster _ executeDirectSingle : IF-condition None   evaluated to: False 
+2020-07-04 19:59:46,308 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 49 with parameters: act=ENDIF, lType=, loc=, Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:46,308 _ INFO _ TestStepMaster _ executeDirectSingle : Executing TestStepDetail 50 with parameters: act=GOBACK, lType=, loc=, Val1=, comp=, Val2=, Optional=False, timeout=20
+2020-07-04 19:59:46,325 _ INFO _ TestCaseMaster _ tearDown : Testcase  finished with status: OK
+2020-07-04 19:59:46,325 _ INFO _ TestCaseSequenceMaster _ execute : execute append1DTestCaseEndDateTimes, param is 2020-07-04 19:59:46.325739
+2020-07-04 19:59:46,325 _ DEBUG _ TestRun _ setResult : Received new result for Testrecord 2
+2020-07-04 19:59:46,354 _ INFO _ Timing _ takeTimeSumOutput : Timing follows:
+2020-07-04 19:59:46,354 _ INFO _ Timing _ takeTimeSumOutput : Complete Testrun : 00:02:44
+2020-07-04 19:59:46,354 _ INFO _ Timing _ takeTimeSumOutput : Browser Start : 00:01:00
+2020-07-04 19:59:46,839 _ DEBUG _ ExportResults _ __getOutputFileName : Filename for export: /home/aguryev/freelancer/baangt/1TestResults/baangt_CompleteBaangtWebdemo.xlsx_20200704_195946.xlsx
+2020-07-04 19:59:46,840 _ INFO _ ExportResults _ __init__ : Export-Sheet for results: /home/aguryev/freelancer/baangt/1TestResults/baangt_CompleteBaangtWebdemo.xlsx_20200704_195946.xlsx
+2020-07-04 19:59:46,840 _ INFO _ ExportResults _ exportToDataBase : Export results to database at: sqlite:////home/aguryev/freelancer/baangt/testrun.db
+2020-07-04 19:59:49,480 _ DEBUG _ SendStatistics _ send_statistics : Statistics sent to server = {"Activity_GOTOURL": 1, "Activity_CLICK": 30, "Activity_PAUSE": 1, "Activity_ALERTIF": 1, "Activity_SWITCHWINDOW": 1, "Activity_SETTEXT": 5, "Activity_CLICKIF": 2, "Activity_IBAN": 1, "Activity_SUBMIT": 1, "Activity_SAVETO": 1, "Activity_ASSERT": 1, "Activity_IF": 1, "Activity_HANDLEIFRAME": 3, "Activity_ENDIF": 1, "Activity_GOBACK": 1, "Browser": 1, "SequenceClass": "baangt.TestCaseSequence.TestCaseSequenceMaster", "TestCaseExecuted": 3, "TestCasePassed": 3, "TestCaseClass": "baangt.TestCase.TestCaseMaster.TestCaseMaster", "TestStepMaster": {"baangt.TestSteps.TestStepMaster.TestStepMaster": 1}, "TestStepSequences": 3, "TestSteps": 118, "TestCaseSequences": 1, "XPATH": 40, "notEqualTo": 1, "release": 1, "Duration": "00:02:44", "TestRunUUID": "771fe3a3-6b79-4f69-8470-a794e9ff9f47"}
+2020-07-04 19:59:49,481 _ INFO _ TestRun _ tearDown : Finished execution of Testrun CompleteBaangtWebdemo.xlsx. 3 Testcases successfully executed, 0 errors
+2020-07-04 19:59:49,588 _ INFO _ mailer _ send_mail : Sending mails...
+2020-07-04 19:59:50,146 _ INFO _ mailer _ send_mail : info@baangt.org = SENT
