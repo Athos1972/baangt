@@ -30,7 +30,7 @@ class ExportConfluence:
         confluence = Confluence(url=self.url, username=self.username, password=self.password)  # Confluence login
         if self.uploadOriginalFile:
             file = self.attach_file(confluence)
-            html = file + "<br /><br /><h1>Original file</h1>" + self.html
+            html = file + "<br /><br />" + self.html
         else:
             html = self.html
         confluence.create_page(
@@ -70,11 +70,8 @@ class ExportConfluence:
                                page_id=self.rootPage, title=self.pageTitle, space=self.space, comment=None)
         try:
             url = "/confluence"+attach["_links"]["download"].split(".xlsx?")[0] + ".xlsx"
-        except:
-            url = "/confluence/download/attachments/155595930/baangt_kfzVBOs.xlsx_20200706_183639.xlsx"
-            print(attach)
-        #link = f'<ac:link><ri:attachment ri:filename="{fileName}" />\
-        #<ac:plain-text-link-body><![CDATA[{attach["_links"]["download"]}]]></ac:plain-text-link-body></ac:link>'
+        except KeyError:
+            url = "/confluence"+attach["results"][0]["_links"]["download"].split(".xlsx?")[0] + ".xlsx"
         link = f'<a href="{url}">{fileName}</a>'
         html = "<h1>Original file</h1>"+link
         return html
