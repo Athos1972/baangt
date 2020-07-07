@@ -73,8 +73,8 @@ class ExportConfluence:
         except:
             url = "/confluence/download/attachments/155595930/baangt_kfzVBOs.xlsx_20200706_183639.xlsx"
             print(attach)
-        link = f'<ac:link><ri:attachment ri:filename="{fileName}" />\
-        <ac:plain-text-link-body><![CDATA[{attach["_links"]["download"]}]]></ac:plain-text-link-body></ac:link>'
+        #link = f'<ac:link><ri:attachment ri:filename="{fileName}" />\
+        #<ac:plain-text-link-body><![CDATA[{attach["_links"]["download"]}]]></ac:plain-text-link-body></ac:link>'
         link = f'<a href="{url}">{fileName}</a>'
         html = "<h1>Original file</h1>"+link
         return html
