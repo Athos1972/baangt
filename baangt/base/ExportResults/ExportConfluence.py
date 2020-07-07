@@ -68,7 +68,11 @@ class ExportConfluence:
         fileName = os.path.basename(self.fileNameAndPathToResultXLSX)
         attach = confluence.attach_file(self.fileNameAndPathToResultXLSX, name=fileName, content_type=None,
                                page_id=self.rootPage, title=self.pageTitle, space=self.space, comment=None)
-        url = "/confluence"+attach["_links"]["download"].split(".xlsx?")[0] + ".xlsx"
+        try:
+            url = "/confluence"+attach["_links"]["download"].split(".xlsx?")[0] + ".xlsx"
+        except:
+            url = "/confluence/download/attachments/155595930/baangt_kfzVBOs.xlsx_20200706_183639.xlsx"
+            print(attach)
         link = f'<ac:link><ri:attachment ri:filename="{fileName}" />\
         <ac:plain-text-link-body><![CDATA[{attach["_links"]["download"]}]]></ac:plain-text-link-body></ac:link>'
         link = f'<a href="{url}">{fileName}</a>'
