@@ -6,7 +6,7 @@ import os
 
 class ExportConfluence:
     def __init__(self, url, space, pageTitle, fileNameAndPathToResultXLSX, username, password, rootPage=None,
-                 remove_headers=["json"], uploadOriginalFile=False):
+                 remove_headers=["json"], uploadOriginalFile=False, CreateSubPagesForEachXXEntries=0):
         self.url = url
         self.space = space
         self.rootPage = rootPage
@@ -16,13 +16,17 @@ class ExportConfluence:
         self.password = password
         self.remove_headers = [headers.lower() for headers in remove_headers]
         self.uploadOriginalFile = uploadOriginalFile
+        self.CreateSubPagesForEachXXEntries = CreateSubPagesForEachXXEntries
         self.html = self.makeBody()
         self.update_confluence()
 
     def makeBody(self):
-        output = self.xlsx2html(self.fileNameAndPathToResultXLSX, sheet="Output")
         summary = self.xlsx2html(self.fileNameAndPathToResultXLSX, sheet="Summary")
-        html = "<h1>Summary</h1>" + summary + "<br /><br /><h1>Output</h1>" + output
+        if not self.CreateSubPagesForEachXXEntries:
+            output = self.xlsx2html(self.fileNameAndPathToResultXLSX, sheet="Output")
+            html = "<h1>Summary</h1>" + summary + "<br /><br /><h1>Output</h1>" + output
+        else:
+            html = "<h1>Summary</h1>" + summary + "<br />"
         html = html.replace('\\',  '\\\\')
         return html
 
@@ -33,9 +37,17 @@ class ExportConfluence:
             html = file + "<br /><br />" + self.html
         else:
             html = self.html
-        confluence.create_page(
+        new_page = confluence.create_page(
             self.space, self.pageTitle, html, parent_id=self.rootPage, type='page', representation='storage'
         )
+        if self.CreateSubPagesForEachXXEntries:
+            try:
+                parent_page = new_page["id"]
+            except KeyError:
+                parent_page = new_page["results"]["id"]
+
+
+
 
     def xlsx2html(self, filePath, sheet):
         wb = xlrd.open_workbook(filePath)
@@ -75,3 +87,41 @@ class ExportConfluence:
         link = f'<a href="{url}">{fileName}</a>'
         html = "<h1>Original file</h1>"+link
         return html
+
+    def create_child_pages(self, confluence, parent_page):
+        wb = xlrd.open_workbook(self.fileNameAndPathToResultXLSX)
+        output_xlsx = wb.sheet_by_name("Output")
+        starting_points = [x for x in range(1, output_xlsx.nrows, self.CreateSubPagesForEachXXEntries)]
+        header = []
+        remove_index = []
+        for x in range(output_xlsx.ncols):
+            value = output_xlsx.cell_value(0, x)
+            if value.lower() not in self.remove_headers:
+                header.append(value)
+            else:
+                remove_index.append(x)
+        header = '<tr><th>' + '</th>\n<th>'.join(header) + '</th></tr>'
+        for starting in starting_points:
+            if starting + self.CreateSubPagesForEachXXEntries < output_xlsx.nrows:
+                ending = starting + self.CreateSubPagesForEachXXEntries
+            else:
+                ending = output_xlsx.nrows
+            title = ((len(str(output_xlsx.nrows)) - len(str(starting))) * "0") + str(starting
+                    ) + " - " + ((len(str(output_xlsx.nrows)) - len(str(ending))) * "0") + str(ending)
+            data = []
+            for row in range(starting, ending):
+                dt = []
+                for column in range(output_xlsx.ncols):
+                    value = output_xlsx.cell_value(row, column)
+                    if type(value) == float:
+                        if repr(value)[-2:] == '.0':
+                            value = int(value)
+                    value = str(value)
+                    if column not in remove_index:  # if column is not in remove_header list than add the data in html
+                        dt.append(escape(value))
+                data.append('<td>' + '</td>\n<td>'.join(dt) + '</td>')
+            html = '<table><tbody>' + header + '<tr>' + '</tr>\n<tr>'.join(data) + '</tr>' + '</tbody></table>'
+            confluence.create_page(
+                self.space, title, html, parent_id=parent_page, type='page', representation='storage'
+            )
+
