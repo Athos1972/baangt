@@ -45,6 +45,7 @@ class ExportConfluence:
                 parent_page = new_page["id"]
             except KeyError:
                 parent_page = new_page["results"]["id"]
+            self.create_child_pages(confluence, parent_page)
 
 
 
