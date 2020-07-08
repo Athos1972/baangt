@@ -91,7 +91,7 @@ class Sender:
             args['username'] = self.globalSettings["Confluence-Username"]
             args['password'] = self.globalSettings["Confluence-Password"]
             args['rootPage'] = self.globalSettings["Confluence-Rootpage"]
-            args['remove_headers'] = [x.strip() for x in self.globalSettings["Confluence-Remove_Headers"].split()]
+            args['remove_headers'] = [x.strip() for x in self.globalSettings["Confluence-Remove_Headers"].split(",")]
             args['uploadOriginalFile'] = self.globalSettings["Confluence-Uploadoriginalfile"]
             args['CreateSubPagesForEachXXEntries'] = int(self.globalSettings["Confluence-Createsubpagesforeachxxentries"])
             ExportConfluence(**args)
@@ -203,25 +203,30 @@ class Sender:
             os.remove(temp_file)
         else:
             send_stats = Sender(globalSettings, results.fileName)
+
         try:
             send_stats.sendMail()
         except Exception as ex:
-            logger.debug(ex)
+            logger.error(f"Error when sending mail: {ex}")
+
         try:
             send_stats.sendMsTeam()
         except Exception as ex:
-            logger.debug(ex)
+            logger.error(f"Error when sending MS Teams: {ex}")
+
         try:
             send_stats.sendSlack()
         except Exception as ex:
-            logger.debug(ex)
+            logger.error(f"Error when sending Slack: {ex}")
+
         try:
             send_stats.sendTelegram()
         except Exception as ex:
-            logger.debug(ex)
+            logger.error(f"Error when sending Telegram: {ex}")
+
         try:
             send_stats.sendConfluence()
         except Exception as ex:
-            logger.debug(ex)
+            logger.error(f"Error when saving in Confluence: {ex}")
 
 
