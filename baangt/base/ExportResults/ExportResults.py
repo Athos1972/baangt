@@ -52,7 +52,18 @@ class ExportResults:
         except KeyError:
             self.exportFormat = GC.EXP_XLSX
 
-        self.fileName = self.__getOutputFileName()
+        self.fileName = None
+        try:
+            if kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.STRUCTURE_TESTCASESEQUENCE)[1][1].get(GC.EXPORT_FILENAME):
+                self.fileName = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.STRUCTURE_TESTCASESEQUENCE)[1][1].get(GC.EXPORT_FILENAME)
+        except Exception as e:
+            # fixme: I don't know, why this error came. When a Filename is set, then the above works.
+            #        No time now to debug.
+            pass
+
+        if not self.fileName:
+            self.fileName = self.__getOutputFileName()
+
         logger.info("Export-Sheet for results: " + self.fileName)
 
         # export results to DB

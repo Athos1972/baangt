@@ -1,0 +1,293 @@
+<h1>Header</h1>
+<table><colgroup><col /> <col /> </colgroup>
+<tbody>
+<tr>
+<td colspan="2">Testreport for heartbeat.json</td></tr>
+<tr>
+<td><br /></td>
+<td><br /></td></tr>
+<tr>
+<td>Testrecords</td>
+<td>12</td></tr>
+<tr>
+<td>Successful</td>
+<td>7</td></tr>
+<tr>
+<td>Paused</td>
+<td><br /></td></tr>
+<tr>
+<td>Error</td>
+<td>5</td></tr>
+<tr>
+<td><br /></td>
+<td><br /></td></tr>
+<tr>
+<td>Logfile</td>
+<td>/Users/bernhardbuhl/git/baangtVIG/Logs/20200703_173620.log</td></tr>
+<tr>
+<td>Testrun UUID</td>
+<td>bba49b3f-a8ba-4531-8284-f65594320047</td></tr>
+<tr>
+<td><br /></td>
+<td><br /></td></tr>
+<tr>
+<td>Starttime</td>
+<td>03-07-2020 15:36:21</td></tr>
+<tr>
+<td>Endtime</td>
+<td>03-07-2020 15:46:04</td></tr>
+<tr>
+<td>Duration</td>
+<td>00:09:43</td></tr>
+<tr>
+<td>Avg. Dur</td>
+<td><br /></td></tr>
+<tr>
+<td><br /></td>
+<td><br /></td></tr>
+<tr>
+<td colspan="2">Global settings for this testrun</td></tr>
+<tr>
+<td>base_url</td>
+<td>portal-fqa</td></tr>
+<tr>
+<td>user</td>
+<td>502266</td></tr>
+<tr>
+<td>password</td>
+<td>\upV97Y8</td></tr>
+<tr>
+<td>file_praemienauskunft</td>
+<td>0testdateninput/Test_unterschrift_Beratungsprotokoll.pdf</td></tr>
+<tr>
+<td>TC.ParallelRuns</td>
+<td>4</td></tr>
+<tr>
+<td>TC.Lines</td>
+<td>488-499</td></tr>
+<tr>
+<td>TC.dontCloseBrowser</td>
+<td>False</td></tr>
+<tr>
+<td>TC.slowExecution</td>
+<td>False</td></tr>
+<tr>
+<td>TC.NetworkInfo</td>
+<td>True</td></tr>
+<tr>
+<td>CL.browserHandling</td>
+<td>baangtVIG.CustBrowserHandling.CustBrowserHandling</td></tr>
+<tr>
+<td>TC.BrowserAttributes</td>
+<td>{'HEADLESS': 'True'}</td></tr>
+<tr>
+<td>TX.DEBUG</td>
+<td>False</td></tr>
+<tr>
+<td>TC.Browser</td>
+<td>FF</td></tr>
+<tr>
+<td>Stage</td>
+<td>FQA</td></tr>
+<tr>
+<td>RootPath</td>
+<td>/Users/bernhardbuhl/git/baangtVIG/vig_wohnen</td></tr>
+<tr>
+<td>Screenshots</td>
+<td>/Users/bernhardbuhl/git/baangtVIG/vig_wohnen/Screenshots</td></tr>
+<tr>
+<td>1TestResults</td>
+<td>/Users/bernhardbuhl/git/baangtVIG/vig_wohnen/1testoutput</td></tr>
+<tr>
+<td>0TestInput</td>
+<td>/Users/bernhardbuhl/git/baangtVIG/vig_wohnen/0testdateninput</td></tr>
+<tr>
+<td><br /></td>
+<td><br /></td></tr>
+<tr>
+<td colspan="2">TestSequence settings follow:</td></tr>
+<tr>
+<td>TestDataFileName</td>
+<td>../0testdateninput/testdata_wstv_fqa.xlsx</td></tr>
+<tr>
+<td>Sheetname</td>
+<td>Testcases</td></tr>
+<tr>
+<td>ParallelRuns</td>
+<td>4</td></tr>
+<tr>
+<td>Lines</td>
+<td>488-499</td></tr></tbody></table>
+<h1>Output</h1>
+<table class="wrapped"><colgroup><col /> <col /> <col /> <col /> <col /> <col /> <col /> <col /> <col /> <col /> <col /><col /><col /></colgroup>
+<tbody>
+<tr>
+<td>UUID</td>
+<td>TFZeile</td>
+<td>TFName</td>
+<td>Stage</td>
+<td>TFDescription</td>
+<td>GF#</td>
+<td>SAP Polizzennr</td>
+<td>Vermittler</td>
+<td>VN</td>
+<td>PolNR Host</td>
+<td>Pr&auml;mie</td>
+<td>Toasts</td>
+<td>Duration</td></tr>
+<tr>
+<td>d902c430-31c0-41da-9cca-b13e16d1a8a4</td>
+<td>488</td>
+<td>HB009 WSTV NB Kombi</td>
+<td>FQA</td>
+<td>Inh, Geb, Nebengeb Max</td>
+<td>wwo68909</td>
+<td>00000001090277312</td>
+<td>1939901051</td>
+<td colspan="2">1902015571</td>
+<td>&euro; 2.029,85</td>
+<td>Bitte erfassen Sie die Kassadaten.<br /> <br /> info<br /> Warnung<br /> Achtung: Bei Reduktion der Versicherungssumme um mehr als 10% des Vorschlagswertes gilt der Unterversicherungsverzicht aufgehoben.<br /> <br /> info<br /> Warnung<br /> Achtung: Bei Reduktion der Versicherungssumme des Vorschlagswertes gilt die Vorsorgeversicherung aufgehoben.<br /> Der Nachlass f&uuml;r Sicherungen wird nur bei VS&Ouml; gepr&uuml;ften Einbruch-Alarmanlagen gew&auml;hrt.<br /> <br /> Bitte erfassen Sie die Kassadaten.<br /> <br /> info<br /> Warnung<br /> Achtung: Bei Reduktion der Versicherungssumme um mehr als 10% des Vorschlagswertes gilt der Unterversicherungsverzicht aufgehoben.<br /> <br /> info<br /> Warnung<br /> Achtung: Bei Reduktion der Versicherungssumme des Vorschlagswertes gilt die Vorsorgeversicherung aufgehoben.<br /> Der Nachlass f&uuml;r Sicherungen wird nur bei VS&Ouml; gepr&uuml;ften Einbruch-Alarmanlagen gew&auml;hrt.<br /> Bitte erfassen Sie die Kassadaten.<br /> <br /> info<br /> Warnung<br /> Achtung: Bei Reduktion der Versicherungssumme um mehr als 10% des Vorschlagswertes gilt der Unterversicherungsverzicht aufgehoben.<br /> <br /> info<br /> Warnung<br /> Achtung: Bei Reduktion der Versicherungssumme des Vorschlagswertes gilt die Vorsorgeversicherung aufgehoben.<br /> Der Nachlass f&uuml;r Sicherungen wird nur bei VS&Ouml; gepr&uuml;ften Einbruch-Alarmanlagen gew&auml;hrt.<br /> Bitte erfassen Sie die Kassadaten.<br /> <br /> info<br /> Warnung<br /> Achtung: Bei Reduktion der Versicherungssumme um mehr als 10% des Vorschlagswertes gilt der Unterversicherungsverzicht aufgehoben.<br /> <br /> info<br /> Warnung<br /> Achtung: Bei Reduktion der Versicherungssumme des Vorschlagswertes gilt die Vorsorgeversicherung aufgehoben.<br /> Der Nachlass f&uuml;r Sicherungen wird nur bei VS&Ouml; gepr&uuml;ften Einbruch-Alarmanlagen gew&auml;hrt.<br /> <br /> Bitte erfassen Sie die Kassadaten.<br /> <br /> info<br /> Warnung<br /> Achtung: Bei Reduktion der Versicherungssumme um mehr als 10% des Vorschlagswertes gilt der Unterversicherungsverzicht aufgehoben.<br /> <br /> info<br /> Warnung<br /> Achtung: Bei Reduktion der Versicherungssumme des Vorschlagswertes gilt die Vorsorgeversicherung aufgehoben.<br /> Der Nachlass f&uuml;r Sicherungen wird nur bei VS&Ouml; gepr&uuml;ften Einbruch-Alarmanlagen gew&auml;hrt.<br /> <br /> <br /> info<br /> Warnung<br /> Achtung: Bei Reduktion der Versicherungssumme um mehr als 10% des Vorschlagswertes gilt der Unterversicherungsverzicht aufgehoben.<br /> <br /> info<br /> Warnung<br /> Achtung: Bei Reduktion der Versicherungssumme des Vorschlagswertes gilt die Vorsorgeversicherung aufgehoben.<br /> Der Nachlass f&uuml;r Sicherungen wird nur bei VS&Ouml; gepr&uuml;ften Einbruch-Alarmanlagen gew&auml;hrt.<br /> <br /> <br /> info<br /> Warnung<br /> Achtung: Bei Reduktion der Versicherungssumme um mehr als 10% des Vorschlagswertes gilt der Unterversicherungsverzicht aufgehoben.<br /> <br /> info<br /> Warnung<br /> Achtung: Bei Reduktion der Versicherungssumme des Vorschlagswertes gilt die Vorsorgeversicherung aufgehoben.<br /> Der Nachlass f&uuml;r Sicherungen wird nur bei VS&Ouml; gepr&uuml;ften Einbruch-Alarmanlagen gew&auml;hrt.</td>
+<td>0:07:10.346611</td></tr>
+<tr>
+<td>ca753c2f-971c-4ef4-934f-a484c246f184</td>
+<td>489</td>
+<td>HB010 DON NB Kombi</td>
+<td>FQA</td>
+<td>Inh, Geb, Nebengeb Max</td>
+<td><br /></td>
+<td><br /></td>
+<td>2939001819</td>
+<td colspan="2">2916239527</td>
+<td><br /></td>
+<td><br /></td>
+<td>0:00:59.018864</td></tr>
+<tr>
+<td>a7286eb3-c802-43c7-8bd8-14ab49cae687</td>
+<td>490</td>
+<td>HB007 WSTV NB Geb NG</td>
+<td>FQA</td>
+<td>Geb + Nebengeb Max</td>
+<td>wwo68908</td>
+<td>00000001090277292</td>
+<td>1939901051</td>
+<td colspan="2">1902015571</td>
+<td>&euro; 864,84</td>
+<td><br /></td>
+<td>0:04:12.165116</td></tr>
+<tr>
+<td>3fe3ab84-48fc-495b-9ff8-703555143f96</td>
+<td>491</td>
+<td>HB008 DON NB Geb NG</td>
+<td>FQA</td>
+<td>Geb + Nebengeb Max</td>
+<td>dwo28567</td>
+<td>00000002044476623</td>
+<td>2939001819</td>
+<td colspan="2">2915076905</td>
+<td>&euro; 2.594,61</td>
+<td><br /></td>
+<td>0:04:18.760233</td></tr>
+<tr>
+<td>51649c01-e100-4fba-ae4b-f38964ee4887</td>
+<td>492</td>
+<td>HB005 WSTV NB Geb Max</td>
+<td>FQA</td>
+<td>Geb&auml;ude maximal + AngRab</td>
+<td>wwo68910</td>
+<td>00000001090277301</td>
+<td>1939901051</td>
+<td colspan="2">1902015571</td>
+<td>&euro; 515,13</td>
+<td><br /></td>
+<td>0:03:44.246432</td></tr>
+<tr>
+<td>95f1f8fc-52d0-4468-833d-451178b9589a</td>
+<td>493</td>
+<td>HB006 DON NB Geb Max</td>
+<td>FQA</td>
+<td>Geb&auml;ude maximal</td>
+<td>dwo28568</td>
+<td>00000002044476634</td>
+<td>2939001819</td>
+<td colspan="2">2915034949</td>
+<td>&euro; 1.824,56</td>
+<td><br /></td>
+<td>0:02:56.323435</td></tr>
+<tr>
+<td>433e90cc-8461-4b17-8ea5-00879184d81d</td>
+<td>494</td>
+<td>HB003 WSTV NB inh max</td>
+<td>FQA</td>
+<td>Inhalt maximal</td>
+<td>wwo68911</td>
+<td>00000001090277334</td>
+<td>1939901051</td>
+<td colspan="2">1902015571</td>
+<td>&euro; 1.923,40</td>
+<td>Bitte um Pr&uuml;fung ob die Sicherheitst&uuml;r den tariflichen Anforderungen entspricht.<br /> Bitte erfassen Sie die Kassadaten.<br /> Der Nachlass f&uuml;r Sicherungen wird nur bei VS&Ouml; gepr&uuml;ften Einbruch-Alarmanlagen gew&auml;hrt.<br /> Bitte um Pr&uuml;fung ob die Sicherheitst&uuml;r den tariflichen Anforderungen entspricht.<br /> Bitte erfassen Sie die Kassadaten.<br /> Der Nachlass f&uuml;r Sicherungen wird nur bei VS&Ouml; gepr&uuml;ften Einbruch-Alarmanlagen gew&auml;hrt.<br /> Bitte um Pr&uuml;fung ob die Sicherheitst&uuml;r den tariflichen Anforderungen entspricht.<br /> Bitte erfassen Sie die Kassadaten.<br /> Der Nachlass f&uuml;r Sicherungen wird nur bei VS&Ouml; gepr&uuml;ften Einbruch-Alarmanlagen gew&auml;hrt.<br /> <br /> Bitte um Pr&uuml;fung ob die Sicherheitst&uuml;r den tariflichen Anforderungen entspricht.<br /> Bitte erfassen Sie die Kassadaten.<br /> Der Nachlass f&uuml;r Sicherungen wird nur bei VS&Ouml; gepr&uuml;ften Einbruch-Alarmanlagen gew&auml;hrt.<br /> Bitte um Pr&uuml;fung ob die Sicherheitst&uuml;r den tariflichen Anforderungen entspricht.<br /> Bitte erfassen Sie die Kassadaten.<br /> Der Nachlass f&uuml;r Sicherungen wird nur bei VS&Ouml; gepr&uuml;ften Einbruch-Alarmanlagen gew&auml;hrt.<br /> <br /> Bitte um Pr&uuml;fung ob die Sicherheitst&uuml;r den tariflichen Anforderungen entspricht.<br /> Der Nachlass f&uuml;r Sicherungen wird nur bei VS&Ouml; gepr&uuml;ften Einbruch-Alarmanlagen gew&auml;hrt.<br /> <br /> Bitte um Pr&uuml;fung ob die Sicherheitst&uuml;r den tariflichen Anforderungen entspricht.<br /> Der Nachlass f&uuml;r Sicherungen wird nur bei VS&Ouml; gepr&uuml;ften Einbruch-Alarmanlagen gew&auml;hrt.</td>
+<td>0:03:48.163544</td></tr>
+<tr>
+<td>79af6c70-6afb-4b75-8d24-eb2e6c8c643a</td>
+<td>495</td>
+<td>HB004 DON NB inh Max</td>
+<td>FQA</td>
+<td>Inhalt maximal</td>
+<td>dwo28569</td>
+<td>00000002044476645</td>
+<td>2939001819</td>
+<td colspan="2">2915534486</td>
+<td>&euro; 1.639,25</td>
+<td>Bitte um Pr&uuml;fung ob die Sicherheitst&uuml;r den tariflichen Anforderungen entspricht.<br /> Bitte erfassen Sie die Kassadaten.<br /> Der Nachlass f&uuml;r Sicherungen wird nur bei VS&Ouml; gepr&uuml;ften Einbruch-Alarmanlagen gew&auml;hrt.<br /> Bitte um Pr&uuml;fung ob die Sicherheitst&uuml;r den tariflichen Anforderungen entspricht.<br /> Bitte erfassen Sie die Kassadaten.<br /> Der Nachlass f&uuml;r Sicherungen wird nur bei VS&Ouml; gepr&uuml;ften Einbruch-Alarmanlagen gew&auml;hrt.<br /> Bitte um Pr&uuml;fung ob die Sicherheitst&uuml;r den tariflichen Anforderungen entspricht.<br /> Bitte erfassen Sie die Kassadaten.<br /> Der Nachlass f&uuml;r Sicherungen wird nur bei VS&Ouml; gepr&uuml;ften Einbruch-Alarmanlagen gew&auml;hrt.<br /> <br /> Bitte um Pr&uuml;fung ob die Sicherheitst&uuml;r den tariflichen Anforderungen entspricht.<br /> Bitte erfassen Sie die Kassadaten.<br /> Der Nachlass f&uuml;r Sicherungen wird nur bei VS&Ouml; gepr&uuml;ften Einbruch-Alarmanlagen gew&auml;hrt.<br /> Bitte um Pr&uuml;fung ob die Sicherheitst&uuml;r den tariflichen Anforderungen entspricht.<br /> Bitte erfassen Sie die Kassadaten.<br /> Der Nachlass f&uuml;r Sicherungen wird nur bei VS&Ouml; gepr&uuml;ften Einbruch-Alarmanlagen gew&auml;hrt.<br /> <br /> Bitte um Pr&uuml;fung ob die Sicherheitst&uuml;r den tariflichen Anforderungen entspricht.<br /> Der Nachlass f&uuml;r Sicherungen wird nur bei VS&Ouml; gepr&uuml;ften Einbruch-Alarmanlagen gew&auml;hrt.<br /> <br /> Bitte um Pr&uuml;fung ob die Sicherheitst&uuml;r den tariflichen Anforderungen entspricht.<br /> Der Nachlass f&uuml;r Sicherungen wird nur bei VS&Ouml; gepr&uuml;ften Einbruch-Alarmanlagen gew&auml;hrt.</td>
+<td>0:03:29.843628</td></tr>
+<tr>
+<td>05f88194-a222-46ff-990d-c0d20439ebae</td>
+<td>496</td>
+<td>HB001 WSTV NB Inh Min</td>
+<td>FQA</td>
+<td>Inhalt minimal</td>
+<td>wwo68912</td>
+<td>00000001090277345</td>
+<td>1939901051</td>
+<td colspan="2">1902015571</td>
+<td>&euro; 1.163,64</td>
+<td><br /></td>
+<td>0:02:27.566960</td></tr>
+<tr>
+<td>4bbcf35f-219d-4299-9e3e-5d99c1ab54c0</td>
+<td>497</td>
+<td>HB002 DON NB Inh Min</td>
+<td>FQA</td>
+<td>Inhalt minimal</td>
+<td>dwo28570</td>
+<td>00000002044476656</td>
+<td>2939001819</td>
+<td colspan="2">2920842492</td>
+<td>&euro; 820,62</td>
+<td><br /></td>
+<td>0:02:25.579939</td></tr>
+<tr>
+<td>9eacbd01-7f1f-4b70-9cf4-c7efb0bdc625</td>
+<td>498</td>
+<td>HBFail Fehlermeldung</td>
+<td>FQA</td>
+<td>Soll bewusst einen Fehler bringen</td>
+<td colspan="2">wwo68913</td>
+<td>1939901051</td>
+<td colspan="2">1902015571</td>
+<td><br /></td>
+<td><br /></td>
+<td>0:00:39.586171</td></tr>
+<tr>
+<td>3eb15c14-371f-4034-8f1b-35ef6935a2a4</td>
+<td>499</td>
+<td>HBFail Fehlermeldung</td>
+<td>FQA</td>
+<td>Soll bewusst einen Fehler bringen</td>
+<td><br /></td>
+<td><br /></td>
+<td>2939001819</td>
+<td colspan="2">2920842492</td>
+<td><br /></td>
+<td><br /></td>
+<td>0:00:54.599267</td></tr></tbody></table>
+<p class="auto-cursor-target"><br /></p>
