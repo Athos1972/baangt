@@ -99,7 +99,7 @@ class TestRun:
         try:
             Sender.send_all(self.results, self.globalSettings)
         except Exception as ex:
-            logger.debug(ex)
+            logger.error(f"Error from SendAll: {ex}")
 
     def append1DTestCaseEndDateTimes(self, dt):
         self.testCasesEndDateTimes_1D.append(dt)
