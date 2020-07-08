@@ -52,7 +52,18 @@ class ExportResults:
         except KeyError:
             self.exportFormat = GC.EXP_XLSX
 
-        self.fileName = self.__getOutputFileName()
+        self.fileName = None
+        try:
+            if kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.STRUCTURE_TESTCASESEQUENCE)[1][1].get(GC.EXPORT_FILENAME):
+                self.fileName = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.STRUCTURE_TESTCASESEQUENCE)[1][1].get(GC.EXPORT_FILENAME)
+        except Exception as e:
+            # fixme: I don't know, why this error came. When a Filename is set, then the above works.
+            #        No time now to debug.
+            pass
+
+        if not self.fileName:
+            self.fileName = self.__getOutputFileName()
+
         logger.info("Export-Sheet for results: " + self.fileName)
 
         # export results to DB
@@ -78,6 +89,7 @@ class ExportResults:
             self.exportResultExcel()
             self.exportJsonExcel()
             self.exportAdditionalData()
+            self.write_json_sheet()
             self.exportTiming = ExportTiming(self.dataRecords,
                                              self.timingSheet)
             if self.networkInfo:
@@ -171,6 +183,15 @@ class ExportResults:
         self.statistics.update_attribute_with_value("TestCaseFailed", error)
         self.statistics.update_attribute_with_value("TestCasePaused", waiting)
         self.statistics.update_attribute_with_value("TestCaseExecuted", success + error + waiting)
+        try:
+            dic = {}
+            for key in self.testRunInstance.json_dict:
+                if "$(" in key:
+                    dic[key[2:-1]] = self.testRunInstance.json_dict[key]
+            json_data = json.dumps(dic)
+        except Exception as ex:
+            logger.info(f"RLP Json error while updating in db : {str(ex)}")
+            json_data = ""
         # get documents
         datafiles = self.fileName
 
@@ -185,6 +206,7 @@ class ExportResults:
             statusFailed=error,
             statusPaused=waiting,
             dataFile=self.fileName,
+            RLPJson=json_data,
         )
         # add to DataBase
         session.add(tr_log)
@@ -328,6 +350,55 @@ class ExportResults:
         for n in range(len(headers)):
             ExcelSheetHelperFunctions.set_column_autowidth(self.jsonSheet, n)
 
+    def write_json_sheet(self):
+        # Used to write rlp_ json in individual sheets
+        dic = self.testRunInstance.json_dict
+        for js in dic:
+            if not js:
+                continue
+            elif js[:2] == "$(":
+                name = js[2:-1]
+            else:
+                name = js
+            jsonSheet = self.workbook.add_worksheet(f"{self.stage}_{name}")
+            if type(dic[js][0]) == dict: # Condition to get dictionary or dictionary inside list to write headers
+                data_dic = dic[js][0]
+            elif type(dic[js][0][0]) == dict:
+                data_dic = dic[js][0][0]
+            else:
+                logger.debug(f"{dic[js]} is not json convertible.")
+                continue
+            remove_header = []
+            for key in data_dic: # Removing headers which consist nested data
+                if type(data_dic[key]) == list or type(data_dic[key]) == dict:
+                    remove_header.append(key)
+            for key in remove_header:
+                del data_dic[key]
+            headers = []
+            for index, header in enumerate(data_dic):
+                jsonSheet.write(0, index, header)
+                headers.append(header)
+            row = 1
+            for data in dic[js]:
+                if not data:
+                    continue
+                dt = {}
+                for y, dt in enumerate(data):
+                    if type(dt) != dict: # for single dictionary data
+                        jsonSheet.write(row, y, data[dt])
+                    else: # if dictionaries are inside list
+                        column = 0 # used to update individual column
+                        for d in dt:
+                            if d not in headers:
+                                continue
+                            try:
+                                jsonSheet.write(row, column, dt[d])
+                            except Exception as ex:
+                                print(ex)
+                            column += 1
+                        row += 1
+                if type(dt) != dict:
+                    row += 1
 
     def makeSummaryExcel(self):
 
@@ -492,8 +563,10 @@ class ExportResults:
                 testRecordDict[fieldName] = "True" if testRecordDict[fieldName] else "False"
 
             # Remove leading New-Line:
-            if '\n' in testRecordDict[fieldName][0:5] or strip:
-                testRecordDict[fieldName] = testRecordDict[fieldName].strip()
+            if isinstance(testRecordDict[fieldName], str):
+                if '\n' in testRecordDict[fieldName][0:5] or strip:
+                    testRecordDict[fieldName] = testRecordDict[fieldName].strip()
+
             # Do different stuff for Dicts and Lists:
             if isinstance(testRecordDict[fieldName], dict):
                 self.worksheet.write(line, cellNumber, testRecordDict[fieldName])
@@ -506,13 +579,13 @@ class ExportResults:
             else:
                 if fieldName == GC.TESTCASESTATUS:
                     if testRecordDict[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_SUCCESS:
-                        self.worksheet.write(line, cellNumber, testRecordDict[fieldName], self.cellFormatGreen)
+                        self.worksheet.write(line, cellNumber, str(testRecordDict[fieldName]), self.cellFormatGreen)
                     elif testRecordDict[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR:
-                        self.worksheet.write(line, cellNumber, testRecordDict[fieldName], self.cellFormatRed)
+                        self.worksheet.write(line, cellNumber, str(testRecordDict[fieldName]), self.cellFormatRed)
                 elif fieldName == GC.SCREENSHOTS:
                     self.__attachScreenshotsToExcelCells(cellNumber, fieldName, line, testRecordDict)
                 else:
-                    self.worksheet.write(line, cellNumber, testRecordDict[fieldName])
+                    self.worksheet.write(line, cellNumber, str(testRecordDict[fieldName]))
 
     def __attachScreenshotsToExcelCells(self, cellNumber, fieldName, line, testRecordDict):
         # Place the screenshot images "on" the appropriate cell

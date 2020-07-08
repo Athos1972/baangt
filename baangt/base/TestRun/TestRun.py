@@ -60,6 +60,7 @@ class TestRun:
         self.kwargs = {}
         self.dataRecords = {}
         self.globalSettings = {}
+        self.json_dict = {} # Used to maintain records of RLP_ data which will be used will exporting results
         self.managedPaths = ManagedPaths()
         self.classesForObjects = ClassesForObjects()         # Dynamically loaded classes
         self.timing = Timing()
@@ -98,7 +99,7 @@ class TestRun:
         try:
             Sender.send_all(self.results, self.globalSettings)
         except Exception as ex:
-            logger.debug(ex)
+            logger.error(f"Error from SendAll: {ex}")
 
     def append1DTestCaseEndDateTimes(self, dt):
         self.testCasesEndDateTimes_1D.append(dt)

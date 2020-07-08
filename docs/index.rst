@@ -18,6 +18,7 @@ and well documented master functionality.
       Structure <Structure.rst>
       Parameters <ParametersConfigFile.rst>
       First API Test <SimpleAPI.rst>
+      Nested data <NestedLoops.rst>
       Types of Tests <TestTypes.rst>
       Data file <DataFile.rst>
       Results in Database <SaveResults2Database.rst>

@@ -117,16 +117,18 @@ class HandleDatabase:
             temp_dic = {}
             for col_index in range(sheet.ncols):
                 temp_dic[keys[col_index]] = sheet.cell(row_index, col_index).value
-                if type(temp_dic[keys[col_index]])==float:
+                if type(temp_dic[keys[col_index]]) == float:
                     temp_dic[keys[col_index]] = repr(temp_dic[keys[col_index]])
-                    if temp_dic[keys[col_index]][-2:]==".0":
+                    if temp_dic[keys[col_index]][-2:] == ".0":
                         temp_dic[keys[col_index]] = temp_dic[keys[col_index]][:-2]
 
             self.dataDict.append(temp_dic)
 
         for temp_dic in self.dataDict:
-            new_data_dic ={}
+            new_data_dic = {}
             for keys in temp_dic:
+                if type(temp_dic[keys]) != str:
+                    continue
                 if '$(' in str(temp_dic[keys]):
                     while '$(' in str(temp_dic[keys]):
                         start_index = temp_dic[keys].index('$(')
@@ -135,18 +137,55 @@ class HandleDatabase:
                         temp_dic[keys] = temp_dic[keys].replace(
                             temp_dic[keys][start_index:end_index+1], data_to_replace_with
                         )
-                    if temp_dic[keys][:4] == "RRD_":
-                        rrd_string = self.__process_rrd_string(temp_dic[keys])
-                        rrd_data = self.__rrd_string_to_python(rrd_string[4:], fileName)
-                        for data in rrd_data:
-                            new_data_dic[data] = rrd_data[data]
-                    if temp_dic[keys][:4] == "RRE_":
-                        rrd_string = self.__process_rre_string(temp_dic[keys])
-                        rrd_data = self.__rre_string_to_python(rrd_string[4:])
-                        for data in rrd_data:
-                            new_data_dic[data] = rrd_data[data]
+
+                if str(temp_dic[keys])[:4] == "RRD_":
+                    rrd_string = self.__process_rrd_string(temp_dic[keys])
+                    rrd_data = self.__rrd_string_to_python(rrd_string[4:], fileName)
+                    for data in rrd_data:
+                        new_data_dic[data] = rrd_data[data]
+                elif str(temp_dic[keys][:4]) == "RRE_":
+                    rre_string = self.__process_rre_string(temp_dic[keys])
+                    rre_data = self.__rre_string_to_python(rre_string[4:])
+                    for data in rre_data:
+                        new_data_dic[data] = rre_data[data]
+                elif str(temp_dic[keys][:4]) == "RLP_":
+                    temp_dic[keys] = self.rlp_process(temp_dic[keys], fileName)
+                else:
+                    try:
+                        js = json.loads(temp_dic[keys])
+                        temp_dic[keys] = js
+                    except:
+                        pass
             for key in new_data_dic:
                 temp_dic[key] = new_data_dic[key]
+
+    def rlp_process(self, string, fileName):
+        # Will get real data from rlp_ prefix string
+        rlp_string = self.__process_rlp_string(string)[5:-1]
+        rlp_data = self.__rlp_string_to_python(rlp_string, fileName)
+        data = rlp_data
+        self.rlp_iterate(data, fileName)
+        return data
+
+    def rlp_iterate(self, data, fileName):
+        # Rlp datas are stored in either json or list. This function will loop on every data and convert every
+        # Rlp string to data
+        if type(data) is list:
+            for dt in data:
+                if type(dt) is str:
+                    dt = self.rlp_iterate(dt, fileName)
+                elif type(dt) is dict or type(dt) is list:
+                    dt = self.rlp_iterate(dt, fileName)
+        elif type(data) is dict:
+            for key in data:
+                if type(data[key]) is list or type(data[key]) is dict:
+                    data[key] = self.rlp_iterate(data[key], fileName)
+                elif type(data[key]) is str:
+                    data[key] = self.rlp_iterate(data[key], fileName)
+        elif type(data) is str:
+            if data[:4] == "RLP_":
+                data = self.rlp_process(data, fileName)
+        return data
 
     def __compareEqualStageInGlobalsAndDataRecord(self, currentNewRecordDict:dict) -> bool:
         """
@@ -258,6 +297,27 @@ class HandleDatabase:
                                        f"but didn't find anything"
         return processed_datas[randint(0, len(processed_datas)-1)]
 
+    def __rlp_string_to_python(self, raw_data, fileName):
+        # will convert rlp string to python
+        sheetName = raw_data.split(',')[0].strip()
+        headerName = raw_data.split(',')[1].strip().split('=')[0].strip()
+        headerValue = raw_data.split(',')[1].strip().split('=')[1].strip()
+        all_sheets, main_sheet = self.__read_excel(path=fileName, sheet_name=sheetName)
+        data_list = []
+        for data in main_sheet:
+            main_value = data[headerName]
+            if type(main_value) == float and str(main_value)[-2:] == '.0':
+                main_value = str(int(main_value))
+            if main_value.strip() == headerValue:
+                for key in data:
+                    try:
+                        js = json.loads(data[key])
+                        data[key] = js
+                    except:
+                        pass
+                data_list.append(data)
+        return data_list
+
     def __process_rre_string(self, rre_string):
         """
         For more detail please refer to TestDataGenerator.py
@@ -286,6 +346,16 @@ class HandleDatabase:
         )
         err_string = f"{rrd_string} not matching pattern RRD_(sheetName,TargetData," \
                      f"[Header1:[Value1],Header2:[Value1,Value2]])"
+        assert match, err_string
+        return processed_string
+
+    def __process_rlp_string(self, rlp_string):
+        processed_string = ','.join([word.strip() for word in rlp_string.split(', ')])
+        match = re.match(
+            r"(RLP_(\(|\[)).+,.+=.+(\]|\))",
+            processed_string
+        )
+        err_string = f"{rlp_string} not matching pattern RLP_(sheetName,HeaderName=DataToMatch"
         assert match, err_string
         return processed_string
 
@@ -318,6 +388,8 @@ class HandleDatabase:
         else:
             assert sheet_name in sheet_dict, f"Excel file doesn't contain {sheet_name} sheet. Please recheck."
             base_sheet = sheet_dict[sheet_name]
+        self.sheet_dict = sheet_dict
+        self.base_sheet = base_sheet
         return sheet_dict, base_sheet
 
     def readNextRecord(self):

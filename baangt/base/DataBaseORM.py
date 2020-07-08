@@ -47,6 +47,7 @@ class TestrunLog(base):
 	statusOk = Column(Integer, nullable=False)
 	statusFailed = Column(Integer, nullable=False)
 	statusPaused = Column(Integer, nullable=False)
+	RLPJson = Column(String, nullable=True)
 	# relationships
 	globalVars = relationship('GlobalAttribute')
 	testcase_sequences = relationship('TestCaseSequenceLog')

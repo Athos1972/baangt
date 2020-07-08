@@ -6,7 +6,7 @@ if __name__ == '__main__':
 
     setuptools.setup(
         name="baangt",
-        version="1.1.4",
+        version="1.1.7",
         author="Bernhard Buhl",
         author_email="info@baangt.org",
         description="Open source Test Automation Suite for MacOS, Windows, Linux",
@@ -18,12 +18,12 @@ if __name__ == '__main__':
         package_data={"baangt.ui.pyqt": ['globalSetting.json',]},
         install_requires=["Appium-Python-Client", "beautifulsoup4", "browsermob-proxy",
                           "dataclasses", "dataclasses-json",
-                          "faker",  "gevent", "lxml",
+                          "faker",  "gevent", "jinja2", "lxml",
                           "openpyxl",
                           "Pillow", "pluggy", "pyperclip",  "pyQT5",
                           "requests", "requests-toolbelt",
                           "schwifty", "selenium", "sqlalchemy",
-                          "urllib3",
+                          "urllib3", "psutil", "pymsteams", "slack-webhook",
                           "xl2dict", "xlrd", "xlsxwriter",
                            ],
         classifiers=[

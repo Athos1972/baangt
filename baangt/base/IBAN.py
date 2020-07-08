@@ -1,4 +1,4 @@
-#import schwifty
+import schwifty
 from baangt.base.Faker import Faker
 import random
 
@@ -26,9 +26,9 @@ class IBAN:
         for n in range(laenge):
             digits.append(random.randrange(0, 10))
         digits = "".join(str(x) for x in digits)
-        #return str(schwifty.IBAN.generate(country_code=self.bankLand,
-        #                                  bank_code=self.bankLeitZahl,
-        #                                  account_code=digits))
+        return str(schwifty.IBAN.generate(country_code=self.bankLand,
+                                          bank_code=self.bankLeitZahl,
+                                          account_code=digits))
         return Faker().fakerProxy(fakerMethod="iban")
 
 
