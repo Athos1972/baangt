@@ -48,8 +48,6 @@ class ExportConfluence:
             self.create_child_pages(confluence, parent_page)
 
 
-
-
     def xlsx2html(self, filePath, sheet):
         wb = xlrd.open_workbook(filePath)
         sht = wb.sheet_by_name(sheet)
@@ -108,7 +106,8 @@ class ExportConfluence:
             else:
                 ending = output_xlsx.nrows
             title = ((len(str(output_xlsx.nrows)) - len(str(starting))) * "0") + str(starting
-                    ) + " - " + ((len(str(output_xlsx.nrows)) - len(str(ending))) * "0") + str(ending)
+                    ) + " - " + ((len(str(output_xlsx.nrows)) - len(str(ending))) * "0") + str(ending
+                    ) + " " + self.pageTitle
             data = []
             for row in range(starting, ending):
                 dt = []
