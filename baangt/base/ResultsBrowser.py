@@ -72,6 +72,17 @@ class ResultsBrowser:
         return max([len(tr.testcase_sequences[testcase_sequence].testcases) for tr in self.query_set])
 
 
+    def name_list(self):
+        names = self.db.query(TestrunLog.testrunName).group_by(TestrunLog.testrunName).order_by(TestrunLog.testrunName).all()
+        return [x[0] for x in names]
+
+
+    def stage_list(self):
+        stages = self.db.query(GlobalAttribute.value).filter_by(name=GC.EXECUTION_STAGE)\
+            .group_by(GlobalAttribute.value).order_by(GlobalAttribute.value).all()
+        return [x[0] for x in stages]
+
+
     def get(self, ids):
         #
         # get TestrunLogs by id (list of uuid string)

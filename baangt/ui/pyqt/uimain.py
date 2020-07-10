@@ -28,6 +28,7 @@ from baangt.base.RuntimeStatistics import Statistic
 from baangt.base.PathManagement import ManagedPaths
 from baangt.base.DownloadFolderMonitoring import DownloadFolderMonitoring
 from baangt.base.Cleanup import Cleanup
+from baangt.base.ResultsBrowser import ResultsBrowser
 import xlrd
 from baangt.reports import Dashboard, Summary
 from baangt.TestDataGenerator.TestDataGenerator import TestDataGenerator
@@ -35,6 +36,7 @@ from baangt.base.Utils import utils
 from threading import Thread
 from time import sleep
 import signal
+from datetime import datetime
 
 logger = logging.getLogger("pyC")
 
@@ -129,6 +131,11 @@ class MainWindow(Ui_MainWindow):
         self.openLogFilePushButton_4.clicked.connect(self.openLogFile)
         self.openTestFilePushButton_4.clicked.connect(self.openTestFile)
         self.InputFileOpen.clicked.connect(self.openInputFile)
+
+        # Result Browser buttons
+        self.actionQuery.triggered.connect(self.showQueryPage)
+        self.queryPushButton.clicked.connect(self.makeResultQuery)
+        self.exportPushButton.clicked.connect(self.exportResultQuery)
 
         # Quit Event
         self.actionExit.triggered.connect(self.quitApplication)
@@ -238,6 +245,7 @@ class MainWindow(Ui_MainWindow):
         logo_pixmap = QtGui.QPixmap(":/baangt/baangtlogo")
         logo_pixmap.scaled(300, 120, QtCore.Qt.KeepAspectRatio)
         self.logo_4.setPixmap(logo_pixmap)
+        self.queryLogo.setPixmap(logo_pixmap)
         icon = QtGui.QIcon()
         icon.addPixmap(
                 QtGui.QPixmap(":/baangt/baangticon"),
@@ -1292,6 +1300,75 @@ class MainWindow(Ui_MainWindow):
         else:
             self.__open_files = 0
         self.saveInteractiveGuiConfig()
+
+
+    #
+    # Browse Results actions
+    #
+
+    @pyqtSlot()
+    def showQueryPage(self):
+        #
+        # display Query Page
+        #
+
+        # setup query object
+        self.queryResults = ResultsBrowser()
+
+        # setup combo box lists
+        self.nameComboBox.clear()
+        self.nameComboBox.addItems([''] + self.queryResults.name_list())
+        self.stageComboBox.clear()
+        self.stageComboBox.addItems([''] + self.queryResults.stage_list())
+
+        # show the page
+        self.stackedWidget.setCurrentIndex(4)
+        self.statusMessage("Query Page is triggered", 1000)
+
+
+    @pyqtSlot()
+    def makeResultQuery(self):
+        #
+        # makes query to results db
+        #
+
+        # get field data
+        name = self.nameComboBox.currentText() or None
+        stage = self.stageComboBox.currentText() or None
+        date_from = datetime.strptime(self.dateFromInput.date().toString("yyyyMMdd"), "%Y%m%d")
+        date_to = datetime.strptime(self.dateToInput.date().toString("yyyyMMdd"), "%Y%m%d")
+
+        # make query
+        self.queryResults.query(name=name, stage=stage, start_date=date_from, end_date=date_to)
+
+        # display status
+        if self.queryResults.query_set:
+            if len(self.queryResults.query_set) > 1:
+                status = f'Found: {len(self.queryResults.query_set)} records'
+            else:
+                status = f'Found: {len(self.queryResults.query_set)} record'
+        else:
+            status = 'No record found'
+        self.queryStatusLabel.setText(QtCore.QCoreApplication.translate("MainWindow", status))
+
+
+    @pyqtSlot()
+    def exportResultQuery(self):
+        #
+        # exports query results
+        #
+
+        _translate = QtCore.QCoreApplication.translate
+
+        if self.queryResults.query_set:
+            self.queryStatusLabel.setText(_translate("MainWindow", "Exporting results..."))
+            path_to_export = self.queryResults.export()
+            self.queryStatusLabel.setText(_translate("MainWindow", f"TestRun results exported to {path_to_export}"))
+            #FilesOpen.openResultFile(path_to_export)
+        else:
+            self.queryStatusLabel.setText(_translate("MainWindow", f"ERROR: No data to export"))
+
+
 
     @pyqtSlot()
     def cleanup_dialog(self):
