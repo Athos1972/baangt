@@ -1,0 +1,93 @@
+{
+    "exportFilesBasePath": {
+        "hint": "",
+        "type": "text",
+        "options": [
+            ""
+        ],
+        "displayText": "exportFilesBasePath",
+        "default": ""
+    },
+    "TC.Lines": "",
+    "TC.slowExecution": "True",
+    "TC.NetworkInfo": "True",
+    "TC.dontCloseBrowser": "True",
+    "TC.Browser": "CHROME",
+    "TC.Mobile": {
+        "hint": "True",
+        "type": "text",
+        "options": [
+            "True"
+        ],
+        "displayText": "TC.Mobile",
+        "default": "True"
+    },
+    "TC.MobileApp": {
+        "hint": "True",
+        "type": "text",
+        "options": [
+            "True"
+        ],
+        "displayText": "TC.MobileApp",
+        "default": "True"
+    },
+    "TC.platformName": {
+        "hint": "Android",
+        "type": "text",
+        "options": [
+            "Android"
+        ],
+        "displayText": "TC.platformName",
+        "default": "Android"
+    },
+    "TC.deviceName": {
+        "hint": "emulator-5554",
+        "type": "text",
+        "options": [
+            "emulator-5554"
+        ],
+        "displayText": "TC.deviceName",
+        "default": "emulator-5554"
+    },
+    "TC.platformVersion": {
+        "hint": "5",
+        "type": "text",
+        "options": [
+            "5"
+        ],
+        "displayText": "TC.platformVersion",
+        "default": "5"
+    },
+    "TC.app": {
+        "hint": "/baangt/examples/calculator.apk",
+        "type": "text",
+        "options": [
+            "/baangt/examples/calculator.apk"
+        ],
+        "displayText": "TC.app",
+        "default": "/baangt/examples/calculator.apk"
+    },
+    "TC.appPackage": {
+        "hint": "com.google.android.calculator",
+        "type": "text",
+        "options": [
+            "com.google.android.calculator"
+        ],
+        "displayText": "TC.appPackage",
+        "default": "com.google.android.calculator"
+    },
+    "TC.appWaitActivity": {
+        "hint": "com.android.calculator2.Calculator",
+        "type": "text",
+        "options": [
+            "com.android.calculator2.Calculator"
+        ],
+        "displayText": "TC.appWaitActivity",
+        "default": "com.android.calculator2.Calculator"
+    },
+    "TX.DEBUG": "True",
+    "RootPath": "/home/aguryev/freelancer/baangt/examples",
+    "Screenshots": "/home/aguryev/freelancer/baangt/examples/Screenshots",
+    "1TestResults": "/home/aguryev/freelancer/baangt/examples/1testoutput",
+    "0TestInput": "/home/aguryev/freelancer/baangt/examples/0testdateninput"
+}

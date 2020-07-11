@@ -134,8 +134,9 @@ class MainWindow(Ui_MainWindow):
 
         # Result Browser buttons
         self.actionQuery.triggered.connect(self.showQueryPage)
-        self.queryPushButton.clicked.connect(self.makeResultQuery)
-        self.exportPushButton.clicked.connect(self.exportResultQuery)
+        self.queryMakePushButton.clicked.connect(self.makeResultQuery)
+        self.queryExportPushButton.clicked.connect(self.exportResultQuery)
+        self.queryExitPushButton.clicked.connect(self.mainPageView)
 
         # Quit Event
         self.actionExit.triggered.connect(self.quitApplication)
@@ -1362,8 +1363,9 @@ class MainWindow(Ui_MainWindow):
 
         if self.queryResults.query_set:
             self.queryStatusLabel.setText(_translate("MainWindow", "Exporting results..."))
+            sleep(1)
             path_to_export = self.queryResults.export()
-            self.queryStatusLabel.setText(_translate("MainWindow", f"TestRun results exported to {path_to_export}"))
+            self.queryStatusLabel.setText(_translate("MainWindow", f"Exported to: {path_to_export}"))
             #FilesOpen.openResultFile(path_to_export)
         else:
             self.queryStatusLabel.setText(_translate("MainWindow", f"ERROR: No data to export"))

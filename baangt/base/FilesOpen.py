@@ -15,7 +15,9 @@ def open(filenameAndPath: str):
     if not isinstance(filenameAndPath, str):
         filenameAndPath = str(filenameAndPath)
 
+    print(f'**** BEFORE: {filenameAndPath}')
     filenameAndPath = os.path.abspath(filenameAndPath)
+    print(f'**** AFTER: {filenameAndPath}')
 
     if not os.path.exists(filenameAndPath):
         return False

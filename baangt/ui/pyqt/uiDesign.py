@@ -549,27 +549,39 @@ class Ui_MainWindow(QtCore.QObject):
         self.queryInputLayout.addWidget(self.dateToInput)
 
         # query buttons
-        self.queryPushButton = QtWidgets.QPushButton(self.queryGroupBox)
+        # make query
+        self.queryMakePushButton = QtWidgets.QPushButton(self.queryGroupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.queryPushButton.sizePolicy().hasHeightForWidth())
-        self.queryPushButton.setSizePolicy(sizePolicy)
-        self.queryPushButton.setMinimumSize(QtCore.QSize(120, 0))
-        self.queryPushButton.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(114, 159, 207);")
-        self.queryPushButton.setObjectName("queryPushButton")
-        self.queryButtonLayout.addWidget(self.queryPushButton)
-
-        self.exportPushButton = QtWidgets.QPushButton(self.queryGroupBox)
+        sizePolicy.setHeightForWidth(self.queryMakePushButton.sizePolicy().hasHeightForWidth())
+        self.queryMakePushButton.setSizePolicy(sizePolicy)
+        self.queryMakePushButton.setMinimumSize(QtCore.QSize(120, 0))
+        self.queryMakePushButton.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(114, 159, 207);")
+        self.queryMakePushButton.setObjectName("queryMakePushButton")
+        self.queryButtonLayout.addWidget(self.queryMakePushButton)
+        # export results
+        self.queryExportPushButton = QtWidgets.QPushButton(self.queryGroupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.exportPushButton.sizePolicy().hasHeightForWidth())
-        self.exportPushButton.setSizePolicy(sizePolicy)
-        self.exportPushButton.setMinimumSize(QtCore.QSize(120, 0))
-        self.exportPushButton.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(138, 226, 52);")
-        self.exportPushButton.setObjectName("exportPushButton")
-        self.queryButtonLayout.addWidget(self.exportPushButton)
+        sizePolicy.setHeightForWidth(self.queryExportPushButton.sizePolicy().hasHeightForWidth())
+        self.queryExportPushButton.setSizePolicy(sizePolicy)
+        self.queryExportPushButton.setMinimumSize(QtCore.QSize(120, 0))
+        self.queryExportPushButton.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(138, 226, 52);")
+        self.queryExportPushButton.setObjectName("queryExportPushButton")
+        self.queryButtonLayout.addWidget(self.queryExportPushButton)
+        # exit to main screen
+        self.queryExitPushButton = QtWidgets.QPushButton(self.queryGroupBox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.queryExitPushButton.sizePolicy().hasHeightForWidth())
+        self.queryExitPushButton.setSizePolicy(sizePolicy)
+        self.queryExitPushButton.setMinimumSize(QtCore.QSize(120, 0))
+        self.queryExitPushButton.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(204, 0, 0);")
+        self.queryExitPushButton.setObjectName("queryExitPushButton")
+        self.queryButtonLayout.addWidget(self.queryExitPushButton)
 
         # status message
         self.queryStatusLabel = QtWidgets.QLabel(self.queryGroupBox)
@@ -592,7 +604,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.queryLogo.setObjectName("queryLogo")
         self.queryActionLayout.addWidget(self.queryLogo)
 
-        # END of query stcreen
+        # END of query screen
 
 
         self.katalonPage = QtWidgets.QWidget()
@@ -660,7 +672,7 @@ class Ui_MainWindow(QtCore.QObject):
         # Browse Results
         self.actionQuery = QtWidgets.QAction(MainWindow)
         self.actionQuery.setObjectName("actionQuery")
-        self.actionQueryIcon = QtGui.QIcon(":/baangt/reporticon")
+        self.actionQueryIcon = QtGui.QIcon(":/baangt/dbqueryicon")
         self.actionQuery.setIcon(self.actionQueryIcon)
         # END: Browse Results
         self.actionReport = QtWidgets.QAction(MainWindow)
@@ -946,8 +958,9 @@ class Ui_MainWindow(QtCore.QObject):
         self.stageComboBoxLabel.setText(_translate("MainWindow", "Stage"))
         self.dateFromInputLabel.setText(_translate("MainWindow", "Date from"))
         self.dateToInputLabel.setText(_translate("MainWindow", "Date to"))
-        self.queryPushButton.setText(_translate("MainWindow", "Query"))
-        self.exportPushButton.setText(_translate("MainWindow", "Export"))
+        self.queryMakePushButton.setText(_translate("MainWindow", "Query"))
+        self.queryExportPushButton.setText(_translate("MainWindow", "Export"))
+        self.queryExitPushButton.setText(_translate("MainWindow", "Exit"))
         self.queryStatusLabel.setText(_translate("MainWindow", "Make a query"))
 
 
