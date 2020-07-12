@@ -25,7 +25,17 @@ class Report:
 
 	@property
 	def path(self):
-		return ''	
+		return ''
+
+	@classmethod
+	def reports_dir(self):
+		#
+		# path to report dir
+		#
+		return os.path.join(
+			os.path.dirname(__file__),
+			GC.REPORT_PATH,
+		)
 
 	def generate(self):
 		#

@@ -1386,6 +1386,9 @@ class MainWindow(Ui_MainWindow):
         self.cleanup_downloads = QtWidgets.QCheckBox()
         self.cleanup_downloads.setText("Downloads")
         self.cleanup_downloads.setChecked(True)
+        self.cleanup_reports = QtWidgets.QCheckBox() # cleanup reports
+        self.cleanup_reports.setText("Reports") # cleanup reports
+        self.cleanup_reports.setChecked(True) # cleanup reports
         hlay = QtWidgets.QHBoxLayout()
         label = QtWidgets.QLabel()
         label.setText("Days: ")
@@ -1400,6 +1403,7 @@ class MainWindow(Ui_MainWindow):
         vlay.addWidget(self.cleanup_logs)
         vlay.addWidget(self.cleanup_screenshots)
         vlay.addWidget(self.cleanup_downloads)
+        vlay.addWidget(self.cleanup_reports) # cleanup reports
         vlay.addLayout(hlay)
         vlay.addWidget(button)
         vlay.addWidget(self.cleanup_status)
@@ -1422,6 +1426,9 @@ class MainWindow(Ui_MainWindow):
             c.clean_screenshots()
         if self.cleanup_downloads.isChecked():
             c.clean_downloads()
+        # cleanup reports
+        if self.cleanup_reports.isChecked():
+            c.clean_reports()
         self.cleanup_status.showMessage("Cleaning Complete!")
 
     def showReport(self):
