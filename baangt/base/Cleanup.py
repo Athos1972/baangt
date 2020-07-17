@@ -101,7 +101,7 @@ class Cleanup:
 
         logger.info(f"Removing reports older than {str(self.threshold)} days")
         reports_dir = Report.reports_dir()
-        files = Path(reports_dir).glob('**/*')
+        files = Path(reports_dir).glob('*.html')
         removed = []
         for file in files:
             timedelta = datetime.now() - datetime.fromtimestamp(DownloadFolderMonitoring.creation_date(file))
