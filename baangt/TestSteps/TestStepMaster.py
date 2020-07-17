@@ -110,6 +110,9 @@ class TestStepMaster:
         # when we have an IF-condition and it's condition was not TRUE, then skip whatever comes here until we
         # reach Endif
         if not self.ifIsTrue and not self.elseIsTrue:
+            if command["Activity"].upper() == "IF":
+                self.manageNestedCondition(condition=command["Activity"].upper(), ifis=self.ifIsTrue)
+                return
             if command["Activity"].upper() != "ELSE" and command["Activity"].upper() != "ENDIF":
                 return
         if self.repeatIsTrue[-1]: # If repeat statement is active then execute this
@@ -276,8 +279,7 @@ class TestStepMaster:
                 self.manageNestedCondition(condition=lActivity)
                 logger.debug("Executing ELSE-condition")
         elif lActivity == "ENDIF":
-            self.ifIsTrue = True
-            self.elseIsTrue = False
+            self.manageNestedCondition(condition=lActivity)
         elif lActivity == "REPEAT":
             self.repeatActive += 1
             self.repeatIsTrue.append(True)
