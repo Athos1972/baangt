@@ -2,12 +2,12 @@ from sqlalchemy import create_engine, desc, and_
 from sqlalchemy.orm import sessionmaker
 from baangt.base.DataBaseORM import DATABASE_URL, engine, TestrunLog, GlobalAttribute, TestCaseLog, TestCaseSequenceLog, TestCaseField
 from baangt.base.ExportResults.ExportResults import ExcelSheetHelperFunctions
+from baangt.base.PathManagement import ManagedPaths
 import baangt.base.GlobalConstants as GC
 import uuid
 from datetime import datetime
 from xlsxwriter import Workbook
 import logging
-import pathlib
 import os
 
 logger = logging.getLogger("pyC")
@@ -27,8 +27,8 @@ class ResultsBrowser:
         self.tag = None
         # set of stages
         self.stages = None
-        # create export folder
-        pathlib.Path(GC.PATH_QUERIES).mkdir(parents=True, exist_ok=True)
+        # path management
+        self.managedPaths = ManagedPaths()
         logger.info(f'Initiated with DATABASE_URL: {db_url if db_url else DATABASE_URL}')
 
     def __del__(self):
@@ -193,13 +193,9 @@ class ResultsBrowser:
         labelTestCase = 'Test Case'
         labelAvgDuration = 'Avg. Duration'
 
-        path_to_file = os.path.join(
-            os.getcwd(),
-            GC.PATH_QUERIES,
-            f'TestrunLogs_{"_".join(list(map(str, self.tag.values())))}.xlsx',
-        )
-        #print(path_to_file)
-        workbook = Workbook(path_to_file)
+        # initialize workbook
+        path_to_file = self.managedPaths.getOrSetDBExportPath().joinpath(f'TestrunLogs_{"_".join(list(map(str, self.tag.values())))}.xlsx')
+        workbook = Workbook(str(path_to_file))
         
         # define cell formats
         # green background
@@ -312,8 +308,4 @@ class ResultsBrowser:
         logger.info(f'Query successfully exported to {path_to_file}')
 
         return path_to_file
-
-        
-
-
 
