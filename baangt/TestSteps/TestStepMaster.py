@@ -81,9 +81,13 @@ class TestStepMaster:
             try:
                 self.executeDirectSingle(index, command)
             except Exception as ex:
-                logger.info(ex)
-            # self.statistics.update_teststep()  --> Moved to BrowserHandling into the activities themselves,
-            # so that we can also count for externally (subclassed) activitis
+                # 2020-07-16: This Exception is cought, printed and then nothing. That's not good. The test run
+                # continues forever, despite this exception. Correct way would be to set test case to error and stop
+                # this test case
+                # Before we change something here we should check, why the calling function raises an error.
+                logger.critical(ex)
+                self.testcaseDataDict[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
+                return
 
     def manageNestedCondition(self, condition="", ifis=False):
         if condition.upper() == "IF":
@@ -216,7 +220,7 @@ class TestStepMaster:
         lRelease = command["Release"]
 
         # Timeout defaults to 20 seconds, if not set otherwise.
-        lTimeout = TestStepMaster.__setTimeout(command["Timeout"])
+        lTimeout = TestStepMaster._setTimeout(command["Timeout"])
 
         lTimingString = f"TS {commandNumber} {lActivity.lower()}"
         self.timing.takeTime(lTimingString)
@@ -457,7 +461,7 @@ class TestStepMaster:
         return utils.setLocatorFromLocatorType(lLocatorType, lLocator)
 
     @staticmethod
-    def __setTimeout(lTimeout):
+    def _setTimeout(lTimeout):
         return 20 if not lTimeout else float(lTimeout)
 
     def __doComparisons(self, lComparison, value1, value2):
