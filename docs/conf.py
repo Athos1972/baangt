@@ -24,7 +24,7 @@ copyright = '2020, Bernhard Buhl'
 author = 'Bernhard Buhl'
 
 # The full version, including alpha/beta/rc tags
-release = '1.1.9'
+release = '1.1.10'
 
 
 # -- General configuration ---------------------------------------------------
