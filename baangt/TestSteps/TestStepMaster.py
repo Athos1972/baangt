@@ -242,6 +242,9 @@ class TestStepMaster:
                                                    optional=lOptional)
         elif lActivity == "FORCETEXT":
             self.browserSession.findByAndForceText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout)
+        elif lActivity == "FORCETEXTIF":
+            if lValue:
+                self.browserSession.findByAndForceText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout)
         elif lActivity == "SETANCHOR":
             if not lLocator:
                 self.anchor = None
