@@ -188,20 +188,11 @@ class TestStepMaster:
                 self.repeatDone -= 1
                 self.repeatActive -= 1
                 return
-        lActivity = command["Activity"].upper()
+
+        css, id, lActivity, lLocator, lLocatorType, xpath = self._extractAllSingleValues(command)
+
         if lActivity == "COMMENT":
             return  # Comment's are ignored
-
-        lLocatorType = command["LocatorType"].upper()
-        try:
-            lLocator = self.replaceVariables(command["Locator"])
-        except Exception as ex:
-            logger.info(ex)
-
-        if lLocator and not lLocatorType:  # If locatorType is empty, default it to XPATH
-            lLocatorType = 'XPATH'
-
-        xpath, css, id = self.__setLocator(lLocatorType, lLocator)
 
         if self.anchor and xpath:
             if xpath[0:3] == '///':         # Xpath doesn't want to use Anchor
@@ -241,10 +232,12 @@ class TestStepMaster:
             self.browserSession.findByAndSetTextIf(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout,
                                                    optional=lOptional)
         elif lActivity == "FORCETEXT":
-            self.browserSession.findByAndForceText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout)
+            self.browserSession.findByAndForceText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout,
+                                                   optional=lOptional)
         elif lActivity == "FORCETEXTIF":
             if lValue:
-                self.browserSession.findByAndForceText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout)
+                self.browserSession.findByAndForceText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout,
+                                                       optional=lOptional)
         elif lActivity == "SETANCHOR":
             if not lLocator:
                 self.anchor = None
@@ -350,6 +343,18 @@ class TestStepMaster:
             raise BaseException(f"Unknown command in TestStep {lActivity}")
 
         self.timing.takeTime(lTimingString)
+
+    def _extractAllSingleValues(self, command):
+        lActivity = command["Activity"].upper()
+        lLocatorType = command["LocatorType"].upper()
+        try:
+            lLocator = self.replaceVariables(command["Locator"])
+        except Exception as ex:
+            logger.info(ex)
+        if lLocator and not lLocatorType:  # If locatorType is empty, default it to XPATH
+            lLocatorType = 'XPATH'
+        xpath, css, id = self.__setLocator(lLocatorType, lLocator)
+        return css, id, lActivity, lLocator, lLocatorType, xpath
 
     def doPDFComparison(self, lValue, lFieldnameForResults="DOC_Compare"):
         lFiles = self.browserSession.findNewFiles()
