@@ -24,7 +24,7 @@ if __name__ == '__main__':
                           "requests", "requests-toolbelt",
                           "schwifty", "selenium", "sqlalchemy",
                           "urllib3", "psutil", "pymsteams", "slack-webhook",
-                          "xl2dict", "xlrd", "xlsxwriter", "atlassian-python-api"
+                          "xl2dict", "xlrd3", "xlsxwriter", "atlassian-python-api"
                            ],
         classifiers=[
             "Programming Language :: Python :: 3",

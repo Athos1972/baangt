@@ -1,6 +1,6 @@
 import os
 import glob
-import xlrd
+import xlrd3 as xlrd
 import subprocess
 from pathlib import Path
 from baangt.base.DownloadFolderMonitoring import DownloadFolderMonitoring

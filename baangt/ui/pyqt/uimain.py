@@ -28,7 +28,7 @@ from baangt.base.RuntimeStatistics import Statistic
 from baangt.base.PathManagement import ManagedPaths
 from baangt.base.DownloadFolderMonitoring import DownloadFolderMonitoring
 from baangt.base.Cleanup import Cleanup
-import xlrd
+import xlrd3 as xlrd
 from baangt.reports import Dashboard, Summary
 from baangt.TestDataGenerator.TestDataGenerator import TestDataGenerator
 from baangt.base.Utils import utils

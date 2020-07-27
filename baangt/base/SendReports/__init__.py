@@ -1,6 +1,6 @@
 import os
 import csv
-import xlrd
+import xlrd3 as xlrd
 import json
 import xlsxwriter
 import logging
