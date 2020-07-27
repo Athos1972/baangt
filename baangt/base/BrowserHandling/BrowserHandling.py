@@ -511,7 +511,8 @@ class BrowserDriver:
 
         """
 
-        self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
+        self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe,
+                                              timeout=timeout, optional=optional)
 
         if not self.element:
             return False
