@@ -1,4 +1,8 @@
-import schwifty
+try:
+    import schwifty
+except Exception as ex:
+    pass
+
 from baangt.base.Faker import Faker
 import random
 
