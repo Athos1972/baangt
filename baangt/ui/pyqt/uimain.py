@@ -922,7 +922,7 @@ class MainWindow(Ui_MainWindow):
                 if self.directory:
                     fullpath = os.path.join(self.directory, self.configFile)
                 else:
-                    self.directory = os.getcwd()#.managedPaths.derivePathForOSAndInstallationOption()
+                    self.directory = os.getcwd()   # .managedPaths.derivePathForOSAndInstallationOption()
                     fullpath = os.path.join(self.directory, self.configFile)
 
             with open(fullpath, 'w') as f:
