@@ -116,9 +116,9 @@ class TestStepMaster:
         if not self.ifIsTrue and not self.elseIsTrue:
             if command["Activity"].upper() == "IF":
                 self.manageNestedCondition(condition=command["Activity"].upper(), ifis=self.ifIsTrue)
-                return
+                return True
             if command["Activity"].upper() != "ELSE" and command["Activity"].upper() != "ENDIF":
-                return
+                return True
         if self.repeatIsTrue[-1]: # If repeat statement is active then execute this
             if command["Activity"].upper() == "REPEAT": # To sync active repeat with repeat done
                 self.repeatActive += 1
