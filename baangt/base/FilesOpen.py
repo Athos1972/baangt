@@ -39,7 +39,6 @@ def open(filenameAndPath: str):
                 return False
 
     elif platform.system().lower() == GC.PLATFORM_LINUX:
-        filenameAndPath = f'"{filenameAndPath}"'
         logger.debug(f"In Linux trying to call xdg-open with filename: {str(filenameAndPath)}")
         status = subprocess.call(["xdg-open", str(filenameAndPath)])
         if status == 0:
