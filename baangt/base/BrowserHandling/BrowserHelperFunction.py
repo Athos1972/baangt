@@ -180,6 +180,8 @@ class BrowserHelperFunction:
         else:
             url = geckoDriversDict[GC.OS_list[2]]
 
+        logger.debug(f"Downloading Geckodriver for Firefox from here {url}")
+
         return url, isTarFile
 
     @staticmethod
@@ -202,6 +204,8 @@ class BrowserHelperFunction:
             url = chromeDriversDict[GC.OS_list[1]]
         else:
             url = chromeDriversDict[GC.OS_list[2]]
+
+        logger.debug(f"Downloading Chromedriver from here: {url}")
 
         return url
   
