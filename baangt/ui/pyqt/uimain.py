@@ -515,7 +515,7 @@ class MainWindow(Ui_MainWindow):
                     str(self.run_process.readAllStandardError().data().decode('iso-8859-1'))))
             self.run_process.finished.connect(self.processFinished)
             self.run_process.start(runCmd)
-            self.statusbar.showMessage("Running.....")
+            self.statusbar.showMessage("Running.....",4000)
 
     @pyqtSlot()
     def stopButtonPressed(self):
@@ -1205,6 +1205,7 @@ class MainWindow(Ui_MainWindow):
         """ Uses Files Open class to open Result file """
         try:
             if self.__result_file != "":
+                logger.debug(f"Opening ResultFile: {self.__result_file}")
                 filePathName = self.__result_file
                 fileName = os.path.basename(filePathName)
                 self.statusMessage(f"Opening file {fileName}", 3000)

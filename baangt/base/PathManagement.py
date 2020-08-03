@@ -220,7 +220,7 @@ class ManagedPaths(metaclass=Singleton):
 
         :return: base Path
         """
-        if platform.system() == "Windows":
+        if platform.system().lower() == GC.PLATFORM_WINDOWS:
             path = os.path.join(os.path.expanduser("~"), "baangt")
             if os.path.exists(path):
                 return Path(path)
