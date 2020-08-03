@@ -442,9 +442,8 @@ class MainWindow(Ui_MainWindow):
     def updateRunFile(self):
         """ this file will update the testRunFile selection
         """
-        self.testRunFile = os.path.join(self.directory,
-                                  self.testRunComboBox_4.currentText())
-        self.statusMessage("Test Run Changed to: {}".format(self.testRunFile))
+        self.testRunFile = self.testRunComboBox_4.currentText()
+        self.statusMessage("Test Run Changed to: {}".format(self.testRunFile), 3000)
         self.saveInteractiveGuiConfig()
 
     @pyqtSlot()
@@ -456,7 +455,7 @@ class MainWindow(Ui_MainWindow):
                                  self.settingComboBox_4.currentText())
 
         self.saveInteractiveGuiConfig()
-        self.statusMessage("Settings changed to: {}".format(self.configFile))
+        self.statusMessage("Settings changed to: {}".format(self.configFile), 3000)
         self.readContentofGlobals()
 
     @pyqtSlot()
@@ -464,7 +463,7 @@ class MainWindow(Ui_MainWindow):
         """ this file will update the testRunFile selection
         """
         self.selectedSheet = self.SheetCombo.currentText()
-        self.statusMessage("Selected Sheet: {}".format(self.selectedSheet))
+        self.statusMessage("Selected Sheet: {}".format(self.selectedSheet), 3000)
 
     def executeButtonClicked(self):
         self.__result_file = ""
@@ -629,7 +628,8 @@ class MainWindow(Ui_MainWindow):
                 else:
                     break
             if result_file[-5:] == ".xlsx":
-                self.__result_file =result_file
+                logger.debug(f"Found result_file in the logs: {result_file}")
+                self.__result_file = result_file
         if "||Statistic:" in text:
             lis = text.split('||')
             stat = lis[1][10:]
