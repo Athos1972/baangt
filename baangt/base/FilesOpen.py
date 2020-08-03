@@ -20,6 +20,7 @@ def open(filenameAndPath: str):
         filenameAndPath = str(filenameAndPath)
 
     filenameAndPath = os.path.abspath(filenameAndPath)
+    logger.debug(f"Trying to open file with it's application: {filenameAndPath}")
 
     if not os.path.exists(filenameAndPath):
         logger.warning(f"Filename doesn't exist and can't be opened: {filenameAndPath}")
