@@ -1,6 +1,6 @@
 import os
 import glob
-import xlrd
+import xlrd3 as xlrd
 import subprocess
 from pathlib import Path
 from baangt.base.DownloadFolderMonitoring import DownloadFolderMonitoring
@@ -256,6 +256,14 @@ def test_NestedIfElse_with_NoBrowser():
     output_file = output_dir.joinpath(new_file[0][0]).as_posix()
     check_output(output_file)
     os.remove(output_file)
+
+def test_NestedIfElse_with_greater_endif():
+    run_file = str(input_dir.joinpath("CompleteBaangtWebdemo_else_error.xlsx"))
+    try:
+        execute(run_file, globals_file=Path(input_dir).joinpath("globalsNoBrowser.json"))
+        assert 1 == 0
+    except BaseException:
+        assert 1 == 1
 
 def test_NestedLoops_and_repeat():
     run_file = str(input_dir.joinpath("CompleteBaangtWebdemo_nested.xlsx"))

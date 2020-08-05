@@ -1,4 +1,8 @@
-import schwifty
+try:
+    import schwifty
+except Exception as ex:
+    pass
+
 from baangt.base.Faker import Faker
 import random
 
@@ -26,11 +30,15 @@ class IBAN:
         for n in range(laenge):
             digits.append(random.randrange(0, 10))
         digits = "".join(str(x) for x in digits)
-        return str(schwifty.IBAN.generate(country_code=self.bankLand,
-                                          bank_code=self.bankLeitZahl,
-                                          account_code=digits))
-        return Faker().fakerProxy(fakerMethod="iban")
+        # Schwifty doesn't work on Ubuntu
+        try:
+            lReturn = str(schwifty.IBAN.generate(country_code=self.bankLand,
+                                              bank_code=self.bankLeitZahl,
+                                              account_code=digits))
+        except Exception:
+            lReturn = Faker().fakerProxyIBAN("AT")
 
+        return lReturn
 
 if __name__ == '__main__':
     l = IBAN()

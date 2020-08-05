@@ -2,7 +2,7 @@ from baangt.base.Utils import utils
 from baangt.base.TestRunUtils import TestRunUtils
 import baangt.base.GlobalConstants as GC
 import baangt.base.CustGlobalConstants as CGC
-import xlrd
+import xlrd3 as xlrd
 import logging
 
 logger = logging.getLogger("pyC")

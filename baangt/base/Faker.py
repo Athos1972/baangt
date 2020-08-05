@@ -33,3 +33,6 @@ class Faker:
             logging.error(f"Error during Faker-Call. Method was: {fakerMethod}, kwargs were: {kwargs}, Exception: {e}")
 
         return lValue
+
+    def fakerProxyIBAN(self, country_or_ListOfCountries):
+        return self.faker.Code.Iban.iban(country_or_ListOfCountries)

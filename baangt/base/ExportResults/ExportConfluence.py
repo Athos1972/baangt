@@ -1,6 +1,6 @@
 from atlassian import Confluence
 from html import escape
-import xlrd
+import xlrd3 as xlrd
 import os
 
 

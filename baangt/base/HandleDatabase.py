@@ -1,5 +1,5 @@
 import logging
-from xlrd import open_workbook
+from xlrd3 import open_workbook
 import itertools
 import json
 import baangt.base.CustGlobalConstants as CGC

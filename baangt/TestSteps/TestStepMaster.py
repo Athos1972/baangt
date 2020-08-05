@@ -81,9 +81,13 @@ class TestStepMaster:
             try:
                 self.executeDirectSingle(index, command)
             except Exception as ex:
-                logger.info(ex)
-            # self.statistics.update_teststep()  --> Moved to BrowserHandling into the activities themselves,
-            # so that we can also count for externally (subclassed) activitis
+                # 2020-07-16: This Exception is cought, printed and then nothing. That's not good. The test run
+                # continues forever, despite this exception. Correct way would be to set test case to error and stop
+                # this test case
+                # Before we change something here we should check, why the calling function raises an error.
+                logger.critical(ex)
+                self.testcaseDataDict[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
+                return
 
     def manageNestedCondition(self, condition="", ifis=False):
         if condition.upper() == "IF":
@@ -110,8 +114,11 @@ class TestStepMaster:
         # when we have an IF-condition and it's condition was not TRUE, then skip whatever comes here until we
         # reach Endif
         if not self.ifIsTrue and not self.elseIsTrue:
+            if command["Activity"].upper() == "IF":
+                self.manageNestedCondition(condition=command["Activity"].upper(), ifis=self.ifIsTrue)
+                return True
             if command["Activity"].upper() != "ELSE" and command["Activity"].upper() != "ENDIF":
-                return
+                return True
         if self.repeatIsTrue[-1]: # If repeat statement is active then execute this
             if command["Activity"].upper() == "REPEAT": # To sync active repeat with repeat done
                 self.repeatActive += 1
@@ -181,20 +188,11 @@ class TestStepMaster:
                 self.repeatDone -= 1
                 self.repeatActive -= 1
                 return
-        lActivity = command["Activity"].upper()
+
+        css, id, lActivity, lLocator, lLocatorType, xpath = self._extractAllSingleValues(command)
+
         if lActivity == "COMMENT":
             return  # Comment's are ignored
-
-        lLocatorType = command["LocatorType"].upper()
-        try:
-            lLocator = self.replaceVariables(command["Locator"])
-        except Exception as ex:
-            logger.info(ex)
-
-        if lLocator and not lLocatorType:  # If locatorType is empty, default it to XPATH
-            lLocatorType = 'XPATH'
-
-        xpath, css, id = self.__setLocator(lLocatorType, lLocator)
 
         if self.anchor and xpath:
             if xpath[0:3] == '///':         # Xpath doesn't want to use Anchor
@@ -213,7 +211,7 @@ class TestStepMaster:
         lRelease = command["Release"]
 
         # Timeout defaults to 20 seconds, if not set otherwise.
-        lTimeout = TestStepMaster.__setTimeout(command["Timeout"])
+        lTimeout = TestStepMaster._setTimeout(command["Timeout"])
 
         lTimingString = f"TS {commandNumber} {lActivity.lower()}"
         self.timing.takeTime(lTimingString)
@@ -234,7 +232,12 @@ class TestStepMaster:
             self.browserSession.findByAndSetTextIf(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout,
                                                    optional=lOptional)
         elif lActivity == "FORCETEXT":
-            self.browserSession.findByAndForceText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout)
+            self.browserSession.findByAndForceText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout,
+                                                   optional=lOptional)
+        elif lActivity == "FORCETEXTIF":
+            if lValue:
+                self.browserSession.findByAndForceText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout,
+                                                       optional=lOptional)
         elif lActivity == "SETANCHOR":
             if not lLocator:
                 self.anchor = None
@@ -276,8 +279,7 @@ class TestStepMaster:
                 self.manageNestedCondition(condition=lActivity)
                 logger.debug("Executing ELSE-condition")
         elif lActivity == "ENDIF":
-            self.ifIsTrue = True
-            self.elseIsTrue = False
+            self.manageNestedCondition(condition=lActivity)
         elif lActivity == "REPEAT":
             self.repeatActive += 1
             self.repeatIsTrue.append(True)
@@ -341,6 +343,18 @@ class TestStepMaster:
             raise BaseException(f"Unknown command in TestStep {lActivity}")
 
         self.timing.takeTime(lTimingString)
+
+    def _extractAllSingleValues(self, command):
+        lActivity = command["Activity"].upper()
+        lLocatorType = command["LocatorType"].upper()
+        try:
+            lLocator = self.replaceVariables(command["Locator"])
+        except Exception as ex:
+            logger.info(ex)
+        if lLocator and not lLocatorType:  # If locatorType is empty, default it to XPATH
+            lLocatorType = 'XPATH'
+        xpath, css, id = self.__setLocator(lLocatorType, lLocator)
+        return css, id, lActivity, lLocator, lLocatorType, xpath
 
     def doPDFComparison(self, lValue, lFieldnameForResults="DOC_Compare"):
         lFiles = self.browserSession.findNewFiles()
@@ -455,7 +469,7 @@ class TestStepMaster:
         return utils.setLocatorFromLocatorType(lLocatorType, lLocator)
 
     @staticmethod
-    def __setTimeout(lTimeout):
+    def _setTimeout(lTimeout):
         return 20 if not lTimeout else float(lTimeout)
 
     def __doComparisons(self, lComparison, value1, value2):
