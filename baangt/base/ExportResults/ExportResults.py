@@ -4,6 +4,7 @@ import json
 import baangt.base.GlobalConstants as GC
 from baangt.base.Timing.Timing import Timing
 from baangt.base.Utils import utils
+from baangt.base.ExportResults.Append2BaseXLS import Append2BaseXLS
 from pathlib import Path
 from typing import Optional
 from xlsxwriter.worksheet import (
@@ -30,6 +31,7 @@ class ExportResults:
     def __init__(self, **kwargs):
         self.kwargs = kwargs
         self.testList = []
+        self.fileName = None
         self.testRunInstance = kwargs.get(GC.KWARGS_TESTRUNINSTANCE)
         self.testCasesEndDateTimes_1D = kwargs.get('testCasesEndDateTimes_1D')
         self.testCasesEndDateTimes_2D = kwargs.get('testCasesEndDateTimes_2D')
@@ -52,7 +54,6 @@ class ExportResults:
         except KeyError:
             self.exportFormat = GC.EXP_XLSX
 
-        self.fileName = None
         try:
             if kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.STRUCTURE_TESTCASESEQUENCE)[1][1].get(GC.EXPORT_FILENAME):
                 self.fileName = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.STRUCTURE_TESTCASESEQUENCE)[1][1].get(GC.EXPORT_FILENAME)
@@ -100,18 +101,23 @@ class ExportResults:
                                                    self.workbook,
                                                    self.networkSheet)
             self.closeExcel()
+
+            # Call functionality for potentially exporting data to other sheets/databases
+            Append2BaseXLS(self.testRunInstance, self.fileName)
+
         elif self.exportFormat == GC.EXP_CSV:
             self.export2CSV()
+
         if self.testRunInstance.globalSettings.get("DeactivateStatistics") == "True":
-            logger.debug("Send Statistics to server is deactive")
+            logger.debug("Send Statistics to server is deactivated. Not sending.")
         elif self.testRunInstance.globalSettings.get("DeactivateStatistics") is True:
-            logger.debug("Send Statistics to server is deactive")
+            logger.debug("Send Statistics to server is deactivated. Not sending.")
         else:
             try:
                 self.statistics.send_statistics()
             except Exception as ex:
                 logger.debug(ex)
-        #self.exportToDataBase()
+
 
     def exportAdditionalData(self):
         # Runs only, when KWARGS-Parameter is set.
