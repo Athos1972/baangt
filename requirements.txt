@@ -27,3 +27,4 @@ pymsteams>=0.1.12
 slack-webhook>=1.0.3
 psutil>=5.7.0
 atlassian-python-api>=1.16.0
+baangt-MvCrrspXLS>=0.0.1
