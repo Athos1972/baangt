@@ -261,6 +261,7 @@ class TestDataGenerator:
                             if not self.usecount_dict[repr(dtt)]['use'] < self.usecount_dict[repr(dtt)]['limit']:
                                 remove_data.append(dtt)
                         for dtt in remove_data:  # removing data from main data list
+                            logger.debug(f"UseCount limit of {dtt} is exceeded : {str(self.usecount_dict[repr(dtt)]['limit'])}")
                             sorted_data.remove(dtt)
                         if len(sorted_data) == 0:  # if the current loop has reached usecount the we need not to add whole row in final output
                             success = False
@@ -584,32 +585,36 @@ class TestDataGenerator:
         if type(data_looking_for) == str:
             data_looking_for = data_looking_for.split(",")
 
-        usecount, limit = self.check_usecount(base_sheet[0])
+        usecount, limit, usecount_header = self.check_usecount(base_sheet[0])
         for data in base_sheet:
+            if usecount_header:
+                used_limit = data[usecount_header]
+            else:
+                used_limit = 0
             if len(matching_data) == 1 and len(matching_data[0]) == 0:
                 if data_looking_for[0] == "*":
                     data_lis.append(data)
                     self.usecount_dict[repr(data)] = {
-                        "use": 0, "limit": limit, "index": base_sheet.index(data) + 2, "sheet_name": sheet_name
+                        "use": used_limit, "limit": limit, "index": base_sheet.index(data) + 2, "sheet_name": sheet_name
                     }
                 else:
                     dt = {keys: data[keys] for keys in data_looking_for}
                     data_lis.append(dt)
                     self.usecount_dict[repr(dt)] = {
-                        "use" : 0, "limit" : limit, "index": base_sheet.index(data) + 2, "sheet_name": sheet_name
+                        "use" : used_limit, "limit" : limit, "index": base_sheet.index(data) + 2, "sheet_name": sheet_name
                     }
             else:
                 if [data[key] for key in data_to_match] in matching_data:
                     if data_looking_for[0] == "*":
                         data_lis.append(data)
                         self.usecount_dict[repr(data)] = {
-                        "use" : 0, "limit" : limit, "index": base_sheet.index(data) + 2, "sheet_name": sheet_name
+                        "use": used_limit, "limit": limit, "index": base_sheet.index(data) + 2, "sheet_name": sheet_name
                     }
                     else:
                         dt = {keys: data[keys] for keys in data_looking_for}
                         data_lis.append(dt)
                         self.usecount_dict[repr(dt)] = {
-                        "use" : 0, "limit" : limit, "index": base_sheet.index(data) + 2, "sheet_name": sheet_name
+                        "use" : used_limit, "limit" : limit, "index": base_sheet.index(data) + 2, "sheet_name": sheet_name
                     }
         return data_lis
 
@@ -617,12 +622,14 @@ class TestDataGenerator:
         # used to find and return if their is usecount header and limit in input file
         usecount = False
         limit = 0
+        usecount_header = None
         for header in data:
             if "usecount" in header.lower():
                 usecount = True
+                usecount_header = header
                 if "usecount_" in header.lower():
                     limit = int(header.lower().strip().split("count_")[1])
-        return usecount, limit
+        return usecount, limit, usecount_header
 
     def update_usecount_in_source(self, data):
         self.writer.write(
