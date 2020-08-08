@@ -13,7 +13,7 @@ pluggy>=0.13.1
 PyQt5==5.14.2
 requests>=2.23.0
 requests-toolbelt>=0.9.1
-schwifty>=2020.5.2
+schwifty>=2020.8.0
 selenium>=3.141.0
 SQLAlchemy>=1.3.13
 urllib3>=1.25.7
@@ -27,4 +27,4 @@ pymsteams>=0.1.12
 slack-webhook>=1.0.3
 psutil>=5.7.0
 atlassian-python-api>=1.16.0
-baangt-MvCrrspXLS>=0.0.1
+icopy2xls>=0.0.2

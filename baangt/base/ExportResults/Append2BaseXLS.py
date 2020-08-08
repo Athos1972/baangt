@@ -1,7 +1,6 @@
 from logging import getLogger
 import baangt.base.GlobalConstants as GC
-import baangt_MvCrrspXLS as MC
-
+from icopy2xls import
 
 logger = getLogger("pyC")
 
