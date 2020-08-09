@@ -29,7 +29,7 @@ from baangt.base.PathManagement import ManagedPaths
 from baangt.base.DownloadFolderMonitoring import DownloadFolderMonitoring
 from baangt.base.Cleanup import Cleanup
 from baangt.base.ResultsBrowser import ResultsBrowser
-import xlrd
+import xlrd3 as xlrd
 from baangt.reports import Dashboard, Summary
 from baangt.TestDataGenerator.TestDataGenerator import TestDataGenerator
 from baangt.base.Utils import utils
@@ -451,9 +451,8 @@ class MainWindow(Ui_MainWindow):
     def updateRunFile(self):
         """ this file will update the testRunFile selection
         """
-        self.testRunFile = os.path.join(self.directory,
-                                  self.testRunComboBox_4.currentText())
-        self.statusMessage("Test Run Changed to: {}".format(self.testRunFile))
+        self.testRunFile = self.testRunComboBox_4.currentText()
+        self.statusMessage("Test Run Changed to: {}".format(self.testRunFile), 3000)
         self.saveInteractiveGuiConfig()
 
     @pyqtSlot()
@@ -465,7 +464,7 @@ class MainWindow(Ui_MainWindow):
                                  self.settingComboBox_4.currentText())
 
         self.saveInteractiveGuiConfig()
-        self.statusMessage("Settings changed to: {}".format(self.configFile))
+        self.statusMessage("Settings changed to: {}".format(self.configFile), 3000)
         self.readContentofGlobals()
 
     @pyqtSlot()
@@ -473,7 +472,7 @@ class MainWindow(Ui_MainWindow):
         """ this file will update the testRunFile selection
         """
         self.selectedSheet = self.SheetCombo.currentText()
-        self.statusMessage("Selected Sheet: {}".format(self.selectedSheet))
+        self.statusMessage("Selected Sheet: {}".format(self.selectedSheet), 3000)
 
     def executeButtonClicked(self):
         self.__result_file = ""
@@ -525,7 +524,7 @@ class MainWindow(Ui_MainWindow):
                     str(self.run_process.readAllStandardError().data().decode('iso-8859-1'))))
             self.run_process.finished.connect(self.processFinished)
             self.run_process.start(runCmd)
-            self.statusbar.showMessage("Running.....")
+            self.statusbar.showMessage("Running.....",4000)
 
     @pyqtSlot()
     def stopButtonPressed(self):
@@ -638,7 +637,8 @@ class MainWindow(Ui_MainWindow):
                 else:
                     break
             if result_file[-5:] == ".xlsx":
-                self.__result_file =result_file
+                logger.debug(f"Found result_file in the logs: {result_file}")
+                self.__result_file = result_file
         if "||Statistic:" in text:
             lis = text.split('||')
             stat = lis[1][10:]
@@ -931,7 +931,7 @@ class MainWindow(Ui_MainWindow):
                 if self.directory:
                     fullpath = os.path.join(self.directory, self.configFile)
                 else:
-                    self.directory = os.getcwd()#.managedPaths.derivePathForOSAndInstallationOption()
+                    self.directory = os.getcwd()   # .managedPaths.derivePathForOSAndInstallationOption()
                     fullpath = os.path.join(self.directory, self.configFile)
 
             with open(fullpath, 'w') as f:
@@ -1214,6 +1214,7 @@ class MainWindow(Ui_MainWindow):
         """ Uses Files Open class to open Result file """
         try:
             if self.__result_file != "":
+                logger.debug(f"Opening ResultFile: {self.__result_file}")
                 filePathName = self.__result_file
                 fileName = os.path.basename(filePathName)
                 self.statusMessage(f"Opening file {fileName}", 3000)

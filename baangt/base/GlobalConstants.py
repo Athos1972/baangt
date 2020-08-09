@@ -81,6 +81,7 @@ EXECUTION_STAGE_QA = 'Quality Assurance'
 
 EXPORT_FORMAT = "ExportFormat"
 EXPORT_ADDITIONAL_DATA = "AdditionalExportTabs"
+EXPORT_FILENAME = "ExportFilenameAndPath"
 EXP_FIELDLIST = "Fieldlist"
 EXP_XLSX = "XLSX"
 EXP_CSV = "CSV"
@@ -108,8 +109,9 @@ MOBILE_APP_PACKAGE = 'appPackage'
 MOBILE_APP_ACTIVITY = 'appActivity'
 MOBILE_APP_BROWSER_PATH = 'mobileAppBrowserPath'   # Path to Browser on Mobile device
 
-WIN_PLATFORM = 'windows'
-LINUX_PLATFORM = 'linux'
+PLATFORM_WINDOWS = 'windows'
+PLATFORM_LINUX = 'linux'
+PLATFORM_MAC = 'darwin'
 
 BIT_64 = 8
 BIT_32 = 4

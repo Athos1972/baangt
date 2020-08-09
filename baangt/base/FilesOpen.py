@@ -2,6 +2,10 @@ import platform
 import os
 import subprocess
 import xl2dict
+import baangt.base.GlobalConstants as GC
+from logging import getLogger
+
+logger = getLogger("pyC")
 
 def open(filenameAndPath: str):
     """Will open the given file with the Operating system default program.
@@ -15,13 +19,14 @@ def open(filenameAndPath: str):
     if not isinstance(filenameAndPath, str):
         filenameAndPath = str(filenameAndPath)
 
-    print(f'**** BEFORE: {filenameAndPath}')
     filenameAndPath = os.path.abspath(filenameAndPath)
-    print(f'**** AFTER: {filenameAndPath}')
+    logger.debug(f"Trying to open file with it's application: {filenameAndPath}")
 
     if not os.path.exists(filenameAndPath):
+        logger.warning(f"Filename doesn't exist and can't be opened: {filenameAndPath}")
         return False
-    elif platform.system() == "Windows":
+
+    elif platform.system().lower() == GC.PLATFORM_WINDOWS:
         try:
             filenameAndPath = f'"{filenameAndPath}"'
             os.startfile(filenameAndPath)
@@ -33,14 +38,15 @@ def open(filenameAndPath: str):
             else:
                 return False
 
-    elif platform.system() == "Linux":
-        filenameAndPath = f'"{filenameAndPath}"'
+    elif platform.system().lower() == GC.PLATFORM_LINUX:
+        logger.debug(f"In Linux trying to call xdg-open with filename: {str(filenameAndPath)}")
         status = subprocess.call(["xdg-open", str(filenameAndPath)])
         if status == 0:
             return True
         else:
             return False
-    elif platform.system() == "Darwin":
+
+    elif platform.system().lower() == GC.PLATFORM_MAC:
         filenameAndPath = f'"{filenameAndPath}"'
         status = os.system("open " + str(filenameAndPath))
         if status == 0:

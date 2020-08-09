@@ -2,7 +2,7 @@ from baangt.base.Utils import utils
 from baangt.base.TestRunUtils import TestRunUtils
 import baangt.base.GlobalConstants as GC
 import baangt.base.CustGlobalConstants as CGC
-import xlrd
+import xlrd3 as xlrd
 import logging
 
 logger = logging.getLogger("pyC")
@@ -81,14 +81,16 @@ class TestRunExcelImporter:
                 "TestDataFileName": self.fileName,
                 "Sheetname": "data",
                 "ParallelRuns": 1,
-                "Lines": "0-999999"
+                "Lines": "0-999999",
+                GC.EXPORT_FILENAME: ""
                 },
             }
         for key, sequence in lSequenceDict.items():
             testrunSequence[key] = [sequence["SequenceClass"], {}]
             for field, value in sequence.items():
                 testRunAttributes[GC.STRUCTURE_TESTCASESEQUENCE][key][1][field] = value
-
+            if not testRunAttributes[GC.STRUCTURE_TESTCASESEQUENCE][key][1].get(GC.EXPORT_FILENAME):
+                testRunAttributes[GC.STRUCTURE_TESTCASESEQUENCE][key][1][GC.EXPORT_FILENAME]=None
 
         xlsTab = self._getTab("TestCase")
         # if Tab "TestCase" exists, then take the definitions from there. Otherwise (means simpleFormat)

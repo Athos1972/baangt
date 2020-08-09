@@ -217,17 +217,18 @@ class BrowserDriver:
         self.statistics.update_teststep()
         try:
             if self.browserData.driver:
+                try:
+                    if len(self.bpid) > 0:
+                        for bpid in self.bpid:
+                            os.kill(bpid, signal.SIGINT)
+                except:
+                    pass
                 self.browserData.driver.close()
                 self.browserData.driver.quit()
-                self.browserData.driver = None
-                if len(self.bpid) > 0:
-                    for bpid in self.bpid:
-                        os.kill(bpid, signal.SIGINT)
-
         except Exception as ex:
             logger.info(ex)
             pass  # If the driver is already dead, it's fine.
-
+        self.browserData.driver = None
 
     def refresh(self):
         self.browserData.driver.execute_script("window.location.reload()")
@@ -480,7 +481,7 @@ class BrowserDriver:
         isValid = False
         if not value:
             pass
-        elif len(value) == 0 or str(value) == "0":
+        elif len(str(value)) == 0 or str(value) == "0":
             pass
         else:
             isValid = True
@@ -510,7 +511,8 @@ class BrowserDriver:
 
         """
 
-        self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
+        self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe,
+                                              timeout=timeout, optional=optional)
 
         if not self.element:
             return False

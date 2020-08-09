@@ -2,7 +2,7 @@ import csv
 import itertools
 import xlsxwriter
 import xl2dict
-import xlrd
+import xlrd3 as xlrd
 import errno
 import os
 import logging

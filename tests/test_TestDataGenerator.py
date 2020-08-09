@@ -1,5 +1,5 @@
 from baangt.TestDataGenerator.TestDataGenerator import TestDataGenerator
-import xlrd
+import xlrd3 as xlrd
 import os
 import csv
 from pathlib import Path

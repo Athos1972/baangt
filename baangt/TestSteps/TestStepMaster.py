@@ -11,6 +11,8 @@ from baangt.base.PDFCompare import PDFCompare, PDFCompareDetails
 from baangt.base.Faker import Faker as baangtFaker
 from baangt.base.Utils import utils
 from baangt.base.RuntimeStatistics import Statistic
+import random
+import itertools
 
 logger = logging.getLogger("pyC")
 
@@ -27,6 +29,12 @@ class TestStepMaster:
         self.ifLis = [self.ifIsTrue]
         self.elseLis = [self.elseIsTrue]
         self.ifConditions = 0
+        self.repeatIsTrue = [False]
+        self.repeatDict = [] # used to store steps command of repeat data
+        self.repeatData = [] # used to store RLP_ data to be looped in repeat
+        self.repeatCount = [] # Used to store count of randomdata in loop
+        self.repeatActive = 0 # to sync active repeat counts with repeat done and will be execute when both are equal
+        self.repeatDone = 0
         self.baangtFaker = None
         self.statistics = Statistic()
         self.kwargs = kwargs
@@ -70,9 +78,16 @@ class TestStepMaster:
         :return:
         """
         for index, (key, command) in enumerate(executionCommands.items()):
-            self.executeDirectSingle(index, command)
-            # self.statistics.update_teststep()  --> Moved to BrowserHandling into the activities themselves,
-            # so that we can also count for externally (subclassed) activitis
+            try:
+                self.executeDirectSingle(index, command)
+            except Exception as ex:
+                # 2020-07-16: This Exception is cought, printed and then nothing. That's not good. The test run
+                # continues forever, despite this exception. Correct way would be to set test case to error and stop
+                # this test case
+                # Before we change something here we should check, why the calling function raises an error.
+                logger.critical(ex)
+                self.testcaseDataDict[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
+                return
 
     def manageNestedCondition(self, condition="", ifis=False):
         if condition.upper() == "IF":
@@ -91,7 +106,7 @@ class TestStepMaster:
         self.ifIsTrue = self.ifLis[-1]
         self.elseIsTrue = self.elseLis[-1]
 
-    def executeDirectSingle(self, commandNumber, command):
+    def executeDirectSingle(self, commandNumber, command, replaceFromDict=None):
         """
         This will execute a single instruction
         """
@@ -99,19 +114,85 @@ class TestStepMaster:
         # when we have an IF-condition and it's condition was not TRUE, then skip whatever comes here until we
         # reach Endif
         if not self.ifIsTrue and not self.elseIsTrue:
+            if command["Activity"].upper() == "IF":
+                self.manageNestedCondition(condition=command["Activity"].upper(), ifis=self.ifIsTrue)
+                return True
             if command["Activity"].upper() != "ELSE" and command["Activity"].upper() != "ENDIF":
+                return True
+        if self.repeatIsTrue[-1]: # If repeat statement is active then execute this
+            if command["Activity"].upper() == "REPEAT": # To sync active repeat with repeat done
+                self.repeatActive += 1
+            if command["Activity"].upper() != "REPEAT-DONE": # store command in repeatDict
+                self.repeatDict[-1][commandNumber] = command
                 return
-        lActivity = command["Activity"].upper()
+            else:
+                self.repeatDone += 1 # to sync repeat done with active repeat
+                if self.repeatDone < self.repeatActive: # if all repeat-done are not synced with repeat store the data
+                    self.repeatDict[-1][commandNumber] = command
+                    logger.info(command)
+                    return
+                self.repeatIsTrue[-1] = False
+                if self.repeatData[-1]:
+                    data_list = []
+                    if type(self.repeatData[-1]) is list:
+                        for data_dic in self.repeatData[-1]:
+                            keys, values = zip(*data_dic.items())
+                            final_values = []
+                            for value in values: # coverting none list values to list. Useful in make all possible data using itertools
+                                if type(value) is not list:
+                                    final_values.append([value])
+                                else:
+                                    final_values.append(value)
+                            data_l = [dict(zip(keys, v)) for v in itertools.product(*final_values)] # itertools to make all possible combinations
+                            data_list.extend(data_l)
+                    else:
+                        data_list = [self.repeatData[-1]]
+                    if len(self.repeatCount) > 0 and self.repeatCount[-1]: # get random data from list of data
+                        try:
+                            data_list = random.sample(data_list, int(self.repeatCount[-1]))
+                        except:
+                            pass
+                    if data_list:
+                        for data in data_list:
+                            temp_dic = dict(self.repeatDict[-1])
+                            processed_data = {}
+                            for key in temp_dic:
+                                try:
+                                    processed_data = dict(temp_dic[key])
+                                except Exception as ex:
+                                    logger.debug(ex)
+                                try:
+                                    self.executeDirectSingle(key, processed_data, replaceFromDict=data)
+                                except Exception as ex:
+                                    logger.info(ex)
+                    else:
+                        temp_dic = dict(self.repeatDict[-1])
+                        for key in temp_dic:
+                            try:
+                                processed_data = dict(temp_dic[key])
+                            except Exception as ex:
+                                logger.debug(ex)
+                            for ky in processed_data:
+                                try:
+                                    processed_data[ky] = self.replaceVariables(processed_data[ky])
+                                except Exception as ex:
+                                    logger.info(ex)
+                            try:
+                                self.executeDirectSingle(key, processed_data)
+                            except Exception as ex:
+                                logger.info(ex)
+                del self.repeatIsTrue[-1]
+                del self.repeatDict[-1]
+                del self.repeatData[-1]
+                del self.repeatCount[-1]
+                self.repeatDone -= 1
+                self.repeatActive -= 1
+                return
+
+        css, id, lActivity, lLocator, lLocatorType, xpath = self._extractAllSingleValues(command)
+
         if lActivity == "COMMENT":
             return  # Comment's are ignored
-
-        lLocatorType = command["LocatorType"].upper()
-        lLocator = self.replaceVariables(command["Locator"])
-
-        if lLocator and not lLocatorType:  # If locatorType is empty, default it to XPATH
-            lLocatorType = 'XPATH'
-
-        xpath, css, id = self.__setLocator(lLocatorType, lLocator)
 
         if self.anchor and xpath:
             if xpath[0:3] == '///':         # Xpath doesn't want to use Anchor
@@ -130,15 +211,15 @@ class TestStepMaster:
         lRelease = command["Release"]
 
         # Timeout defaults to 20 seconds, if not set otherwise.
-        lTimeout = TestStepMaster.__setTimeout(command["Timeout"])
+        lTimeout = TestStepMaster._setTimeout(command["Timeout"])
 
         lTimingString = f"TS {commandNumber} {lActivity.lower()}"
         self.timing.takeTime(lTimingString)
         logger.info(
             f"Executing TestStepDetail {commandNumber} with parameters: act={lActivity}, lType={lLocatorType}, loc={lLocator}, "
             f"Val1={lValue}, comp={lComparison}, Val2={lValue2}, Optional={lOptional}, timeout={lTimeout}")
-
-        lValue, lValue2 = self.replaceAllVariables(lValue, lValue2)
+        original_value = lValue # used as key to make rlp json dict and will be used further to make sheet name
+        lValue, lValue2 = self.replaceAllVariables(lValue, lValue2, replaceFromDict=replaceFromDict)
 
         if not TestStepMaster.ifQualifyForExecution(self.globalRelease, lRelease):
             logger.debug(f"we skipped this line due to {lRelease} disqualifies according to {self.globalRelease} ")
@@ -151,7 +232,12 @@ class TestStepMaster:
             self.browserSession.findByAndSetTextIf(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout,
                                                    optional=lOptional)
         elif lActivity == "FORCETEXT":
-            self.browserSession.findByAndForceText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout)
+            self.browserSession.findByAndForceText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout,
+                                                   optional=lOptional)
+        elif lActivity == "FORCETEXTIF":
+            if lValue:
+                self.browserSession.findByAndForceText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout,
+                                                       optional=lOptional)
         elif lActivity == "SETANCHOR":
             if not lLocator:
                 self.anchor = None
@@ -193,8 +279,16 @@ class TestStepMaster:
                 self.manageNestedCondition(condition=lActivity)
                 logger.debug("Executing ELSE-condition")
         elif lActivity == "ENDIF":
-            self.ifIsTrue = True
-            self.elseIsTrue = False
+            self.manageNestedCondition(condition=lActivity)
+        elif lActivity == "REPEAT":
+            self.repeatActive += 1
+            self.repeatIsTrue.append(True)
+            self.repeatDict.append({})
+            if original_value not in self.testRunInstance.json_dict:
+                self.testRunInstance.json_dict[original_value] = []
+            self.testRunInstance.json_dict[original_value].append(lValue)
+            self.repeatData.append(lValue)
+            self.repeatCount.append(lValue2)
         elif lActivity == 'GOBACK':
             self.browserSession.goBack()
         elif lActivity == 'APIURL':
@@ -242,10 +336,25 @@ class TestStepMaster:
             self.testcaseDataDict[GC.TESTCASESTATUS_STOP] = "X"              # will stop the test case
         elif lActivity == GC.TESTCASESTATUS_STOPERROR.upper():
             self.testcaseDataDict[GC.TESTCASESTATUS_STOPERROR] = "X"         # will stop the test case and set error
+        elif lActivity[0:3] == "ZZ_":
+            # custom command. Do nothing and return
+            return
         else:
             raise BaseException(f"Unknown command in TestStep {lActivity}")
 
         self.timing.takeTime(lTimingString)
+
+    def _extractAllSingleValues(self, command):
+        lActivity = command["Activity"].upper()
+        lLocatorType = command["LocatorType"].upper()
+        try:
+            lLocator = self.replaceVariables(command["Locator"])
+        except Exception as ex:
+            logger.info(ex)
+        if lLocator and not lLocatorType:  # If locatorType is empty, default it to XPATH
+            lLocatorType = 'XPATH'
+        xpath, css, id = self.__setLocator(lLocatorType, lLocator)
+        return css, id, lActivity, lLocator, lLocatorType, xpath
 
     def doPDFComparison(self, lValue, lFieldnameForResults="DOC_Compare"):
         lFiles = self.browserSession.findNewFiles()
@@ -264,12 +373,15 @@ class TestStepMaster:
             self.testcaseDataDict[lFieldnameForResults + "_Status"] = lDict[""].Status
             self.testcaseDataDict[lFieldnameForResults + "_Results"] = lDict[""].StatusText
 
-    def replaceAllVariables(self, lValue, lValue2):
+    def replaceAllVariables(self, lValue, lValue2, replaceFromDict=None):
         # Replace variables from data file
-        if len(lValue) > 0:
-            lValue = self.replaceVariables(lValue)
-        if len(lValue2) > 0:
-            lValue2 = self.replaceVariables(lValue2)
+        try:
+            if len(lValue) > 0:
+                lValue = self.replaceVariables(lValue, replaceFromDict=replaceFromDict)
+            if len(lValue2) > 0:
+                lValue2 = self.replaceVariables(lValue2, replaceFromDict=replaceFromDict)
+        except Exception as ex:
+            logger.info(ex)
         return lValue, lValue2
 
     def __getIBAN(self, lValue, lValue2):
@@ -357,7 +469,7 @@ class TestStepMaster:
         return utils.setLocatorFromLocatorType(lLocatorType, lLocator)
 
     @staticmethod
-    def __setTimeout(lTimeout):
+    def _setTimeout(lTimeout):
         return 20 if not lTimeout else float(lTimeout)
 
     def __doComparisons(self, lComparison, value1, value2):
@@ -411,7 +523,7 @@ class TestStepMaster:
 
         self.timing.takeTime(self.timingName)
 
-    def replaceVariables(self, expression):
+    def replaceVariables(self, expression, replaceFromDict=None):
         """
         The syntax for variables is currently $(<column_name_from_data_file>). Multiple variables can be assigned
         in one cell, for instance perfectly fine: "http://$(BASEURL)/$(ENDPOINT)"
@@ -437,8 +549,17 @@ class TestStepMaster:
             center = center.split(")")[0]
 
             right_part = expression[len(left_part) + len(center) + 3:]
+            centerValue = ""
 
-            if "." not in center:
+            if replaceFromDict: # json is supplied with repeat tag, that json is used here to get main data
+                    dic = replaceFromDict
+                    for key in center.split('.')[-1:]:
+                        dic = self.iterate_json(dic, key)
+                    centerValue = dic
+
+            if centerValue: # if we got value from the passed json then bypass this if else conditions
+                pass
+            elif "." not in center:
                 # Replace the variable with the value from data structure
                 centerValue = self.testcaseDataDict.get(center)
             else:
@@ -450,21 +571,39 @@ class TestStepMaster:
                     centerValue = self.apiSession.session[1].answerJSON.get(dictValue, "Empty")
                 elif dictVariable == 'FAKER':
                     # This is to call Faker Module with the Method, that is given after the .
-                    centerValue = self.__getFakerData(dictValue)
+                    centerValue = self._getFakerData(dictValue)
+                elif self.testcaseDataDict.get(dictVariable):
+                    dic = self.testcaseDataDict.get(dictVariable)
+                    for key in center.split('.')[1:]:
+                        dic = self.iterate_json(dic, key)
+                    centerValue = dic
                 else:
                     raise BaseException(f"Missing code to replace value for: {center}")
 
             if not centerValue:
                 if center in self.testcaseDataDict.keys():
                     # The variable exists, but has no value.
-                    return None
+                    centerValue = ""
                 else:
                     raise BaseException(f"Variable not found: {center}, input parameter was: {expression}")
 
-            expression = "".join([left_part, centerValue, right_part])
+            expression = "".join([left_part, str(centerValue), right_part])
+
         return expression
 
-    def __getFakerData(self, fakerMethod):
+    def iterate_json(self, data, key):
+        # itereate through list of json and create list of data from dictionary inside those list
+        if type(data) is list:
+            lis = []
+            for dt in data:
+                dt = self.iterate_json(dt, key)
+                lis.append(dt)
+            return lis
+        elif type(data) is dict:
+            return data.get(key)
+
+
+    def _getFakerData(self, fakerMethod):
         if not self.baangtFaker:
             self.baangtFaker = baangtFaker()
 

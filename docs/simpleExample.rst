@@ -211,6 +211,8 @@ More details on Activities
 
        ``Else`` statement is only executed when if statement is not true.
 
+   * - repeat / repeat-done
+     - See details in <NestedLoops.rst>
    * - assert
      - Will retrieve value of element specified by ``locator`` and compare with reference value from ``value``.
       

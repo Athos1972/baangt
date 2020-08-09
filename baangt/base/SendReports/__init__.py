@@ -1,6 +1,6 @@
 import os
 import csv
-import xlrd
+import xlrd3 as xlrd
 import json
 import xlsxwriter
 import logging
@@ -10,6 +10,7 @@ import configparser
 from slack_webhook import Slack
 from baangt.base.PathManagement import ManagedPaths
 from baangt.base.SendReports.mailer import SendMail
+from baangt.base.ExportResults.ExportConfluence import ExportConfluence
 
 logger = logging.getLogger('pyC')
 
@@ -79,6 +80,22 @@ class Sender:
             if test:
                 return messages
 
+    def sendConfluence(self):
+        self.set_globalSettings(self.defaultSettings, "Confluence-Base-Url")
+        if self.globalSettings["Confluence-Base-Url"]:
+            args = {}
+            args['url'] = self.globalSettings["Confluence-Base-Url"]
+            args['space'] = self.globalSettings["Confluence-Space"]
+            args['pageTitle'] = self.globalSettings["Confluence-Pagetitle"]
+            args['fileNameAndPathToResultXLSX'] = self.xlsx_file
+            args['username'] = self.globalSettings["Confluence-Username"]
+            args['password'] = self.globalSettings["Confluence-Password"]
+            args['rootPage'] = self.globalSettings["Confluence-Rootpage"]
+            args['remove_headers'] = [x.strip() for x in self.globalSettings["Confluence-Remove_Headers"].split(",")]
+            args['uploadOriginalFile'] = self.globalSettings["Confluence-Uploadoriginalfile"]
+            args['CreateSubPagesForEachXXEntries'] = int(self.globalSettings["Confluence-Createsubpagesforeachxxentries"])
+            ExportConfluence(**args)
+
     def set_globalSettings(self, setting, word_to_look):
         if word_to_look in setting:
             self.globalSettings = setting
@@ -108,6 +125,8 @@ class Sender:
         self.globalSettings["TelegramChannel"] = config["Default"].get("TelegramChannel"
                                                                     ) or self.write_config(config_file, "TelegramChannel",
                                                                                            "")
+        self.globalSettings["Confluence-Base-Url"] = config["Default"].get("Confluence-Base-Url") or self.write_config(
+            config_file, "Confluence-Base-Url", "")
 
     def write_config(self, config_file, key=None, value=None):
         if key:
@@ -184,21 +203,30 @@ class Sender:
             os.remove(temp_file)
         else:
             send_stats = Sender(globalSettings, results.fileName)
+
         try:
             send_stats.sendMail()
         except Exception as ex:
-            logger.debug(ex)
+            logger.error(f"Error when sending mail: {ex}")
+
         try:
             send_stats.sendMsTeam()
         except Exception as ex:
-            logger.debug(ex)
+            logger.error(f"Error when sending MS Teams: {ex}")
+
         try:
             send_stats.sendSlack()
         except Exception as ex:
-            logger.debug(ex)
+            logger.error(f"Error when sending Slack: {ex}")
+
         try:
             send_stats.sendTelegram()
         except Exception as ex:
-            logger.debug(ex)
+            logger.error(f"Error when sending Telegram: {ex}")
+
+        try:
+            send_stats.sendConfluence()
+        except Exception as ex:
+            logger.error(f"Error when saving in Confluence: {ex}")
 
 
