@@ -5,10 +5,10 @@ We implement all features for 3 operating Systems (Mac, Windows, Ubuntu and Ubun
 Short/Medium term features
 ---------------------------
 * Improve template for TestCaseDefinitions
-* DataFiles and TestDataGenerator: Read remote data sources (e.g. other sheets or SQL-Databases)
-* DataFiles: Nested data structures per line item (e.g. Sales order header --> Sales order item)
 * Better support for scraping
-* ELSE-Activity and nested IF/ELSE/ENDIF-Activities
+* Improved reporting on test runs/Test cases, etc.
+* Improved handling of test data base entities (e.g. use-counters for each object)
+
 
 Features for later
 ------------------
@@ -19,7 +19,6 @@ Features for later
 * Improved support for Mass testing APIs
 * Katalon Importer/Converter as Webservice
 * Integration with Atlassian Confluence (for Testcase and Testrun definitions)
-* Integration with Atlassian Confluence (to publish results of testruns)
 * Better support for oData V4.0 (similar to SOAP)
 * Support for GraphQL via Graphene
 * Multi-Language interface (I18n)
