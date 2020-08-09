@@ -1,17 +1,21 @@
 from logging import getLogger
 import baangt.base.GlobalConstants as GC
-from icopy2xls import
+from icopy2xls import Mover
+from baangt.base.PathManagement import ManagedPaths
 
 logger = getLogger("pyC")
+
 
 class Append2BaseXLS:
     """
     If in the globals of the current testrun the parameter AR2BXLS (Append Results to Base XLS) is set,
     we execute baangt Move-Corresponding module accordingly.
     """
-    def __init__(self, testRunInstance, resultsFileName:str=None):
+    def __init__(self, testRunInstance, resultsFileName: str=None):
         self.testRunInstance = testRunInstance
         self.resultsFileName = resultsFileName
+        self.mp = ManagedPaths()
+
         self._append2BaseXLS()
 
     def _append2BaseXLS(self):
@@ -25,14 +29,22 @@ class Append2BaseXLS:
         if ";" in lGlobals.get("AR2BXLS"):
             files = lGlobals.get("AR2BXLS").split(";")
             for file in files:
-                fileTuples.append(file.split(",")[0], file.split(",")[1])
+                fileTuples.append(self.checkAppend(file))
         else:
-            fileTuples.append([lGlobals["AR2BXLS"].split(",")[0], lGlobals["AR2BXLS"].split(",")[1]])
+            fileTuples.append(self.checkAppend(lGlobals["AR2BXLS"]))
 
         for fileTuple in fileTuples:
-            MC.Mover(source_file_path=self.resultsFileName,
-                     source_sheet="Output",
-                     destination_file_path=fileTuple[0],
-                     destination_sheet=fileTuple[1])
+            logger.debug(f"Starting to append results to: {str(fileTuple)}")
+            lMover = Mover(source_file_path=self.resultsFileName,
+                           source_sheet="Output",
+                           destination_file_path=fileTuple[0],
+                           destination_sheet=fileTuple[1])
+            lMover.move(add_missing_columns=False)
 
-
+    def checkAppend(self, file):
+        lFileAndPath = self.mp.findFileInAnyPath(filename=file.split(",")[0])
+        if lFileAndPath:
+            return [lFileAndPath, file.split(",")[1]]
+        else:
+            logger.critical(f"File not found anywhere: {file.split(',')[0]}")
+            return None

@@ -67,6 +67,9 @@ class ExportResults:
 
         logger.info("Export-Sheet for results: " + self.fileName)
 
+        self.__removeUnwantedFields()  # Will remove Password-Contents AND fields from data records, that came from
+                                       # Globals-File.
+
         # export results to DB
         self.testcase_uuids = []
         self.exportToDataBase()
@@ -118,6 +121,28 @@ class ExportResults:
             except Exception as ex:
                 logger.debug(ex)
 
+    def __removeUnwantedFields(self):
+        lListPasswordFieldNames = ["PASSWORD", "PASSWORT", "PASSW"]
+        if not self.testRunInstance.globalSettings.get("LetPasswords"):
+            # If there's a password in GlobalSettings, remove the value:
+            for key, value in self.testRunInstance.globalSettings.items():
+                if key.upper() in lListPasswordFieldNames:
+                    self.testRunInstance.globalSettings[key] = "*" * 8
+
+            # If there's a password in the datafile, remove the value
+            # Also remove all columns, that are anyway included in the global settings
+            for key, fields in self.dataRecords.items():
+                fieldsToPop = []
+                for field, value in fields.items():
+                    if field.upper() in ["PASSWORD", "PASSWORT"]:
+                        self.dataRecords[key][field] = "*" * 8
+                    if field in self.testRunInstance.globalSettings.keys():
+                        logger.debug(
+                            f"Added {field} to fields to be removed from data record as it exists in GlobalSettings already.")
+                        fieldsToPop.append(field)
+                for field in fieldsToPop:
+                    logger.debug(f"Removed field {field} from data record.")
+                    fields.pop(field)
 
     def exportAdditionalData(self):
         # Runs only, when KWARGS-Parameter is set.
