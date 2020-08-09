@@ -257,3 +257,18 @@ class ManagedPaths(metaclass=Singleton):
 
         self.__makeAndCheckDir(self.IniPath)
         return self.IniPath
+
+    def findFileInAnyPath(self, filename):
+        if Path(filename).exists():
+            return filename
+
+        if Path(self.getOrSetExportPath()).joinpath(filename).exists():
+            return Path(self.getOrSetExportPath()).joinpath(filename)
+
+        if Path(self.getOrSetImportPath()).joinpath(filename).exists():
+            return Path(self.getOrSetImportPath()).joinpath(filename)
+
+        if Path(self.getOrSetRootPath()).joinpath(filename).exists():
+            return Path(self.getOrSetRootPath()).joinpath(filename)
+
+        return None
