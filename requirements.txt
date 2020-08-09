@@ -1,5 +1,5 @@
 Appium-Python-Client==0.52
-beautifulsoup4==4.8.2
+beautifulsoup4>=4.8.2
 browsermob-proxy>=0.8.0
 dataclasses>=0.6
 dataclasses-json>=0.4.2
@@ -27,4 +27,4 @@ pymsteams>=0.1.12
 slack-webhook>=1.0.3
 psutil>=5.7.0
 atlassian-python-api>=1.16.0
-icopy2xls>=0.0.2
+icopy2xls>=0.0.3
