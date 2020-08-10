@@ -628,7 +628,10 @@ class TestDataGenerator:
                 usecount = True
                 usecount_header = header
                 if "usecount_" in header.lower():
-                    limit = int(header.lower().strip().split("count_")[1])
+                    try:
+                        limit = int(header.lower().strip().split("count_")[1])
+                    except:
+                        limit = 0
         return usecount, limit, usecount_header
 
     def update_usecount_in_source(self, data):
