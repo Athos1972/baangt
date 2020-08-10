@@ -1,10 +1,10 @@
 {
-    "TC.Lines": "",
+    "TC.Lines": "1",
     "TC.dontCloseBrowser": "False",
     "TC.slowExecution": "False",
     "TC.NetworkInfo": "False",
-    "TX.DEBUG": "False",
-    "TC.Browser": "Chrome",
+    "TX.DEBUG": "True",
+    "TC.Browser": "FF",
     "TC.BrowserAttributes": "",
     "TC.ParallelRuns": "1",
     "TC.BrowserWindowSize": "1024x768",
@@ -16,5 +16,7 @@
     "SlackWebHook": "",
     "TelegramBot": "",
     "TelegramChannel": "",
-    "DeactivateStatistics": "False"
+    "DeactivateStatistics": "False",
+    "Password": "Franzi1234",
+    "AR2BXLS": "CompleteBaangtWebdemo_ResultsCombined.xlsx,CombinedResults"
 }

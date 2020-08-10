@@ -74,4 +74,9 @@ for instance to slowly retest a single testrecord or to not close the browser af
      - Set the LogLevel to a different value. In baangt standard the file-logger is set to ``debug`` while the console
        output is set to ``info``. Using this setting you'll set both logger channels to whatever value you provide.
        In the new UI you'll see a dropdown menu.
+   * - ``Append Excel``
+     - When you use this parameter, you can append the corresponding columns of the output sheet to existing Excel-Sheet(s).
+       We will compare column header names and append records (lines) to all Excel-Workbooks/Sheets, that you want.
+       This feature is very handy when you create test data, that you want to use later in other and/or multiple test cases.
+       e.g. if you create customer master data, that you want to use for multiple orders/deliveries.
 
