@@ -113,6 +113,14 @@ class HandleDatabase:
         # read header values into the list
         keys = [sheet.cell(0, col_index).value for col_index in range(sheet.ncols)]
 
+        # if testresult header is present then taking its index, which is later used as column number
+        testrun_index = [keys.index(x) for x in keys if str(x).lower() == "testresult"]
+        if testrun_index:
+            testrun_index = testrun_index[0] + 1  # adding +1 value which is the correct column position
+        else:  # if list is empty that means their is no testresult header
+            testrun_index = 0
+
+
         for row_index in range(1, sheet.nrows):
             temp_dic = {}
             for col_index in range(sheet.ncols):
@@ -121,7 +129,11 @@ class HandleDatabase:
                     temp_dic[keys[col_index]] = repr(temp_dic[keys[col_index]])
                     if temp_dic[keys[col_index]][-2:] == ".0":
                         temp_dic[keys[col_index]] = temp_dic[keys[col_index]][:-2]
-
+            # row, column, sheetName & fileName which are later used in updating source testrun file
+            temp_dic["testcase_row"] = row_index
+            temp_dic["testcase_sheet"] = sheetName
+            temp_dic["testcase_file"] = fileName
+            temp_dic["testcase_column"] = testrun_index
             self.dataDict.append(temp_dic)
 
         for temp_dic in self.dataDict:
