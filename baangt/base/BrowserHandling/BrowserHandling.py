@@ -366,7 +366,7 @@ class BrowserDriver:
 
             if self.element:
                 try:
-                    if len(self.element.text.strip()) > 0:
+                    if len(self.element.text) > 0:
                         returnValue = self.element.text.strip()
                     elif self.element.tag_name == 'input':
                         #  element is of type <input />
@@ -377,7 +377,7 @@ class BrowserDriver:
             else:
                 logger.info(f"Couldn't find value for element {self.browserData.locatorType}:{self.browserData.locator}")
 
-            if len(returnValue.strip()) > 0:
+            if returnValue and len(returnValue.strip()) > 0:
                 return returnValue
 
         return returnValue
