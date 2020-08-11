@@ -6,7 +6,7 @@ if __name__ == '__main__':
 
     setuptools.setup(
         name="baangt",
-        version="1.1.17",
+        version="1.1.18",
         author="Bernhard Buhl",
         author_email="info@baangt.org",
         description="Open source Test Automation Suite for MacOS, Windows, Linux",
