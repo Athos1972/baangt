@@ -356,27 +356,29 @@ class BrowserDriver:
         returnValue = None
         start = time.time()
         duration = 0
+        retry = True
 
-        while not self.element and duration < timeout:
+        while retry and duration < timeout:
             self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout / 3,
                             optional=optional)
             time.sleep(0.5)
             duration = time.time() - start
 
-        if self.element:
-            try:
-                if len(self.element.text) > 0:
-                    returnValue = self.element.text
-                elif self.element.tag_name == 'input':
-                    #  element is of type <input />
-                    returnValue = self.element.get_property('value')
-                else:
-                    returnValue = None
-            except Exception as e:
-                logger.debug(f"Exception during findByAndWaitForValue, but continuing {str(e)}, "
-                             f"Locator: {self.browserData.locatorType} = {self.browserData.locator}")
-        else:
-            logger.info(f"Couldn't find value for element {self.browserData.locatorType}:{self.browserData.locator}")
+            if self.element:
+                try:
+                    if len(self.element.text) > 0:
+                        returnValue = self.element.text.strip()
+                    elif self.element.tag_name == 'input':
+                        #  element is of type <input />
+                        returnValue = self.element.get_property('value').strip()
+                except Exception as e:
+                    logger.debug(f"Exception during findByAndWaitForValue, but continuing {str(e)}, "
+                                 f"Locator: {self.browserData.locatorType} = {self.browserData.locator}")
+            else:
+                logger.info(f"Couldn't find value for element {self.browserData.locatorType}:{self.browserData.locator}")
+
+            if returnValue and len(returnValue.strip()) > 0:
+                return returnValue
 
         return returnValue
 
