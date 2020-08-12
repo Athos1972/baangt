@@ -608,10 +608,12 @@ class ExportResults:
                        f"TestRun_UUID: {str(self.testRunInstance.uuid)}\r\n" \
                        f"TestCase_UUID: {str(self.testcase_uuids[key])}\r\n\r\n"
                 old_value = testrun_sheet.cell(value["testcase_row"] + 1, value["testcase_column"]).value
-                testrun_sheet.cell(value["testcase_row"] + 1, value["testcase_column"]).value = data + old_value
+                if old_value:
+                    testrun_sheet.cell(value["testcase_row"] + 1, value["testcase_column"]).value = data + old_value
+                else:
+                    testrun_sheet.cell(value["testcase_row"] + 1, value["testcase_column"]).value = data
             testrun_file.save(self.dataRecords[0]["testcase_file"])
-            logger.info("Source TestRun file updated.")
-
+            logger.info(f"Source TestRun file {testrun_file} updated.")
 
     def __writeCell(self, line, cellNumber, testRecordDict, fieldName, strip=False):
         if fieldName in testRecordDict.keys() and testRecordDict[fieldName]:
