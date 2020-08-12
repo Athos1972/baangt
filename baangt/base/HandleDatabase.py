@@ -137,7 +137,9 @@ class HandleDatabase:
             temp_dic["testcase_column"] = testrun_index
             self.dataDict.append(temp_dic)
 
-        for temp_dic in self.dataDict:
+    def update_datarecords(self, dataDict, fileName):
+        for td in dataDict:
+            temp_dic = dataDict[td]
             new_data_dic = {}
             for keys in temp_dic:
                 if type(temp_dic[keys]) != str:

@@ -607,7 +607,7 @@ class ExportResults:
                        f"TCErrorLog: {value['TCErrorLog']}\r\n" \
                        f"TestRun_UUID: {str(self.testRunInstance.uuid)}\r\n" \
                        f"TestCase_UUID: {str(self.testcase_uuids[key])}\r\n\r\n"
-                old_value = testrun_sheet.cell(value["testcase_row"] + 1, value["testcase_column"]).value
+                old_value = testrun_sheet.cell(value["testcase_row"] + 1, value["testcase_column"]).value or ""
                 testrun_sheet.cell(value["testcase_row"] + 1, value["testcase_column"]).value = data + old_value
             testrun_file.save(self.dataRecords[0]["testcase_file"])
             logger.info("Source TestRun file updated.")
