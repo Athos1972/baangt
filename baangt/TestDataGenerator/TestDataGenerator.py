@@ -609,7 +609,7 @@ class TestDataGenerator:
                 data = string[1:-1].strip().split(',')[1].strip()
                 logger.info(f"{variable} not found in environment, using {data} instead")
         except:
-            assert 1 == 0, f"Can't find {variable} in envrionment & default value is also not set"
+            raise BaseException(f"Can't find {variable} in envrionment & default value is also not set")
         return data
 
 

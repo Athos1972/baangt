@@ -26,6 +26,7 @@ from uuid import uuid4
 from baangt.base.RuntimeStatistics import Statistic
 from baangt.base.SendReports import Sender
 import signal
+from baangt.TestDataGenerator.TestDataGenerator import TestDataGenerator
 
 logger = logging.getLogger("pyC")
 
@@ -322,13 +323,17 @@ class TestRun:
             if isinstance(value, str):
                 if value.lower() in ("false", "true", "no", "x"):
                     self.globalSettings[key] = utils.anything2Boolean(value)
-
+                elif "renv_" in value.lower():
+                    self.globalSettings[key] = TestDataGenerator.get_env_variable(value[5:])
             if isinstance(value, dict):
                 if "default" in value:
                     # This happens in the new UI, if a value was added manually,
                     # but is not part of the globalSetting.json. In this case there's the whole shebang in a dict. We
                     # are only interested in the actual value, which is stored in "default":
                     self.globalSettings[key] = value["default"]
+                    if isinstance(self.globalSettings[key], str):
+                        if "renv_" in self.globalSettings[key].lower():
+                            self.globalSettings[key] = TestDataGenerator.get_env_variable(self.globalSettings[key][5:])
                     continue
                 else:
                     # This could be the "old" way of the globals-file (with {"HEADLESS":"True"})
