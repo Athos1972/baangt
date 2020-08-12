@@ -23,6 +23,7 @@ from uuid import uuid4
 from pathlib import Path
 from baangt.base.ExportResults.SendStatistics import Statistics
 from baangt.base.RuntimeStatistics import Statistic
+from openpyxl import load_workbook
 
 logger = logging.getLogger("pyC")
 
@@ -120,6 +121,7 @@ class ExportResults:
                 self.statistics.send_statistics()
             except Exception as ex:
                 logger.debug(ex)
+        self.update_result_in_testrun()
 
     def __removeUnwantedFields(self):
         lListPasswordFieldNames = ["PASSWORD", "PASSWORT", "PASSW"]
@@ -134,15 +136,16 @@ class ExportResults:
             for key, fields in self.dataRecords.items():
                 fieldsToPop = []
                 for field, value in fields.items():
-                    if field.upper() in ["PASSWORD", "PASSWORT"]:
+                    if field.upper() in lListPasswordFieldNames:
                         self.dataRecords[key][field] = "*" * 8
                     if field in self.testRunInstance.globalSettings.keys():
                         logger.debug(
                             f"Added {field} to fields to be removed from data record as it exists in GlobalSettings already.")
                         fieldsToPop.append(field)
                 for field in fieldsToPop:
-                    logger.debug(f"Removed field {field} from data record.")
-                    fields.pop(field)
+                    if field != 'Screenshots' and field != 'Stage':   # Stage and Screenshot are needed in output file
+                        logger.debug(f"Removed field {field} from data record.")
+                        fields.pop(field)
 
     def exportAdditionalData(self):
         # Runs only, when KWARGS-Parameter is set.
@@ -464,6 +467,7 @@ class ExportResults:
         # Timing
         timing: Timing = self.testRunInstance.timing
         start, end, duration = timing.returnTimeSegment(GC.TIMING_TESTRUN)
+        self.testRun_end = end  # used while updating timestamp in source file
         self.statistics.update_attribute_with_value("Duration", duration)
         self.statistics.update_attribute_with_value("TestRunUUID", str(self.testRunInstance.uuid))
         self.__writeSummaryCell("Starttime", start, row=10)
@@ -477,6 +481,8 @@ class ExportResults:
         # Globals:
         self.__writeSummaryCell("Global settings for this testrun", "", format=self.cellFormatBold, row=15)
         for key, value in self.testRunInstance.globalSettings.items():
+            if key.upper() in ["PASSWORD", "PASSWORT", "CONFLUENCE-PASSWORD"]:
+                continue
             self.__writeSummaryCell(key, str(value))
             # get global data my
             self.testList.append(str(value))
@@ -586,6 +592,25 @@ class ExportResults:
         # Make cells wide enough
         for n in range(0, len(self.fieldListExport)):
             ExcelSheetHelperFunctions.set_column_autowidth(self.worksheet, n)
+
+    def update_result_in_testrun(self):
+        # To update source testrun file
+        testrun_column = self.dataRecords[0]["testcase_column"]
+        if testrun_column:  # if testrun_column is greater than 0 that means testresult header is present in source file
+            testrun_file = load_workbook(self.dataRecords[0]["testcase_file"])
+            testrun_sheet = testrun_file.get_sheet_by_name(self.dataRecords[0]["testcase_sheet"])
+            for key, value in self.dataRecords.items():
+                print(value)
+                data = f"TestCaseStatus: {value['TestCaseStatus']}\r\n" \
+                       f"Timestamp: {self.testRun_end}\r\n" \
+                       f"Duration: {value['Duration']}\r\n" \
+                       f"TCErrorLog: {value['TCErrorLog']}\r\n" \
+                       f"TestRun_UUID: {str(self.testRunInstance.uuid)}\r\n" \
+                       f"TestCase_UUID: {str(self.testcase_uuids[key])}\r\n\r\n"
+                old_value = testrun_sheet.cell(value["testcase_row"] + 1, value["testcase_column"]).value or ""
+                testrun_sheet.cell(value["testcase_row"] + 1, value["testcase_column"]).value = data + old_value
+            testrun_file.save(self.dataRecords[0]["testcase_file"])
+            logger.info(f"Source TestRun file {self.dataRecords[0]['testcase_file']} updated.")
 
     def __writeCell(self, line, cellNumber, testRecordDict, fieldName, strip=False):
         if fieldName in testRecordDict.keys() and testRecordDict[fieldName]:

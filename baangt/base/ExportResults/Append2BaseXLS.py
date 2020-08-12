@@ -34,12 +34,16 @@ class Append2BaseXLS:
             fileTuples.append(self.checkAppend(lGlobals["AR2BXLS"]))
 
         for fileTuple in fileTuples:
-            logger.debug(f"Starting to append results to: {str(fileTuple)}")
+            if not fileTuple:
+                logger.critical("File to append results to not found (see message above")
+                break
+            logger.info(f"Starting to append results to: {str(fileTuple)}")
             lMover = Mover(source_file_path=self.resultsFileName,
                            source_sheet="Output",
                            destination_file_path=fileTuple[0],
-                           destination_sheet=fileTuple[1])
-            lMover.move(add_missing_columns=False)
+                           destination_sheet=fileTuple[1].strip())
+            lMover.move(filters={GC.TESTCASESTATUS:GC.TESTCASESTATUS_SUCCESS}, add_missing_columns=False)
+            logger.debug(f"Appending results to {str(fileTuple)} finished")
 
     def checkAppend(self, file):
         lFileAndPath = self.mp.findFileInAnyPath(filename=file.split(",")[0])
