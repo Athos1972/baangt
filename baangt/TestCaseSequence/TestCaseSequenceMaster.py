@@ -57,6 +57,9 @@ class TestCaseSequenceMaster:
                 recordPointer -= 1
                 break
             recordPointer += 1
+        self.testdataDataBase.update_datarecords(self.dataRecords, fileName=utils.findFileAndPathFromPath(
+            self.testSequenceData[GC.DATABASE_FILENAME],
+            basePath=str(Path(self.testRunInstance.globalSettingsFileNameAndPath).parent)))
         logger.info(f"{recordPointer + 1} test records read for processing")
         self.statistics.total_testcases(recordPointer + 1)
 

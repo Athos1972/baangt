@@ -169,7 +169,9 @@ class HandleDatabase:
         self.usecount_dict = {}  # used to maintain usecount limit record and verify if that non of the data cross limit
         self.writer = Writer(fileName)  # Writer class object to save file only in end, which will save time
 
-        for temp_dic in self.dataDict:
+    def update_datarecords(self, dataDict, fileName):
+        for td in dataDict:
+            temp_dic = dataDict[td]
             new_data_dic = {}
             for keys in temp_dic:
                 if type(temp_dic[keys]) != str:
