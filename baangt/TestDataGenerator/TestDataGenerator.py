@@ -10,9 +10,39 @@ import faker
 from random import sample, randint
 import baangt.base.GlobalConstants as GC
 import re
+from openpyxl import load_workbook
 
 logger = logging.getLogger("pyC")
 
+
+class Writer:
+    """
+    This class is made to update existing excel file.
+    First it will open the file in python and then we can do multiple writes and once everything is update we can use
+    save method in order to save the updated excel file. Hence, this class is very useful is saving time while updating
+    excel files.
+    """
+    def __init__(self, path):
+        self.path = path
+        self.workbook = load_workbook(self.path)
+
+    def write(self, row, data, sht):
+        # Update the values using row and col number.
+        # Note :- We are using openpyxl so row & column index will start from 1 instead of 0
+        column = 0
+        sheet = self.workbook[sht]
+        headers = next(sheet.rows)
+        for header in headers:  # checks if usecount header is present in sheet
+            if "usecount" in str(header.value).lower():
+                column = headers.index(header) + 1
+        if column:
+            sheet.cell(row, column).value = data
+
+
+    def save(self):
+        # Call this method to save the file once every updates are written
+        self.workbook.save(self.path)
+        self.workbook.close()
 
 class TestDataGenerator:
     """
@@ -39,9 +69,13 @@ class TestDataGenerator:
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), self.path)
         self.sheet_dict, self.raw_data_json = self.__read_excel(self.path, self.sheet_name)
         self.remove_header = []
+        self.usecount_dict = {}  # used to maintain usecount limit record and verify if that non of the data cross limit
         self.processed_datas = self.__process_data(self.raw_data_json)
         self.headers = [x for x in list(self.processed_datas[0].keys()) if x not in self.remove_header]
+        self.headers = [x for x in self.headers if 'usecount' not in x.lower()]
+        self.writer = Writer(self.path)  # Writer class object to save file only in end, which will save time
         self.final_data = self.__generateFinalData(self.processed_datas)
+        self.writer.save()  # saving source input file once everything is done
 
     def write(self, OutputFormat=GC.TESTDATAGENERATOR_OUTPUT_FORMAT, batch_size=0, outputfile=None):
         """
@@ -203,6 +237,7 @@ class TestDataGenerator:
         :return: None
         """
         for data in data_list:
+            success = True  # if usecount data is present then this is used to keep track of it and not to add whole row in final
             data = list(data)
             done = {}
             for ind in dictionary:
@@ -218,9 +253,28 @@ class TestDataGenerator:
                                 sorted_data = [x for x in dictionary[ind] if x[header] == match]
                                 break
                         if not sorted_data:
-                            sorted_data = dictionary[ind]
-                        data_to_insert = sorted_data[randint(0, len(sorted_data) - 1)]
+                            sorted_data = list(dictionary[ind])
+                        remove_data = []  # Used to remove data with reached limit of usecount
+                        for dtt in sorted_data:  # this loop will check if data has reached the usecount limit and remove
+                            if self.usecount_dict[repr(dtt)]['limit'] == 0:
+                                continue
+                            if not self.usecount_dict[repr(dtt)]['use'] < self.usecount_dict[repr(dtt)]['limit']:
+                                remove_data.append(dtt)
+                        for dtt in remove_data:  # removing data from main data list
+                            logger.debug(f"UseCount limit of {dtt} is exceeded : {str(self.usecount_dict[repr(dtt)]['limit'])}")
+                            sorted_data.remove(dtt)
+                        if len(sorted_data) == 0:  # if the current loop has reached usecount the we need not to add whole row in final output
+                            success = False
+                            break
+                        elif len(sorted_data) == 1:
+                            data_to_insert = sorted_data[0]
+                        else:
+                            data_to_insert = sorted_data[randint(0, len(sorted_data) - 1)]
+                        self.usecount_dict[repr(data_to_insert)]['use'] += 1
                         for keys in data_to_insert:
+                            if "usecount" in keys.lower():  # removing usecount header from headers in final output
+                                self.update_usecount_in_source(data_to_insert)
+                                continue
                             if keys not in self.headers:
                                 self.headers.append(keys)
                             if keys not in done:
@@ -229,7 +283,8 @@ class TestDataGenerator:
                     else:
                         data_to_insert = dictionary[ind][randint(0, len(dictionary[ind]) - 1)]
                         data.insert(ind, data_to_insert)
-            final_list.append(data)
+            if success:
+                final_list.append(data)
 
     def __prefix_data_processing(self, dic, key, dictionary: dict):
         """
@@ -536,19 +591,60 @@ class TestDataGenerator:
         if type(data_looking_for) == str:
             data_looking_for = data_looking_for.split(",")
 
+        usecount, limit, usecount_header = self.check_usecount(base_sheet[0])
         for data in base_sheet:
+            if usecount_header:
+                used_limit = data[usecount_header]
+            else:
+                used_limit = 0
             if len(matching_data) == 1 and len(matching_data[0]) == 0:
                 if data_looking_for[0] == "*":
                     data_lis.append(data)
+                    self.usecount_dict[repr(data)] = {
+                        "use": used_limit, "limit": limit, "index": base_sheet.index(data) + 2, "sheet_name": sheet_name
+                    }
                 else:
-                    data_lis.append({keys: data[keys] for keys in data_looking_for})
+                    dt = {keys: data[keys] for keys in data_looking_for}
+                    data_lis.append(dt)
+                    self.usecount_dict[repr(dt)] = {
+                        "use" : used_limit, "limit" : limit, "index": base_sheet.index(data) + 2, "sheet_name": sheet_name
+                    }
             else:
                 if [data[key] for key in data_to_match] in matching_data:
                     if data_looking_for[0] == "*":
                         data_lis.append(data)
+                        self.usecount_dict[repr(data)] = {
+                        "use": used_limit, "limit": limit, "index": base_sheet.index(data) + 2, "sheet_name": sheet_name
+                    }
                     else:
-                        data_lis.append({keys: data[keys] for keys in data_looking_for})
+                        dt = {keys: data[keys] for keys in data_looking_for}
+                        data_lis.append(dt)
+                        self.usecount_dict[repr(dt)] = {
+                        "use" : used_limit, "limit" : limit, "index": base_sheet.index(data) + 2, "sheet_name": sheet_name
+                    }
         return data_lis
+
+    def check_usecount(self, data):
+        # used to find and return if their is usecount header and limit in input file
+        usecount = False
+        limit = 0
+        usecount_header = None
+        for header in data:
+            if "usecount" in header.lower():
+                usecount = True
+                usecount_header = header
+                if "usecount_" in header.lower():
+                    try:
+                        limit = int(header.lower().strip().split("count_")[1])
+                    except:
+                        limit = 0
+        return usecount, limit, usecount_header
+
+    def update_usecount_in_source(self, data):
+        self.writer.write(
+            self.usecount_dict[repr(data)]["index"], self.usecount_dict[repr(data)]["use"],
+            self.usecount_dict[repr(data)]["sheet_name"]
+        )
 
     def __process_rrd_string(self, rrd_string):
         """
