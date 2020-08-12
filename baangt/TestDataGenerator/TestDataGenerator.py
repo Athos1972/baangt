@@ -388,6 +388,9 @@ class TestDataGenerator:
             processed_datas = self.__processRrd(first_value, second_value, evaluated_dict, sheet_dict)
             processed_datas = data_type(processed_datas)
 
+        elif prefix == "Renv":
+            processed_datas = self.get_env_variable(raw_data)
+
         elif "-" in raw_data:
             raw_data = raw_data.split('-')
             start = raw_data[0].strip()
@@ -450,6 +453,9 @@ class TestDataGenerator:
                 else:
                     data_type = list
             else:
+                if raw_string[:5].lower() == "renv_":
+                    prefix = "Renv"
+                    raw_string = raw_string[5:]
                 data_type = list
         else:
             data_type = list
@@ -593,6 +599,19 @@ class TestDataGenerator:
                      f"[Header1:[Value1],Header2:[Value1,Value2]])"
         assert match, err_string
         return processed_string
+
+    @staticmethod
+    def get_env_variable(string):
+        variable = string[1:-1].strip().split(',')[0].strip()
+        data = os.environ.get(variable)
+        try:
+            if not data:
+                data = string[1:-1].strip().split(',')[1].strip()
+                logger.info(f"{variable} not found in environment, using {data} instead")
+        except:
+            assert 1 == 0, f"Can't find {variable} in envrionment & default value is also not set"
+        return data
+
 
 if __name__ == "__main__":
     lTestDataGenerator = TestDataGenerator("../../tests/0TestInput/RawTestData.xlsx")
