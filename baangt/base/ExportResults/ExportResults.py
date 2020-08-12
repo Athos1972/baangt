@@ -610,8 +610,7 @@ class ExportResults:
                 old_value = testrun_sheet.cell(value["testcase_row"] + 1, value["testcase_column"]).value or ""
                 testrun_sheet.cell(value["testcase_row"] + 1, value["testcase_column"]).value = data + old_value
             testrun_file.save(self.dataRecords[0]["testcase_file"])
-            logger.info("Source TestRun file updated.")
-
+            logger.info(f"Source TestRun file {self.dataRecords[0]['testcase_file']} updated.")
 
     def __writeCell(self, line, cellNumber, testRecordDict, fieldName, strip=False):
         if fieldName in testRecordDict.keys() and testRecordDict[fieldName]:
