@@ -90,6 +90,7 @@ class MainWindow(Ui_MainWindow):
         self.__log_file = ""
         self.__open_files = 0
         self.TDGResult = ""
+        self.dataFile = ""
 
         # self.refreshNew()
         # self.setupBasePath(self.directory)
@@ -532,6 +533,39 @@ class MainWindow(Ui_MainWindow):
             os.kill(self.run_process.processId(), signal.SIGINT)
             self.run_process.waitForFinished(3000)
             self.run_process.kill()
+
+    def update_datafile(self):
+        from baangt.base.TestRun.TestRun import TestRun
+        testRunFile = f"{Path(self.directory).joinpath(self.testRunFile)}"
+        globalsFile = self.configFile
+        uu = uuid4()
+        tr = TestRun(testRunFile, globalsFile, uuid=uu, executeDirect=False)
+        tr._initTestRunSettingsFromFile()
+        if "TC.TestDataFileName" in tr.globalSettings:
+            self.dataFile = tr.globalSettings["TC.TestDataFileName"]
+        else:
+            tr._loadJSONTestRunDefinitions()
+            tr._loadExcelTestRunDefinitions()
+            self.dataFile = self.findKeyFromDict(tr.testRunUtils.testRunAttributes, "TestDataFileName")
+
+    def findKeyFromDict(self, dic, key):
+        if isinstance(dic, list):
+            for data in dic:
+                if isinstance(dic, list) or isinstance(dic, dict):
+                    result = self.findKeyFromDict(data, key)
+                    if result:
+                        return result
+        elif isinstance(dic, dict):
+            for k in dic:
+                if k == key:
+                    return dic[k]
+                elif isinstance(dic[k], list) or isinstance(dic[k], dict):
+                    result = self.findKeyFromDict(dic[k], key)
+                    if result:
+                        return result
+        return ""
+
+
 
     def signalCtrl(self, qProcess, ctrlEvent=None):
         import win32console, win32process, win32api, win32con
@@ -1245,6 +1279,12 @@ class MainWindow(Ui_MainWindow):
             fileName = os.path.basename(filePathName)
             self.statusMessage(f"Opening file {fileName}", 3000)
             FilesOpen.openResultFile(filePathName)
+            self.update_datafile()
+            if self.dataFile:
+                self.statusMessage(f"Opening file {self.dataFile}", 3000)
+                PathName = f"{Path(self.directory).joinpath(self.dataFile)}"
+                Name = os.path.basename(PathName)
+                FilesOpen.openResultFile(PathName)
         except:
             self.statusMessage("No file found!", 3000)
 

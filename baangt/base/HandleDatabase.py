@@ -11,6 +11,7 @@ import xl2dict
 import re
 from random import randint
 from openpyxl import load_workbook
+from baangt.TestDataGenerator.TestDataGenerator import TestDataGenerator
 
 logger = logging.getLogger("pyC")
 
@@ -143,6 +144,14 @@ class HandleDatabase:
         # read header values into the list
         keys = [sheet.cell(0, col_index).value for col_index in range(sheet.ncols)]
 
+        # if testresult header is present then taking its index, which is later used as column number
+        testrun_index = [keys.index(x) for x in keys if str(x).lower() == "testresult"]
+        if testrun_index:
+            testrun_index = testrun_index[0] + 1  # adding +1 value which is the correct column position
+        else:  # if list is empty that means their is no testresult header
+            testrun_index = 0
+
+
         for row_index in range(1, sheet.nrows):
             temp_dic = {}
             for col_index in range(sheet.ncols):
@@ -151,7 +160,11 @@ class HandleDatabase:
                     temp_dic[keys[col_index]] = repr(temp_dic[keys[col_index]])
                     if temp_dic[keys[col_index]][-2:] == ".0":
                         temp_dic[keys[col_index]] = temp_dic[keys[col_index]][:-2]
-
+            # row, column, sheetName & fileName which are later used in updating source testrun file
+            temp_dic["testcase_row"] = row_index
+            temp_dic["testcase_sheet"] = sheetName
+            temp_dic["testcase_file"] = fileName
+            temp_dic["testcase_column"] = testrun_index
             self.dataDict.append(temp_dic)
         self.usecount_dict = {}  # used to maintain usecount limit record and verify if that non of the data cross limit
         self.writer = Writer(fileName)  # Writer class object to save file only in end, which will save time
@@ -182,6 +195,8 @@ class HandleDatabase:
                         new_data_dic[data] = rre_data[data]
                 elif str(temp_dic[keys][:4]) == "RLP_":
                     temp_dic[keys] = self.rlp_process(temp_dic[keys], fileName)
+                elif str(temp_dic[keys][:5]).upper() == "RENV_":
+                    temp_dic[keys] = str(TestDataGenerator.get_env_variable(temp_dic[keys][5:]))
                 else:
                     try:
                         js = json.loads(temp_dic[keys])
