@@ -1284,7 +1284,7 @@ class MainWindow(Ui_MainWindow):
                 self.statusMessage(f"Opening file {self.dataFile}", 3000)
                 PathName = f"{Path(self.directory).joinpath(self.dataFile)}"
                 Name = os.path.basename(PathName)
-                FilesOpen.openResultFile(Name)
+                FilesOpen.openResultFile(PathName)
         except:
             self.statusMessage("No file found!", 3000)
 
