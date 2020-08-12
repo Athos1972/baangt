@@ -10,6 +10,7 @@ from pathlib import Path
 import xl2dict
 import re
 from random import randint
+from baangt.TestDataGenerator.TestDataGenerator import TestDataGenerator
 
 logger = logging.getLogger("pyC")
 
@@ -162,6 +163,8 @@ class HandleDatabase:
                         new_data_dic[data] = rre_data[data]
                 elif str(temp_dic[keys][:4]) == "RLP_":
                     temp_dic[keys] = self.rlp_process(temp_dic[keys], fileName)
+                elif str(temp_dic[keys][:5]).upper() == "RENV_":
+                    temp_dic[keys] = str(TestDataGenerator.get_env_variable(temp_dic[keys][5:]))
                 else:
                     try:
                         js = json.loads(temp_dic[keys])
