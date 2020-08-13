@@ -252,7 +252,8 @@ class HandleDatabase:
                     lAppend = False
         return lAppend
 
-    def __processRrd(self, sheet_name, data_looking_for, data_to_match: dict, sheet_dict=None, caller="RRD_"):
+    def __processRrd(self, sheet_name, data_looking_for, data_to_match: dict, sheet_dict=None, caller="RRD_",
+                     file_name=None):
         """
         For more detail please refer to TestDataGenerator.py
         :param sheet_name:
@@ -263,7 +264,7 @@ class HandleDatabase:
         sheet_dict = self.sheet_dict if sheet_dict is None else sheet_dict
         matching_data = [list(x) for x in itertools.product(*[data_to_match[key] for key in data_to_match])]
         assert sheet_name in sheet_dict, \
-            f"Excel file doesn't contain {sheet_name} sheet. Please recheck. Called in '{caller}'"
+            f"Excel file {file_name} doesn't contain {sheet_name} sheet. Please recheck. Called in '{caller}'"
         base_sheet = sheet_dict[sheet_name]
         data_lis = []
         if type(data_looking_for) == str:
@@ -348,8 +349,8 @@ class HandleDatabase:
             second_value = self.__splitList(second_value)
         if first_value not in self.sheet_dict:
             self.sheet_dict, _ = self.__read_excel(path=fileName)
-        processed_datas = self.__processRrd(first_value, second_value, evaluated_dict)
-        assert len(processed_datas)>0, f"No matching data for RRD_. Please check the input file. Was searching for " \
+        processed_datas = self.__processRrd(first_value, second_value, evaluated_dict, file_name=fileName)
+        assert len(processed_datas)>0, f"No matching data for RRD_. Please check the input file {fileName}. Was searching for " \
                                        f"{first_value}, {second_value} and {str(evaluated_dict)} " \
                                        f"but didn't find anything. Also please check the usecount limit if their is any."
         final_data = processed_datas[randint(0, len(processed_datas)-1)]
