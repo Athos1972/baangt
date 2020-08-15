@@ -151,7 +151,6 @@ class HandleDatabase:
         else:  # if list is empty that means their is no testresult header
             testrun_index = 0
 
-
         for row_index in range(1, sheet.nrows):
             temp_dic = {}
             for col_index in range(sheet.ncols):
@@ -484,7 +483,7 @@ class HandleDatabase:
         if sheet_name == "":
             base_sheet = sheet_dict[sheet_lis[0]]
         else:
-            assert sheet_name in sheet_dict, f"Excel file doesn't contain {sheet_name} sheet. Please recheck."
+            assert sheet_name in sheet_dict, f"Excel file {path} doesn't contain {sheet_name} sheet. Please recheck."
             base_sheet = sheet_dict[sheet_name]
         self.sheet_dict = sheet_dict
         self.base_sheet = base_sheet

@@ -139,12 +139,9 @@ class ExportResults:
                     if field.upper() in lListPasswordFieldNames:
                         self.dataRecords[key][field] = "*" * 8
                     if field in self.testRunInstance.globalSettings.keys():
-                        logger.debug(
-                            f"Added {field} to fields to be removed from data record as it exists in GlobalSettings already.")
                         fieldsToPop.append(field)
                 for field in fieldsToPop:
                     if field != 'Screenshots' and field != 'Stage':   # Stage and Screenshot are needed in output file
-                        logger.debug(f"Removed field {field} from data record.")
                         fields.pop(field)
 
     def exportAdditionalData(self):

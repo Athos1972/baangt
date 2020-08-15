@@ -57,9 +57,14 @@ class TestCaseSequenceMaster:
                 recordPointer -= 1
                 break
             recordPointer += 1
-        self.testdataDataBase.update_datarecords(self.dataRecords, fileName=utils.findFileAndPathFromPath(
-            self.testSequenceData[GC.DATABASE_FILENAME],
-            basePath=str(Path(self.testRunInstance.globalSettingsFileNameAndPath).parent)))
+        try:
+            self.testdataDataBase.update_datarecords(self.dataRecords, fileName=utils.findFileAndPathFromPath(
+                self.testSequenceData[GC.DATABASE_FILENAME],
+                basePath=str(Path(self.testRunInstance.globalSettingsFileNameAndPath).parent)))
+        except Exception as e:
+            logger.error(f"Error during update_datarecords: {e}, Terminating.")
+            import sys
+            sys.exit(f"Error during update_datarecords: {e}")
         logger.info(f"{recordPointer + 1} test records read for processing")
         self.statistics.total_testcases(recordPointer + 1)
 
