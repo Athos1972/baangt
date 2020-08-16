@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine, desc, and_
 from sqlalchemy.orm import sessionmaker
-from baangt.base.DataBaseORM import DATABASE_URL, engine, TestrunLog, GlobalAttribute, TestCaseLog, TestCaseSequenceLog, TestCaseField
+from baangt.base.DataBaseORM import DATABASE_URL, TestrunLog, GlobalAttribute, TestCaseLog, TestCaseSequenceLog, TestCaseField
 from baangt.base.ExportResults.ExportResults import ExcelSheetHelperFunctions
 from baangt.base.PathManagement import ManagedPaths
 import baangt.base.GlobalConstants as GC
@@ -9,6 +9,7 @@ from datetime import datetime
 from xlsxwriter import Workbook
 import logging
 import os
+import json
 
 logger = logging.getLogger("pyC")
 
@@ -61,7 +62,9 @@ class ResultsBrowser:
 
     def size(self, testcase_sequence=None):
         #
-        # the maximum number of testcase sequences
+        # returns the max number of 
+        # testcase_sequence is None: testcase sequences within the testruns in query_set
+        # testcase_sequence is a number: testcases within specified testcase sequence of all testruns in db
         #
 
         # test case sequences
@@ -69,7 +72,9 @@ class ResultsBrowser:
             return max([len(tr.testcase_sequences) for tr in self.query_set])
 
         # test cases
-        return max([len(tr.testcase_sequences[testcase_sequence].testcases) for tr in self.query_set])
+        return max(
+            [len(tr.testcase_sequences[testcase_sequence].testcases) for tr in self.query_set if len(tr.testcase_sequences)>testcase_sequence],
+        )
 
 
     def name_list(self):
@@ -190,7 +195,8 @@ class ResultsBrowser:
         # set labels
         labelTetsrun = 'TestRun'
         labelTestCaseSequence = 'Test Case Sequence'
-        labelTestCase = 'Test Case'
+        labelTestCase = 'Test Cases'
+        labelStage = 'Stage'
         labelAvgDuration = 'Avg. Duration'
 
         # initialize workbook
@@ -200,10 +206,10 @@ class ResultsBrowser:
         # define cell formats
         # green background
         cellFormatGreen = workbook.add_format({'bg_color': 'green'})
-        #cellFormatGreen.set_bg_color('green')
         # red background
         cellFormatRed = workbook.add_format({'bg_color': 'red'})
-        #cellFormatRed.set_bg_color('red')
+        # yellow background
+        cellFormatYellow = workbook.add_format({'bg_color': 'yellow'})
         # bold font
         cellFormatBold = workbook.add_format({'bold': True})
         # bold and italic font
@@ -212,7 +218,6 @@ class ResultsBrowser:
         # summary tab
         sheet = workbook.add_worksheet('Summary')
         sheet.set_column(first_col=0, last_col=0, width=18)
-        #sheet.set_column(first_col=1, last_col=1, width=12)
         # title
         sheet.write(0, 0, f'{labelTetsrun}s Summary', cellFormatBold)
         # parameters
@@ -238,8 +243,8 @@ class ResultsBrowser:
         for tcs_index in range(self.size()):
             # testcase sequence
             line += 1
-            sheet.write(line, 0, labelTestCaseSequence)
-            sheet.write(line, 1, tcs_index)
+            sheet.write(line, 0, labelTestCaseSequence, cellFormatYellow)
+            sheet.write(line, 1, tcs_index, cellFormatYellow)
             line += 1
             sheet.write(line, 0, labelAvgDuration)
             sheet.write(line, 1, self.average_duration(testcase_sequence=tcs_index))
@@ -251,10 +256,11 @@ class ResultsBrowser:
             line += 1            
             for i in range(self.size(testcase_sequence=tcs_index)):
                 sheet.write(line, 1 + i, i)
-            id_col = i + 3
-            sheet.write(line - 1, id_col, f'{labelTetsrun} ID', cellFormatBoldItalic)
+            stage_col = i + 2
+            sheet.write(line-1, stage_col, labelStage, cellFormatBoldItalic)
+            sheet.write(line-1, stage_col, f'{labelTetsrun} ID', cellFormatBoldItalic)
             # status
-            for tr in self.query_set:
+            for tr in filter(lambda tr: len(tr.testcase_sequences)>tcs_index, self.query_set):
                 line += 1
                 sheet.write(line, 0, tr.startTime.strftime('%Y-%m-%d %H:%M:%S'))
                 col = 1
@@ -264,13 +270,18 @@ class ResultsBrowser:
                     col += 1
                 #sheet.write(line, col, tr.duration)
                 #sheet.write(line, col+1, tr.testcase_sequences[0].duration)
-                sheet.write(line, id_col, str(tr))
+                sheet.write(line, stage_col, tr.stage)
+                sheet.write(line, stage_col+1, str(tr))
 
             line += 1
             sheet.write(line, 0, labelAvgDuration, cellFormatBoldItalic)
             for tc_index in range(self.size(testcase_sequence=tcs_index)):
                 sheet.write(line, tc_index+1, self.average_duration(testcase_sequence=tcs_index, testcase=tc_index))
 
+            # empty line separator
+            line += 1
+
+        '''
         # test case tabs
         for stage in self.stages:
             sheet = workbook.add_worksheet(f'{stage}_JSON')
@@ -302,6 +313,36 @@ class ResultsBrowser:
             # autowidth
             for i in range(len(headers)):
                 ExcelSheetHelperFunctions.set_column_autowidth(sheet, i)
+        '''
+        # output tab
+        sheet = workbook.add_worksheet('Output')
+        # write headers
+        headers = [
+            'Testrun UUID',
+            'TestCase UUID',
+            'Stage',
+            'TestCase Status',
+            'Duration',
+            'JSON',
+        ]
+        for index, label in enumerate(headers):
+            sheet.write(0, index, label, cellFormatBold)
+        # write data
+        line = 1
+        for tr in self.query_set:
+            for tcs in tr.testcase_sequences:
+                for tc in tcs.testcases:
+                    sheet.write(line, 0, str(tr))
+                    sheet.write(line, 1, str(tc))
+                    sheet.write(line, 2, tr.stage)
+                    sheet.write(line, 3, tc.status)
+                    sheet.write(line, 4, tc.duration)
+                    sheet.write(line, 5, json.dumps(tc.fields_as_dict()))
+                    line += 1
+        # autowidth
+        for col in range(len(headers)-1):
+            ExcelSheetHelperFunctions.set_column_autowidth(sheet, col)
+
 
         workbook.close()
 

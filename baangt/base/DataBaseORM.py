@@ -1,5 +1,4 @@
 from sqlalchemy import Column, String, Integer, DateTime, Boolean, Table, ForeignKey
-#from sqlalchemy.types import Binary(16), TypeDecorator
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -47,7 +46,7 @@ class TestrunLog(base):
 	statusOk = Column(Integer, nullable=False)
 	statusFailed = Column(Integer, nullable=False)
 	statusPaused = Column(Integer, nullable=False)
-	RLPJson = Column(String, nullable=True)
+	RLPJson = Column(String, nullable=True) # ------------------------> New feature: comment for old DB
 	# relationships
 	globalVars = relationship('GlobalAttribute')
 	testcase_sequences = relationship('TestCaseSequenceLog')
@@ -194,6 +193,9 @@ class TestCaseLog(base):
 
 	def __str__(self):
 		return str(uuid.UUID(bytes=self.id))
+
+	def fields_as_dict(self):
+		return {pr.name: pr.value for pr in self.fields}
 
 	def to_json(self):
 		return {

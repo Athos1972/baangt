@@ -25,7 +25,7 @@ from baangt.base.PathManagement import ManagedPaths
 from uuid import uuid4
 from baangt.base.FilesOpen import FilesOpen
 from baangt.base.RuntimeStatistics import Statistic
-from baangt.base.PathManagement import ManagedPaths
+#from baangt.base.PathManagement import ManagedPaths
 from baangt.base.DownloadFolderMonitoring import DownloadFolderMonitoring
 from baangt.base.Cleanup import Cleanup
 from baangt.base.ResultsBrowser import ResultsBrowser
@@ -37,6 +37,7 @@ from threading import Thread
 from time import sleep
 import signal
 from datetime import datetime
+
 
 logger = logging.getLogger("pyC")
 
@@ -136,6 +137,7 @@ class MainWindow(Ui_MainWindow):
         self.actionQuery.triggered.connect(self.showQueryPage)
         self.queryMakePushButton.clicked.connect(self.makeResultQuery)
         self.queryExportPushButton.clicked.connect(self.exportResultQuery)
+        self.openExportPushButton.clicked.connect(self.openRecentQueryResults)
         self.queryExitPushButton.clicked.connect(self.mainPageView)
 
         # Quit Event
@@ -1363,14 +1365,30 @@ class MainWindow(Ui_MainWindow):
         _translate = QtCore.QCoreApplication.translate
 
         if self.queryResults.query_set:
-            self.queryStatusLabel.setText(_translate("MainWindow", "Exporting results..."))
-            sleep(1)
+            #self.queryStatusLabel.setText(_translate("MainWindow", "Exporting results..."))
+            #sleep(1)
             path_to_export = self.queryResults.export()
             self.queryStatusLabel.setText(_translate("MainWindow", f"Exported to: {path_to_export}"))
-            #FilesOpen.openResultFile(path_to_export)
+            FilesOpen.openResultFile(path_to_export)
         else:
             self.queryStatusLabel.setText(_translate("MainWindow", f"ERROR: No data to export"))
 
+    @pyqtSlot()
+    def openRecentQueryResults(self):
+        #
+        # opens recent query result file
+        #
+
+        try:
+            # get recent file
+            recent_export = max(
+                list(Path(self.managedPaths.getOrSetDBExportPath()).glob('*.xlsx')),
+                key=os.path.getctime,
+            )
+            FilesOpen.openResultFile(recent_export)
+        except Exception:
+            # no export file exists
+            self.statusMessage(f"No Result Export File to Show", 3000)
 
 
     @pyqtSlot()

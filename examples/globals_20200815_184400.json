@@ -1,0 +1,34 @@
+{
+    "TC.Lines": "1",
+    "TC.dontCloseBrowser": "False",
+    "TC.slowExecution": "False",
+    "TC.NetworkInfo": "False",
+    "TX.DEBUG": "True",
+    "TC.Browser": "FF",
+    "TC.BrowserAttributes": "",
+    "TC.ParallelRuns": "1",
+    "TC.BrowserWindowSize": "1024x768",
+    "TC.LogLevel": "Debug",
+    "Stage": "Test",
+    "SendMailTo": "",
+    "NotificationWithAttachment": "True",
+    "MsWebHook": "",
+    "SlackWebHook": "",
+    "TelegramBot": "",
+    "TelegramChannel": "",
+    "DeactivateStatistics": "False",
+    "Password": {
+        "hint": "Franzi1234",
+        "type": "text",
+        "options": [
+            "Franzi1234"
+        ],
+        "displayText": "Password",
+        "default": "Franzi1234"
+    },
+    "AR2BXLS": "CompleteBaangtWebdemo_ResultsCombined.xlsx,CombinedResults",
+    "RootPath": "/home/aguryev/freelancer/baangt/examples",
+    "Screenshots": "/home/aguryev/freelancer/baangt/examples/Screenshots",
+    "1TestResults": "/home/aguryev/freelancer/baangt/examples/1testoutput",
+    "0TestInput": "/home/aguryev/freelancer/baangt/examples/0testdateninput"
+}
