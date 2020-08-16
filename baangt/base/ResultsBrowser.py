@@ -258,7 +258,7 @@ class ResultsBrowser:
                 sheet.write(line, 1 + i, i)
             stage_col = i + 2
             sheet.write(line-1, stage_col, labelStage, cellFormatBoldItalic)
-            sheet.write(line-1, stage_col, f'{labelTetsrun} ID', cellFormatBoldItalic)
+            sheet.write(line-1, stage_col+1, f'{labelTetsrun} ID', cellFormatBoldItalic)
             # status
             for tr in filter(lambda tr: len(tr.testcase_sequences)>tcs_index, self.query_set):
                 line += 1
