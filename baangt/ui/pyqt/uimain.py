@@ -1347,10 +1347,10 @@ class MainWindow(Ui_MainWindow):
 
         # display status
         if self.queryResults.query_set:
-            if len(self.queryResults.query_set) > 1:
-                status = f'Found: {len(self.queryResults.query_set)} records'
+            if self.queryResults.query_set.length > 1:
+                status = f'Found: {self.queryResults.query_set.length} records'
             else:
-                status = f'Found: {len(self.queryResults.query_set)} record'
+                status = f'Found: {self.queryResults.query_set.length} record'
         else:
             status = 'No record found'
         self.queryStatusLabel.setText(QtCore.QCoreApplication.translate("MainWindow", status))

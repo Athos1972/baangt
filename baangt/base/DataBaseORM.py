@@ -116,6 +116,7 @@ class TestCaseSequenceLog(base):
 	__tablename__ = 'testCaseSequences'
 	# columns
 	id = Column(Binary(16), primary_key=True, default=uuidAsBytes)
+	number = Column(Integer)
 	testrun_id = Column(Binary(16), ForeignKey('testruns.id'), nullable=False)
 	# relationships
 	testrun = relationship('TestrunLog', foreign_keys=[testrun_id])
@@ -127,7 +128,7 @@ class TestCaseSequenceLog(base):
 		# duration in seconds
 		#
 
-		return sum([tc.duration for tc in self.testcases])
+		return sum([tc.duration for tc in self.testcases if tc.duration])
 
 
 	def __str__(self):
@@ -151,10 +152,11 @@ class TestCaseLog(base):
 	__tablename__ = 'testCases'
 	# columns
 	id = Column(Binary(16), primary_key=True, default=uuidAsBytes)
+	number = Column(Integer)
 	testcase_sequence_id = Column(Binary(16), ForeignKey('testCaseSequences.id'), nullable=False)
 	# relationships
 	testcase_sequence = relationship('TestCaseSequenceLog', foreign_keys=[testcase_sequence_id])
-	fields = relationship('TestCaseField')
+	fields = relationship('TestCaseField', lazy='select')
 	networkInfo = relationship('TestCaseNetworkInfo')
 
 	@property
