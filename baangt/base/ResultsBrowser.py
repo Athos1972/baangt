@@ -247,9 +247,9 @@ class ResultsBrowser:
         if start_date and end_date:
             self.query_set.set([log for log in records if log.startTime > start_date and log.startTime < end_date])
         elif start_date:
-            self.query_set.set([log for log in records if log.startTime > start_date])
+            self.query_set.set([log for log in records if log.startTime >= start_date])
         elif end_date:
-            self.query_set.set([log for log in records if log.startTime < end_date])
+            self.query_set.set([log for log in records if log.startTime <= end_date])
         else:
             self.query_set.set(records)
 
