@@ -1,7 +1,20 @@
 Change log
 ==========
 
-1.1.4
+1.1.15
+^^^^^^^
+
+Summary:
+++++++++
+
+* Export (all channels): Passwords are replaced by ``*******``
+* ELSE-Activity and nested IF/ELSE/ENDIF-Activities
+* DataFiles: Nested data structures per line item (e.g. Sales order header --> Sales order item)
+* DataFiles and TestDataGenerator: Read remote data sources (e.g. other sheets or SQL-Databases)
+* Integration with Atlassian Confluence to export test run results into Confluence WIKI-Pages (and Sub-pages!)
+* Export results to multiple Excel-Sheets (e.g. when collecting reusable master data like customer master records)
+
+1.1.5
 ^^^^^^^
 This is the version, that was released as first publicly downloadable version.
 

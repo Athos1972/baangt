@@ -108,7 +108,6 @@ def test_regular_firefox():
     assert new_file
     output_file = output_dir.joinpath(new_file[0][0]).as_posix()
     check_output(output_file)
-    os.remove(output_file)
     return "Firefox regular test succeed output file =", new_file[0][0]
 
 
@@ -121,7 +120,6 @@ def test_parellel_firefox():
     assert new_file
     output_file = output_dir.joinpath(new_file[0][0]).as_posix()
     check_output(output_file)
-    os.remove(output_file)
     return "Firefox parellel test succeed output file =", new_file[0][0]
 
 
@@ -135,7 +133,6 @@ def test_browsermob_proxy_firefox():
     output_file = output_dir.joinpath(new_file[0][0]).as_posix()
     check_output(output_file)
     check_browsermob_output(output_file)
-    os.remove(output_file)
     return "Firefox Browsermob test succeed output file =", new_file[0][0]
 
 
@@ -148,7 +145,6 @@ def test_headless_firefox():
     assert new_file
     output_file = output_dir.joinpath(new_file[0][0]).as_posix()
     check_output(output_file)
-    os.remove(output_file)
     return "Firefox headless test succeed output file =", new_file[0][0]
 
 
@@ -160,8 +156,6 @@ def test_csv_firefox():
     new_file = folder_monitor.getNewFiles()
     assert new_file
     assert ".csv" in new_file[0][0]
-    output_file = output_dir.joinpath(new_file[0][0]).as_posix()
-    os.remove(output_file)
     return "Firefox Output Format test succeed output file =", new_file[0][0]
 
 
@@ -176,7 +170,6 @@ def test_regular_chrome():
     assert new_file
     output_file = output_dir.joinpath(new_file[0][0]).as_posix()
     check_output(output_file)
-    os.remove(output_file)
     return "Chrome regular test succeed output file =", new_file[0][0]
 
 
@@ -190,7 +183,6 @@ def test_parellel_chrome():
     assert new_file
     output_file = output_dir.joinpath(new_file[0][0]).as_posix()
     check_output(output_file)
-    os.remove(output_file)
     return "Chrome parellel test succeed output file =", new_file[0][0]
 
 
@@ -205,7 +197,6 @@ def test_browsermob_proxy_chrome():
     output_file = output_dir.joinpath(new_file[0][0]).as_posix()
     check_output(output_file)
     check_browsermob_output(output_file)
-    os.remove(output_file)
     return "Chrome Browsermob test succeed output file =", new_file[0][0]
 
 
@@ -223,7 +214,6 @@ def test_headless_chrome():
     assert new_file
     output_file = output_dir.joinpath(new_file[0][0]).as_posix()
     check_output(output_file)
-    os.remove(output_file)
     return "Chrome headless test succeed output file =", new_file[0][0]
 
 
@@ -246,7 +236,6 @@ def test_full_BaangtWebDemo():
     assert new_file
     output_file = output_dir.joinpath(new_file[0][0]).as_posix()
     check_output(output_file)
-    os.remove(output_file)
 
 def test_NestedIfElse_with_NoBrowser():
     run_file = str(input_dir.joinpath("CompleteBaangtWebdemo_else.xlsx"))
@@ -255,7 +244,6 @@ def test_NestedIfElse_with_NoBrowser():
     assert new_file
     output_file = output_dir.joinpath(new_file[0][0]).as_posix()
     check_output(output_file)
-    os.remove(output_file)
 
 def test_NestedIfElse_with_greater_endif():
     run_file = str(input_dir.joinpath("CompleteBaangtWebdemo_else_error.xlsx"))
@@ -286,4 +274,3 @@ def test_NestedLoops_and_repeat():
     s = Session()
     data = s.query(TestrunLog).get(uuid.UUID(TestRunUUID).bytes)
     assert "textarea2" in json.loads(data.RLPJson)
-    os.remove(output_file)

@@ -136,3 +136,13 @@ def test_rre_no_data_to_match():
     assert len(rrd_output_dict) == 10
     for data in rrd_output_dict:
         print(data)
+
+
+def test_renv():
+    data = TestDataGenerator.get_env_variable("(USERNAME, test)")
+    assert data
+
+
+def test_renv_without_default():
+    with pytest.raises(BaseException):
+        TestDataGenerator.get_env_variable("(URNAMEfh)")
