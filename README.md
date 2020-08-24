@@ -3,6 +3,7 @@ UPDATE
 #### 24 Aug 2020  
 The `ResultsDB` structure was updatetd to support `ResultsBrowser` module:
 * field `number` was inrouduced to tables `TestCaseSequences` and `TestCases`
+
 To update your current DB, run
 ```bash
 python db_add_number.py
