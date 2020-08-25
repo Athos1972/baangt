@@ -62,20 +62,23 @@ class TestDataGenerator:
     :param sheetName: Name of sheet where all base data is located.
     :method write: Will write the final processed data in excel/csv file.
     """
-    def __init__(self, rawExcelPath=GC.TESTDATAGENERATOR_INPUTFILE, sheetName=""):
+    def __init__(self, rawExcelPath=GC.TESTDATAGENERATOR_INPUTFILE, sheetName="", from_handleDatabase=False):
         self.path = os.path.abspath(rawExcelPath)
         self.sheet_name = sheetName
         if not os.path.isfile(self.path):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), self.path)
-        self.sheet_dict, self.raw_data_json = self.__read_excel(self.path, self.sheet_name)
+        self.sheet_dict, self.raw_data_json = self.read_excel(self.path, self.sheet_name)
         self.remove_header = []
         self.usecount_dict = {}  # used to maintain usecount limit record and verify if that non of the data cross limit
-        self.processed_datas = self.__process_data(self.raw_data_json)
-        self.headers = [x for x in list(self.processed_datas[0].keys()) if x not in self.remove_header]
-        self.headers = [x for x in self.headers if 'usecount' not in x.lower()]
         self.writer = Writer(self.path)  # Writer class object to save file only in end, which will save time
-        self.final_data = self.__generateFinalData(self.processed_datas)
-        self.writer.save()  # saving source input file once everything is done
+        self.isUsecount = False
+        if not from_handleDatabase:
+            self.processed_datas = self.__process_data(self.raw_data_json)
+            self.headers = [x for x in list(self.processed_datas[0].keys()) if x not in self.remove_header]
+            self.headers = [x for x in self.headers if 'usecount' not in x.lower()]
+            self.final_data = self.__generateFinalData(self.processed_datas)
+            if self.isUsecount:
+                self.writer.save()  # saving source input file once everything is done
 
     def write(self, OutputFormat=GC.TESTDATAGENERATOR_OUTPUT_FORMAT, batch_size=0, outputfile=None):
         """
@@ -358,9 +361,9 @@ class TestDataGenerator:
                 continue
             processed_data = {}
             for key in raw_data:
-                keys = self.__data_generators(key)
+                keys = self.data_generators(key)
                 for ke in keys:
-                    processed_data[ke] = self.__data_generators(raw_data[key])
+                    processed_data[ke] = self.data_generators(raw_data[key])
                     if type(processed_data[ke]) == tuple and len(processed_data[ke])>0:
                         if type(processed_data[ke][0]) == dict:
                             if ke not in processed_data[ke][0]:
@@ -368,7 +371,7 @@ class TestDataGenerator:
             processed_datas.append(processed_data)
         return processed_datas
 
-    def __data_generators(self, raw_data):
+    def data_generators(self, raw_data):
         """
         This method first send the data to ``__raw_data_string_process`` method to split the data and remove the unwanted
         spaces.
@@ -422,7 +425,7 @@ class TestDataGenerator:
 
         elif prefix == "Rre":
             file_name = raw_data[1:-1].split(',')[0].strip()
-            sheet_dict, _ = self.__read_excel(file_name)
+            sheet_dict, _ = self.read_excel(file_name)
             first_value = raw_data[1:-1].split(',')[1].strip()
             second_value = raw_data[1:-1].split(',')[2].strip()
             if second_value[0] == "[":
@@ -517,7 +520,7 @@ class TestDataGenerator:
         return raw_string, prefix, data_type
 
     @staticmethod
-    def __read_excel(path, sheet_name=""):
+    def read_excel(path, sheet_name=""):
         """
         This method will read the input excel file.
         It will read all the sheets inside this excel file and will create a dictionary of dictionary containing all data
@@ -594,7 +597,10 @@ class TestDataGenerator:
         usecount, limit, usecount_header = self.check_usecount(base_sheet[0])
         for data in base_sheet:
             if usecount_header:
-                used_limit = data[usecount_header]
+                try:
+                    used_limit = int(data[usecount_header])
+                except:
+                    used_limit = 0
             else:
                 used_limit = 0
             if len(matching_data) == 1 and len(matching_data[0]) == 0:
@@ -638,6 +644,8 @@ class TestDataGenerator:
                         limit = int(header.lower().strip().split("count_")[1])
                     except:
                         limit = 0
+        if not self.isUsecount:
+            self.isUsecount = usecount
         return usecount, limit, usecount_header
 
     def update_usecount_in_source(self, data):
