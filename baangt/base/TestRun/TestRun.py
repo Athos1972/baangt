@@ -27,7 +27,7 @@ from baangt.base.RuntimeStatistics import Statistic
 from baangt.base.SendReports import Sender
 import signal
 from baangt.TestDataGenerator.TestDataGenerator import TestDataGenerator
-#from CloneXls import CloneXls
+from CloneXls import CloneXls
 
 logger = logging.getLogger("pyC")
 
@@ -387,11 +387,9 @@ class TestRun:
         @return: TestRunName and FileName (if definition of testrun comes from a file (JSON or XLSX)
         """
         if ".XLSX" in TestRunNameInput.upper() or ".JSON" in TestRunNameInput.upper():
-            #cloneXls = CloneXls(TestRunNameInput)
-            #lFileName = cloneXls.update_or_make_clone(ignore_headers=["TestResult", "UseCount"], clone=direct)
-            #lRunName = utils.extractFileNameFromFullPath(lFileName)
-            lRunName = utils.extractFileNameFromFullPath(TestRunNameInput)
-            lFileName = TestRunNameInput
+            cloneXls = CloneXls(TestRunNameInput)
+            lFileName = cloneXls.update_or_make_clone(ignore_headers=["TestResult", "UseCount"], clone=direct)
+            lRunName = utils.extractFileNameFromFullPath(lFileName)
         else:
             lRunName = TestRunNameInput
             lFileName = None
