@@ -13,6 +13,8 @@ import gevent
 import gevent.queue
 import gevent.pool
 from baangt.base.RuntimeStatistics import Statistic
+from CloneXls import CloneXls
+import os
 
 logger = logging.getLogger("pyC")
 
@@ -143,10 +145,15 @@ class TestCaseSequenceMaster:
         if not self.testdataDataBase:
             self.testdataDataBase = HandleDatabase(globalSettings=self.testRunInstance.globalSettings,
                                                    linesToRead=self.testSequenceData.get(GC.DATABASE_LINES))
-            self.testdataDataBase.read_excel(
-                fileName=utils.findFileAndPathFromPath(
-                    self.testSequenceData[GC.DATABASE_FILENAME],
-                    basePath=str(Path(self.testRunInstance.globalSettingsFileNameAndPath).parent)),
+        testDataFile = utils.findFileAndPathFromPath(
+            self.testSequenceData[GC.DATABASE_FILENAME],
+            basePath=str(Path(self.testRunInstance.globalSettingsFileNameAndPath).parent))
+        cloneXls = CloneXls(testDataFile)  # , logger=logger)
+        testDataFile = cloneXls.update_or_make_clone(
+            ignore_headers=["TestResult", "UseCount"])
+        self.testSequenceData[GC.DATABASE_FILENAME] = os.path.basename(testDataFile)
+        self.testdataDataBase.read_excel(
+                fileName=testDataFile,
                 sheetName=self.testSequenceData[GC.DATABASE_SHEETNAME])
         return self.testdataDataBase
 
