@@ -151,7 +151,7 @@ class TestCaseSequenceMaster:
         cloneXls = CloneXls(testDataFile)  # , logger=logger)
         testDataFile = cloneXls.update_or_make_clone(
             ignore_headers=["TestResult", "UseCount"])
-        self.testSequenceData[GC.DATABASE_FILENAME] = os.path.basename(testDataFile)
+        self.testSequenceData[GC.DATABASE_FILENAME] = self.testSequenceData[GC.DATABASE_FILENAME]
         self.testdataDataBase.read_excel(
                 fileName=testDataFile,
                 sheetName=self.testSequenceData[GC.DATABASE_SHEETNAME])
