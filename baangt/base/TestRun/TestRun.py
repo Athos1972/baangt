@@ -27,6 +27,7 @@ from baangt.base.RuntimeStatistics import Statistic
 from baangt.base.SendReports import Sender
 import signal
 from baangt.TestDataGenerator.TestDataGenerator import TestDataGenerator
+from CloneXls import CloneXls
 
 logger = logging.getLogger("pyC")
 
@@ -50,7 +51,7 @@ class TestRun:
         self.testRunDict = testRunDict
         self.globalSettingsFileNameAndPath = globalSettingsFileNameAndPath
         self.testRunName, self.testRunFileName = \
-            self._sanitizeTestRunNameAndFileName(testRunName)
+            self._sanitizeTestRunNameAndFileName(testRunName, executeDirect)
 
         # Initialize everything else
         self.apiInstance = None
@@ -380,14 +381,15 @@ class TestRun:
         return utils.dynamicImportOfClasses(fullQualifiedImportName=fullQualifiedImportName)
 
     @staticmethod
-    def _sanitizeTestRunNameAndFileName(TestRunNameInput):
+    def _sanitizeTestRunNameAndFileName(TestRunNameInput, direct):
         """
         @param TestRunNameInput: The complete File and Path of the TestRun definition (JSON or XLSX).
         @return: TestRunName and FileName (if definition of testrun comes from a file (JSON or XLSX)
         """
         if ".XLSX" in TestRunNameInput.upper() or ".JSON" in TestRunNameInput.upper():
-            lRunName = utils.extractFileNameFromFullPath(TestRunNameInput)
-            lFileName = TestRunNameInput
+            cloneXls = CloneXls(TestRunNameInput)
+            lFileName = cloneXls.update_or_make_clone(ignore_headers=["TestResult", "UseCount"], clone=direct)
+            lRunName = utils.extractFileNameFromFullPath(lFileName)
         else:
             lRunName = TestRunNameInput
             lFileName = None

@@ -60,7 +60,8 @@ class TestCaseSequenceMaster:
         try:
             self.testdataDataBase.update_datarecords(self.dataRecords, fileName=utils.findFileAndPathFromPath(
                 self.testSequenceData[GC.DATABASE_FILENAME],
-                basePath=str(Path(self.testRunInstance.globalSettingsFileNameAndPath).parent)))
+                basePath=str(Path(self.testRunInstance.globalSettingsFileNameAndPath).parent)),
+                sheetName=self.testSequenceData[GC.DATABASE_SHEETNAME])
         except Exception as e:
             logger.error(f"Error during update_datarecords: {e}, Terminating.")
             import sys

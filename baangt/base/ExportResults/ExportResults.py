@@ -598,7 +598,6 @@ class ExportResults:
             testrun_file = load_workbook(self.dataRecords[0]["testcase_file"])
             testrun_sheet = testrun_file.get_sheet_by_name(self.dataRecords[0]["testcase_sheet"])
             for key, value in self.dataRecords.items():
-                print(value)
                 data = f"TestCaseStatus: {value['TestCaseStatus']}\r\n" \
                        f"Timestamp: {self.testRun_end}\r\n" \
                        f"Duration: {value['Duration']}\r\n" \
