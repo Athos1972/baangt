@@ -14,7 +14,6 @@ import gevent.queue
 import gevent.pool
 from baangt.base.RuntimeStatistics import Statistic
 from CloneXls import CloneXls
-import os
 
 logger = logging.getLogger("pyC")
 
