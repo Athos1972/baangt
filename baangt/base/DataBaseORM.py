@@ -1,12 +1,11 @@
 from sqlalchemy import Column, String, Integer, DateTime, Boolean, Table, ForeignKey
-#from sqlalchemy.types import Binary(16), TypeDecorator
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-import os
-import re
-import uuid
+import os, re, uuid
+from datetime import timedelta
 from baangt.base.PathManagement import ManagedPaths
+from baangt.base.GlobalConstants import EXECUTION_STAGE, TIMING_DURATION, TESTCASESTATUS
 
 
 managedPaths = ManagedPaths()
@@ -47,7 +46,7 @@ class TestrunLog(base):
 	statusOk = Column(Integer, nullable=False)
 	statusFailed = Column(Integer, nullable=False)
 	statusPaused = Column(Integer, nullable=False)
-	RLPJson = Column(String, nullable=True)
+	RLPJson = Column(String, nullable=True) # ------------------------> New feature: comment for old DB
 	# relationships
 	globalVars = relationship('GlobalAttribute')
 	testcase_sequences = relationship('TestCaseSequenceLog')
@@ -59,7 +58,14 @@ class TestrunLog(base):
 	@property
 	def duration(self):
 		return (self.endTime - self.startTime).seconds
-	
+
+	@property
+	def stage(self):
+		for gv in self.globalVars:
+			if gv.name == EXECUTION_STAGE:
+				return gv.value
+
+		return None
 
 	def __str__(self):
 		return str(uuid.UUID(bytes=self.id))
@@ -110,10 +116,20 @@ class TestCaseSequenceLog(base):
 	__tablename__ = 'testCaseSequences'
 	# columns
 	id = Column(Binary(16), primary_key=True, default=uuidAsBytes)
+	number = Column(Integer, nullable=False)
 	testrun_id = Column(Binary(16), ForeignKey('testruns.id'), nullable=False)
 	# relationships
 	testrun = relationship('TestrunLog', foreign_keys=[testrun_id])
 	testcases = relationship('TestCaseLog')
+
+	@property
+	def duration(self):
+		#
+		# duration in seconds
+		#
+
+		return sum([tc.duration for tc in self.testcases if tc.duration])
+
 
 	def __str__(self):
 		return str(uuid.UUID(bytes=self.id))
@@ -136,14 +152,52 @@ class TestCaseLog(base):
 	__tablename__ = 'testCases'
 	# columns
 	id = Column(Binary(16), primary_key=True, default=uuidAsBytes)
+	number = Column(Integer, nullable=False)
 	testcase_sequence_id = Column(Binary(16), ForeignKey('testCaseSequences.id'), nullable=False)
 	# relationships
 	testcase_sequence = relationship('TestCaseSequenceLog', foreign_keys=[testcase_sequence_id])
-	fields = relationship('TestCaseField')
+	fields = relationship('TestCaseField', lazy='select')
 	networkInfo = relationship('TestCaseNetworkInfo')
+
+	@property
+	def status(self):
+		#
+		# testcase status
+		#
+
+		for field in self.fields:
+			if field.name == TESTCASESTATUS:
+				return field.value
+
+		return None	
+
+	@property
+	def duration(self):
+		#
+		# duration in seconds
+		#
+
+		for field in self.fields:
+			if field.name == TIMING_DURATION:
+				# parse value from H:M:S.microseconds
+				m = re.search(r'(?P<hours>\d+):(?P<minutes>\d+):(?P<seconds>\d[\.\d+]*)', field.value)
+				if m:
+					factors = {
+						'hours': 3600,
+						'minutes': 60,
+						'seconds': 1,
+					}
+					#duration = {key: float(value) for key, value in m.groupdict().items()}
+					#return timedelta(**duration)
+					return sum([factors[key]*float(value) for key, value in m.groupdict().items()])
+
+		return None
 
 	def __str__(self):
 		return str(uuid.UUID(bytes=self.id))
+
+	def fields_as_dict(self):
+		return {pr.name: pr.value for pr in self.fields}
 
 	def to_json(self):
 		return {

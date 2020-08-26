@@ -254,16 +254,17 @@ class ExportResults:
         self.__save_commit(session)
 
         # create testcase sequence instance
-        tcs_log = TestCaseSequenceLog(testrun=tr_log)
+        tcs_log = TestCaseSequenceLog(testrun=tr_log, number=1)
 
         # create testcases
-        for tc in self.dataRecords.values():
+        for tc_number, tc in enumerate(self.dataRecords.values(), 1):
             # get uuid
             uuid = uuid4()
             # create TestCaseLog instances
             tc_log = TestCaseLog(
                 id=uuid.bytes,
-                testcase_sequence=tcs_log
+                testcase_sequence=tcs_log,
+                number=tc_number,
             )
             # store uuid
             self.testcase_uuids.append(uuid)

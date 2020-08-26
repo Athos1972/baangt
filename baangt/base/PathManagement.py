@@ -25,9 +25,11 @@ class ManagedPaths(metaclass=Singleton):
     - getOrSetScreenshotsPath: Will return a path for Screenshots directory. You can also set path.
     - getOrSetDownloadsPath: Will return a path for Download directory. You can also set path.
     - getOrSetAttachmentDownloadPath: Will return a path for Attachment Download directory. You can also set path.
-    - getOrSetDriverPath: Will return path were webdriver is located. You can also set path.
-    - getOrSetImportPath: Will return path were input files are located. You can also set path.
-    - getOrSetExportPath: Will return path were files will be save. You can also set path.
+    - getOrSetDriverPath: Will return path where webdriver is located. You can also set path.
+    - getOrSetImportPath: Will return path where input files are located. You can also set path.
+    - getOrSetExportPath: Will return path where files will be save. You can also set path.
+    - getOrSetDBExportPath: Will return path where DB query outputs should be saved. You can also set path.
+    - getOrSetReportPath: Will return path where reports should be saved. You can also set path.
     - getOrSetRootPath: Will return root directory path. You can also set path.
     - getOrSetIni: Will return path of directory where ini files are managed.
     """
@@ -42,6 +44,8 @@ class ManagedPaths(metaclass=Singleton):
         self.RootPath = ""
         self.ExportPath = ""
         self.ImportPath = ""
+        self.DBExportPath = ""
+        self.ReportPath = ""
         self.IniPath = ""
 
     def getLogfilePath(self):
@@ -199,6 +203,42 @@ class ManagedPaths(metaclass=Singleton):
 
         self.__makeAndCheckDir(self.ImportPath)
         return self.ImportPath
+
+    def getOrSetDBExportPath(self, path=None):
+        """
+        Will return path where DB queriy outputs should be saved.
+
+        :param path: Path to be set for DB exports.
+        :return: DB Export path
+        """
+        if self.DBExportPath != "":
+            return self.DBExportPath
+
+        if path:
+            self.DBExportPath = path
+        else:
+            self.DBExportPath = self.__combineBasePathWithObjectPath(GC.PATH_DB_EXPORT)
+
+        self.__makeAndCheckDir(self.DBExportPath)
+        return self.DBExportPath
+
+    def getOrSetReportPath(self, path=None):
+        """
+        Will return path where reports should be saved.
+
+        :param path: Path to be set for reports.
+        :return: Report path
+        """
+        if self.ReportPath != "":
+            return self.ReportPath
+
+        if path:
+            self.ReportPath = path
+        else:
+            self.ReportPath = self.__combineBasePathWithObjectPath(GC.PATH_REPORT)
+
+        self.__makeAndCheckDir(self.ReportPath)
+        return self.ReportPath
 
     def __combineBasePathWithObjectPath(self, objectPath: str):
         """
