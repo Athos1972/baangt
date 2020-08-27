@@ -227,7 +227,8 @@ class TestStepMaster:
         if lActivity == "GOTOURL":
             self.browserSession.goToUrl(lValue)
         elif lActivity == "SETTEXT":
-            self.browserSession.findByAndSetText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout)
+            self.browserSession.findByAndSetText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout,
+                                                 optional=lOptional)
         elif lActivity == "SETTEXTIF":
             self.browserSession.findByAndSetTextIf(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout,
                                                    optional=lOptional)
@@ -261,9 +262,10 @@ class TestStepMaster:
                 lWindow = int(lWindow)
             self.browserSession.handleWindow(windowNumber=lWindow, timeout=lTimeout)
         elif lActivity == "CLICK":
-            self.browserSession.findByAndClick(xpath=xpath, css=css, id=id, timeout=lTimeout)
+            self.browserSession.findByAndClick(xpath=xpath, css=css, id=id, timeout=lTimeout, optional=lOptional)
         elif lActivity == "CLICKIF":
-            self.browserSession.findByAndClickIf(xpath=xpath, css=css, id=id, timeout=lTimeout, value=lValue)
+            self.browserSession.findByAndClickIf(xpath=xpath, css=css, id=id, timeout=lTimeout, value=lValue,
+                                                 optional=lOptional)
         elif lActivity == "PAUSE":
             self.browserSession.sleep(seconds=float(lValue))
         elif lActivity == "IF":

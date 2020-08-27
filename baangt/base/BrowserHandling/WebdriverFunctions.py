@@ -310,7 +310,8 @@ class WebdriverFunctions:
                 if counter < COUNTER_LIMIT_RETRY:
                     time.sleep(0.2)
                 elif counter < COUNTER_LIMIT_ELEMENT_REF:
-                    begin, element = WebdriverFunctions.webdriver_refindElementAfterError(browserData, timeout)
+                    begin, element = WebdriverFunctions.webdriver_refindElementAfterError(browserData, timeout,
+                                                                                          optional=optional)
                 else:
                     raise Exceptions.baangtTestStepException(e)
             except NoSuchElementException as e:
@@ -325,7 +326,8 @@ class WebdriverFunctions:
                     time.sleep(0.2)
                 elif counter < COUNTER_LIMIT_ELEMENT_NOT_INTERACT:
                     logger.debug(f"Element not interactable {browserData.locatorType} {browserData.locator}, re-finding element")
-                    begin, element = WebdriverFunctions.webdriver_refindElementAfterError(browserData, timeout)
+                    begin, element = WebdriverFunctions.webdriver_refindElementAfterError(browserData, timeout,
+                                                                                          optional=optional)
                 else:
                     helper.browserHelper_log(logging.ERROR, f"Element not interactable {e}", browserData)
                     raise Exceptions.baangtTestStepException(e)
@@ -346,13 +348,18 @@ class WebdriverFunctions:
         return didWork
 
     @staticmethod
-    def webdriver_refindElementAfterError(browserData, timeout):
+    def webdriver_refindElementAfterError(browserData, timeout, optional=None):
+        if not optional:
+            optional = False
         element, _ = WebdriverFunctions.webdriver_tryAndRetry(browserData, timeout=timeout / 2, optional=True)
         if element:
             logger.debug(f"Re-Found element {browserData.locatorType}: {browserData.locator}, will retry ")
             begin = time.time()
         else:
-            raise Exceptions.baangtTestStepException(
-                f"Element {browserData.locatorType} {browserData.locator} couldn't be found. "
-                f"Tried to re-find it, but not element was not found")
+            if not optional:
+                raise Exceptions.baangtTestStepException(
+                    f"Element {browserData.locatorType} {browserData.locator} couldn't be found. "
+                    f"Tried to re-find it, but not element was not found")
+            else:
+                return None, None
         return begin, element

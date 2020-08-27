@@ -387,7 +387,7 @@ class BrowserDriver:
         """
         Please see documentation in findBy and __doSomething
         """
-        self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
+        self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout, optional=optional)
         if not self.element:
             return False
 
@@ -462,8 +462,8 @@ class BrowserDriver:
         @return wasSuccessful says, whether the element was found.
         """
 
-        self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout,
-                                    optional=optional)
+        self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe,
+                                              timeout=timeout, optional=optional)
 
         if not self.element:
             logger.debug("findBy didn't work in findByAndClick")
@@ -502,7 +502,8 @@ class BrowserDriver:
         If value is evaluated to "True", the click-event is executed.
         """
         if self._isValidKeyValue(value):
-            return self.findByAndClick(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout, optional=optional)
+            return self.findByAndClick(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe,
+                                       timeout=timeout, optional=optional)
         else:
             return False
 
