@@ -1,13 +1,9 @@
 import logging
 from xlrd3 import open_workbook
-import itertools
 import json
 import baangt.base.CustGlobalConstants as CGC
 import baangt.base.GlobalConstants as GC
 from baangt.base.Utils import utils
-import baangt.TestSteps.Exceptions
-from pathlib import Path
-import xl2dict
 import re
 from random import randint
 from openpyxl import load_workbook
