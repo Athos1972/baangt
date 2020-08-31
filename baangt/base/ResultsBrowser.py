@@ -401,7 +401,7 @@ class ResultsBrowser:
                             'format': cformats.get('font_bold_italic'),
                         },
                         {
-                            'value': f'{labels.get("testcase")} ID',
+                            'value': f'{labels.get("testrun")} ID',
                             'format': cformats.get('font_bold_italic'),
                         },
                     ]
@@ -425,7 +425,8 @@ class ResultsBrowser:
                     .filter(and_(TestrunLog.id == tr.id, TestCaseSequenceLog.number == tcs_number)).order_by(TestCaseLog.number)
                     tc_id_cur = None
                     for name, value, tc_index, tc_id in data.yield_per(500):
-                        # summary data  
+                        # summary data
+                        tr_stage = None
                         if name == GC.TESTCASESTATUS:
                             status_row.append({
                                 'value': value,
