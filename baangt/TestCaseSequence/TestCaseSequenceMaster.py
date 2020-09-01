@@ -42,6 +42,7 @@ class TestCaseSequenceMaster:
             self.execute()
 
     def prepareExecution(self):
+        logger.info("Preparing Test Records...")
         if self.testSequenceData.get(GC.DATABASE_FROM_LINE) and not self.testSequenceData.get(GC.DATABASE_LINES, None):
             # Change old line selection format into new format:
             self.testSequenceData[
@@ -150,7 +151,7 @@ class TestCaseSequenceMaster:
         cloneXls = CloneXls(testDataFile)  # , logger=logger)
         testDataFile = cloneXls.update_or_make_clone(
             ignore_headers=["TestResult", "UseCount"])
-        self.testSequenceData[GC.DATABASE_FILENAME] = self.testSequenceData[GC.DATABASE_FILENAME]
+        self.testSequenceData[GC.DATABASE_FILENAME] = testDataFile
         self.testdataDataBase.read_excel(
                 fileName=testDataFile,
                 sheetName=self.testSequenceData[GC.DATABASE_SHEETNAME])
