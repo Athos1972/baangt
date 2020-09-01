@@ -522,6 +522,25 @@ class BrowserDriver:
 
         return webDrv.webdriver_doSomething(GC.CMD_FORCETEXT, self.element, value=value, timeout=timeout, optional=optional, browserData = self.browserData)
 
+    def findByAndForceViaJS(self, id=None, css=None, xpath:str=None, class_name=None, value=None,
+                           iframe=None, timeout=60, optional=False):
+        """
+        Identifies the object via JS and set's the desired value via JS
+        """
+        xpath = xpath.replace('"', "'")
+        xpath = xpath.replace("'", "\\'")
+        lJSText = "\n".join(
+            [f"var zzbaangt = document.evaluate('{xpath}', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);",
+             "if (zzbaangt.snapshotLength > 0) { ",
+             f"zzbaangt.value='{value}';",
+             "};",
+             f""
+            ]
+        )
+        logger.debug(f"Setting element using JS-Text: {lJSText}")
+
+        self.javaScript(lJSText)
+
     def setBrowserWindowSize(self, browserWindowSize: str):
         """
         Resized the browser Window to a fixed size

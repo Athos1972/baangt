@@ -239,6 +239,10 @@ class TestStepMaster:
             if lValue:
                 self.browserSession.findByAndForceText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout,
                                                        optional=lOptional)
+        elif lActivity == "FORCETEXTJS":
+            if lValue:
+                self.browserSession.findByAndForceViaJS(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout,
+                                                        optional=lOptional)
         elif lActivity == "SETANCHOR":
             if not lLocator:
                 self.anchor = None
