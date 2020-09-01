@@ -188,6 +188,8 @@ class HandleDatabase:
                         new_data_dic[data] = rrd_data[data]
                 elif str(temp_dic[keys])[:4].upper() == "RRE_":
                     rre_data = self.get_data_from_tdg(temp_dic[keys], testDataGenerator)
+                    testDataGenerator.usecount_dict[repr(rre_data)]["use"] += 1
+                    testDataGenerator.update_usecount_in_source_rre(rre_data)
                     for data in rre_data:
                         new_data_dic[data] = rre_data[data]
                 elif str(temp_dic[keys])[:4].upper() == "RLP_":
@@ -203,7 +205,9 @@ class HandleDatabase:
             for key in new_data_dic:
                 temp_dic[key] = new_data_dic[key]
         if testDataGenerator.isUsecount:
-            testDataGenerator.writer.save()  # saving source input file once everything is done
+                testDataGenerator.writer.save()  # saving source input file once everything is done
+        for writer in testDataGenerator.writers:
+            testDataGenerator.writers[writer].save()
 
     def get_data_from_tdg(self, string, testDataGenerator):
         data = testDataGenerator.data_generators(string)

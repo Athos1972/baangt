@@ -38,7 +38,6 @@ class Writer:
         if column:
             sheet.cell(row, column).value = data
 
-
     def save(self):
         # Call this method to save the file once every updates are written
         self.workbook.save(self.path)
@@ -70,7 +69,9 @@ class TestDataGenerator:
         self.sheet_dict, self.raw_data_json = self.read_excel(self.path, self.sheet_name)
         self.remove_header = []
         self.usecount_dict = {}  # used to maintain usecount limit record and verify if that non of the data cross limit
+        self.done = {}
         self.writer = Writer(self.path)  # Writer class object to save file only in end, which will save time
+        self.writers = {}
         self.isUsecount = False
         if not from_handleDatabase:
             self.processed_datas = self.__process_data(self.raw_data_json)
@@ -371,7 +372,7 @@ class TestDataGenerator:
             processed_datas.append(processed_data)
         return processed_datas
 
-    def data_generators(self, raw_data):
+    def data_generators(self, raw_data_old):
         """
         This method first send the data to ``__raw_data_string_process`` method to split the data and remove the unwanted
         spaces.
@@ -390,7 +391,7 @@ class TestDataGenerator:
         :param raw_data:
         :return: List or Tuple containing necessary data
         """
-        raw_data, prefix, data_type = self.__raw_data_string_process(raw_data)
+        raw_data, prefix, data_type = self.__raw_data_string_process(raw_data_old)
         if len(raw_data)<=1:
             return [""]
         if raw_data[0] == "[" and raw_data[-1] == "]" and prefix == "":
@@ -422,6 +423,7 @@ class TestDataGenerator:
                 second_value = self.__splitList(second_value)
             processed_datas = self.__processRrd(first_value, second_value,evaluated_dict)
             processed_datas = data_type(processed_datas)
+            logger.debug(f"Data processed - {raw_data_old}")
 
         elif prefix == "Rre":
             file_name = raw_data[1:-1].split(',')[0].strip()
@@ -443,8 +445,9 @@ class TestDataGenerator:
                 }
             if second_value[0] == "[" and second_value[-1] == "]":
                 second_value = self.__splitList(second_value)
-            processed_datas = self.__processRrd(first_value, second_value, evaluated_dict, sheet_dict)
+            processed_datas = self.__processRrd(first_value, second_value, evaluated_dict, sheet_dict, filename=file_name)
             processed_datas = data_type(processed_datas)
+            logger.debug(f"Data processed - {raw_data_old}")
 
         elif prefix == "Renv":
             processed_datas = self.get_env_variable(raw_data)
@@ -499,11 +502,13 @@ class TestDataGenerator:
                     raw_string = raw_string[4:]
                     data_type = tuple
                 elif raw_string[:4].lower() == "rrd_":         # Remote Random (Remote = other sheet)
+                    logger.debug(f"Processing rrd data - {raw_string}")
                     prefix = "Rrd"
                     raw_string = self.__process_rrd_string(raw_string)
                     raw_string = raw_string[4:]
                     data_type = tuple
                 elif raw_string[:4].lower() == "rre_":         # Remote Random (Remote = other sheet)
+                    logger.debug(f"Processing rre data - {raw_string}")
                     prefix = "Rre"
                     raw_string = self.__process_rre_string(raw_string)
                     raw_string = raw_string[4:]
@@ -561,7 +566,7 @@ class TestDataGenerator:
         proccesed_datas = [data.strip() for data in raw_data[1:-1].split(",")]
         return proccesed_datas
 
-    def __processRrd(self, sheet_name, data_looking_for, data_to_match: dict, sheet_dict=None, caller="RRD_"):
+    def __processRrd(self, sheet_name, data_looking_for, data_to_match: dict, sheet_dict=None, caller="RRD_", filename=None):
         """
         This function is internal function to process the data wil RRD_ prefix.
         The General input in excel file is like ``RRD_[sheetName,TargetData,[Header:[values**],Header:[values**]]]``
@@ -591,8 +596,13 @@ class TestDataGenerator:
             f"Excel file doesn't contain {sheet_name} sheet. Please recheck. Called in '{caller}'"
         base_sheet = sheet_dict[sheet_name]
         data_lis = []
+
         if type(data_looking_for) == str:
             data_looking_for = data_looking_for.split(",")
+        key_name = repr(sheet_name)+repr(data_looking_for)+repr(data_to_match)+repr(filename)
+        if key_name in self.done:
+            logger.debug(f"Data Gathered from previously saved data.")
+            return self.done[key_name]
 
         usecount, limit, usecount_header = self.check_usecount(base_sheet[0])
         for data in base_sheet:
@@ -607,27 +617,34 @@ class TestDataGenerator:
                 if data_looking_for[0] == "*":
                     data_lis.append(data)
                     self.usecount_dict[repr(data)] = {
-                        "use": used_limit, "limit": limit, "index": base_sheet.index(data) + 2, "sheet_name": sheet_name
+                        "use": used_limit, "limit": limit, "index": base_sheet.index(data) + 2,
+                        "sheet_name": sheet_name, "file_name": filename
                     }
+
                 else:
                     dt = {keys: data[keys] for keys in data_looking_for}
                     data_lis.append(dt)
                     self.usecount_dict[repr(dt)] = {
-                        "use" : used_limit, "limit" : limit, "index": base_sheet.index(data) + 2, "sheet_name": sheet_name
+                        "use": used_limit, "limit": limit, "index": base_sheet.index(data) + 2,
+                        "sheet_name": sheet_name, "file_name": filename
                     }
             else:
                 if [data[key] for key in data_to_match] in matching_data:
                     if data_looking_for[0] == "*":
                         data_lis.append(data)
                         self.usecount_dict[repr(data)] = {
-                        "use": used_limit, "limit": limit, "index": base_sheet.index(data) + 2, "sheet_name": sheet_name
-                    }
+                            "use": used_limit, "limit": limit, "index": base_sheet.index(data) + 2,
+                            "sheet_name": sheet_name, "file_name": filename
+                        }
                     else:
                         dt = {keys: data[keys] for keys in data_looking_for}
                         data_lis.append(dt)
                         self.usecount_dict[repr(dt)] = {
-                        "use" : used_limit, "limit" : limit, "index": base_sheet.index(data) + 2, "sheet_name": sheet_name
-                    }
+                            "use": used_limit, "limit": limit, "index": base_sheet.index(data) + 2,
+                            "sheet_name": sheet_name, "file_name": filename
+                        }
+        logger.debug(f"New Data Gathered.")
+        self.done[key_name] = data_lis
         return data_lis
 
     def check_usecount(self, data):
@@ -650,6 +667,15 @@ class TestDataGenerator:
 
     def update_usecount_in_source(self, data):
         self.writer.write(
+            self.usecount_dict[repr(data)]["index"], self.usecount_dict[repr(data)]["use"],
+            self.usecount_dict[repr(data)]["sheet_name"]
+        )
+
+    def update_usecount_in_source_rre(self, data):
+        filename = self.usecount_dict[repr(data)]["file_name"]
+        if filename not in self.writers:
+            self.writers[filename] = Writer(filename)
+        self.writers[filename].write(
             self.usecount_dict[repr(data)]["index"], self.usecount_dict[repr(data)]["use"],
             self.usecount_dict[repr(data)]["sheet_name"]
         )
