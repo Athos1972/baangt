@@ -86,7 +86,7 @@ class BrowserDriver:
         self.takeTime("Browser Start")
         self.randomProxy = randomProxy
         self.browserName = browserName
-        self.bpid = []
+        self.browserProcessID = []
         lCurPath = Path(self.managedPaths.getOrSetDriverPath())
 
         if browserName in webDrv.BROWSER_DRIVERS:
@@ -99,14 +99,14 @@ class BrowserDriver:
             elif GC.BROWSER_FIREFOX == browserName:
                 self.browserData.driver = self._browserFirefoxRun(browserName, lCurPath, browserProxy, randomProxy, desiredCapabilities)
                 helper.browserHelper_startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance, browserProxy=browserProxy)
-                self.bpid.append(self.browserData.driver.capabilities.get("moz:processID"))
+                self.browserProcessID.append(self.browserData.driver.capabilities.get("moz:processID"))
             elif GC.BROWSER_CHROME == browserName:
                 self.browserData.driver = self._browserChromeRun(browserName, lCurPath, browserProxy, randomProxy, desiredCapabilities)
                 helper.browserHelper_startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance, browserProxy=browserProxy)
                 try:
                     port = self.browserData.driver.capabilities['goog:chromeOptions']["debuggerAddress"].split(":")[1]
                     fp = os.popen(f"lsof -nP -iTCP:{port} | grep LISTEN")
-                    self.bpid.append(int(fp.readlines()[-1].split()[1]))
+                    self.browserProcessID.append(int(fp.readlines()[-1].split()[1]))
                 except Exception as ex:
                     logger.info(ex)
             elif GC.BROWSER_EDGE == browserName:
@@ -123,8 +123,8 @@ class BrowserDriver:
                                                         command_executor=GC.REMOTE_EXECUTE_URL,
                                                         desired_capabilities=desiredCapabilities)
             else:
-                # TODO add exception, this code should never be reached
-                pass
+                logger.critical(f"Browsername not found: {browserName}. Cancelling test run")
+                raise SystemError(f"Browsername not found: {browserName}. Cancelling test run")
         elif GC.BROWSER_REMOTE_V4 == browserName:
             desired_capabilities, seleniumGridIp, seleniumGridPort = helper.browserHelper_setSettingsRemoteV4(desiredCapabilities)
 
@@ -218,8 +218,8 @@ class BrowserDriver:
         try:
             if self.browserData.driver:
                 try:
-                    if len(self.bpid) > 0:
-                        for bpid in self.bpid:
+                    if len(self.browserProcessID) > 0:
+                        for bpid in self.browserProcessID:
                             os.kill(bpid, signal.SIGINT)
                 except:
                     pass

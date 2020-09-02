@@ -499,6 +499,16 @@ class TestStepMaster:
                 self.manageNestedCondition(condition="IF", ifis=True)
             else:
                 self.manageNestedCondition(condition="IF", ifis=False)
+        elif lComparison == ">=":
+            if value1 >= value2:
+                self.manageNestedCondition(condition="IF", ifis=True)
+            else:
+                self.manageNestedCondition(condition="IF", ifis=False)
+        elif lComparison == "<=":
+            if value1 <= value2:
+                self.manageNestedCondition(condition="IF", ifis=True)
+            else:
+                self.manageNestedCondition(condition="IF", ifis=False)
         elif not lComparison:  # Check only, if Value1 has a value.
             val = True if value1 else False
             self.manageNestedCondition(condition="IF", ifis=val)
