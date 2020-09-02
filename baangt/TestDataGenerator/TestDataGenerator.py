@@ -11,6 +11,7 @@ from random import sample, randint
 import baangt.base.GlobalConstants as GC
 import re
 from openpyxl import load_workbook
+import sys
 
 logger = logging.getLogger("pyC")
 
@@ -421,8 +422,11 @@ class TestDataGenerator:
                 }
             if second_value[0] == "[" and second_value[-1] == "]":
                 second_value = self.__splitList(second_value)
-            processed_datas = self.__processRrd(first_value, second_value,evaluated_dict)
-            processed_datas = data_type(processed_datas)
+            try:
+                processed_datas = self.__processRrd(first_value, second_value,evaluated_dict)
+                processed_datas = data_type(processed_datas)
+            except KeyError:
+                sys.exit(f"Please check that source files contains all the headers mentioned in : {raw_data_old}")
             logger.debug(f"Data processed - {raw_data_old}")
 
         elif prefix == "Rre":
@@ -445,7 +449,10 @@ class TestDataGenerator:
                 }
             if second_value[0] == "[" and second_value[-1] == "]":
                 second_value = self.__splitList(second_value)
-            processed_datas = self.__processRrd(first_value, second_value, evaluated_dict, sheet_dict, filename=file_name)
+            try:
+                processed_datas = self.__processRrd(first_value, second_value, evaluated_dict, sheet_dict, filename=file_name)
+            except KeyError:
+                sys.exit(f"Please check that source files contains all the headers mentioned in : {raw_data_old}")
             processed_datas = data_type(processed_datas)
             logger.debug(f"Data processed - {raw_data_old}")
 
@@ -629,7 +636,8 @@ class TestDataGenerator:
                         "sheet_name": sheet_name, "file_name": filename
                     }
             else:
-                if [data[key] for key in data_to_match] in matching_data:
+                data_to_match_list = [data[key] for key in data_to_match]
+                if data_to_match_list in matching_data:
                     if data_looking_for[0] == "*":
                         data_lis.append(data)
                         self.usecount_dict[repr(data)] = {
@@ -643,6 +651,10 @@ class TestDataGenerator:
                             "use": used_limit, "limit": limit, "index": base_sheet.index(data) + 2,
                             "sheet_name": sheet_name, "file_name": filename
                         }
+        if len(data_lis) == 0:
+            dic = [{key: l for key, l in zip(data_to_match, lis)} for lis in matching_data]
+            logger.info(f"No data matching: {dic}")
+            sys.exit(f"No data matching: {dic}")
         logger.debug(f"New Data Gathered.")
         self.done[key_name] = data_lis
         return data_lis
