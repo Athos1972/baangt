@@ -477,9 +477,10 @@ class TestDataGenerator:
         return processed_datas
 
     def __processRrdRre(self, sheet_name, data_looking_for, data_to_match: dict, filename=None):
-        if not filename:
-            filename = self.path
-        df = pd.read_excel(filename, sheet_name, dtype=str)
+        if filename:
+            df = pd.read_excel(filename, sheet_name, dtype=str)
+        else:
+            df = self.sheet_dict[sheet_name]
         df1 = df.copy()
         for key, value in data_to_match.items():
             if not isinstance(value, list):
@@ -601,19 +602,18 @@ class TestDataGenerator:
         :param sheet_name: Name of base sheet sheet where main input data is located. Default will be the first sheet.
         :return: Dictionary of all sheets and data, Dictionary of base sheet.
         """
-        wb = xlrd.open_workbook(path)
-        sheet_lis = wb.sheet_names()
-        sheet_dict = {}
+        wb = pd.ExcelFile(path)
+        sheet_lis = wb.sheet_names
+        sheet_df = {}
         for sheet in sheet_lis:
-            xl_obj = xl2dict.XlToDict()
-            data = xl_obj.fetch_data_by_column_by_sheet_name(path,sheet_name=sheet)
-            sheet_dict[sheet] = data
+            df = pd.read_excel(path, sheet)
+            sheet_df[sheet] = df
         if sheet_name == "":
-            base_sheet = sheet_dict[sheet_lis[0]]
+            base_sheet = sheet_df[sheet_lis[0]]
         else:
-            assert sheet_name in sheet_dict, f"Excel file doesn't contain {sheet_name} sheet. Please recheck."
-            base_sheet = sheet_dict[sheet_name]
-        return sheet_dict, base_sheet
+            assert sheet_name in sheet_df, f"Excel file doesn't contain {sheet_name} sheet. Please recheck."
+            base_sheet = sheet_df[sheet_name]
+        return sheet_df, base_sheet
 
     @staticmethod
     def __splitList(raw_data):
