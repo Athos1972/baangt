@@ -134,7 +134,7 @@ class HandleDatabase:
         if not fileName:
             logger.critical(f"Can't open file: {fileName}")
             return
-
+        logger.debug(f"Reading excel file {fileName}...")
         book = open_workbook(fileName)
         sheet = book.sheet_by_name(sheetName)
 
@@ -164,6 +164,7 @@ class HandleDatabase:
             self.dataDict.append(temp_dic)
 
     def update_datarecords(self, dataDict, fileName, sheetName):
+        logger.debug("Updating prefix data...")
         testDataGenerator = TestDataGenerator(fileName, sheetName=sheetName, from_handleDatabase=True)
         for td in dataDict:
             temp_dic = dataDict[td]
@@ -208,6 +209,7 @@ class HandleDatabase:
                 testDataGenerator.writer.save()  # saving source input file once everything is done
         for writer in testDataGenerator.writers:
             testDataGenerator.writers[writer].save()
+            logger.debug(f"File updated: {writer}")
 
     def get_data_from_tdg(self, string, testDataGenerator):
         data = testDataGenerator.data_generators(string)

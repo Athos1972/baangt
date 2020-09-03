@@ -742,6 +742,7 @@ class TestDataGenerator:
     def update_usecount_in_source_rre(self, data):
         filename = self.usecount_dict[repr(data)]["file_name"]
         if filename not in self.writers:
+            logger.debug(f"Updating file: {filename}")
             self.writers[filename] = Writer(filename)
         self.writers[filename].write(
             self.usecount_dict[repr(data)]["index"], self.usecount_dict[repr(data)]["use"],
