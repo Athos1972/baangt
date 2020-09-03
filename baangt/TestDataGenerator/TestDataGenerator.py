@@ -12,6 +12,7 @@ import baangt.base.GlobalConstants as GC
 import re
 from openpyxl import load_workbook
 import sys
+import pandas as pd
 
 logger = logging.getLogger("pyC")
 
@@ -431,7 +432,6 @@ class TestDataGenerator:
 
         elif prefix == "Rre":
             file_name = raw_data[1:-1].split(',')[0].strip()
-            sheet_dict, _ = self.read_excel(file_name)
             first_value = raw_data[1:-1].split(',')[1].strip()
             second_value = raw_data[1:-1].split(',')[2].strip()
             if second_value[0] == "[":
@@ -450,7 +450,7 @@ class TestDataGenerator:
             if second_value[0] == "[" and second_value[-1] == "]":
                 second_value = self.__splitList(second_value)
             try:
-                processed_datas = self.__processRrd(first_value, second_value, evaluated_dict, sheet_dict, filename=file_name)
+                processed_datas = self.__processRre(first_value, second_value, evaluated_dict, filename=file_name)
             except KeyError:
                 sys.exit(f"Please check that source files contains all the headers mentioned in : {raw_data_old}")
             processed_datas = data_type(processed_datas)
@@ -475,6 +475,62 @@ class TestDataGenerator:
             processed_datas = [raw_data.strip()]
             processed_datas = data_type(processed_datas)
         return processed_datas
+
+    def __processRre(self, sheet_name, data_looking_for, data_to_match: dict, filename):
+        df = pd.read_excel(filename, sheet_name)
+        df1 = df.copy()
+        for key, value in data_to_match.items():
+            if not isinstance(value, list):
+                value = [value]
+            for i, val in enumerate(value):
+                if not isinstance(val, str):
+                    continue
+                if val.isnumeric():
+                    value[i] = float(val)
+            df1 = df1.loc[df1[key].isin(value)]
+        data_lis = []
+
+        if type(data_looking_for) == str:
+            data_looking_for = data_looking_for.split(",")
+        key_name = repr(sheet_name) + repr(data_looking_for) + repr(data_to_match) + repr(filename)
+        if key_name in self.done:
+            logger.debug(f"Data Gathered from previously saved data.")
+            return self.done[key_name]
+
+        usecount, limit, usecount_header = self.check_usecount(df.columns.values.tolist())
+        for tup in df1.itertuples():
+            data = tup._asdict()
+            if usecount_header:
+                try:
+                    used_limit = int(data[usecount_header])
+                except:
+                    used_limit = 0
+            else:
+                used_limit = 0
+
+            if data_looking_for[0] == "*":
+                index = data["Index"] + 1
+                del data["Index"]
+                data_lis.append(data)
+                self.usecount_dict[repr(data)] = {
+                    "use": used_limit, "limit": limit, "index": index,
+                    "sheet_name": sheet_name, "file_name": filename
+                }
+            else:
+                dt = {keys: data[keys] for keys in data_looking_for}
+                data_lis.append(dt)
+                self.usecount_dict[repr(dt)] = {
+                    "use": used_limit, "limit": limit, "index": data["Index"] + 1,
+                    "sheet_name": sheet_name, "file_name": filename
+                }
+
+        if len(data_lis) == 0:
+            logger.info(f"No data matching: {data_to_match}")
+            sys.exit(f"No data matching: {data_to_match}")
+        logger.debug(f"New Data Gathered.")
+        self.done[key_name] = data_lis
+
+        return data_lis
 
     def __raw_data_string_process(self, raw_string):
         """
