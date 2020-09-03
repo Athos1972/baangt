@@ -83,7 +83,7 @@ def test_write_to_wrong_Path():
 
 def test_rrd_simple_input():
     # Checks __processRrd to get dict to target data
-    rrd_output_dict = testDataGenerator._TestDataGenerator__processRrd(
+    rrd_output_dict = testDataGenerator._TestDataGenerator__processRrdRre(
         'Customers', 'Customer', {'Age group': ['30s', '40s'], 'Employment_status': ['employed']}
     )
     assert len(rrd_output_dict) > 0
@@ -93,7 +93,7 @@ def test_rrd_simple_input():
 
 def test_rrd_target_data_all():
     # Checks __processRrd to get dict to for all data of matching values
-    rrd_output_dict = testDataGenerator._TestDataGenerator__processRrd(
+    rrd_output_dict = testDataGenerator._TestDataGenerator__processRrdRre(
         'Customers', '*', {'Age group': ['30s', '40s'], 'Employment_status': ['employed']}
     )
     assert len(rrd_output_dict) > 0
@@ -103,7 +103,7 @@ def test_rrd_target_data_all():
 
 def test_rrd_no_data_to_match():
     # Checks __processRrd to get dict to for all data of when no value of matching is given
-    rrd_output_dict = testDataGenerator._TestDataGenerator__processRrd('PaymentTerms', '*', {})
+    rrd_output_dict = testDataGenerator._TestDataGenerator__processRrdRre('PaymentTerms', '*', {})
     assert len(rrd_output_dict) > 0
     for data in rrd_output_dict:
         print(data)
