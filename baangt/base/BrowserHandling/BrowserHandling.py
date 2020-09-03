@@ -527,17 +527,23 @@ class BrowserDriver:
         """
         Identifies the object via JS and set's the desired value via JS
         """
+        # element, html = self.findBy(id=id ,css=css, xpath=xpath, class_name=class_name, iframe=iframe,
+        # timeout=timeout, optional=optional)
+        # didn't work to give the element to JavaScript-method
+
         xpath = xpath.replace('"', "'")
         xpath = xpath.replace("'", "\\'")
         lJSText = "\n".join(
             [f"var zzbaangt = document.evaluate('{xpath}', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);",
              "if (zzbaangt.snapshotLength > 0) { ",
-             f"zzbaangt.value='{value}';",
+             f"zzbaangt[0].value='{value}';",
              "};",
              f""
             ]
         )
         logger.debug(f"Setting element using JS-Text: {lJSText}")
+
+        # lJSText = f"arguments[0].value='{value}';" --> Didn't work with Element.
 
         self.javaScript(lJSText)
 

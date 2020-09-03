@@ -20,7 +20,7 @@ if __name__ == '__main__':
                           "dataclasses", "dataclasses-json",
                           "faker",  "gevent", "jinja2", "lxml",
                           "openpyxl",
-                          "Pillow", "pluggy", "pyperclip",  "pyQT5==5.14.2",
+                          "pandas", "Pillow", "pluggy", "pyperclip",  "pyQT5==5.14.2",
                           "requests", "requests-toolbelt",
                           "schwifty", "selenium", "sqlalchemy",
                           "urllib3", "psutil", "pymsteams", "slack-webhook",
