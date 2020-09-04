@@ -1,8 +1,6 @@
 import csv
 import itertools
 import xlsxwriter
-import xl2dict
-import xlrd3 as xlrd
 import errno
 import os
 import logging
@@ -69,6 +67,7 @@ class TestDataGenerator:
         if not os.path.isfile(self.path):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), self.path)
         self.sheet_dict, self.raw_data_json = self.read_excel(self.path, self.sheet_name)
+        self.rre_sheets = {}
         self.remove_header = []
         self.usecount_dict = {}  # used to maintain usecount limit record and verify if that non of the data cross limit
         self.done = {}
@@ -428,7 +427,6 @@ class TestDataGenerator:
                 processed_datas = data_type(processed_datas)
             except KeyError:
                 sys.exit(f"Please check that source files contains all the headers mentioned in : {raw_data_old}")
-            logger.debug(f"Data processed - {raw_data_old}")
 
         elif prefix == "Rre":
             file_name = raw_data[1:-1].split(',')[0].strip()
@@ -478,7 +476,16 @@ class TestDataGenerator:
 
     def __processRrdRre(self, sheet_name, data_looking_for, data_to_match: dict, filename=None):
         if filename:
-            df = pd.read_excel(filename, sheet_name, dtype=str)
+            if filename in self.rre_sheets:
+                if sheet_name in self.rre_sheets[filename]:
+                    df = self.rre_sheets[filename][sheet_name]
+                else:
+                    df = pd.read_excel(filename, sheet_name, dtype=str)
+                    self.rre_sheets[filename][sheet_name] = df
+            else:
+                self.rre_sheets[filename] = {}
+                df = pd.read_excel(filename, sheet_name, dtype=str)
+                self.rre_sheets[filename][sheet_name] = df
         else:
             df = self.sheet_dict[sheet_name]
         df1 = df.copy()
@@ -653,7 +660,6 @@ class TestDataGenerator:
     def update_usecount_in_source_rre(self, data):
         filename = self.usecount_dict[repr(data)]["file_name"]
         if filename not in self.writers:
-            logger.debug(f"Updating file: {filename}")
             self.writers[filename] = Writer(filename)
         self.writers[filename].write(
             self.usecount_dict[repr(data)]["index"], self.usecount_dict[repr(data)]["use"],
