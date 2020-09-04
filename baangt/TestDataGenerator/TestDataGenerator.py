@@ -613,7 +613,7 @@ class TestDataGenerator:
         sheet_lis = wb.sheet_names
         sheet_df = {}
         for sheet in sheet_lis:
-            df = pd.read_excel(path, sheet)
+            df = pd.read_excel(path, sheet, dtype=str)
             sheet_df[sheet] = df
         if sheet_name == "":
             base_sheet = sheet_df[sheet_lis[0]]
