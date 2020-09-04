@@ -11,6 +11,7 @@ import re
 from openpyxl import load_workbook
 import sys
 import pandas as pd
+from CloneXls import CloneXls
 
 logger = logging.getLogger("pyC")
 
@@ -449,7 +450,8 @@ class TestDataGenerator:
                 second_value = self.__splitList(second_value)
             try:
                 processed_datas = self.__processRrdRre(first_value, second_value, evaluated_dict, filename=file_name)
-            except KeyError:
+            except KeyError as e:
+                raise e
                 sys.exit(f"Please check that source files contains all the headers mentioned in : {raw_data_old}")
             processed_datas = data_type(processed_datas)
 
@@ -475,14 +477,16 @@ class TestDataGenerator:
 
     def __processRrdRre(self, sheet_name, data_looking_for, data_to_match: dict, filename=None):
         if filename:
-            if filename in self.rre_sheets:
-                if sheet_name in self.rre_sheets[filename]:
-                    df = self.rre_sheets[filename][sheet_name]
-                else:
-                    df = pd.read_excel(filename, sheet_name, dtype=str)
-                    self.rre_sheets[filename][sheet_name] = df
-            else:
+            file_name = ".".join(filename.split(".")[:-1])
+            file_extension = filename.split(".")[-1]
+            file = file_name + "_baangt" + "." + file_extension
+            if not file in self.rre_sheets:
+                filename = CloneXls(filename).update_or_make_clone()
                 self.rre_sheets[filename] = {}
+            filename = file
+            if sheet_name in self.rre_sheets[filename]:
+                df = self.rre_sheets[filename][sheet_name]
+            else:
                 df = pd.read_excel(filename, sheet_name, dtype=str)
                 self.rre_sheets[filename][sheet_name] = df
         else:
