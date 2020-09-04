@@ -452,7 +452,6 @@ class TestDataGenerator:
             except KeyError:
                 sys.exit(f"Please check that source files contains all the headers mentioned in : {raw_data_old}")
             processed_datas = data_type(processed_datas)
-            logger.debug(f"Data processed - {raw_data_old}")
 
         elif prefix == "Renv":
             processed_datas = self.get_env_variable(raw_data)
@@ -570,13 +569,11 @@ class TestDataGenerator:
                     raw_string = raw_string[4:]
                     data_type = tuple
                 elif raw_string[:4].lower() == "rrd_":         # Remote Random (Remote = other sheet)
-                    logger.debug(f"Processing rrd data - {raw_string}")
                     prefix = "Rrd"
                     raw_string = self.__process_rrd_string(raw_string)
                     raw_string = raw_string[4:]
                     data_type = tuple
                 elif raw_string[:4].lower() == "rre_":         # Remote Random (Remote = other sheet)
-                    logger.debug(f"Processing rre data - {raw_string}")
                     prefix = "Rre"
                     raw_string = self.__process_rre_string(raw_string)
                     raw_string = raw_string[4:]
@@ -592,8 +589,13 @@ class TestDataGenerator:
             data_type = list
         return raw_string, prefix, data_type
 
-    @staticmethod
-    def read_excel(path, sheet_name=""):
+    def get_str_sheet(self, excel, sheet):
+        columns = excel.parse(sheet).columns
+        converters = {column: str for column in columns}
+        data = excel.parse(sheet, converters=converters)
+        return data
+
+    def read_excel(self, path, sheet_name=""):
         """
         This method will read the input excel file.
         It will read all the sheets inside this excel file and will create a dictionary of dictionary containing all data
@@ -613,8 +615,7 @@ class TestDataGenerator:
         sheet_lis = wb.sheet_names
         sheet_df = {}
         for sheet in sheet_lis:
-            df = pd.read_excel(path, sheet, dtype=str)
-            sheet_df[sheet] = df
+            sheet_df[sheet] = self.get_str_sheet(wb, sheet)
         if sheet_name == "":
             base_sheet = sheet_df[sheet_lis[0]]
         else:

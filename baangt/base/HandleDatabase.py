@@ -184,17 +184,21 @@ class HandleDatabase:
                         )
 
                 if str(temp_dic[keys])[:4].upper() == "RRD_":
+                    logger.debug(f"Processing rrd data - {temp_dic[keys]}")
                     rrd_data = self.get_data_from_tdg(temp_dic[keys], testDataGenerator)
                     testDataGenerator.usecount_dict[repr(rrd_data)]["use"] += 1
                     testDataGenerator.update_usecount_in_source(rrd_data)
                     for data in rrd_data:
                         new_data_dic[data] = rrd_data[data]
+                    logger.debug(f"Data processed - {temp_dic[keys]}")
                 elif str(temp_dic[keys])[:4].upper() == "RRE_":
+                    logger.debug(f"Processing rre data - {temp_dic[keys]}")
                     rre_data = self.get_data_from_tdg(temp_dic[keys], testDataGenerator)
                     testDataGenerator.usecount_dict[repr(rre_data)]["use"] += 1
                     testDataGenerator.update_usecount_in_source_rre(rre_data)
                     for data in rre_data:
                         new_data_dic[data] = rre_data[data]
+                    logger.debug(f"Data processed - {temp_dic[keys]}")
                 elif str(temp_dic[keys])[:4].upper() == "RLP_":
                     temp_dic[keys] = self.rlp_process(temp_dic[keys], fileName)
                 elif str(temp_dic[keys])[:5].upper() == "RENV_":
@@ -215,9 +219,10 @@ class HandleDatabase:
             size += os.stat(file).st_size
         if size > 1000000:
             logger.debug("Source files are updating in a thread.")
-            t = Thread(target=self.update_sources, args=[testDataGenerator,])
+            t = Thread(target=self.update_sources, args=(testDataGenerator,))
             t.daemon = True
             t.start()
+            t.join()
         else:
             logger.debug("Source files are updating in main thread.")
             self.update_sources(testDataGenerator)
