@@ -1,13 +1,9 @@
 import logging
 from xlrd3 import open_workbook
-import itertools
 import json
 import baangt.base.CustGlobalConstants as CGC
 import baangt.base.GlobalConstants as GC
 from baangt.base.Utils import utils
-import baangt.TestSteps.Exceptions
-from pathlib import Path
-import xl2dict
 import re
 from random import randint
 from openpyxl import load_workbook
@@ -33,7 +29,7 @@ class Writer:
         column = 0
         sheet = self.workbook[sht]
         headers = next(sheet.rows)
-        for header in headers:  # checks if usecount header is present in sheet
+        for header in headers:  # finds the header position
             if "usecount" in str(header.value).lower():
                 column = headers.index(header) + 1
         if column:
@@ -72,6 +68,7 @@ class HandleDatabase:
         self.dataDict = []
         self.recordPointer = 0
         self.sheet_dict = {}
+        self.usecount = False
 
     def __buildRangeDict(self):
         """
@@ -137,7 +134,7 @@ class HandleDatabase:
         if not fileName:
             logger.critical(f"Can't open file: {fileName}")
             return
-
+        logger.debug(f"Reading excel file {fileName}...")
         book = open_workbook(fileName)
         sheet = book.sheet_by_name(sheetName)
 
@@ -150,7 +147,6 @@ class HandleDatabase:
             testrun_index = testrun_index[0] + 1  # adding +1 value which is the correct column position
         else:  # if list is empty that means their is no testresult header
             testrun_index = 0
-
 
         for row_index in range(1, sheet.nrows):
             temp_dic = {}
@@ -166,10 +162,10 @@ class HandleDatabase:
             temp_dic["testcase_file"] = fileName
             temp_dic["testcase_column"] = testrun_index
             self.dataDict.append(temp_dic)
-        self.usecount_dict = {}  # used to maintain usecount limit record and verify if that non of the data cross limit
-        self.writer = Writer(fileName)  # Writer class object to save file only in end, which will save time
 
-    def update_datarecords(self, dataDict, fileName):
+    def update_datarecords(self, dataDict, fileName, sheetName):
+        logger.debug("Updating prefix data...")
+        testDataGenerator = TestDataGenerator(fileName, sheetName=sheetName, from_handleDatabase=True)
         for td in dataDict:
             temp_dic = dataDict[td]
             new_data_dic = {}
@@ -185,19 +181,25 @@ class HandleDatabase:
                             temp_dic[keys][start_index:end_index+1], data_to_replace_with
                         )
 
-                if str(temp_dic[keys])[:4] == "RRD_":
-                    rrd_string = self.__process_rrd_string(temp_dic[keys])
-                    rrd_data = self.__rrd_string_to_python(rrd_string[4:], fileName)
+                if str(temp_dic[keys])[:4].upper() == "RRD_":
+                    logger.debug(f"Processing rrd data - {temp_dic[keys]}")
+                    rrd_data = self.get_data_from_tdg(temp_dic[keys], testDataGenerator)
+                    testDataGenerator.usecount_dict[repr(rrd_data)]["use"] += 1
+                    testDataGenerator.update_usecount_in_source(rrd_data)
                     for data in rrd_data:
                         new_data_dic[data] = rrd_data[data]
-                elif str(temp_dic[keys][:4]) == "RRE_":
-                    rre_string = self.__process_rre_string(temp_dic[keys])
-                    rre_data = self.__rre_string_to_python(rre_string[4:])
+                    logger.debug(f"Data processed - {temp_dic[keys]}")
+                elif str(temp_dic[keys])[:4].upper() == "RRE_":
+                    logger.debug(f"Processing rre data - {temp_dic[keys]}")
+                    rre_data = self.get_data_from_tdg(temp_dic[keys], testDataGenerator)
+                    testDataGenerator.usecount_dict[repr(rre_data)]["use"] += 1
+                    testDataGenerator.update_usecount_in_source(rre_data)
                     for data in rre_data:
                         new_data_dic[data] = rre_data[data]
-                elif str(temp_dic[keys][:4]) == "RLP_":
+                    logger.debug(f"Data processed - {temp_dic[keys]}")
+                elif str(temp_dic[keys])[:4].upper() == "RLP_":
                     temp_dic[keys] = self.rlp_process(temp_dic[keys], fileName)
-                elif str(temp_dic[keys][:5]).upper() == "RENV_":
+                elif str(temp_dic[keys])[:5].upper() == "RENV_":
                     temp_dic[keys] = str(TestDataGenerator.get_env_variable(temp_dic[keys][5:]))
                 else:
                     try:
@@ -207,7 +209,21 @@ class HandleDatabase:
                         pass
             for key in new_data_dic:
                 temp_dic[key] = new_data_dic[key]
-        self.writer.save()  # saving source input file once everything is done
+        testDataGenerator.save_usecount()
+
+    def get_data_from_tdg(self, string, testDataGenerator):
+        data = testDataGenerator.data_generators(string)
+        if testDataGenerator.usecount_dict[repr(data[0])]["limit"]:
+            data = [d for d in data if testDataGenerator.usecount_dict[repr(d)]["use"
+                                                                ] < testDataGenerator.usecount_dict[repr(d)]["limit"]]
+        if len(data) > 1:
+            data = data[randint(0, len(data) - 1)]
+        elif len(data) == 1:
+            data = data[0]
+        else:
+            raise BaseException(f"Not enough data for {string}, please verify if data is present or usecount limit" \
+                                "has reached!!")
+        return data
 
     def rlp_process(self, string, fileName):
         # Will get real data from rlp_ prefix string
@@ -237,169 +253,12 @@ class HandleDatabase:
                 data = self.rlp_process(data, fileName)
         return data
 
-    def __compareEqualStageInGlobalsAndDataRecord(self, currentNewRecordDict:dict) -> bool:
-        """
-        As method name says, compares, whether Stage in Global-settings is equal to stage in Data Record,
-        so that this record might be excluded, if it's for the wrong Stage.
-
-        :param currentNewRecordDict: The current Record
-        :return: Boolean
-        """
-        lAppend = True
-        if self.globals.get(GC.EXECUTION_STAGE):
-            if currentNewRecordDict.get(GC.EXECUTION_STAGE):
-                if currentNewRecordDict[GC.EXECUTION_STAGE] != self.globals[GC.EXECUTION_STAGE]:
-                    lAppend = False
-        return lAppend
-
-    def __processRrd(self, sheet_name, data_looking_for, data_to_match: dict, sheet_dict=None, caller="RRD_"):
-        """
-        For more detail please refer to TestDataGenerator.py
-        :param sheet_name:
-        :param data_looking_for:
-        :param data_to_match:
-        :return: dictionary of TargetData
-        """
-        sheet_dict = self.sheet_dict if sheet_dict is None else sheet_dict
-        matching_data = [list(x) for x in itertools.product(*[data_to_match[key] for key in data_to_match])]
-        assert sheet_name in sheet_dict, \
-            f"Excel file doesn't contain {sheet_name} sheet. Please recheck. Called in '{caller}'"
-        base_sheet = sheet_dict[sheet_name]
-        data_lis = []
-        if type(data_looking_for) == str:
-            data_looking_for = data_looking_for.split(",")
-
-        usecount, limit, usecount_header = self.check_usecount(base_sheet[0])
-
-        for data in base_sheet:
-            dt = ""
-            if len(matching_data) == 1 and len(matching_data[0]) == 0:
-                if data_looking_for[0] == "*":
-                    dt = data
-                    data_lis.append(dt)
-                else:
-                    dt = {keys: data[keys] for keys in data_looking_for}
-                    data_lis.append(dt)
-            else:
-                if [data[key] for key in data_to_match] in matching_data:
-                    if data_looking_for[0] == "*":
-                        dt = data
-                        data_lis.append(dt)
-                    else:
-                        dt = {keys: data[keys] for keys in data_looking_for}
-                        data_lis.append(dt)
-            if dt:
-                if repr(dt) not in self.usecount_dict:
-                    if usecount_header:
-                        if data[usecount_header]:
-                            used_limit = int(data[usecount_header])
-                        else:
-                            used_limit = 0
-                    else:
-                        used_limit = 0
-                    self.usecount_dict[repr(dt)] = {
-                        "use": used_limit, "limit": limit, "index": base_sheet.index(data) + 2, "sheet_name": sheet_name
-                    }
-                else:
-                    if limit:
-                        if not self.usecount_dict[repr(dt)]["use"] < self.usecount_dict[repr(dt)]["limit"]:
-                            data_lis.remove(dt)
-        return data_lis
-
-    def check_usecount(self, data):
-        # used to find and return if their is usecount header and limit in input file
-        usecount = False
-        limit = 0
-        usecount_header = None
-        for header in data:
-            if "usecount" in header.lower():
-                usecount = True
-                usecount_header = header
-                if "usecount_" in header.lower():
-                    try:
-                        limit = int(header.lower().strip().split("count_")[1])
-                    except:
-                        limit = 0
-        return usecount, limit, usecount_header
-
-    def __rrd_string_to_python(self, raw_data, fileName):
-        """
-        Convert string to python data types
-        :param raw_data:
-        :return:
-        """
-        first_value = raw_data[1:-1].split(',')[0].strip()
-        second_value = raw_data[1:-1].split(',')[1].strip()
-        if second_value[0] == "[":
-            second_value = ','.join(raw_data[1:-1].split(',')[1:]).strip()
-            second_value = second_value[:second_value.index(']') + 1]
-            third_value = [x.strip() for x in ']'.join(raw_data[1:-1].split(']')[1:]).split(',')[1:]]
-        else:
-            third_value = [x.strip() for x in raw_data[1:-1].split(',')[2:]]
-        evaluated_list = ']],'.join(','.join(third_value)[1:-1].strip().split('],')).split('],')
-        if evaluated_list[0] == "":
-            evaluated_dict = {}
-        else:
-            evaluated_dict = {
-                splited_data.split(':')[0]: self.__splitList(splited_data.split(':')[1]) for splited_data in
-                evaluated_list
-            }
-        if second_value[0] == "[" and second_value[-1] == "]":
-            second_value = self.__splitList(second_value)
-        if first_value not in self.sheet_dict:
-            self.sheet_dict, _ = self.__read_excel(path=fileName)
-        processed_datas = self.__processRrd(first_value, second_value, evaluated_dict)
-        assert len(processed_datas)>0, f"No matching data for RRD_. Please check the input file. Was searching for " \
-                                       f"{first_value}, {second_value} and {str(evaluated_dict)} " \
-                                       f"but didn't find anything. Also please check the usecount limit if their is any."
-        final_data = processed_datas[randint(0, len(processed_datas)-1)]
-        if repr(final_data) in self.usecount_dict:
-            self.usecount_dict[repr(final_data)]["use"] += 1
-            self.writer.write(
-                self.usecount_dict[repr(final_data)]["index"], self.usecount_dict[repr(final_data)]["use"],
-                self.usecount_dict[repr(final_data)]["sheet_name"]
-            )
-        return final_data
-
-    def __rre_string_to_python(self, raw_data):
-        """
-        Convert string to python data types
-        :param raw_data:
-        :return:
-        """
-        file_name = raw_data[1:-1].split(',')[0].strip()
-        sheet_dict, _ = self.__read_excel(file_name)
-        first_value = raw_data[1:-1].split(',')[1].strip()
-        second_value = raw_data[1:-1].split(',')[2].strip()
-        if second_value[0] == "[":
-            second_value = ','.join(raw_data[1:-1].split(',')[2:]).strip()
-            second_value = second_value[:second_value.index(']') + 1]
-            third_value = [x.strip() for x in ']'.join(raw_data[1:-1].split(']')[1:]).split(',')[1:]]
-        else:
-            third_value = [x.strip() for x in raw_data[1:-1].split(',')[3:]]
-        evaluated_list = ']],'.join(','.join(third_value)[1:-1].strip().split('],')).split('],')
-        if evaluated_list[0] == "":
-            evaluated_dict = {}
-        else:
-            evaluated_dict = {
-                splited_data.split(':')[0]: self.__splitList(splited_data.split(':')[1]) for splited_data in
-                evaluated_list
-            }
-        if second_value[0] == "[" and second_value[-1] == "]":
-            second_value = self.__splitList(second_value)
-        processed_datas = self.__processRrd(first_value, second_value, evaluated_dict, sheet_dict, caller="RRE_")
-        assert len(processed_datas)>0, f"No matching data for RRD_. Please check the input file. Was searching for " \
-                                       f"{first_value}, {second_value} and {str(evaluated_dict)} " \
-                                       f"but didn't find anything"
-        final_data = randint(0, len(processed_datas)-1)
-        return processed_datas[final_data]
-
     def __rlp_string_to_python(self, raw_data, fileName):
         # will convert rlp string to python
         sheetName = raw_data.split(',')[0].strip()
         headerName = raw_data.split(',')[1].strip().split('=')[0].strip()
         headerValue = raw_data.split(',')[1].strip().split('=')[1].strip()
-        all_sheets, main_sheet = self.__read_excel(path=fileName, sheet_name=sheetName)
+        all_sheets, main_sheet = TestDataGenerator.read_excel(path=fileName, sheet_name=sheetName)
         data_list = []
         for data in main_sheet:
             main_value = data[headerName]
@@ -415,37 +274,6 @@ class HandleDatabase:
                 data_list.append(data)
         return data_list
 
-    def __process_rre_string(self, rre_string):
-        """
-        For more detail please refer to TestDataGenerator.py
-        :param rre_string:
-        :return:
-        """
-        processed_string = ','.join([word.strip() for word in rre_string.split(', ')])
-        match = re.match(
-            r"(RRE_(\(|\[))[\w\d\s\-./\\]+\.(xlsx|xls),[a-zA-z0-9\s]+,(\[?[a-zA-z\s,]+\]?|)|\*,\[([a-zA-z0-9\s]+:\[[a-zA-z0-9,\s]+\](,?))*\]",
-            processed_string)
-        err_string = f"{rre_string} not matching pattern RRE_(fileName, sheetName, TargetData," \
-                     f"[Header1:[Value1],Header2:[Value1,Value2]])"
-        assert match, err_string
-        return processed_string
-
-    def __process_rrd_string(self, rrd_string):
-        """
-        For more detail please refer to TestDataGenerator.py
-        :param rrd_string:
-        :return:
-        """
-        processed_string = ','.join([word.strip() for word in rrd_string.split(', ')])
-        match = re.match(
-            r"(RRD_(\(|\[))[a-zA-z0-9\s]+,(\[?[a-zA-z\s,]+\]?|)|\*,\[([a-zA-z0-9\s]+:\[[a-zA-z0-9,\s]+\](,?))*\]",
-            processed_string
-        )
-        err_string = f"{rrd_string} not matching pattern RRD_(sheetName,TargetData," \
-                     f"[Header1:[Value1],Header2:[Value1,Value2]])"
-        assert match, err_string
-        return processed_string
-
     def __process_rlp_string(self, rlp_string):
         processed_string = ','.join([word.strip() for word in rlp_string.split(', ')])
         match = re.match(
@@ -456,38 +284,20 @@ class HandleDatabase:
         assert match, err_string
         return processed_string
 
-    def __splitList(self, raw_data):
+    def __compareEqualStageInGlobalsAndDataRecord(self, currentNewRecordDict:dict) -> bool:
         """
-        Will convert string list to python list.
-        i.e. "[value1,value2,value3]" ==> ["value1","value2","value3"]
-        :param raw_data: string of list
-        :return: Python list
-        """
-        proccesed_datas = [data.strip() for data in raw_data[1:-1].split(",")]
-        return proccesed_datas
+        As method name says, compares, whether Stage in Global-settings is equal to stage in Data Record,
+        so that this record might be excluded, if it's for the wrong Stage.
 
-    def __read_excel(self, path, sheet_name=""):
+        :param currentNewRecordDict: The current Record
+        :return: Boolean
         """
-        For more detail please refer to TestDataGenerator.py
-        :param path: Path to raw data xlsx file.
-        :param sheet_name: Name of base sheet sheet where main input data is located. Default will be the first sheet.
-        :return: Dictionary of all sheets and data, Dictionary of base sheet.
-        """
-        wb = open_workbook(path)
-        sheet_lis = wb.sheet_names()
-        sheet_dict = {}
-        for sheet in sheet_lis:
-            xl_obj = xl2dict.XlToDict()
-            data = xl_obj.fetch_data_by_column_by_sheet_name(path,sheet_name=sheet)
-            sheet_dict[sheet] = data
-        if sheet_name == "":
-            base_sheet = sheet_dict[sheet_lis[0]]
-        else:
-            assert sheet_name in sheet_dict, f"Excel file doesn't contain {sheet_name} sheet. Please recheck."
-            base_sheet = sheet_dict[sheet_name]
-        self.sheet_dict = sheet_dict
-        self.base_sheet = base_sheet
-        return sheet_dict, base_sheet
+        lAppend = True
+        if self.globals.get(GC.EXECUTION_STAGE):
+            if currentNewRecordDict.get(GC.EXECUTION_STAGE):
+                if currentNewRecordDict[GC.EXECUTION_STAGE] != self.globals[GC.EXECUTION_STAGE]:
+                    lAppend = False
+        return lAppend
 
     def readNextRecord(self):
         """

@@ -139,12 +139,9 @@ class ExportResults:
                     if field.upper() in lListPasswordFieldNames:
                         self.dataRecords[key][field] = "*" * 8
                     if field in self.testRunInstance.globalSettings.keys():
-                        logger.debug(
-                            f"Added {field} to fields to be removed from data record as it exists in GlobalSettings already.")
                         fieldsToPop.append(field)
                 for field in fieldsToPop:
                     if field != 'Screenshots' and field != 'Stage':   # Stage and Screenshot are needed in output file
-                        logger.debug(f"Removed field {field} from data record.")
                         fields.pop(field)
 
     def exportAdditionalData(self):
@@ -257,16 +254,17 @@ class ExportResults:
         self.__save_commit(session)
 
         # create testcase sequence instance
-        tcs_log = TestCaseSequenceLog(testrun=tr_log)
+        tcs_log = TestCaseSequenceLog(testrun=tr_log, number=1)
 
         # create testcases
-        for tc in self.dataRecords.values():
+        for tc_number, tc in enumerate(self.dataRecords.values(), 1):
             # get uuid
             uuid = uuid4()
             # create TestCaseLog instances
             tc_log = TestCaseLog(
                 id=uuid.bytes,
-                testcase_sequence=tcs_log
+                testcase_sequence=tcs_log,
+                number=tc_number,
             )
             # store uuid
             self.testcase_uuids.append(uuid)
@@ -600,7 +598,6 @@ class ExportResults:
             testrun_file = load_workbook(self.dataRecords[0]["testcase_file"])
             testrun_sheet = testrun_file.get_sheet_by_name(self.dataRecords[0]["testcase_sheet"])
             for key, value in self.dataRecords.items():
-                print(value)
                 data = f"TestCaseStatus: {value['TestCaseStatus']}\r\n" \
                        f"Timestamp: {self.testRun_end}\r\n" \
                        f"Duration: {value['Duration']}\r\n" \

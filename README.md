@@ -17,3 +17,12 @@ Please find the full documentation on [ReadTheDocs](https://baangt.readthedocs.i
 * Official repository for download: [https://github.com/Athos1972/baangt](https://github.com/Athos1972/baangt)
 * Nightly builds: [https://gogs.earthsquad.global/Athos/baangt](https://gogs.earthsquad.global/Athos/baangt) 
 * Binary repositories: [https://github.com/Athos1972/baangt-executables](https://github.com/Athos1972/baangt-executables)
+
+# UPDATE: 24 Aug 2020  
+The `ResultsDB` structure was updatetd to support `ResultsBrowser` module:
+* field `number` was inrouduced to tables `TestCaseSequences` and `TestCases`
+
+To update an older DB, run
+```bash
+python db_update.py
+```

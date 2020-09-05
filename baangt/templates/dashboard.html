@@ -16,7 +16,7 @@
     {% if data.names %}
     <div class="row mx-2 pt-3 rounded shadow">
         <div class="col-md-1 h4">Filters:</div>
-        <div class="col-md-3 mb-3 input-group">
+        <div class="col-lg-3 mb-3 input-group">
             <div class="input-group-prepend">
                 <label class="input-group-text px-4" for="selectName">Name</label>
             </div>
@@ -27,7 +27,7 @@
                 {% endfor %}
             </select>
         </div>
-        <div class="col-md-3 mb-3 input-group">
+        <div class="col-lg-3 mb-3 input-group">
             <div class="input-group-prepend">
                 <label class="input-group-text px-4" for="selectStage">Stage</label>
             </div>
@@ -43,53 +43,53 @@
 
     <!-- header -->
     <div class="row mx-2 mb-2 mt-3">
-        <div class="col-md-3 h3">Testrun</div>
-        <div class="col-md-3 h3">Summary</div>
-        <div class="col-md-3 h3">Results</div>
-        <div class="col-md-3 h3">Duration</div>
+        <div class="col-lg-3 h3">Testrun</div>
+        <div class="col-lg-3 h3">Summary</div>
+        <div class="col-lg-3 h3">Results</div>
+        <div class="col-lg-3 h3">Duration</div>
     </div>
 
     <!-- testrun list -->
     {% for item in data.records %}
         <div class="row hovered-item border-top py-3 mx-2" id="{{ item.id }}" data-name="{{ item.name }}" data-stage="{{ item.stage }}">
-            <div class="col-md-3 text-break">
+            <div class="col-lg-3 text-break">
                 <p class="text-primary">{{ item.name }}</p>
                 <p class="text-secondary">{{ item.stage }}</p> 
             </div>
-            <div class="col-md-3">
-                <div class="row">
-                    <div class="d-flex col-3">
+            <div class="col-lg-3">
+                <div class="row my-auto">
+                    <div class="col-4 p-0">
                         <canvas class="statusChart" width="100" height="100"></canvas>
                     </div>
-                    <div class="d-flex flex-column col-2 border-right px-0">
-                        <h2 class="text-center">{{ item.figures.records }}</h2>
-                        <h6 class="text-center">TESTS</h6>
+                    <div class="col-2 border-right px-0 figure my-auto">
+                        <div class="test-digit">{{ item.figures.records }}</div>
+                        <div class="test-status">TESTS</div>
                     </div>
                     {% if item.figures.successful > 0  %}
-                        <div class="d-flex flex-column col-2 text-success px-0">
-                            <h2 class="text-center">{{ item.figures.successful }}</h2>
-                            <h6 class="text-center">PASSED</h6>
+                        <div class="col-2 text-success px-0 figure">
+                            <div class="test-digit">{{ item.figures.successful }}</div>
+                            <div class="test-status">PASSED</div>
                         </div>
                     {% endif %}
                     {% if item.figures.error > 0  %}
-                        <div class="d-flex flex-column col-2 text-danger px-0">
-                            <h2 class="text-center">{{ item.figures.error }}</h2>
-                            <h6 class="text-center">FAILED</h6>
+                        <div class="col-2 text-danger px-0 figure">
+                            <div class="test-digit">{{ item.figures.error }}</div>
+                            <div class="test-status">FAILED</div>
                         </div>
                     {% endif %}
                     {% if item.figures.paused > 0  %}
-                        <div class="d-flex flex-column col-2 text-secondary px-0">
-                            <h2 class="text-center">{{ item.figures.paused }}</h2>
-                            <h6 class="text-center">PAUSED</h6>
+                        <div class="col-2 text-secondary px-0 figure">
+                            <div class="test-digit">{{ item.figures.paused }}</div>
+                            <div class="test-status">PAUSED</div>
                         </div>
                     {% endif %}
                 </div>
             </div>
-            <div class="col-md-3">
-                <canvas class="resultsChart" height="60"></canvas>
+            <div class="col-lg-3 p-0 pl-2">
+                <canvas class="resultsChart timeChart" height="100"></canvas>
             </div>
-            <div class="col-md-3 text-break">
-                <canvas class="durationChart" height="60"></canvas>
+            <div class="col-lg-3 p-0 pl-2">
+                <canvas class="durationChart timeChart" height="100"></canvas>
             </div>
         </div>
 
@@ -97,6 +97,34 @@
 
 </div>
 </main>
+
+<style>
+    .figure {
+      min-width: 4rem;
+      margin-bottom: auto;
+      margin-top: auto;
+      padding: 0;
+    }
+
+    .statusChart {
+        min-width: 6rem;
+        min-height: 6rem;
+    }
+
+    .timeChart {
+        min-height: 6rem;
+    } 
+
+    .test-digit {
+        font-size: 2.7rem;
+        text-align: center !important;
+    }
+
+    .test-state {
+        font-size: 1rem;
+        text-align: center !important;
+    }
+</style>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 <script type="text/javascript">

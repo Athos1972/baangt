@@ -50,7 +50,7 @@ class TestRun:
         self.testRunDict = testRunDict
         self.globalSettingsFileNameAndPath = globalSettingsFileNameAndPath
         self.testRunName, self.testRunFileName = \
-            self._sanitizeTestRunNameAndFileName(testRunName)
+            self._sanitizeTestRunNameAndFileName(testRunName, executeDirect)
 
         # Initialize everything else
         self.apiInstance = None
@@ -380,7 +380,7 @@ class TestRun:
         return utils.dynamicImportOfClasses(fullQualifiedImportName=fullQualifiedImportName)
 
     @staticmethod
-    def _sanitizeTestRunNameAndFileName(TestRunNameInput):
+    def _sanitizeTestRunNameAndFileName(TestRunNameInput, direct):
         """
         @param TestRunNameInput: The complete File and Path of the TestRun definition (JSON or XLSX).
         @return: TestRunName and FileName (if definition of testrun comes from a file (JSON or XLSX)

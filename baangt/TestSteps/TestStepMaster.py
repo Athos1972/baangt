@@ -227,7 +227,8 @@ class TestStepMaster:
         if lActivity == "GOTOURL":
             self.browserSession.goToUrl(lValue)
         elif lActivity == "SETTEXT":
-            self.browserSession.findByAndSetText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout)
+            self.browserSession.findByAndSetText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout,
+                                                 optional=lOptional)
         elif lActivity == "SETTEXTIF":
             self.browserSession.findByAndSetTextIf(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout,
                                                    optional=lOptional)
@@ -238,6 +239,10 @@ class TestStepMaster:
             if lValue:
                 self.browserSession.findByAndForceText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout,
                                                        optional=lOptional)
+        elif lActivity == "FORCETEXTJS":
+            if lValue:
+                self.browserSession.findByAndForceViaJS(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout,
+                                                        optional=lOptional)
         elif lActivity == "SETANCHOR":
             if not lLocator:
                 self.anchor = None
@@ -261,9 +266,10 @@ class TestStepMaster:
                 lWindow = int(lWindow)
             self.browserSession.handleWindow(windowNumber=lWindow, timeout=lTimeout)
         elif lActivity == "CLICK":
-            self.browserSession.findByAndClick(xpath=xpath, css=css, id=id, timeout=lTimeout)
+            self.browserSession.findByAndClick(xpath=xpath, css=css, id=id, timeout=lTimeout, optional=lOptional)
         elif lActivity == "CLICKIF":
-            self.browserSession.findByAndClickIf(xpath=xpath, css=css, id=id, timeout=lTimeout, value=lValue)
+            self.browserSession.findByAndClickIf(xpath=xpath, css=css, id=id, timeout=lTimeout, value=lValue,
+                                                 optional=lOptional)
         elif lActivity == "PAUSE":
             self.browserSession.sleep(seconds=float(lValue))
         elif lActivity == "IF":
@@ -497,6 +503,16 @@ class TestStepMaster:
                 self.manageNestedCondition(condition="IF", ifis=True)
             else:
                 self.manageNestedCondition(condition="IF", ifis=False)
+        elif lComparison == ">=":
+            if value1 >= value2:
+                self.manageNestedCondition(condition="IF", ifis=True)
+            else:
+                self.manageNestedCondition(condition="IF", ifis=False)
+        elif lComparison == "<=":
+            if value1 <= value2:
+                self.manageNestedCondition(condition="IF", ifis=True)
+            else:
+                self.manageNestedCondition(condition="IF", ifis=False)
         elif not lComparison:  # Check only, if Value1 has a value.
             val = True if value1 else False
             self.manageNestedCondition(condition="IF", ifis=val)
@@ -586,9 +602,10 @@ class TestStepMaster:
                     centerValue = ""
                 else:
                     raise BaseException(f"Variable not found: {center}, input parameter was: {expression}")
-
-            expression = "".join([left_part, str(centerValue), right_part])
-
+            if not isinstance(centerValue, list) and not isinstance(centerValue, dict):
+                expression = "".join([left_part, str(centerValue), right_part])
+            else:
+                expression = centerValue
         return expression
 
     def iterate_json(self, data, key):
