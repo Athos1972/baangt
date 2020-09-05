@@ -1,8 +1,6 @@
 import csv
 import itertools
 import xlsxwriter
-import xl2dict
-import xlrd3 as xlrd
 import errno
 import os
 import logging
@@ -12,6 +10,8 @@ import baangt.base.GlobalConstants as GC
 import re
 from openpyxl import load_workbook
 import sys
+import pandas as pd
+from CloneXls import CloneXls
 
 logger = logging.getLogger("pyC")
 
@@ -25,7 +25,6 @@ class Writer:
     """
     def __init__(self, path):
         self.path = path
-        self.workbook = load_workbook(self.path)
 
     def write(self, row, data, sht):
         # Update the values using row and col number.
@@ -68,12 +67,13 @@ class TestDataGenerator:
         if not os.path.isfile(self.path):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), self.path)
         self.sheet_dict, self.raw_data_json = self.read_excel(self.path, self.sheet_name)
+        self.rre_sheets = {}
+        self.isUsecount = {}
         self.remove_header = []
         self.usecount_dict = {}  # used to maintain usecount limit record and verify if that non of the data cross limit
         self.done = {}
         self.writer = Writer(self.path)  # Writer class object to save file only in end, which will save time
         self.writers = {}
-        self.isUsecount = False
         if not from_handleDatabase:
             self.processed_datas = self.__process_data(self.raw_data_json)
             self.headers = [x for x in list(self.processed_datas[0].keys()) if x not in self.remove_header]
@@ -423,15 +423,13 @@ class TestDataGenerator:
             if second_value[0] == "[" and second_value[-1] == "]":
                 second_value = self.__splitList(second_value)
             try:
-                processed_datas = self.__processRrd(first_value, second_value,evaluated_dict)
+                processed_datas = self.__processRrdRre(first_value, second_value,evaluated_dict)
                 processed_datas = data_type(processed_datas)
             except KeyError:
                 sys.exit(f"Please check that source files contains all the headers mentioned in : {raw_data_old}")
-            logger.debug(f"Data processed - {raw_data_old}")
 
         elif prefix == "Rre":
             file_name = raw_data[1:-1].split(',')[0].strip()
-            sheet_dict, _ = self.read_excel(file_name)
             first_value = raw_data[1:-1].split(',')[1].strip()
             second_value = raw_data[1:-1].split(',')[2].strip()
             if second_value[0] == "[":
@@ -450,11 +448,11 @@ class TestDataGenerator:
             if second_value[0] == "[" and second_value[-1] == "]":
                 second_value = self.__splitList(second_value)
             try:
-                processed_datas = self.__processRrd(first_value, second_value, evaluated_dict, sheet_dict, filename=file_name)
-            except KeyError:
+                processed_datas = self.__processRrdRre(first_value, second_value, evaluated_dict, filename=file_name)
+            except KeyError as e:
+                raise e
                 sys.exit(f"Please check that source files contains all the headers mentioned in : {raw_data_old}")
             processed_datas = data_type(processed_datas)
-            logger.debug(f"Data processed - {raw_data_old}")
 
         elif prefix == "Renv":
             processed_datas = self.get_env_variable(raw_data)
@@ -475,6 +473,82 @@ class TestDataGenerator:
             processed_datas = [raw_data.strip()]
             processed_datas = data_type(processed_datas)
         return processed_datas
+
+    def __processRrdRre(self, sheet_name, data_looking_for, data_to_match: dict, filename=None):
+        if filename:
+            file_name = ".".join(filename.split(".")[:-1])
+            file_extension = filename.split(".")[-1]
+            file = file_name + "_baangt" + "." + file_extension
+            if not file in self.rre_sheets:
+                logger.debug(f"Creating clone file of: {filename}")
+                filename = CloneXls(filename).update_or_make_clone()
+                self.rre_sheets[filename] = {}
+            filename = file
+            if sheet_name in self.rre_sheets[filename]:
+                df = self.rre_sheets[filename][sheet_name]
+            else:
+                df = pd.read_excel(filename, sheet_name, dtype=str)
+                self.rre_sheets[filename][sheet_name] = df
+        else:
+            df = self.sheet_dict[sheet_name]
+            if not self.path in self.rre_sheets:
+                self.rre_sheets[self.path] = {}
+            if not sheet_name in self.rre_sheets[self.path]:
+                self.rre_sheets[self.path][sheet_name] = df
+        df1 = df.copy()
+        for key, value in data_to_match.items():
+            if not isinstance(value, list):
+                value = [value]
+            df1 = df1.loc[df1[key].isin(value)]
+        data_lis = []
+
+        if type(data_looking_for) == str:
+            data_looking_for = data_looking_for.split(",")
+        key_name = repr(sheet_name) + repr(data_looking_for) + repr(data_to_match) + repr(filename)
+        if key_name in self.done:
+            logger.debug(f"Data Gathered from previously saved data.")
+            return self.done[key_name]
+
+        usecount, limit, usecount_header = self.check_usecount(df.columns.values.tolist())
+        if not filename:
+            if self.path not in self.isUsecount:
+                self.isUsecount[self.path] = usecount_header
+        else:
+            if filename not in self.isUsecount:
+                self.isUsecount[filename] = usecount_header
+        for tup in df1.itertuples():
+            data = tup._asdict()
+            if usecount_header:
+                try:
+                    used_limit = int(data[usecount_header])
+                except:
+                    used_limit = 0
+            else:
+                used_limit = 0
+
+            if data_looking_for[0] == "*":
+                index = data["Index"]
+                del data["Index"]
+                data_lis.append(data)
+                self.usecount_dict[repr(data)] = {
+                    "use": used_limit, "limit": limit, "index": index,
+                    "sheet_name": sheet_name, "file_name": filename
+                }
+            else:
+                dt = {keys: data[keys] for keys in data_looking_for}
+                data_lis.append(dt)
+                self.usecount_dict[repr(dt)] = {
+                    "use": used_limit, "limit": limit, "index": data["Index"],
+                    "sheet_name": sheet_name, "file_name": filename
+                }
+
+        if len(data_lis) == 0:
+            logger.info(f"No data matching: {data_to_match}")
+            sys.exit(f"No data matching: {data_to_match}")
+        logger.debug(f"New Data Gathered.")
+        self.done[key_name] = data_lis
+
+        return data_lis
 
     def __raw_data_string_process(self, raw_string):
         """
@@ -509,13 +583,11 @@ class TestDataGenerator:
                     raw_string = raw_string[4:]
                     data_type = tuple
                 elif raw_string[:4].lower() == "rrd_":         # Remote Random (Remote = other sheet)
-                    logger.debug(f"Processing rrd data - {raw_string}")
                     prefix = "Rrd"
                     raw_string = self.__process_rrd_string(raw_string)
                     raw_string = raw_string[4:]
                     data_type = tuple
                 elif raw_string[:4].lower() == "rre_":         # Remote Random (Remote = other sheet)
-                    logger.debug(f"Processing rre data - {raw_string}")
                     prefix = "Rre"
                     raw_string = self.__process_rre_string(raw_string)
                     raw_string = raw_string[4:]
@@ -531,8 +603,13 @@ class TestDataGenerator:
             data_type = list
         return raw_string, prefix, data_type
 
-    @staticmethod
-    def read_excel(path, sheet_name=""):
+    def get_str_sheet(self, excel, sheet):
+        columns = excel.parse(sheet).columns
+        converters = {column: str for column in columns}
+        data = excel.parse(sheet, converters=converters)
+        return data
+
+    def read_excel(self, path, sheet_name=""):
         """
         This method will read the input excel file.
         It will read all the sheets inside this excel file and will create a dictionary of dictionary containing all data
@@ -548,19 +625,17 @@ class TestDataGenerator:
         :param sheet_name: Name of base sheet sheet where main input data is located. Default will be the first sheet.
         :return: Dictionary of all sheets and data, Dictionary of base sheet.
         """
-        wb = xlrd.open_workbook(path)
-        sheet_lis = wb.sheet_names()
-        sheet_dict = {}
+        wb = pd.ExcelFile(path)
+        sheet_lis = wb.sheet_names
+        sheet_df = {}
         for sheet in sheet_lis:
-            xl_obj = xl2dict.XlToDict()
-            data = xl_obj.fetch_data_by_column_by_sheet_name(path,sheet_name=sheet)
-            sheet_dict[sheet] = data
+            sheet_df[sheet] = self.get_str_sheet(wb, sheet)
         if sheet_name == "":
-            base_sheet = sheet_dict[sheet_lis[0]]
+            base_sheet = sheet_df[sheet_lis[0]]
         else:
-            assert sheet_name in sheet_dict, f"Excel file doesn't contain {sheet_name} sheet. Please recheck."
-            base_sheet = sheet_dict[sheet_name]
-        return sheet_dict, base_sheet
+            assert sheet_name in sheet_df, f"Excel file doesn't contain {sheet_name} sheet. Please recheck."
+            base_sheet = sheet_df[sheet_name]
+        return sheet_df, base_sheet
 
     @staticmethod
     def __splitList(raw_data):
@@ -572,92 +647,6 @@ class TestDataGenerator:
         """
         proccesed_datas = [data.strip() for data in raw_data[1:-1].split(",")]
         return proccesed_datas
-
-    def __processRrd(self, sheet_name, data_looking_for, data_to_match: dict, sheet_dict=None, caller="RRD_", filename=None):
-        """
-        This function is internal function to process the data wil RRD_ prefix.
-        The General input in excel file is like ``RRD_[sheetName,TargetData,[Header:[values**],Header:[values**]]]``
-        So this program will take already have processed input i.e. strings converted as python string and list to
-        python list, vice versa.
-
-        ``sheet_name`` is the python string referring to TargetData containing string.
-
-        ``data_looking_for`` is expected to be a string or list of TargetData. When there are multiple values then the
-        previous process will send list else it will send string. When a string is received it will be automatically
-        converted in list so the program will alwaus have to deal with list. If input is "*" then this method will take
-        all value in the matched row as TargetData.
-
-        ``data_to_match`` is a python dictionary created by the previous process. It will contain the key value pair
-        same as given in input but just converted in python dict. Then all possible combinations will be generated inside
-        this method. If an empty list is given by the user in the excel file then this list will get emptu dictionary from
-        the previous process. Thus then this method will pick TargetData from all rows of the target sheet.
-
-        :param sheet_name:
-        :param data_looking_for:
-        :param data_to_match:
-        :return: dictionary of TargetData
-        """
-        sheet_dict = self.sheet_dict if sheet_dict is None else sheet_dict
-        matching_data = [list(x) for x in itertools.product(*[data_to_match[key] for key in data_to_match])]
-        assert sheet_name in sheet_dict, \
-            f"Excel file doesn't contain {sheet_name} sheet. Please recheck. Called in '{caller}'"
-        base_sheet = sheet_dict[sheet_name]
-        data_lis = []
-
-        if type(data_looking_for) == str:
-            data_looking_for = data_looking_for.split(",")
-        key_name = repr(sheet_name)+repr(data_looking_for)+repr(data_to_match)+repr(filename)
-        if key_name in self.done:
-            logger.debug(f"Data Gathered from previously saved data.")
-            return self.done[key_name]
-
-        usecount, limit, usecount_header = self.check_usecount(base_sheet[0])
-        for data in base_sheet:
-            if usecount_header:
-                try:
-                    used_limit = int(data[usecount_header])
-                except:
-                    used_limit = 0
-            else:
-                used_limit = 0
-            if len(matching_data) == 1 and len(matching_data[0]) == 0:
-                if data_looking_for[0] == "*":
-                    data_lis.append(data)
-                    self.usecount_dict[repr(data)] = {
-                        "use": used_limit, "limit": limit, "index": base_sheet.index(data) + 2,
-                        "sheet_name": sheet_name, "file_name": filename
-                    }
-
-                else:
-                    dt = {keys: data[keys] for keys in data_looking_for}
-                    data_lis.append(dt)
-                    self.usecount_dict[repr(dt)] = {
-                        "use": used_limit, "limit": limit, "index": base_sheet.index(data) + 2,
-                        "sheet_name": sheet_name, "file_name": filename
-                    }
-            else:
-                data_to_match_list = [data[key] for key in data_to_match]
-                if data_to_match_list in matching_data:
-                    if data_looking_for[0] == "*":
-                        data_lis.append(data)
-                        self.usecount_dict[repr(data)] = {
-                            "use": used_limit, "limit": limit, "index": base_sheet.index(data) + 2,
-                            "sheet_name": sheet_name, "file_name": filename
-                        }
-                    else:
-                        dt = {keys: data[keys] for keys in data_looking_for}
-                        data_lis.append(dt)
-                        self.usecount_dict[repr(dt)] = {
-                            "use": used_limit, "limit": limit, "index": base_sheet.index(data) + 2,
-                            "sheet_name": sheet_name, "file_name": filename
-                        }
-        if len(data_lis) == 0:
-            dic = [{key: l for key, l in zip(data_to_match, lis)} for lis in matching_data]
-            logger.info(f"No data matching: {dic}")
-            sys.exit(f"No data matching: {dic}")
-        logger.debug(f"New Data Gathered.")
-        self.done[key_name] = data_lis
-        return data_lis
 
     def check_usecount(self, data):
         # used to find and return if their is usecount header and limit in input file
@@ -673,24 +662,30 @@ class TestDataGenerator:
                         limit = int(header.lower().strip().split("count_")[1])
                     except:
                         limit = 0
-        if not self.isUsecount:
-            self.isUsecount = usecount
         return usecount, limit, usecount_header
 
-    def update_usecount_in_source(self, data):
-        self.writer.write(
-            self.usecount_dict[repr(data)]["index"], self.usecount_dict[repr(data)]["use"],
-            self.usecount_dict[repr(data)]["sheet_name"]
-        )
+    def save_usecount(self):
+        for filename in self.isUsecount:
+            logger.debug(f"Updating file {filename} with usecounts.")
+            sheet_dict = {}
+            ex = pd.ExcelFile(filename)
+            for sheet in ex.sheet_names:
+                df = self.get_str_sheet(ex, sheet)
+                sheet_dict[sheet] = df
+            with pd.ExcelWriter(filename) as writer:
+                for sheetname in sheet_dict:
+                    sheet_dict[sheetname].to_excel(writer, sheetname, index=False)
+                writer.save()
+            logger.debug(f"File updated {filename}.")
 
-    def update_usecount_in_source_rre(self, data):
+    def update_usecount_in_source(self, data):
         filename = self.usecount_dict[repr(data)]["file_name"]
-        if filename not in self.writers:
-            self.writers[filename] = Writer(filename)
-        self.writers[filename].write(
-            self.usecount_dict[repr(data)]["index"], self.usecount_dict[repr(data)]["use"],
-            self.usecount_dict[repr(data)]["sheet_name"]
-        )
+        if not filename:
+            filename = self.path
+        if filename not in self.isUsecount:
+            return
+        self.rre_sheets[filename][self.usecount_dict[repr(data)]["sheet_name"]][
+            self.isUsecount[filename]][self.usecount_dict[repr(data)]["index"]] = self.usecount_dict[repr(data)]["use"]
 
     def __process_rrd_string(self, rrd_string):
         """

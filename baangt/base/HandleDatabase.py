@@ -134,7 +134,7 @@ class HandleDatabase:
         if not fileName:
             logger.critical(f"Can't open file: {fileName}")
             return
-
+        logger.debug(f"Reading excel file {fileName}...")
         book = open_workbook(fileName)
         sheet = book.sheet_by_name(sheetName)
 
@@ -164,6 +164,7 @@ class HandleDatabase:
             self.dataDict.append(temp_dic)
 
     def update_datarecords(self, dataDict, fileName, sheetName):
+        logger.debug("Updating prefix data...")
         testDataGenerator = TestDataGenerator(fileName, sheetName=sheetName, from_handleDatabase=True)
         for td in dataDict:
             temp_dic = dataDict[td]
@@ -181,17 +182,21 @@ class HandleDatabase:
                         )
 
                 if str(temp_dic[keys])[:4].upper() == "RRD_":
+                    logger.debug(f"Processing rrd data - {temp_dic[keys]}")
                     rrd_data = self.get_data_from_tdg(temp_dic[keys], testDataGenerator)
                     testDataGenerator.usecount_dict[repr(rrd_data)]["use"] += 1
                     testDataGenerator.update_usecount_in_source(rrd_data)
                     for data in rrd_data:
                         new_data_dic[data] = rrd_data[data]
+                    logger.debug(f"Data processed - {temp_dic[keys]}")
                 elif str(temp_dic[keys])[:4].upper() == "RRE_":
+                    logger.debug(f"Processing rre data - {temp_dic[keys]}")
                     rre_data = self.get_data_from_tdg(temp_dic[keys], testDataGenerator)
                     testDataGenerator.usecount_dict[repr(rre_data)]["use"] += 1
-                    testDataGenerator.update_usecount_in_source_rre(rre_data)
+                    testDataGenerator.update_usecount_in_source(rre_data)
                     for data in rre_data:
                         new_data_dic[data] = rre_data[data]
+                    logger.debug(f"Data processed - {temp_dic[keys]}")
                 elif str(temp_dic[keys])[:4].upper() == "RLP_":
                     temp_dic[keys] = self.rlp_process(temp_dic[keys], fileName)
                 elif str(temp_dic[keys])[:5].upper() == "RENV_":
@@ -204,10 +209,7 @@ class HandleDatabase:
                         pass
             for key in new_data_dic:
                 temp_dic[key] = new_data_dic[key]
-        if testDataGenerator.isUsecount:
-                testDataGenerator.writer.save()  # saving source input file once everything is done
-        for writer in testDataGenerator.writers:
-            testDataGenerator.writers[writer].save()
+        testDataGenerator.save_usecount()
 
     def get_data_from_tdg(self, string, testDataGenerator):
         data = testDataGenerator.data_generators(string)
