@@ -25,7 +25,6 @@ class Writer:
     """
     def __init__(self, path):
         self.path = path
-        self.workbook = load_workbook(self.path)
 
     def write(self, row, data, sht):
         # Update the values using row and col number.
@@ -492,6 +491,10 @@ class TestDataGenerator:
                 self.rre_sheets[filename][sheet_name] = df
         else:
             df = self.sheet_dict[sheet_name]
+            if not self.path in self.rre_sheets:
+                self.rre_sheets[self.path] = {}
+            if not sheet_name in self.rre_sheets[self.path]:
+                self.rre_sheets[self.path][sheet_name] = df
         df1 = df.copy()
         for key, value in data_to_match.items():
             if not isinstance(value, list):
@@ -508,11 +511,11 @@ class TestDataGenerator:
 
         usecount, limit, usecount_header = self.check_usecount(df.columns.values.tolist())
         if not filename:
-            if not self.isUsecount[self.path]:
-                self.isUsecount[self.path] = usecount
+            if self.path not in self.isUsecount:
+                self.isUsecount[self.path] = usecount_header
         else:
-            if not self.isUsecount[filename]:
-                self.isUsecount[filename] = usecount
+            if filename not in self.isUsecount:
+                self.isUsecount[filename] = usecount_header
         for tup in df1.itertuples():
             data = tup._asdict()
             if usecount_header:
@@ -524,7 +527,7 @@ class TestDataGenerator:
                 used_limit = 0
 
             if data_looking_for[0] == "*":
-                index = data["Index"] + 1
+                index = data["Index"]
                 del data["Index"]
                 data_lis.append(data)
                 self.usecount_dict[repr(data)] = {
@@ -535,7 +538,7 @@ class TestDataGenerator:
                 dt = {keys: data[keys] for keys in data_looking_for}
                 data_lis.append(dt)
                 self.usecount_dict[repr(dt)] = {
-                    "use": used_limit, "limit": limit, "index": data["Index"] + 1,
+                    "use": used_limit, "limit": limit, "index": data["Index"],
                     "sheet_name": sheet_name, "file_name": filename
                 }
 
@@ -661,22 +664,28 @@ class TestDataGenerator:
                         limit = 0
         return usecount, limit, usecount_header
 
-    def update_usecount_in_source(self, data):
-        self.writer.write(
-            self.usecount_dict[repr(data)]["index"], self.usecount_dict[repr(data)]["use"],
-            self.usecount_dict[repr(data)]["sheet_name"]
-        )
+    def save_usecount(self):
+        for filename in self.isUsecount:
+            logger.debug(f"Updating file {filename} with usecounts.")
+            sheet_dict = {}
+            ex = pd.ExcelFile(filename)
+            for sheet in ex.sheet_names:
+                df = self.get_str_sheet(ex, sheet)
+                sheet_dict[sheet] = df
+            with pd.ExcelWriter(filename) as writer:
+                for sheetname in sheet_dict:
+                    sheet_dict[sheetname].to_excel(writer, sheetname, index=False)
+                writer.save()
+            logger.debug(f"File updated {filename}.")
 
-    def update_usecount_in_source_rre(self, data):
+    def update_usecount_in_source(self, data):
         filename = self.usecount_dict[repr(data)]["file_name"]
+        if not filename:
+            filename = self.path
         if filename not in self.isUsecount:
             return
-        if filename not in self.writers:
-            self.writers[filename] = Writer(filename)
-        self.writers[filename].write(
-            self.usecount_dict[repr(data)]["index"], self.usecount_dict[repr(data)]["use"],
-            self.usecount_dict[repr(data)]["sheet_name"]
-        )
+        self.rre_sheets[filename][self.usecount_dict[repr(data)]["sheet_name"]][
+            self.isUsecount[filename]][self.usecount_dict[repr(data)]["index"]] = self.usecount_dict[repr(data)]["use"]
 
     def __process_rrd_string(self, rrd_string):
         """

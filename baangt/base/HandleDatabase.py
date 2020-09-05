@@ -193,7 +193,7 @@ class HandleDatabase:
                     logger.debug(f"Processing rre data - {temp_dic[keys]}")
                     rre_data = self.get_data_from_tdg(temp_dic[keys], testDataGenerator)
                     testDataGenerator.usecount_dict[repr(rre_data)]["use"] += 1
-                    testDataGenerator.update_usecount_in_source_rre(rre_data)
+                    testDataGenerator.update_usecount_in_source(rre_data)
                     for data in rre_data:
                         new_data_dic[data] = rre_data[data]
                     logger.debug(f"Data processed - {temp_dic[keys]}")
@@ -209,16 +209,7 @@ class HandleDatabase:
                         pass
             for key in new_data_dic:
                 temp_dic[key] = new_data_dic[key]
-        self.update_sources(testDataGenerator)
-
-    def update_sources(self, testDataGenerator):
-        if testDataGenerator.isUsecount:
-            if testDataGenerator.isUsecount[testDataGenerator.path]:
-                testDataGenerator.writer.save()  # saving source input file once everything is done
-        for writer in testDataGenerator.writers:
-            if testDataGenerator.isUsecount[testDataGenerator.writer]:
-                testDataGenerator.writers[writer].save()
-                logger.debug(f"File updated: {writer}")
+        testDataGenerator.save_usecount()
 
     def get_data_from_tdg(self, string, testDataGenerator):
         data = testDataGenerator.data_generators(string)
