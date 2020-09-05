@@ -8,8 +8,6 @@ import re
 from random import randint
 from openpyxl import load_workbook
 from baangt.TestDataGenerator.TestDataGenerator import TestDataGenerator
-from threading import Thread
-import os
 
 logger = logging.getLogger("pyC")
 
@@ -211,28 +209,16 @@ class HandleDatabase:
                         pass
             for key in new_data_dic:
                 temp_dic[key] = new_data_dic[key]
-        files = [testDataGenerator.path]
-        for file in testDataGenerator.writers:
-            files.append(file)
-        size = 0
-        for file in files:
-            size += os.stat(file).st_size
-        if size > 1000000:
-            logger.debug("Source files are updating in a thread.")
-            t = Thread(target=self.update_sources, args=(testDataGenerator,))
-            t.daemon = True
-            t.start()
-            t.join()
-        else:
-            logger.debug("Source files are updating in main thread.")
-            self.update_sources(testDataGenerator)
+        self.update_sources(testDataGenerator)
 
     def update_sources(self, testDataGenerator):
         if testDataGenerator.isUsecount:
+            if testDataGenerator.isUsecount[testDataGenerator.path]:
                 testDataGenerator.writer.save()  # saving source input file once everything is done
         for writer in testDataGenerator.writers:
-            testDataGenerator.writers[writer].save()
-            logger.debug(f"File updated: {writer}")
+            if testDataGenerator.isUsecount[testDataGenerator.writer]:
+                testDataGenerator.writers[writer].save()
+                logger.debug(f"File updated: {writer}")
 
     def get_data_from_tdg(self, string, testDataGenerator):
         data = testDataGenerator.data_generators(string)

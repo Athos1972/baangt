@@ -69,12 +69,12 @@ class TestDataGenerator:
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), self.path)
         self.sheet_dict, self.raw_data_json = self.read_excel(self.path, self.sheet_name)
         self.rre_sheets = {}
+        self.isUsecount = {}
         self.remove_header = []
         self.usecount_dict = {}  # used to maintain usecount limit record and verify if that non of the data cross limit
         self.done = {}
         self.writer = Writer(self.path)  # Writer class object to save file only in end, which will save time
         self.writers = {}
-        self.isUsecount = False
         if not from_handleDatabase:
             self.processed_datas = self.__process_data(self.raw_data_json)
             self.headers = [x for x in list(self.processed_datas[0].keys()) if x not in self.remove_header]
@@ -481,6 +481,7 @@ class TestDataGenerator:
             file_extension = filename.split(".")[-1]
             file = file_name + "_baangt" + "." + file_extension
             if not file in self.rre_sheets:
+                logger.debug(f"Creating clone file of: {filename}")
                 filename = CloneXls(filename).update_or_make_clone()
                 self.rre_sheets[filename] = {}
             filename = file
@@ -506,6 +507,12 @@ class TestDataGenerator:
             return self.done[key_name]
 
         usecount, limit, usecount_header = self.check_usecount(df.columns.values.tolist())
+        if not filename:
+            if not self.isUsecount[self.path]:
+                self.isUsecount[self.path] = usecount
+        else:
+            if not self.isUsecount[filename]:
+                self.isUsecount[filename] = usecount
         for tup in df1.itertuples():
             data = tup._asdict()
             if usecount_header:
@@ -652,8 +659,6 @@ class TestDataGenerator:
                         limit = int(header.lower().strip().split("count_")[1])
                     except:
                         limit = 0
-        if not self.isUsecount:
-            self.isUsecount = usecount
         return usecount, limit, usecount_header
 
     def update_usecount_in_source(self, data):
@@ -664,6 +669,8 @@ class TestDataGenerator:
 
     def update_usecount_in_source_rre(self, data):
         filename = self.usecount_dict[repr(data)]["file_name"]
+        if filename not in self.isUsecount:
+            return
         if filename not in self.writers:
             self.writers[filename] = Writer(filename)
         self.writers[filename].write(
