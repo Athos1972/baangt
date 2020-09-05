@@ -25,6 +25,7 @@ class Writer:
     """
     def __init__(self, path):
         self.path = path
+        self.workbook = load_workbook(path)
 
     def write(self, row, data, sht):
         # Update the values using row and col number.
@@ -358,6 +359,7 @@ class TestDataGenerator:
         :return:
         """
         processed_datas = []
+        raw_json = raw_json.to_dict(orient="records")
         for raw_data in raw_json:
             if not list(raw_data.values())[0]:
                 continue
@@ -630,6 +632,7 @@ class TestDataGenerator:
         sheet_df = {}
         for sheet in sheet_lis:
             sheet_df[sheet] = self.get_str_sheet(wb, sheet)
+            sheet_df[sheet].fillna("", inplace=True)
         if sheet_name == "":
             base_sheet = sheet_df[sheet_lis[0]]
         else:
