@@ -165,7 +165,7 @@ class HandleDatabase:
 
     def update_datarecords(self, dataDict, fileName, sheetName):
         logger.debug("Updating prefix data...")
-        testDataGenerator = TestDataGenerator(fileName, sheetName=sheetName, from_handleDatabase=True)
+        self.testDataGenerator = TestDataGenerator(fileName, sheetName=sheetName, from_handleDatabase=True)
         for td in dataDict:
             temp_dic = dataDict[td]
             new_data_dic = {}
@@ -183,17 +183,17 @@ class HandleDatabase:
 
                 if str(temp_dic[keys])[:4].upper() == "RRD_":
                     logger.debug(f"Processing rrd data - {temp_dic[keys]}")
-                    rrd_data = self.get_data_from_tdg(temp_dic[keys], testDataGenerator)
-                    testDataGenerator.usecount_dict[repr(rrd_data)]["use"] += 1
-                    testDataGenerator.update_usecount_in_source(rrd_data)
+                    rrd_data = self.get_data_from_tdg(temp_dic[keys])
+                    self.testDataGenerator.usecount_dict[repr(rrd_data)]["use"] += 1
+                    self.testDataGenerator.update_usecount_in_source(rrd_data)
                     for data in rrd_data:
                         new_data_dic[data] = rrd_data[data]
                     logger.debug(f"Data processed - {temp_dic[keys]}")
                 elif str(temp_dic[keys])[:4].upper() == "RRE_":
                     logger.debug(f"Processing rre data - {temp_dic[keys]}")
-                    rre_data = self.get_data_from_tdg(temp_dic[keys], testDataGenerator)
-                    testDataGenerator.usecount_dict[repr(rre_data)]["use"] += 1
-                    testDataGenerator.update_usecount_in_source(rre_data)
+                    rre_data = self.get_data_from_tdg(temp_dic[keys])
+                    self.testDataGenerator.usecount_dict[repr(rre_data)]["use"] += 1
+                    self.testDataGenerator.update_usecount_in_source(rre_data)
                     for data in rre_data:
                         new_data_dic[data] = rre_data[data]
                     logger.debug(f"Data processed - {temp_dic[keys]}")
@@ -209,13 +209,13 @@ class HandleDatabase:
                         pass
             for key in new_data_dic:
                 temp_dic[key] = new_data_dic[key]
-        testDataGenerator.save_usecount()
+        self.testDataGenerator.save_usecount()
 
-    def get_data_from_tdg(self, string, testDataGenerator):
-        data = testDataGenerator.data_generators(string)
-        if testDataGenerator.usecount_dict[repr(data[0])]["limit"]:
-            data = [d for d in data if testDataGenerator.usecount_dict[repr(d)]["use"
-                                                                ] < testDataGenerator.usecount_dict[repr(d)]["limit"]]
+    def get_data_from_tdg(self, string):
+        data = self.testDataGenerator.data_generators(string)
+        if self.testDataGenerator.usecount_dict[repr(data[0])]["limit"]:
+            data = [d for d in data if self.testDataGenerator.usecount_dict[repr(d)]["use"
+                                                                ] < self.testDataGenerator.usecount_dict[repr(d)]["limit"]]
         if len(data) > 1:
             data = data[randint(0, len(data) - 1)]
         elif len(data) == 1:
@@ -258,7 +258,7 @@ class HandleDatabase:
         sheetName = raw_data.split(',')[0].strip()
         headerName = raw_data.split(',')[1].strip().split('=')[0].strip()
         headerValue = raw_data.split(',')[1].strip().split('=')[1].strip()
-        all_sheets, main_sheet = TestDataGenerator.read_excel(path=fileName, sheet_name=sheetName)
+        all_sheets, main_sheet = self.testDataGenerator.read_excel(path=fileName, sheet_name=sheetName, return_json=True)
         data_list = []
         for data in main_sheet:
             main_value = data[headerName]

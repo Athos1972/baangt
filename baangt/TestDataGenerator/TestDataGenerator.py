@@ -516,8 +516,12 @@ class TestDataGenerator:
         if not filename:
             if self.path not in self.isUsecount:
                 self.isUsecount[self.path] = usecount_header
+            if not self.isUsecount[self.path]:
+                self.isUsecount[self.path] = usecount_header
         else:
             if filename not in self.isUsecount:
+                self.isUsecount[filename] = usecount_header
+            if not self.isUsecount[filename]:
                 self.isUsecount[filename] = usecount_header
         for tup in df1.itertuples():
             data = dict(tup._asdict())
@@ -612,7 +616,7 @@ class TestDataGenerator:
         data = excel.parse(sheet, converters=converters)
         return data
 
-    def read_excel(self, path, sheet_name=""):
+    def read_excel(self, path, sheet_name="", return_json=False):
         """
         This method will read the input excel file.
         It will read all the sheets inside this excel file and will create a dictionary of dictionary containing all data
@@ -639,6 +643,10 @@ class TestDataGenerator:
         else:
             assert sheet_name in sheet_df, f"Excel file doesn't contain {sheet_name} sheet. Please recheck."
             base_sheet = sheet_df[sheet_name]
+        if return_json:
+            base_sheet = json.loads(base_sheet.to_json("records"))
+            for df in sheet_df:
+                sheet_df[df] = json.loads(sheet_df[df].to_json("records"))
         return sheet_df, base_sheet
 
     @staticmethod
@@ -687,6 +695,8 @@ class TestDataGenerator:
         if not filename:
             filename = self.path
         if filename not in self.isUsecount:
+            return
+        if not self.isUsecount[filename]:
             return
         self.rre_sheets[filename][self.usecount_dict[repr(data)]["sheet_name"]][
             self.isUsecount[filename]][self.usecount_dict[repr(data)]["index"]] = self.usecount_dict[repr(data)]["use"]
