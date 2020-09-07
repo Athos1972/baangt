@@ -12,6 +12,7 @@ from openpyxl import load_workbook
 import sys
 import pandas as pd
 from CloneXls import CloneXls
+import json
 
 logger = logging.getLogger("pyC")
 
@@ -359,7 +360,7 @@ class TestDataGenerator:
         :return:
         """
         processed_datas = []
-        raw_json = raw_json.to_dict(orient="records")
+        raw_json = json.loads(raw_json.to_json(orient="records"))
         for raw_data in raw_json:
             if not list(raw_data.values())[0]:
                 continue
@@ -519,7 +520,7 @@ class TestDataGenerator:
             if filename not in self.isUsecount:
                 self.isUsecount[filename] = usecount_header
         for tup in df1.itertuples():
-            data = tup._asdict()
+            data = dict(tup._asdict())
             if usecount_header:
                 try:
                     used_limit = int(data[usecount_header])
