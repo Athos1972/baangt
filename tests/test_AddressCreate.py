@@ -1,19 +1,11 @@
 import pytest
+import baangt.base.GlobalConstants as GC
+from baangt.base.AddressCreate import AddressCreate
 
 
-def test_getRandomAddress():
-    import baangt.base.GlobalConstants as GC
-    from baangt.base.AddressCreate import AddressCreate
-
-    addressCreate = AddressCreate(addressFilterCriteria={GC.ADDRESS_COUNTRYCODE:"AT"})
-
-    assert addressCreate.returnAddress()[GC.ADDRESS_COUNTRYCODE] == "AT"
-    assert addressCreate.returnAddress()[GC.ADDRESS_POSTLCODE] == "1020"
-
-    addressCreate = AddressCreate(addressFilterCriteria={GC.ADDRESS_COUNTRYCODE:"CY"})
-
-    assert addressCreate.returnAddress()[GC.ADDRESS_COUNTRYCODE] == "CY"
-    assert addressCreate.returnAddress()[GC.ADDRESS_POSTLCODE] == "6020"
-
-if __name__ == '__main__':
-    test_getRandomAddress()
+@pytest.mark.parametrize("CountryCode, PostalCode", [("AT", "1020"), ("CY", "6020")])
+def test_getRandomAddress(CountryCode, PostalCode):
+    addressCreate = AddressCreate(addressFilterCriteria={GC.ADDRESS_COUNTRYCODE:CountryCode})
+    address = addressCreate.returnAddress()
+    assert address[GC.ADDRESS_COUNTRYCODE] == CountryCode
+    assert address[GC.ADDRESS_POSTLCODE] == PostalCode
