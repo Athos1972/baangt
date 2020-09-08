@@ -638,15 +638,14 @@ class TestDataGenerator:
         for sheet in sheet_lis:
             sheet_df[sheet] = self.get_str_sheet(wb, sheet)
             sheet_df[sheet].fillna("", inplace=True)
+        if return_json:
+            for df in sheet_df.keys():
+                sheet_df[df] = json.loads(sheet_df[df].to_json(orient="records"))
         if sheet_name == "":
             base_sheet = sheet_df[sheet_lis[0]]
         else:
             assert sheet_name in sheet_df, f"Excel file doesn't contain {sheet_name} sheet. Please recheck."
             base_sheet = sheet_df[sheet_name]
-        if return_json:
-            base_sheet = json.loads(base_sheet.to_json("records"))
-            for df in sheet_df:
-                sheet_df[df] = json.loads(sheet_df[df].to_json("records"))
         return sheet_df, base_sheet
 
     @staticmethod
