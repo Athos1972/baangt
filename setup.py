@@ -25,7 +25,7 @@ if __name__ == '__main__':
                           "schwifty", "selenium", "sqlalchemy",
                           "urllib3", "psutil", "pymsteams", "slack-webhook",
                           "xl2dict", "xlrd3", "xlsxwriter", "atlassian-python-api",
-                          "icopy2xls"],
+                          "icopy2xls", "xlsclone"],
         classifiers=[
             "Programming Language :: Python :: 3",
             "License :: OSI Approved :: MIT License",
