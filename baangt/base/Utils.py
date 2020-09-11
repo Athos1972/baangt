@@ -6,6 +6,7 @@ import ntpath
 import logging
 import json
 import sys
+import traceback
 from pathlib import Path
 from baangt.base.PathManagement import ManagedPaths
 
@@ -64,6 +65,14 @@ class utils:
                 lDictOut[lKey] = value
 
         return lDictOut
+
+    @staticmethod
+    def traceback(exception_in):
+
+        ex_traceback = exception_in.__traceback__
+        tb_lines = "\n".join([line.rstrip('\n') for line in
+                    traceback.format_exception(exception_in.__class__, exception_in, ex_traceback)])
+        logger.info(tb_lines)
 
     @staticmethod
     def _loopList(listIn):

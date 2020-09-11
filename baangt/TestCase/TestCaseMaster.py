@@ -2,6 +2,7 @@ from baangt.base import GlobalConstants as GC
 from baangt.base.Timing.Timing import Timing
 from baangt.TestSteps.Exceptions import *
 from baangt.base.RuntimeStatistics import Statistic
+from baangt.base.Utils import utils
 
 
 class TestCaseMaster:
@@ -31,7 +32,11 @@ class TestCaseMaster:
         # In Unit-Tests this is a problem. When we run within the main loop of TestRun we are expected to directly
         # execute on __init__.
         if executeDirect:
-            self.executeTestCase()
+            try:
+                self.executeTestCase()
+            except Exception as e:
+                logger.warning(f"Uncought exception {e}")
+                utils.traceback(exception_in=e)
 
     def executeTestCase(self):
         self.timingName = self.timing.takeTime(self.__class__.__name__, forceNew=True)

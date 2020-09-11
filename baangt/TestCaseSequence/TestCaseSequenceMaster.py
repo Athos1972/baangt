@@ -34,12 +34,17 @@ class TestCaseSequenceMaster:
         self.testCases = self.testSequenceData[GC.STRUCTURE_TESTCASE]
         self.kwargs = kwargs
         self.timingName = self.timing.takeTime(self.__class__.__name__, forceNew=True)
-        self.statistics = Statistic()
-        self.prepareExecution()
-        if int(self.testSequenceData.get(GC.EXECUTION_PARALLEL, 0)) > 1:
-            self.execute_parallel(self.testSequenceData.get(GC.EXECUTION_PARALLEL, 0))
-        else:
-            self.execute()
+
+        try:
+            self.statistics = Statistic()
+            self.prepareExecution()
+            if int(self.testSequenceData.get(GC.EXECUTION_PARALLEL, 0)) > 1:
+                self.execute_parallel(self.testSequenceData.get(GC.EXECUTION_PARALLEL, 0))
+            else:
+                self.execute()
+        except Exception as e:
+            logger.warning(f"Uncought exception {e}")
+            utils.traceback(exception_in=e)
 
     def prepareExecution(self):
         logger.info("Preparing Test Records...")
