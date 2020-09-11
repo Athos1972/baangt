@@ -9,3 +9,9 @@ def test_getRandomAddress(CountryCode, PostalCode):
     address = addressCreate.returnAddress()
     assert address[GC.ADDRESS_COUNTRYCODE] == CountryCode
     assert address[GC.ADDRESS_POSTLCODE] == PostalCode
+
+
+def test_testStepAddressCreation():
+    from baangt.TestSteps.AddressCreation import AddressCreate
+    address = AddressCreate.returnAddress()
+    assert type(address) == dict

@@ -1,6 +1,19 @@
 import pytest
 import platform
 from baangt.base import GlobalConstants as GC
+from baangt.base.BrowserHandling.BrowserHandling import BrowserDriver
+from unittest.mock import patch, MagicMock
+
+
+browserName = "FIREFOX"
+desired_app = [{GC.MOBILE_PLATFORM_NAME: "Android"}, {GC.MOBILE_PLATFORM_NAME: "iOS"}]
+mobileApp = ["True", "False"]
+mobile_app_setting = {
+    GC.MOBILE_APP_URL: "test",
+    GC.MOBILE_APP_PACKAGE: "com.baangt.pytest",
+    GC.MOBILE_APP_ACTIVITY: "baangt.test",
+    GC.MOBILE_APP_BROWSER_PATH: "temp"
+}
 
 
 @pytest.fixture
@@ -8,7 +21,6 @@ def getdriver():
     """ This will return BrowserDriver instance
         for below test function
     """
-    from baangt.base.BrowserHandling.BrowserHandling import BrowserDriver
     return BrowserDriver()
 
 
@@ -20,6 +32,7 @@ def test_setZoomFactor(getdriver):
     getdriver.createNewBrowser()
     getdriver.goToUrl("https://www.baangt.org")
     # FInd element by class
+    getdriver.zoomFactorDesired = True
     getdriver.setZoomFactor(lZoomFactor=200)
 
     # TODO add check
@@ -193,3 +206,20 @@ def test_setBrowserWindowSizeWithX(getdriver):
     result = getdriver.setBrowserWindowSize("--800x600")
     getdriver.closeBrowser()
     assert isinstance(result, dict)
+
+
+@pytest.mark.parametrize(
+    "browserName, desired_app, mobileApp, mobile_app_setting",
+    [
+        (browserName, desired_app[0], mobileApp[0], mobile_app_setting),
+        (browserName, desired_app[0], mobileApp[1], mobile_app_setting),
+        (browserName, desired_app[1], mobileApp[0], mobile_app_setting),
+        (browserName, desired_app[1], mobileApp[1], mobile_app_setting)
+    ]
+)
+def test_mobileConnectAppium(browserName, desired_app, mobileApp, mobile_app_setting):
+    from baangt.base.BrowserHandling.WebdriverFunctions import WebdriverFunctions
+    wdf = WebdriverFunctions
+    with patch.dict(wdf.BROWSER_DRIVERS, {GC.BROWSER_APPIUM: MagicMock}):
+        BrowserDriver._mobileConnectAppium(browserName, desired_app, mobileApp, mobile_app_setting)
+    assert 1 == 1
