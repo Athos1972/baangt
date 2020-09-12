@@ -37,6 +37,8 @@ class TestCaseMaster:
             except Exception as e:
                 logger.warning(f"Uncought exception {e}")
                 utils.traceback(exception_in=e)
+                self.kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS_STOPERROR] = True
+                self.kwargs[GC.KWARGS_DATA][GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
 
     def executeTestCase(self):
         self.timingName = self.timing.takeTime(self.__class__.__name__, forceNew=True)
