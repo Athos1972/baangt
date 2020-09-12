@@ -678,11 +678,7 @@ class TestDataGenerator:
     def save_usecount(self):
         for filename in self.isUsecount:
             logger.debug(f"Updating file {filename} with usecounts.")
-            sheet_dict = {}
-            ex = pd.ExcelFile(filename)
-            for sheet in ex.sheet_names:
-                df = self.get_str_sheet(ex, sheet)
-                sheet_dict[sheet] = df
+            sheet_dict = self.rre_sheets[filename]
             with pd.ExcelWriter(filename) as writer:
                 for sheetname in sheet_dict:
                     sheet_dict[sheetname].to_excel(writer, sheetname, index=False)
