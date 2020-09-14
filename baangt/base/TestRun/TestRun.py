@@ -38,7 +38,7 @@ class TestRun:
     """
 
     def __init__(self, testRunName, globalSettingsFileNameAndPath=None,
-                 testRunDict=None, uuid=uuid4(), executeDirect=True):  # -- API support: testRunDict --
+                 testRunDict=None, uuid=uuid4(), executeDirect=True, noCloneXls=False):  # -- API support: testRunDict --
         """
         @param testRunName: The name of the TestRun to be executed.
         @param globalSettingsFileNameAndPath: from where to read the <globals>.json
@@ -73,7 +73,7 @@ class TestRun:
         # from anywhere within your custom code base.
         self.additionalExportTabs = {}
         self.statistics = Statistic()
-        self.noCloneXls = False
+        self.noCloneXls = noCloneXls
         signal.signal(signal.SIGINT, self.exit_signal_handler)
         signal.signal(signal.SIGTERM, self.exit_signal_handler)
 
