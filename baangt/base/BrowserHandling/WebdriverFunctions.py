@@ -296,10 +296,12 @@ class WebdriverFunctions:
                     element.click()
                 elif command.upper() == GC.CMD_FORCETEXT:
                     element.clear()
-                    for i in range(0, NUMBER_OF_SEND_KEY_BACKSPACE):
-                        element.send_keys(keys.Keys.BACKSPACE)
-                    time.sleep(0.1)
+                    element.click()
+                    # element.send_keys(keys.Keys.CONTROL+"A")
+                    # for i in range(0, NUMBER_OF_SEND_KEY_BACKSPACE):
+                    #     element.send_keys(keys.Keys.BACKSPACE)
                     element.send_keys(value)
+                    element.send_keys(keys.Keys.TAB)
                 didWork = True
             except ElementClickInterceptedException as e:
                 logger.debug("doSomething: Element intercepted - retry")
