@@ -223,3 +223,34 @@ def test_mobileConnectAppium(browserName, desired_app, mobileApp, mobile_app_set
     with patch.dict(wdf.BROWSER_DRIVERS, {GC.BROWSER_APPIUM: MagicMock}):
         BrowserDriver._mobileConnectAppium(browserName, desired_app, mobileApp, mobile_app_setting)
     assert 1 == 1
+
+
+def test_handleIframe(getdriver):
+    getdriver.browserData = MagicMock()
+    getdriver.handleIframe("test")
+    assert 1 == 1
+    getdriver.iFrame = "test"
+    getdriver.handleIframe()
+    assert 1 == 1
+
+
+def test_checkLinks(getdriver):
+    getdriver.browserData = MagicMock()
+    getdriver.checkLinks()
+    assert 1 == 1
+
+
+def test_waitForPageLoadAfterButtonClick(getdriver):
+    getdriver.browserData = MagicMock()
+    getdriver.html = "test"
+    getdriver.waitForPageLoadAfterButtonClick()
+    assert 1 == 1
+
+
+@pytest.mark.parametrize("function", [("close"), ("closeall-0"), ("")])
+def test_handleWindow(function, getdriver):
+    getdriver.browserData = MagicMock()
+    getdriver.browserData.driver.window_handles = ["test"]
+    getdriver.handleWindow(function=function)
+    assert 1 == 1
+
