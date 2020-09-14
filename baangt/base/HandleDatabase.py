@@ -163,9 +163,10 @@ class HandleDatabase:
             temp_dic["testcase_column"] = testrun_index
             self.dataDict.append(temp_dic)
 
-    def update_datarecords(self, dataDict, fileName, sheetName):
+    def update_datarecords(self, dataDict, fileName, sheetName, noCloneXls):
         logger.debug("Updating prefix data...")
-        self.testDataGenerator = TestDataGenerator(fileName, sheetName=sheetName, from_handleDatabase=True)
+        self.testDataGenerator = TestDataGenerator(fileName, sheetName=sheetName,
+                                                   from_handleDatabase=True, noUpdate=noCloneXls)
         for td in dataDict:
             temp_dic = dataDict[td]
             new_data_dic = {}

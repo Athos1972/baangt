@@ -73,6 +73,7 @@ class TestRun:
         # from anywhere within your custom code base.
         self.additionalExportTabs = {}
         self.statistics = Statistic()
+        self.noCloneXls = False
         signal.signal(signal.SIGINT, self.exit_signal_handler)
         signal.signal(signal.SIGTERM, self.exit_signal_handler)
 

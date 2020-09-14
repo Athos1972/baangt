@@ -63,7 +63,8 @@ class TestDataGenerator:
     :param sheetName: Name of sheet where all base data is located.
     :method write: Will write the final processed data in excel/csv file.
     """
-    def __init__(self, rawExcelPath=GC.TESTDATAGENERATOR_INPUTFILE, sheetName="", from_handleDatabase=False):
+    def __init__(self, rawExcelPath=GC.TESTDATAGENERATOR_INPUTFILE, sheetName="",
+                 from_handleDatabase=False, noUpdate=False):
         self.path = os.path.abspath(rawExcelPath)
         self.sheet_name = sheetName
         if not os.path.isfile(self.path):
@@ -74,7 +75,7 @@ class TestDataGenerator:
         self.remove_header = []
         self.usecount_dict = {}  # used to maintain usecount limit record and verify if that non of the data cross limit
         self.done = {}
-        self.writer = Writer(self.path)  # Writer class object to save file only in end, which will save time
+        self.noUpdateFiles = noUpdate
         self.writers = {}
         if not from_handleDatabase:
             self.processed_datas = self.__process_data(self.raw_data_json)
@@ -82,7 +83,8 @@ class TestDataGenerator:
             self.headers = [x for x in self.headers if 'usecount' not in x.lower()]
             self.final_data = self.__generateFinalData(self.processed_datas)
             if self.isUsecount:
-                self.writer.save()  # saving source input file once everything is done
+                if not self.noUpdateFiles:
+                    self.save_usecount()  # saving source input file once everything is done
 
     def write(self, OutputFormat=GC.TESTDATAGENERATOR_OUTPUT_FORMAT, batch_size=0, outputfile=None):
         """
@@ -484,8 +486,9 @@ class TestDataGenerator:
             file = file_name + "_baangt" + "." + file_extension
             if not file in self.rre_sheets:
                 logger.debug(f"Creating clone file of: {filename}")
-                filename = CloneXls(filename).update_or_make_clone()
-                self.rre_sheets[filename] = {}
+                if not self.noUpdateFiles:
+                    filename = CloneXls(filename).update_or_make_clone()
+                    self.rre_sheets[filename] = {}
             filename = file
             if sheet_name in self.rre_sheets[filename]:
                 df = self.rre_sheets[filename][sheet_name]
@@ -676,6 +679,8 @@ class TestDataGenerator:
         return usecount, limit, usecount_header
 
     def save_usecount(self):
+        if self.noUpdateFiles:
+            return 
         for filename in self.isUsecount:
             logger.debug(f"Updating file {filename} with usecounts.")
             sheet_dict = self.rre_sheets[filename]
@@ -692,6 +697,8 @@ class TestDataGenerator:
             logger.debug(f"File updated {filename}.")
 
     def update_usecount_in_source(self, data):
+        if self.noUpdateFiles:
+            return 
         filename = self.usecount_dict[repr(data)]["file_name"]
         if not filename:
             filename = self.path

@@ -67,7 +67,7 @@ class TestCaseSequenceMaster:
         self.testdataDataBase.update_datarecords(self.dataRecords, fileName=utils.findFileAndPathFromPath(
             self.testSequenceData[GC.DATABASE_FILENAME],
             basePath=str(Path(self.testRunInstance.globalSettingsFileNameAndPath).parent)),
-            sheetName=self.testSequenceData[GC.DATABASE_SHEETNAME])
+            sheetName=self.testSequenceData[GC.DATABASE_SHEETNAME], noCloneXls=self.testRunInstance.noCloneXls)
         logger.info(f"{recordPointer + 1} test records read for processing")
         self.statistics.total_testcases(recordPointer + 1)
 
@@ -148,9 +148,10 @@ class TestCaseSequenceMaster:
         testDataFile = utils.findFileAndPathFromPath(
             self.testSequenceData[GC.DATABASE_FILENAME],
             basePath=str(Path(self.testRunInstance.globalSettingsFileNameAndPath).parent))
-        cloneXls = CloneXls(testDataFile)  # , logger=logger)
-        testDataFile = cloneXls.update_or_make_clone(
-            ignore_headers=["TestResult", "UseCount"])
+        if not self.testRunInstance.noCloneXls:
+            cloneXls = CloneXls(testDataFile)  # , logger=logger)
+            testDataFile = cloneXls.update_or_make_clone(
+                ignore_headers=["TestResult", "UseCount"])
         self.testSequenceData[GC.DATABASE_FILENAME] = testDataFile
         self.testdataDataBase.read_excel(
                 fileName=testDataFile,

@@ -121,7 +121,8 @@ class ExportResults:
                 self.statistics.send_statistics()
             except Exception as ex:
                 logger.debug(ex)
-        self.update_result_in_testrun()
+        if not self.testRunInstance.noCloneXls:
+            self.update_result_in_testrun()
 
     def __removeUnwantedFields(self):
         lListPasswordFieldNames = ["PASSWORD", "PASSWORT", "PASSW"]
