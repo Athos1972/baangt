@@ -283,7 +283,8 @@ class TestStepMaster:
                                                     timeout=lTimeout)
 
             self.__doComparisons(lComparison=lComparison, value1=lValue, value2=lValue2)
-            logger.debug(f"IF-condition {lValue} {lComparison} {lValue2} evaluated to: {self.ifIsTrue} ")
+            logger.debug(f"IF-condition original Value: {original_value} (transformed: {lValue}) {lComparison} {lValue2} "
+                         f"evaluated to: {self.ifIsTrue} ")
         elif lActivity == "ELSE":
             if not self.ifIsTrue:
                 self.manageNestedCondition(condition=lActivity)
@@ -391,7 +392,7 @@ class TestStepMaster:
             if len(lValue2) > 0:
                 lValue2 = self.replaceVariables(lValue2, replaceFromDict=replaceFromDict)
         except Exception as ex:
-            logger.info(ex)
+            logger.warning(f"During replacement of variables an error happened: {ex}")
         return lValue, lValue2
 
     def __getIBAN(self, lValue, lValue2):
@@ -490,13 +491,18 @@ class TestStepMaster:
         if value2 == 'None':
             value2 = None
 
+        logger.debug(f"Evaluating IF-Condition: Value1 = {value1}, comparison={lComparison}, value2={value2}")
+
         if lComparison == "=":
             if value1 == value2:
                 self.manageNestedCondition(condition="IF", ifis=True)
             else:
                 self.manageNestedCondition(condition="IF", ifis=False)
         elif lComparison == "!=":
-            self.ifIsTrue = False if value1 == value2 else True
+            if value1 != value2:
+                self.manageNestedCondition(condition="IF", ifis=True)
+            else:
+                self.manageNestedCondition(condition="IF", ifis=False)
         elif lComparison == ">":
             if value1 > value2:
                 self.manageNestedCondition(condition="IF", ifis=True)
