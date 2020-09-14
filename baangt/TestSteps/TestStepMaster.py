@@ -289,6 +289,8 @@ class TestStepMaster:
             if not self.ifIsTrue:
                 self.manageNestedCondition(condition=lActivity)
                 logger.debug("Executing ELSE-condition")
+            else:
+                self.ifIsTrue = False
         elif lActivity == "ENDIF":
             self.manageNestedCondition(condition=lActivity)
         elif lActivity == "REPEAT":
