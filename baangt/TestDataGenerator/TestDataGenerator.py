@@ -64,7 +64,7 @@ class TestDataGenerator:
     :method write: Will write the final processed data in excel/csv file.
     """
     def __init__(self, rawExcelPath=GC.TESTDATAGENERATOR_INPUTFILE, sheetName="",
-                 from_handleDatabase=False, noUpdate=False):
+                 from_handleDatabase=False, noUpdate=True):
         self.path = os.path.abspath(rawExcelPath)
         self.sheet_name = sheetName
         if not os.path.isfile(self.path):
