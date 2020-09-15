@@ -307,6 +307,15 @@ class TestRunExcelImporter:
         @param value: potentially convertable value (e.g. GC.BROWSER)
         @return: potentially converted value (e.g. "Browser")
         """
+
+        # with change to Pandas all Cells are treated as string. Which is good otherwise in baangt.
+        # Here it's not good as we need int-values for the keys in the dicts.
+        if isinstance(value, str):
+            if value.isnumeric():
+                value = int(value)
+                return value
+
+        # Old implementation came with sometimes with floats for ints (Excel..)
         if isinstance(value, float):
             if value % 1 == 0:
                 return int(value)
