@@ -481,14 +481,17 @@ class TestDataGenerator:
 
     def __processRrdRre(self, sheet_name, data_looking_for, data_to_match: dict, filename=None):
         if filename:
-            file_name = ".".join(filename.split(".")[:-1])
-            file_extension = filename.split(".")[-1]
-            file = file_name + "_baangt" + "." + file_extension
+            if not self.noUpdateFiles:
+                file_name = ".".join(filename.split(".")[:-1])
+                file_extension = filename.split(".")[-1]
+                file = file_name + "_baangt" + "." + file_extension
+            else:
+                file = filename
             if not file in self.rre_sheets:
                 logger.debug(f"Creating clone file of: {filename}")
                 if not self.noUpdateFiles:
                     filename = CloneXls(filename).update_or_make_clone()
-                    self.rre_sheets[filename] = {}
+                self.rre_sheets[filename] = {}
             filename = file
             if sheet_name in self.rre_sheets[filename]:
                 df = self.rre_sheets[filename][sheet_name]
