@@ -4,6 +4,8 @@ from baangt.base import GlobalConstants as GC
 from baangt.base.BrowserHandling.BrowserHandling import BrowserDriver
 from unittest.mock import patch, MagicMock
 from baangt.TestSteps.Exceptions import baangtTestStepException
+from baangt.base.BrowserHandling.WebdriverFunctions import WebdriverFunctions
+from baangt.base.Utils import utils
 
 
 browserName = "FIREFOX"
@@ -219,7 +221,6 @@ def test_setBrowserWindowSizeWithX(getdriver):
     ]
 )
 def test_mobileConnectAppium(browserName, desired_app, mobileApp, mobile_app_setting):
-    from baangt.base.BrowserHandling.WebdriverFunctions import WebdriverFunctions
     wdf = WebdriverFunctions
     with patch.dict(wdf.BROWSER_DRIVERS, {GC.BROWSER_APPIUM: MagicMock}):
         BrowserDriver._mobileConnectAppium(browserName, desired_app, mobileApp, mobile_app_setting)
@@ -237,6 +238,7 @@ def test_handleIframe(getdriver):
 
 def test_checkLinks(getdriver):
     getdriver.browserData = MagicMock()
+    getdriver.browserData.driver.find_elements_by_css_selector.return_value = [MagicMock()]
     getdriver.checkLinks()
     assert 1 == 1
 
@@ -255,7 +257,45 @@ def test_handleWindow(function, getdriver):
     if function == "":
         with pytest.raises(baangtTestStepException):
             getdriver.handleWindow(function=function)
+        getdriver.refresh()
     else:
         getdriver.handleWindow(function=function)
     assert 1 == 1
 
+
+def test_findNewFiles(getdriver):
+    from baangt.base.DownloadFolderMonitoring import DownloadFolderMonitoring
+    getdriver.downloadFolderMonitoring = DownloadFolderMonitoring(getdriver.downloadFolder)
+    result = getdriver.findNewFiles()
+    assert type(result) == list
+
+
+def test_getURL(getdriver):
+    result = getdriver.getURL()
+    assert result
+
+
+@pytest.mark.parametrize("css, xpath, id", [("test", None, None), (None, "test", None), (None, None, "test")])
+def test_findWaitNotVisible(css, xpath, id, getdriver):
+    getdriver.browserData = MagicMock()
+    result = getdriver.findWaitNotVisible(css, xpath, id)
+    assert type(result) == bool
+
+
+@pytest.mark.parametrize("browser", ["firefox", "chrome"])
+def test_createNewBrowser(browser, getdriver):
+    with patch.dict(WebdriverFunctions.BROWSER_DRIVERS, {GC.BROWSER_REMOTE: MagicMock}):
+        getdriver.createNewBrowser(browserName="REMOTE_V4", desiredCapabilities={"browserName": browser})
+    assert 1 == 1
+
+
+@patch.object(utils, "setLocatorFromLocatorType")
+def test_waitForElementChangeAfterButtonClick(mock_utils, getdriver):
+    mock_utils.return_value = (1, 2, 3)
+    getdriver.findBy = MagicMock()
+    id = MagicMock()
+    getdriver.findBy.return_value = (id, '1234')
+    getdriver.element = MagicMock()
+    getdriver.element.id = "xxxx"
+    id.id = "1234"
+    getdriver.waitForElementChangeAfterButtonClick(timeout=0.1)

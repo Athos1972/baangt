@@ -156,33 +156,16 @@ class TestStepMaster:
                             data_list = random.sample(data_list, int(self.repeatCount[-1]))
                         except:
                             pass
-                    if data_list:
-                        for data in data_list:
-                            temp_dic = dict(self.repeatDict[-1])
-                            processed_data = {}
-                            for key in temp_dic:
-                                try:
-                                    processed_data = dict(temp_dic[key])
-                                except Exception as ex:
-                                    logger.debug(ex)
-                                try:
-                                    self.executeDirectSingle(key, processed_data, replaceFromDict=data)
-                                except Exception as ex:
-                                    logger.info(ex)
-                    else:
+                    for data in data_list:
                         temp_dic = dict(self.repeatDict[-1])
+                        processed_data = {}
                         for key in temp_dic:
                             try:
                                 processed_data = dict(temp_dic[key])
                             except Exception as ex:
                                 logger.debug(ex)
-                            for ky in processed_data:
-                                try:
-                                    processed_data[ky] = self.replaceVariables(processed_data[ky])
-                                except Exception as ex:
-                                    logger.info(ex)
                             try:
-                                self.executeDirectSingle(key, processed_data)
+                                self.executeDirectSingle(key, processed_data, replaceFromDict=data)
                             except Exception as ex:
                                 logger.info(ex)
                 del self.repeatIsTrue[-1]
