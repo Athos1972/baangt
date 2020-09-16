@@ -63,7 +63,8 @@ class TestDataGenerator:
     :param sheetName: Name of sheet where all base data is located.
     :method write: Will write the final processed data in excel/csv file.
     """
-    def __init__(self, rawExcelPath=GC.TESTDATAGENERATOR_INPUTFILE, sheetName="", from_handleDatabase=False):
+    def __init__(self, rawExcelPath=GC.TESTDATAGENERATOR_INPUTFILE, sheetName="",
+                 from_handleDatabase=False, noUpdate=True):
         self.path = os.path.abspath(rawExcelPath)
         self.sheet_name = sheetName
         if not os.path.isfile(self.path):
@@ -74,7 +75,7 @@ class TestDataGenerator:
         self.remove_header = []
         self.usecount_dict = {}  # used to maintain usecount limit record and verify if that non of the data cross limit
         self.done = {}
-        self.writer = Writer(self.path)  # Writer class object to save file only in end, which will save time
+        self.noUpdateFiles = noUpdate
         self.writers = {}
         if not from_handleDatabase:
             self.processed_datas = self.__process_data(self.raw_data_json)
@@ -82,7 +83,8 @@ class TestDataGenerator:
             self.headers = [x for x in self.headers if 'usecount' not in x.lower()]
             self.final_data = self.__generateFinalData(self.processed_datas)
             if self.isUsecount:
-                self.writer.save()  # saving source input file once everything is done
+                if not self.noUpdateFiles:
+                    self.save_usecount()  # saving source input file once everything is done
 
     def write(self, OutputFormat=GC.TESTDATAGENERATOR_OUTPUT_FORMAT, batch_size=0, outputfile=None):
         """
@@ -479,12 +481,16 @@ class TestDataGenerator:
 
     def __processRrdRre(self, sheet_name, data_looking_for, data_to_match: dict, filename=None):
         if filename:
-            file_name = ".".join(filename.split(".")[:-1])
-            file_extension = filename.split(".")[-1]
-            file = file_name + "_baangt" + "." + file_extension
+            if not self.noUpdateFiles:
+                file_name = ".".join(filename.split(".")[:-1])
+                file_extension = filename.split(".")[-1]
+                file = file_name + "_baangt" + "." + file_extension
+            else:
+                file = filename
             if not file in self.rre_sheets:
                 logger.debug(f"Creating clone file of: {filename}")
-                filename = CloneXls(filename).update_or_make_clone()
+                if not self.noUpdateFiles:
+                    filename = CloneXls(filename).update_or_make_clone()
                 self.rre_sheets[filename] = {}
             filename = file
             if sheet_name in self.rre_sheets[filename]:
@@ -638,15 +644,14 @@ class TestDataGenerator:
         for sheet in sheet_lis:
             sheet_df[sheet] = self.get_str_sheet(wb, sheet)
             sheet_df[sheet].fillna("", inplace=True)
+        if return_json:
+            for df in sheet_df.keys():
+                sheet_df[df] = json.loads(sheet_df[df].to_json(orient="records"))
         if sheet_name == "":
             base_sheet = sheet_df[sheet_lis[0]]
         else:
             assert sheet_name in sheet_df, f"Excel file doesn't contain {sheet_name} sheet. Please recheck."
             base_sheet = sheet_df[sheet_name]
-        if return_json:
-            base_sheet = json.loads(base_sheet.to_json("records"))
-            for df in sheet_df:
-                sheet_df[df] = json.loads(sheet_df[df].to_json("records"))
         return sheet_df, base_sheet
 
     @staticmethod
@@ -677,11 +682,15 @@ class TestDataGenerator:
         return usecount, limit, usecount_header
 
     def save_usecount(self):
+        if self.noUpdateFiles:
+            return 
         for filename in self.isUsecount:
             logger.debug(f"Updating file {filename} with usecounts.")
-            sheet_dict = {}
+            sheet_dict = self.rre_sheets[filename]
             ex = pd.ExcelFile(filename)
             for sheet in ex.sheet_names:
+                if sheet in sheet_dict:
+                    continue
                 df = self.get_str_sheet(ex, sheet)
                 sheet_dict[sheet] = df
             with pd.ExcelWriter(filename) as writer:
@@ -691,6 +700,8 @@ class TestDataGenerator:
             logger.debug(f"File updated {filename}.")
 
     def update_usecount_in_source(self, data):
+        if self.noUpdateFiles:
+            return 
         filename = self.usecount_dict[repr(data)]["file_name"]
         if not filename:
             filename = self.path

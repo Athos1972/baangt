@@ -121,7 +121,8 @@ class ExportResults:
                 self.statistics.send_statistics()
             except Exception as ex:
                 logger.debug(ex)
-        self.update_result_in_testrun()
+        if not self.testRunInstance.noCloneXls:
+            self.update_result_in_testrun()
 
     def __removeUnwantedFields(self):
         lListPasswordFieldNames = ["PASSWORD", "PASSWORT", "PASSW"]
@@ -593,8 +594,11 @@ class ExportResults:
 
     def update_result_in_testrun(self):
         # To update source testrun file
+        logger.debug("TestResult updating")
         testrun_column = self.dataRecords[0]["testcase_column"]
         if testrun_column:  # if testrun_column is greater than 0 that means testresult header is present in source file
+            logger.debug(f'Header for result update is {self.dataRecords[0]["testcase_column"]} in sheet ' \
+                         f'{self.dataRecords[0]["testcase_sheet"]} of file {self.dataRecords[0]["testcase_file"]}')
             testrun_file = load_workbook(self.dataRecords[0]["testcase_file"])
             testrun_sheet = testrun_file.get_sheet_by_name(self.dataRecords[0]["testcase_sheet"])
             for key, value in self.dataRecords.items():
@@ -606,8 +610,12 @@ class ExportResults:
                        f"TestCase_UUID: {str(self.testcase_uuids[key])}\r\n\r\n"
                 old_value = testrun_sheet.cell(value["testcase_row"] + 1, value["testcase_column"]).value or ""
                 testrun_sheet.cell(value["testcase_row"] + 1, value["testcase_column"]).value = data + old_value
+                logger.debug(f'Result written in row {value["testcase_row"]} column {value["testcase_column"]}')
+            logger.debug("Saving Source TestRun file.")
             testrun_file.save(self.dataRecords[0]["testcase_file"])
             logger.info(f"Source TestRun file {self.dataRecords[0]['testcase_file']} updated.")
+        else:
+            logger.debug(f"No TestResult column found")
 
     def __writeCell(self, line, cellNumber, testRecordDict, fieldName, strip=False):
         if fieldName in testRecordDict.keys() and testRecordDict[fieldName]:
