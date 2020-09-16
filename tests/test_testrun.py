@@ -1,5 +1,6 @@
 import pytest
 from unittest.mock import patch
+from baangt.base.TestRun.TestRun import TestRun
 
 
 class subprocess_communicate:
@@ -15,13 +16,12 @@ def testrun_obj():
     """ This function return instance of TestRun object
         which will be used by other test methods
     """
-    from baangt.base.TestRun.TestRun import TestRun
-    return TestRun("SimpleTheInternet.xlsx","globals.json", executeDirect=False)
+    return TestRun("examples/SimpleTheInternet.xlsx","globals.json", executeDirect=False)
 
 
 def test_filenotfound():
     """ To check if function raises File not found Error """
-    with pytest.raises(Exception) as e:
+    with pytest.raises(BaseException) as e:
         TestRun("SimpleTheInternet.xlsx","global.json")
 
 

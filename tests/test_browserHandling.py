@@ -3,6 +3,7 @@ import platform
 from baangt.base import GlobalConstants as GC
 from baangt.base.BrowserHandling.BrowserHandling import BrowserDriver
 from unittest.mock import patch, MagicMock
+from baangt.TestSteps.Exceptions import baangtTestStepException
 
 
 browserName = "FIREFOX"
@@ -251,6 +252,10 @@ def test_waitForPageLoadAfterButtonClick(getdriver):
 def test_handleWindow(function, getdriver):
     getdriver.browserData = MagicMock()
     getdriver.browserData.driver.window_handles = ["test"]
-    getdriver.handleWindow(function=function)
+    if function == "":
+        with pytest.raises(baangtTestStepException):
+            getdriver.handleWindow(function=function)
+    else:
+        getdriver.handleWindow(function=function)
     assert 1 == 1
 

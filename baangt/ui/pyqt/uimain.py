@@ -675,6 +675,8 @@ class MainWindow(Ui_MainWindow):
             if result_file[-5:] == ".xlsx":
                 logger.debug(f"Found result_file in the logs: {result_file}")
                 self.__result_file = result_file
+        elif "Logfile used: " in text:
+            self.__log_file = text.split("used: ")[1].strip()
         if "||Statistic:" in text:
             lis = text.split('||')
             stat = lis[1][10:]
