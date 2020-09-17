@@ -1,0 +1,71 @@
+{
+  "GC.KWARGS_TESTRUNATTRIBUTES": {
+    "GC.EXPORT_FORMAT": {
+      "GC.EXP_XLSX": "True",
+      "GC.EXP_FIELDLIST": ["GC.TestCaseStatus", "GC.TIMING_DURATION", "GC.TIMELOG"]
+    },
+    "GC.STRUCTURE_TESTCASESEQUENCE": {
+      "1": [
+        "GC.CLASSES_TESTCASESEQUENCE",
+        {
+          "GC.DATABASE_FILENAME": "example_googleImages.xlsx",
+          "GC.DATABASE_SHEETNAME": "data",
+          "GC.EXECUTION_PARALLEL": 1,
+          "GC.STRUCTURE_TESTCASE": {
+            "1": [
+              "GC.CLASSES_TESTCASE",
+              {
+                "GC.KWARGS_BROWSER": "GC.BROWSER_FIREFOX",
+                "GC.BROWSER_ATTRIBUTES": "",
+                "GC.KWARGS_TESTCASETYPE": "GC.KWARGS_BROWSER"
+              },
+              {
+                "GC.STRUCTURE_TESTSTEP": {
+                  "1": [
+                    "TestStepMaster", {
+                      "TestStepExecutionParameters": {
+                        "1": {
+                          "Activity": "GOTOURL",
+                          "LocatorType": "",
+                          "Locator": "",
+                          "Value": "https://google.com",
+                          "Comparison": "",
+                          "Value2": "",
+                          "Timeout": "",
+                          "Optional": "",
+                          "Release": ""
+                        },
+                        "2": {
+                          "Activity": "COMMENT",
+                          "LocatorType": "",
+                          "Locator": "Open Google.com and search for terms from the data tab",
+                          "Value": "",
+                          "Comparison": "",
+                          "Value2": "",
+                          "Timeout": "",
+                          "Optional": "",
+                          "Release": ""
+                        },
+                        "3": {
+                          "Activity": "SETTEXT",
+                          "LocatorType": "xpath",
+                          "Locator": "//input[@role='combobox']",
+                          "Value": "$(searchterm)",
+                          "Comparison": "",
+                          "Value2": "",
+                          "Timeout": "",
+                          "Optional": "",
+                          "Release": ""
+                        },
+                        "4": {
+                          "Activity": "CLICK",
+                          "LocatorType": "xpath",
+                          "Locator": "(//input[contains(@type,'submit')])[3]",
+                          "Value": "",
+                          "Comparison": "",
+                          "Value2": "",
+                          "Timeout": "",
+                          "Optional": "",
+                          "Release": ""
+                        }
+                      }}]}}]}}]}}}
