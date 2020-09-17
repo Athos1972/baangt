@@ -212,7 +212,13 @@ class TestStepMaster:
             logger.debug(f"we skipped this line due to {lRelease} disqualifies according to {self.globalRelease} ")
             return
         if lActivity == "GOTOURL":
-            self.browserSession.goToUrl(lValue)
+            if lValue:
+                self.browserSession.goToUrl(lValue)
+            elif lLocator:
+                self.browserSession.goToUrl(lLocator)
+            else:
+                logger.critical("GotoURL without URL called. Aborting. "
+                                "Please provide URL either in Value or Locator columns")
         elif lActivity == "SETTEXT":
             self.browserSession.findByAndSetText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout,
                                                  optional=lOptional)
@@ -318,6 +324,7 @@ class TestStepMaster:
             value_found = self.browserSession.findByAndWaitForValue(xpath=xpath, css=css, id=id, optional=lOptional,
                                                                     timeout=lTimeout)
             if not self.__doComparisons(lComparison=lComparison, value1=value_found, value2=lValue):
+                logger.error(f"Condition {value_found} {lComparison} {lValue} was not met during assert.")
                 raise baangtTestStepException(f"Expected Value: {lValue}, Value found :{value_found} ")
         elif lActivity == 'IBAN':
             # Create Random IBAN. Value1 = Input-Parameter for IBAN-Function. Value2=Fieldname
@@ -505,6 +512,16 @@ class TestStepMaster:
                 self.manageNestedCondition(condition="IF", ifis=False)
         elif lComparison == "<=":
             if value1 <= value2:
+                self.manageNestedCondition(condition="IF", ifis=True)
+            else:
+                self.manageNestedCondition(condition="IF", ifis=False)
+        elif lComparison.upper() == "IP":     # Is Part of (Value 1 is part of Value 2)
+            if value1 in value2:
+                self.manageNestedCondition(condition="IF", ifis=True)
+            else:
+                self.manageNestedCondition(condition="IF", ifis=False)
+        elif lComparison.upper() == 'CO':      # COntains (Value 1 contains Value 2)
+            if value2 in value1:
                 self.manageNestedCondition(condition="IF", ifis=True)
             else:
                 self.manageNestedCondition(condition="IF", ifis=False)
