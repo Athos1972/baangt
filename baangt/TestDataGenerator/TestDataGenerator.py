@@ -513,6 +513,19 @@ class TestDataGenerator:
 
         if type(data_looking_for) == str:
             data_looking_for = data_looking_for.split(",")
+        data_new_header = {}
+        data_looking_for_old = data_looking_for[:]
+        data_looking_for = []
+        for header in data_looking_for_old:
+            if ":" in header:
+                old_header = header.split(":")[0].strip()
+                new_header = header.split(":")[1].strip()
+            else:
+                old_header = header
+                new_header = header
+            data_new_header[old_header] = new_header
+            data_looking_for.append(header)
+
         key_name = repr(sheet_name) + repr(data_looking_for) + repr(data_to_match) + repr(filename)
         if key_name in self.done:
             logger.debug(f"Data Gathered from previously saved data.")
@@ -548,7 +561,7 @@ class TestDataGenerator:
                     "sheet_name": sheet_name, "file_name": filename
                 }
             else:
-                dt = {keys: data[keys] for keys in data_looking_for}
+                dt = {header: data[keys] for (keys, header) in zip(data_looking_for, data_looking_for_old)}
                 data_lis.append(dt)
                 self.usecount_dict[repr(dt)] = {
                     "use": used_limit, "limit": limit, "index": data["Index"],
