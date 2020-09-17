@@ -1,1 +1,37 @@
-{"TESTRUNEXECUTIONPARAMETERS": {"ExportFormat": {"ExportFormat": "XLSX", "Fieldlist": ["TestCaseStatus", "Duration", "timelog"]}, "TESTSEQUENCE": {"1": ["baangt.TestCaseSequence.TestCaseSequenceMaster.TestCaseSequenceMaster", {"SequenceClass": "baangt.TestCaseSequence.TestCaseSequenceMaster.TestCaseSequenceMaster", "TestDataFileName": "example_googleImages.xlsx", "Sheetname": "data", "ParallelRuns": 1, "FromLine": 0, "ToLine": 999999, "TESTCASE": {"1": ["baangt.TestCase.TestCaseMaster.TestCaseMaster", {"TestCaseType": "Browser", "Browser": "FF", "BrowserAttributes": ""}, {"TestStep": {"1": ["TestStepMaster", {"TestStepExecutionParameters": {"1": {"Activity": "GOTOURL", "LocatorType": "", "Locator": "", "Value": "https://google.com", "Comparison": "", "Value2": "", "Timeout": "", "Optional": "", "Release": ""}, "2": {"Activity": "COMMENT", "LocatorType": "", "Locator": "Open Google.com and search for terms from the data tab", "Value": "", "Comparison": "", "Value2": "", "Timeout": "", "Optional": "", "Release": ""}, "3": {"Activity": "SETTEXT", "LocatorType": "xpath", "Locator": "//input[@role='combobox']", "Value": "$(searchterm)", "Comparison": "", "Value2": "", "Timeout": "", "Optional": "", "Release": ""}, "4": {"Activity": "CLICK", "LocatorType": "xpath", "Locator": "(//input[contains(@type,'submit')])[3]", "Value": "", "Comparison": "", "Value2": "", "Timeout": "", "Optional": "", "Release": ""}}}]}}]}}]}}}
+{"TESTRUNEXECUTIONPARAMETERS":
+   {"ExportFormat":  {
+     "ExportFormat": "XLSX",
+     "Fieldlist": ["TestCaseStatus", "Duration", "timelog"]},
+     "TESTSEQUENCE": {
+       "1": ["baangt.TestCaseSequence.TestCaseSequenceMaster.TestCaseSequenceMaster", {
+         "SequenceClass": "baangt.TestCaseSequence.TestCaseSequenceMaster.TestCaseSequenceMaster",
+         "TestDataFileName": "example_googleImages.xlsx",
+         "Sheetname": "data",
+         "ParallelRuns": 1,
+         "FromLine": 0,
+         "ToLine": 999999,
+         "TESTCASE": {
+           "1": ["baangt.TestCase.TestCaseMaster.TestCaseMaster", {
+             "TestCaseType": "Browser",
+             "Browser": "FF",
+             "BrowserAttributes": ""
+           },
+             {"TestStep": {
+               "1": [{"TestStepClass": "baangt.TestSteps.TestStepMaster"}, {
+                 "TestStepExecutionParameters": {
+                   "1": {"Activity": "GOTOURL", "LocatorType": "", "Locator": "", "Value": "https://google.com", "Comparison": "", "Value2": "", "Timeout": "", "Optional": "", "Release": ""},
+                   "2": {"Activity": "COMMENT", "LocatorType": "", "Locator": "Open Google.com and search for terms from the data tab", "Value": "", "Comparison": "", "Value2": "", "Timeout": "", "Optional": "", "Release": ""},
+                   "3": {"Activity": "SETTEXT", "LocatorType": "xpath", "Locator": "//input[@role='combobox']", "Value": "$(searchterm)", "Comparison": "", "Value2": "", "Timeout": "", "Optional": "", "Release": ""},
+                   "4": {"Activity": "CLICK", "LocatorType": "xpath", "Locator": "(//input[contains(@type,'submit')])[3]", "Value": "", "Comparison": "", "Value2": "", "Timeout": "", "Optional": "", "Release": ""}
+                 }
+               }
+               ]
+             }
+             }
+           ]
+         }
+       }
+       ]
+     }
+   }
+}
