@@ -463,6 +463,7 @@ class TestDataGenerator:
             processed_datas = self.get_env_variable(raw_data)
 
         elif "-" in raw_data:
+            raw_data_original = raw_data[:]
             raw_data = raw_data.split('-')
             start = raw_data[0].strip()
             end = raw_data[1].strip()
@@ -471,7 +472,10 @@ class TestDataGenerator:
                 raw_data = end.split(",")
                 end = raw_data[0].strip()
                 step = raw_data[1].strip()
-            processed_datas = [x for x in range(int(start), int(end)+1, int(step))]
+            try:
+                processed_datas = [x for x in range(int(start), int(end)+1, int(step))]
+            except:
+                processed_datas = [raw_data_original.strip()]
             processed_datas = data_type(processed_datas)
 
         else:
@@ -497,6 +501,7 @@ class TestDataGenerator:
                 df = self.rre_sheets[filename][sheet_name]
             else:
                 df = pd.read_excel(filename, sheet_name, dtype=str)
+                df.fillna("", inplace=True)
                 self.rre_sheets[filename][sheet_name] = df
         else:
             df = self.sheet_dict[sheet_name]
@@ -542,8 +547,9 @@ class TestDataGenerator:
                 self.isUsecount[filename] = usecount_header
             if not self.isUsecount[filename]:
                 self.isUsecount[filename] = usecount_header
-        for tup in df1.itertuples():
-            data = dict(tup._asdict())
+        df1_dict = df1.to_dict(orient="index")
+        for index in df1_dict:
+            data = df1_dict[index]
             if usecount_header:
                 try:
                     used_limit = int(data[usecount_header])
@@ -553,8 +559,6 @@ class TestDataGenerator:
                 used_limit = 0
 
             if data_looking_for[0] == "*":
-                index = data["Index"]
-                del data["Index"]
                 data_lis.append(data)
                 self.usecount_dict[repr(data)] = {
                     "use": used_limit, "limit": limit, "index": index,
@@ -633,6 +637,7 @@ class TestDataGenerator:
         columns = excel.parse(sheet).columns
         converters = {column: str for column in columns}
         data = excel.parse(sheet, converters=converters)
+        data.fillna("", inplace=True)
         return data
 
     def read_excel(self, path, sheet_name="", return_json=False):
