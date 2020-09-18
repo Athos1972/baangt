@@ -568,7 +568,7 @@ class TestDataGenerator:
                 dt = {header: data[keys] for (keys, header) in zip(data_looking_for, data_looking_for_old)}
                 data_lis.append(dt)
                 self.usecount_dict[repr(dt)] = {
-                    "use": used_limit, "limit": limit, "index": data["Index"],
+                    "use": used_limit, "limit": limit, "index": index,
                     "sheet_name": sheet_name, "file_name": filename
                 }
 
