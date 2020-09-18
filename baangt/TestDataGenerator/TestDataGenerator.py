@@ -485,6 +485,7 @@ class TestDataGenerator:
 
     def __processRrdRre(self, sheet_name, data_looking_for, data_to_match: dict, filename=None):
         if filename:
+            filename = os.path.join(os.path.dirname(self.path), filename)
             if not self.noUpdateFiles:
                 file_name = ".".join(filename.split(".")[:-1])
                 file_extension = filename.split(".")[-1]
