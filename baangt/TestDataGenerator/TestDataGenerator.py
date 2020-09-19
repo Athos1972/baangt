@@ -35,7 +35,8 @@ class PrefixData:
             fake_lis = []
             if len(self.dataList) == 3:
                 if int(self.dataList[2]) == 0:
-                    fake_lis.append(getattr(fake, self.dataList[0])())
+                    fake_lis.append([fake, self.dataList[0]])
+                    fake_lis = tuple(fake_lis)
                 else:
                     for x in range(int(self.dataList[2])):
                         fake_lis.append(getattr(fake, self.dataList[0])())
@@ -47,7 +48,6 @@ class PrefixData:
     def return_random(self):
         if self.prefix == "rre" or self.prefix == "rrd":
             if not len(self.dataList):
-                print(self.dataList)
                 raise BaseException(f"Not enough data, please verify if data is present or usecount limit" \
                                     "has reached!!")
             data = choice(self.dataList)
@@ -58,6 +58,8 @@ class PrefixData:
             return data
 
         elif self.prefix.lower() == "fkr":
+            if type(self.dataList) == tuple:
+                return getattr(self.dataList[0][0], self.dataList[0][1])()
             return choice(self.dataList)
 
         elif self.prefix == 'rnd':
@@ -91,7 +93,6 @@ class TestDataGenerator:
         self.sheet_dict, self.raw_data_json = self.read_excel(self.path, self.sheet_name)
         self.rre_sheets = {}
         self.isUsecount = {}
-        self.remove_header = []
         self.usecount_dict = {}  # used to maintain usecount limit record and verify if that non of the data cross limit
         self.done = {}
         self.noUpdateFiles = noUpdate
@@ -111,92 +112,45 @@ class TestDataGenerator:
         :param outputfile: name and path of outputfile.
         :return:
         """
-        if OutputFormat.lower() == "xlsx":
-            if outputfile == None:
-                outputfile = GC.TESTDATAGENERATOR_OUTPUTFILE_XLSX
-            #self.__write_excel(batch_size=batch_size, outputfile=outputfile)
-            with pd.ExcelWriter(outputfile) as writer:
-                self.final_data.to_excel(writer, index=False)
-            writer.save()
-        elif OutputFormat.lower() == "csv":
-            if outputfile == None:
-                outputfile = GC.TESTDATAGENERATOR_OUTPUTFILE_CSV
-            self.__write_csv(batch_size=batch_size, outputfile=outputfile)
-        else:
-            logger.debug("Incorrect file format")
-
-    def __write_excel(self, outputfile=GC.TESTDATAGENERATOR_OUTPUTFILE_XLSX, batch_size=0):
-        """
-        Writes TestData file with final processsed data.
-        :param outputfile: Name and path for output file.
-        :param batch_size: No. of data to be randomly selected and written in output file.
-        :return: None
-        """
         if batch_size > 0:
             if len(self.final_data) > batch_size:
-                data_lis = sample(self.final_data, batch_size)
+                data_lis = self.final_data.sample(n=batch_size)
             else:
                 data_lis = self.final_data
                 logger.debug("Total final data is smaller than batch size.")
         else:
             data_lis = self.final_data
-        with xlsxwriter.Workbook(outputfile) as workbook:
-            worksheet = workbook.add_worksheet()
-            worksheet.write_row(0, 0, self.headers)
-            for row_num, data in enumerate(data_lis):
-                worksheet.write_row(row_num+1, 0, data)
 
-    def __write_csv(self, outputfile=GC.TESTDATAGENERATOR_OUTPUTFILE_CSV, batch_size=0):
-        """
-        Writes final data in csv
-        :param outputfile: Name and path of output file
-        :param batch_size: No. of data to be randomly selected and written in output file.
-        :return:
-        """
-        if batch_size > 0:
-            if len(self.final_data) > batch_size:
-                data_lis = sample(self.final_data, batch_size)
-            else:
-                data_lis = self.final_data
+        if OutputFormat.lower() == "xlsx":
+            if outputfile == None:
+                outputfile = GC.TESTDATAGENERATOR_OUTPUTFILE_XLSX
+            with pd.ExcelWriter(outputfile) as writer:
+                data_lis.to_excel(writer, index=False)
+                writer.save()
+
+        elif OutputFormat.lower() == "csv":
+            if outputfile == None:
+                outputfile = GC.TESTDATAGENERATOR_OUTPUTFILE_CSV
+            data_lis.to_csv(outputfile)
+
         else:
-            data_lis = self.final_data
-        with open(outputfile, 'w', newline='\n', encoding='utf-8-sig') as file:
-            fl = csv.writer(file)
-            fl.writerow(self.headers)
-            for dt in data_lis:
-                fl.writerow(list(dt))
+            logger.debug("Incorrect file format")
 
     def __generateFinalData(self, processed_data):
         """
-        This method will do the final process on the processed_data. Processed_data contains list of dictionary, each
-        dictionary is the row from input file which are processed to be interact able in python as per the requirement.
-
-        First loop is of processed_data
-        Second loop is of the dictionary(row) and each key:value of that dictionary is header:processed_data
-
-        Method will first check the data type of value.
-        If it is a string than method will put it inside a list(i.e. ["string"])
-        If it is a tuple than it is a data with prefix so it will be sent to ``__prefix_data_processing`` method for
-        further processing.
-        Else the value is of type list.
-
-        Then we store all this lists in a list(can be treat as row). This list contains value of cells. They are evaluted
-        i.e. ranges are converted to list, strings are converted to list & list are all ready list. So to generate all
-        possible combinations from it we use ``iterable`` module.
-
-        Once this list of lists which contains all possible combinations is created we will call
-        ``__update_prefix_data_in_final_list`` method. This method will insert the processed prefix data along with the
-        data of all combinations list in the final list with the correct position of every value.
-
-        Finally it will return the list of lists which is completely processed and ready to be written in output file.
 
         :param processed_data:
         :return: Final_data_list
         """
         for dic in processed_data:
-            for key in dic:
+            for key in dic.copy():
                 if type(dic[key]) == PrefixData:
-                    dic[key] = dic[key].return_random()
+                    data = dic[key].return_random()
+                    if type(data) == dict:
+                        del dic[key]
+                        dic.update(data)
+                    else:
+                        dic[key] = data
         final_data = pd.DataFrame(processed_data)
         return final_data
 
@@ -237,15 +191,7 @@ class TestDataGenerator:
                         processed_data[ke] = data
             product = list(self.product_dict(**processed_data))
             processed_datas += product
-        print(len(processed_datas))
         return processed_datas
-
-    @staticmethod
-    def product_dict(**kwargs):
-        keys = kwargs.keys()
-        vals = kwargs.values()
-        for instance in itertools.product(*vals):
-            yield dict(zip(keys, instance))
 
     def data_generators(self, raw_data_old):
         """
@@ -429,6 +375,8 @@ class TestDataGenerator:
                 used_limit = 0
 
             if data_looking_for[0] == "*":
+                if usecount_header:
+                    del data[usecount_header]
                 data_lis.append(data)
                 self.usecount_dict[repr(data)] = {
                     "use": used_limit, "limit": limit, "index": index,
@@ -665,6 +613,13 @@ class TestDataGenerator:
         except:
             raise BaseException(f"Can't find {variable} in envrionment & default value is also not set")
         return data
+
+    @staticmethod
+    def product_dict(**kwargs):
+        keys = kwargs.keys()
+        vals = kwargs.values()
+        for instance in itertools.product(*vals):
+            yield dict(zip(keys, instance))
 
 
 if __name__ == "__main__":
