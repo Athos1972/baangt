@@ -197,6 +197,12 @@
             "type": "text",
             "default": "",
             "displayText": "AppRes2BaseXLS"
+        },
+        "TC.RestartBrowserAfter": {
+            "hint": "Enter a number of Testcases, after that the browser shall be restartet. Valid: e.g. '2'. Instead of '1' you could set the flag RestartBrowser.",
+            "type": "text",
+            "default": "",
+            "displayText": "RestBrowserAfter"
         }
     }
 }

@@ -38,7 +38,7 @@ class TestRun:
     """
 
     def __init__(self, testRunName, globalSettingsFileNameAndPath=None,
-                 testRunDict=None, uuid=uuid4(), executeDirect=True):  # -- API support: testRunDict --
+                 testRunDict=None, uuid=uuid4(), executeDirect=True, noCloneXls=False):  # -- API support: testRunDict --
         """
         @param testRunName: The name of the TestRun to be executed.
         @param globalSettingsFileNameAndPath: from where to read the <globals>.json
@@ -50,7 +50,7 @@ class TestRun:
         self.testRunDict = testRunDict
         self.globalSettingsFileNameAndPath = globalSettingsFileNameAndPath
         self.testRunName, self.testRunFileName = \
-            self._sanitizeTestRunNameAndFileName(testRunName)
+            self._sanitizeTestRunNameAndFileName(testRunName, executeDirect)
 
         # Initialize everything else
         self.apiInstance = None
@@ -73,6 +73,7 @@ class TestRun:
         # from anywhere within your custom code base.
         self.additionalExportTabs = {}
         self.statistics = Statistic()
+        self.noCloneXls = noCloneXls
         signal.signal(signal.SIGINT, self.exit_signal_handler)
         signal.signal(signal.SIGTERM, self.exit_signal_handler)
 
@@ -380,7 +381,7 @@ class TestRun:
         return utils.dynamicImportOfClasses(fullQualifiedImportName=fullQualifiedImportName)
 
     @staticmethod
-    def _sanitizeTestRunNameAndFileName(TestRunNameInput):
+    def _sanitizeTestRunNameAndFileName(TestRunNameInput, direct):
         """
         @param TestRunNameInput: The complete File and Path of the TestRun definition (JSON or XLSX).
         @return: TestRunName and FileName (if definition of testrun comes from a file (JSON or XLSX)

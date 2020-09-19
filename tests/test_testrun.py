@@ -1,4 +1,14 @@
 import pytest
+from unittest.mock import patch
+
+
+class subprocess_communicate:
+    def __init__(self, *stdout, **stderr):
+        pass
+
+    def communicate(self):
+        return b"firefox\n", 1
+
 
 @pytest.fixture
 def testrun_obj():
@@ -46,6 +56,23 @@ def test_setResult(testrun_obj):
     # check the result
     new_result = set(old_result[0]+1, old_result[1])
     assert new_result == testrun_obj.getSuccessAndError()
+
+
+@pytest.mark.parametrize("system, os_version", [
+    ("Linux", ["redhat-release"]),
+    ("Linux", ["debian_version"]),
+    ("Darwin", ["firefox"]),
+    ("Darwin", ["chrome"])
+])
+@patch("subprocess.Popen", subprocess_communicate)
+@patch("os.listdir")
+@patch("platform.system")
+def test_ExcelImporter(mock_plat, mock_list, system, os_version):
+    from baangt.base.TestRunExcelImporter import TestRunExcelImporter
+    mock_plat.return_value = system
+    mock_list.return_value = os_version
+    TestRunExcelImporter.get_browser(TestRunExcelImporter)
+    assert mock_plat.call_count > 0
     
 
 

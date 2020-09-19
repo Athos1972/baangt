@@ -28,6 +28,8 @@ class BrowserFactory:
             if self.globalSettings.get('TC.' + GC.EXECUTION_NETWORK_INFO) == True else None
         self.browsersMobProxies = {}
 
+        self.callsPerBrowserInstance = {}
+
         self.__startRotatingProxies()
 
     def __startRotatingProxies(self):
@@ -75,9 +77,12 @@ class BrowserFactory:
                 self.browser[browserInstance].slowExecutionToggle()
             return self.browser[browserInstance]
         else:
-            if self.globalSettings.get("TC.RestartBrowser"):
+
+            lRestartBrowserSession = self.checkMaxBrowserInstanceCallsUsedToRestart(browserInstance)
+
+            if self.globalSettings.get("TC.RestartBrowser") or lRestartBrowserSession:
                 if browserInstance in self.browser.keys():
-                    logger.debug(f"Instance {browserInstance}: TC.RestartBrowser was set. Quitting old browser.")
+                    logger.debug(f"Instance {browserInstance}: TC.RestartBrowser was set or Threshold-Limit for Testcases reached. Quitting old browser.")
                     lBrowser = self.browser[browserInstance]
                     lBrowser.closeBrowser()
                     del self.browser[browserInstance]
@@ -115,6 +120,24 @@ class BrowserFactory:
             else:
                 logger.debug(f"Using existing instance of browser {browserInstance}")
             return self.browser[browserInstance]
+
+    def checkMaxBrowserInstanceCallsUsedToRestart(self, browserInstance):
+        """
+        for each browserInstance we record how often it was used by a testcase.
+        If there's a Number n RestartBrowserAfter Global parameter and we're higher than that,
+        we restart the browser.
+        :param browserInstance:
+        :return:
+        """
+        lRestartBrowserSession = False
+        self.callsPerBrowserInstance[browserInstance] = self.callsPerBrowserInstance.get(browserInstance, 0) + 1
+        if self.callsPerBrowserInstance[browserInstance] > int(
+                self.globalSettings.get("TC.RestartBrowserAfter", 99999999)):
+            lRestartBrowserSession = True
+            logger.debug(f"Reached threshold for browser restart in instance {browserInstance}. Restarting Browser.")
+            self.callsPerBrowserInstance[browserInstance] = 0
+
+        return lRestartBrowserSession
 
     @staticmethod
     def setBrowserWindowSize(lBrowserInstance: BrowserDriver, browserWindowSize):
