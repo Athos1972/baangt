@@ -5,10 +5,9 @@ import errno
 import os
 import logging
 import faker
-from random import sample, randint
+from random import sample, choice
 import baangt.base.GlobalConstants as GC
 import re
-from openpyxl import load_workbook
 import sys
 import pandas as pd
 from CloneXls import CloneXls
@@ -17,33 +16,53 @@ import json
 logger = logging.getLogger("pyC")
 
 
-class Writer:
-    """
-    This class is made to update existing excel file.
-    First it will open the file in python and then we can do multiple writes and once everything is update we can use
-    save method in order to save the updated excel file. Hence, this class is very useful is saving time while updating
-    excel files.
-    """
-    def __init__(self, path):
-        self.path = path
-        self.workbook = load_workbook(path)
+class PrefixData:
+    def __init__(self, dataList, prefix, tdg_object=None):
+        self.dataList = dataList
+        self.prefix = prefix
+        self.tdg_object = tdg_object
+        self.process()
 
-    def write(self, row, data, sht):
-        # Update the values using row and col number.
-        # Note :- We are using openpyxl so row & column index will start from 1 instead of 0
-        column = 0
-        sheet = self.workbook[sht]
-        headers = next(sheet.rows)
-        for header in headers:  # checks if usecount header is present in sheet
-            if "usecount" in str(header.value).lower():
-                column = headers.index(header) + 1
-        if column:
-            sheet.cell(row, column).value = data
+    def process(self):
+        if self.prefix.lower() == "rrd" or self.prefix.lower() == "rre":
+            self.dataList = [
+                data for data in self.dataList if not self.tdg_object.usecount_dict[repr(data)]["limit"] or \
+                self.tdg_object.usecount_dict[repr(data)]['use'] < self.tdg_object.usecount_dict[repr(data)]['limit']
+               ]
 
-    def save(self):
-        # Call this method to save the file once every updates are written
-        self.workbook.save(self.path)
-        self.workbook.close()
+        elif self.prefix.lower() == "fkr":
+            fake = faker.Faker(self.dataList[1])
+            fake_lis = []
+            if len(self.dataList) == 3:
+                if int(self.dataList[2]) == 0:
+                    fake_lis.append(getattr(fake, self.dataList[0])())
+                else:
+                    for x in range(int(self.dataList[2])):
+                        fake_lis.append(getattr(fake, self.dataList[0])())
+            else:
+                for x in range(5):
+                    fake_lis.append(getattr(fake, self.dataList[0])())
+            self.dataList = fake_lis
+
+    def return_random(self):
+        if self.prefix == "rre" or self.prefix == "rrd":
+            if not len(self.dataList):
+                print(self.dataList)
+                raise BaseException(f"Not enough data, please verify if data is present or usecount limit" \
+                                    "has reached!!")
+            data = choice(self.dataList)
+            self.tdg_object.usecount_dict[repr(data)]['use'] += 1
+            if self.tdg_object.usecount_dict[repr(data)]['limit'] and \
+                self.tdg_object.usecount_dict[repr(data)]['use'] >= self.tdg_object.usecount_dict[repr(data)]['limit']:
+                self.dataList.remove(data)
+            return data
+
+        elif self.prefix.lower() == "fkr":
+            return choice(self.dataList)
+
+        elif self.prefix == 'rnd':
+            return choice(self.dataList)
+
 
 class TestDataGenerator:
     """
@@ -79,8 +98,6 @@ class TestDataGenerator:
         self.writers = {}
         if not from_handleDatabase:
             self.processed_datas = self.__process_data(self.raw_data_json)
-            self.headers = [x for x in list(self.processed_datas[0].keys()) if x not in self.remove_header]
-            self.headers = [x for x in self.headers if 'usecount' not in x.lower()]
             self.final_data = self.__generateFinalData(self.processed_datas)
             if self.isUsecount:
                 if not self.noUpdateFiles:
@@ -97,7 +114,10 @@ class TestDataGenerator:
         if OutputFormat.lower() == "xlsx":
             if outputfile == None:
                 outputfile = GC.TESTDATAGENERATOR_OUTPUTFILE_XLSX
-            self.__write_excel(batch_size=batch_size, outputfile=outputfile)
+            #self.__write_excel(batch_size=batch_size, outputfile=outputfile)
+            with pd.ExcelWriter(outputfile) as writer:
+                self.final_data.to_excel(writer, index=False)
+            writer.save()
         elif OutputFormat.lower() == "csv":
             if outputfile == None:
                 outputfile = GC.TESTDATAGENERATOR_OUTPUTFILE_CSV
@@ -173,172 +193,12 @@ class TestDataGenerator:
         :param processed_data:
         :return: Final_data_list
         """
-        final_data = []
-        for lis in processed_data:
-            index = {}
-            data_lis = []
-            for key in lis:
-                if type(lis[key]) == str:
-                    data = [lis[key]]
-                elif type(lis[key]) == tuple:
-                    if len(lis[key]) > 0:
-                        self.__prefix_data_processing(lis, key, index)
-                        continue
-                    else:
-                        data = ['']
-                else:
-                    data = lis[key]
-                data_lis.append(data)
-            datas = list(itertools.product(*data_lis))
-            self.__update_prefix_data_in_final_list(datas, index, final_data)
-        logger.info(f"Total generated data = {len(final_data)}")
+        for dic in processed_data:
+            for key in dic:
+                if type(dic[key]) == PrefixData:
+                    dic[key] = dic[key].return_random()
+        final_data = pd.DataFrame(processed_data)
         return final_data
-
-    def __update_prefix_data_in_final_list(self, data_list, dictionary, final_list):
-        """
-        This method will insert the data from the dictionary to final_list. So further it can be written in the output.
-
-        ``data_list`` is the list where all possible combinations generated by the input lists and ranges are stored.
-        ``dictionary`` is where the data with prefix are stored with their index value(which will be used to place data)
-        ``final_list`` is the list where final data will be stored after merging values from data_list and dictionary
-
-        First it will iterate through data_list which is list of lists(Also you can take it as list of rows).
-        Second loop will go through dictionary and check the data type of each value. Pairings inside dictionary are of
-        ``index: value`` here index is the position from where this value was picked. So it will be used in placing the
-        data in their correct position.
-
-        List:
-        =====
-            If value is list then it is a data with ``FKR_`` prefix with number of data 0(i.e. create new fake data for
-            every output). So we will create the faker module instance as per the input and will generate fake data for
-            every row. And will insert them in the position of index(key of dictionary).
-
-
-        Dictionary:
-        ==========
-            If it is not of type list then we will check that if it is of type dict. If yes then this is a data with
-            "RRD_" prefix and we have to select the random data here. So we will start looping through this dictionary.
-            Remember this is the third loop. This dictionary contains header:value(TargetDatas from matched data) pair.
-            On every loop it will first check that if the same header is stored in done dictionary. If yes then it will
-            get value of it from done dictionary. Then it will create a list from the TargetData list. This new list
-            will contain only data which has same value for same header stored in done dictionary.
-            i.e. If matching Header has value x then from TargetDatas list only data where header=x will be
-            considered for random pick.
-
-            Then the random value is selected from that list.
-            If none of the header is processed before(for the same row). Then it will get random data from the list and
-            will store header: value pair in done dictionary so it is used in the checking process as above.
-
-            It will also check if the ``self.header`` list contains all the header which are in the random selected data.
-            If not then it will add the header there.
-
-            At last we will index the position of header inside self.headers list and will insert the value in same
-            position and append the row in final_data list.
-
-        Tuple:
-        ======
-            If the type is tuple then we need to simply pick a random value from it and insert it in the same position of
-            index(key of dictionary for current value).
-
-        :param data_list:
-        :param dictionary:
-        :param final_list:
-        :return: None
-        """
-        for data in data_list:
-            success = True  # if usecount data is present then this is used to keep track of it and not to add whole row in final
-            data = list(data)
-            done = {}
-            for ind in dictionary:
-                if type(dictionary[ind]) == list:
-                    fake = faker.Faker(dictionary[ind][2])
-                    data.insert(ind, getattr(fake, dictionary[ind][1])())
-                else:
-                    if type(dictionary[ind][0]) == dict:
-                        sorted_data = False
-                        for header in dictionary[ind][0]:
-                            if header in done:
-                                match = done[header]
-                                sorted_data = [x for x in dictionary[ind] if x[header] == match]
-                                break
-                        if not sorted_data:
-                            sorted_data = list(dictionary[ind])
-                        remove_data = []  # Used to remove data with reached limit of usecount
-                        for dtt in sorted_data:  # this loop will check if data has reached the usecount limit and remove
-                            if self.usecount_dict[repr(dtt)]['limit'] == 0:
-                                continue
-                            if not self.usecount_dict[repr(dtt)]['use'] < self.usecount_dict[repr(dtt)]['limit']:
-                                remove_data.append(dtt)
-                        for dtt in remove_data:  # removing data from main data list
-                            logger.debug(f"UseCount limit of {dtt} is exceeded : {str(self.usecount_dict[repr(dtt)]['limit'])}")
-                            sorted_data.remove(dtt)
-                        if len(sorted_data) == 0:  # if the current loop has reached usecount the we need not to add whole row in final output
-                            success = False
-                            break
-                        elif len(sorted_data) == 1:
-                            data_to_insert = sorted_data[0]
-                        else:
-                            data_to_insert = sorted_data[randint(0, len(sorted_data) - 1)]
-                        self.usecount_dict[repr(data_to_insert)]['use'] += 1
-                        for keys in data_to_insert:
-                            if "usecount" in keys.lower():  # removing usecount header from headers in final output
-                                self.update_usecount_in_source(data_to_insert)
-                                continue
-                            if keys not in self.headers:
-                                self.headers.append(keys)
-                            if keys not in done:
-                                data.insert(self.headers.index(keys), data_to_insert[keys])
-                                done[keys] = data_to_insert[keys]
-                    else:
-                        data_to_insert = dictionary[ind][randint(0, len(dictionary[ind]) - 1)]
-                        data.insert(ind, data_to_insert)
-            if success:
-                final_list.append(data)
-
-    def __prefix_data_processing(self, dic, key, dictionary: dict):
-        """
-        This method will process the datas with prefix.
-
-        ``dic`` the dictionary where all data which are in final process is stored
-        ``key`` the header of the current data which will be used now to call the data.
-        ``dictionary`` in which the values will be inserted after performing their process.
-
-        First it will check the first value of tuple.
-        If it is ``Faker`` then in will continue the process and will check the 4th value of tuple.
-        If the 4th value(which is used to determine the number of fake data to be generated and store inside a list)
-        is ``0`` then the method will store the values as it is in a list, because ``0`` value means we have to generate
-        new fake data for every output data, so it will be done later.
-        If it is greater than ``0`` then this method will create tuple with the given number of fake data and store it.
-        (If no number is given then default number is 5.)
-
-        If first value is not ``Faker`` then no process will be done.
-
-        Finally the data will be inserted in the dictionary.
-
-        :param dic:
-        :param key:
-        :param dictionary:
-        :return:
-        """
-        ltuple = dic[key]
-        if ltuple[0] == "Faker":
-            fake = faker.Faker(ltuple[2])
-            fake_lis = []
-            if len(ltuple) == 4:
-                if int(ltuple[3]) == 0:
-                    dictionary[list(dic.keys()).index(key)] = list(ltuple)
-                    return True
-                else:
-                    for x in range(int(ltuple[3])):
-                        fake_lis.append(getattr(fake, ltuple[1])())
-            else:
-                for x in range(5):
-                    fake_lis.append(getattr(fake, ltuple[1])())
-            dictionary[list(dic.keys()).index(key)] = tuple(fake_lis)
-            return True
-        else:
-            dictionary[list(dic.keys()).index(key)] = ltuple
-            return True
 
     def __process_data(self, raw_json):
         """
@@ -368,15 +228,24 @@ class TestDataGenerator:
                 continue
             processed_data = {}
             for key in raw_data:
-                keys = self.data_generators(key)
+                keys = self.__splitList(key)
                 for ke in keys:
-                    processed_data[ke] = self.data_generators(raw_data[key])
-                    if type(processed_data[ke]) == tuple and len(processed_data[ke])>0:
-                        if type(processed_data[ke][0]) == dict:
-                            if ke not in processed_data[ke][0]:
-                                self.remove_header.append(ke)
-            processed_datas.append(processed_data)
+                    data = self.data_generators(raw_data[key])
+                    if type(data) != list:
+                        processed_data[ke] = [data]
+                    else:
+                        processed_data[ke] = data
+            product = list(self.product_dict(**processed_data))
+            processed_datas += product
+        print(len(processed_datas))
         return processed_datas
+
+    @staticmethod
+    def product_dict(**kwargs):
+        keys = kwargs.keys()
+        vals = kwargs.values()
+        for instance in itertools.product(*vals):
+            yield dict(zip(keys, instance))
 
     def data_generators(self, raw_data_old):
         """
@@ -400,67 +269,48 @@ class TestDataGenerator:
         raw_data, prefix, data_type = self.__raw_data_string_process(raw_data_old)
         if len(raw_data)<=1:
             return [""]
-        if raw_data[0] == "[" and raw_data[-1] == "]" and prefix == "":
-            processed_datas = self.__splitList(raw_data)
-            processed_datas = data_type(processed_datas)
+
+        if prefix == "Rnd":
+            if "-" in raw_data:
+                raw_data = raw_data.split('-')
+                start = raw_data[0].strip()
+                end = raw_data[1].strip()
+                step = 1
+                if "," in end:
+                    raw_data = end.split(",")
+                    end = raw_data[0].strip()
+                    step = raw_data[1].strip()
+                processed_datas = [x for x in range(int(start), int(end) + 1, int(step))]
+            else:
+                processed_datas = self.__splitList(raw_data)
+            processed_datas = PrefixData(processed_datas, 'rnd')
 
         elif prefix == "Faker":
-                processed_datas = [data.strip() for data in raw_data[1:-1].split(",")]
-                processed_datas.insert(0, "Faker")
-                processed_datas = data_type(processed_datas)
+                dataList = [data.strip() for data in raw_data[1:-1].split(",")]
+                processed_datas = PrefixData(dataList, prefix="fkr")
 
         elif prefix == "Rrd":
-            first_value = raw_data[1:-1].split(',')[0].strip()
-            second_value = raw_data[1:-1].split(',')[1].strip()
-            if second_value[0] == "[":
-                second_value = ','.join(raw_data[1:-1].split(',')[1:]).strip()
-                second_value = second_value[:second_value.index(']')+1]
-                third_value = [x.strip() for x in ']'.join(raw_data[1:-1].split(']')[1:]).split(',')[1:]]
-            else:
-                third_value = [x.strip() for x in raw_data[1:-1].split(',')[2:]]
-            evaluated_list = ']],'.join(','.join(third_value)[1:-1].strip().split('],')).split('],')
-            if evaluated_list[0] == "":
-                evaluated_dict = {}
-            else:
-                evaluated_dict = {
-                    splited_data.split(':')[0]: self.__splitList(splited_data.split(':')[1])  for splited_data in evaluated_list
-                }
-            if second_value[0] == "[" and second_value[-1] == "]":
-                second_value = self.__splitList(second_value)
+            sheet_name, data_looking_for, data_to_match = self.extractDataFromRrd(raw_data)
             try:
-                processed_datas = self.__processRrdRre(first_value, second_value,evaluated_dict)
-                processed_datas = data_type(processed_datas)
+                dataList = self.__processRrdRre(sheet_name, data_looking_for, data_to_match)
+                processed_datas = PrefixData(dataList, prefix='rrd', tdg_object=self)
             except KeyError:
                 sys.exit(f"Please check that source files contains all the headers mentioned in : {raw_data_old}")
 
         elif prefix == "Rre":
             file_name = raw_data[1:-1].split(',')[0].strip()
-            first_value = raw_data[1:-1].split(',')[1].strip()
-            second_value = raw_data[1:-1].split(',')[2].strip()
-            if second_value[0] == "[":
-                second_value = ','.join(raw_data[1:-1].split(',')[2:]).strip()
-                second_value = second_value[:second_value.index(']')+1]
-                third_value = [x.strip() for x in ']'.join(raw_data[1:-1].split(']')[1:]).split(',')[1:]]
-            else:
-                third_value = [x.strip() for x in raw_data[1:-1].split(',')[3:]]
-            evaluated_list = ']],'.join(','.join(third_value)[1:-1].strip().split('],')).split('],')
-            if evaluated_list[0] == "":
-                evaluated_dict = {}
-            else:
-                evaluated_dict = {
-                    splited_data.split(':')[0]: self.__splitList(splited_data.split(':')[1])  for splited_data in evaluated_list
-                }
-            if second_value[0] == "[" and second_value[-1] == "]":
-                second_value = self.__splitList(second_value)
+            sheet_name, data_looking_for, data_to_match = self.extractDataFromRrd(raw_data, index=1)
             try:
-                processed_datas = self.__processRrdRre(first_value, second_value, evaluated_dict, filename=file_name)
-            except KeyError as e:
-                raise e
+                dataList = self.__processRrdRre(sheet_name, data_looking_for, data_to_match, filename=file_name)
+                processed_datas = PrefixData(dataList, prefix="rre", tdg_object=self)
+            except KeyError:
                 sys.exit(f"Please check that source files contains all the headers mentioned in : {raw_data_old}")
-            processed_datas = data_type(processed_datas)
 
         elif prefix == "Renv":
             processed_datas = self.get_env_variable(raw_data)
+
+        elif raw_data[0] == "[" and raw_data[-1] == "]":
+            processed_datas = self.__splitList(raw_data)
 
         elif "-" in raw_data:
             raw_data_original = raw_data[:]
@@ -476,15 +326,35 @@ class TestDataGenerator:
                 processed_datas = [x for x in range(int(start), int(end)+1, int(step))]
             except:
                 processed_datas = [raw_data_original.strip()]
-            processed_datas = data_type(processed_datas)
 
         else:
-            processed_datas = [raw_data.strip()]
-            processed_datas = data_type(processed_datas)
+            processed_datas = raw_data.strip()
         return processed_datas
+
+    def extractDataFromRrd(self, raw_data, index=0):
+        first_value = raw_data[1:-1].split(',')[0+index].strip()
+        second_value = raw_data[1:-1].split(',')[1+index].strip()
+        if second_value[0] == "[":
+            second_value = ','.join(raw_data[1:-1].split(',')[1+index:]).strip()
+            second_value = second_value[:second_value.index(']') + 1]
+            third_value = [x.strip() for x in ']'.join(raw_data[1:-1].split(']')[1:]).split(',')[1:]]
+        else:
+            third_value = [x.strip() for x in raw_data[1:-1].split(',')[2+index:]]
+        evaluated_list = ']],'.join(','.join(third_value)[1:-1].strip().split('],')).split('],')
+        if evaluated_list[0] == "":
+            evaluated_dict = {}
+        else:
+            evaluated_dict = {
+                splited_data.split(':')[0]: self.__splitList(splited_data.split(':')[1]) for splited_data in
+                evaluated_list
+            }
+        if second_value[0] == "[" and second_value[-1] == "]":
+            second_value = self.__splitList(second_value)
+        return first_value, second_value, evaluated_dict
 
     def __processRrdRre(self, sheet_name, data_looking_for, data_to_match: dict, filename=None):
         if filename:
+            filename = os.path.join(os.path.dirname(self.path), filename)
             if not self.noUpdateFiles:
                 file_name = ".".join(filename.split(".")[:-1])
                 file_extension = filename.split(".")[-1]
@@ -577,7 +447,6 @@ class TestDataGenerator:
             sys.exit(f"No data matching: {data_to_match}")
         logger.debug(f"New Data Gathered.")
         self.done[key_name] = data_lis
-
         return data_lis
 
     def __raw_data_string_process(self, raw_string):
@@ -605,7 +474,8 @@ class TestDataGenerator:
         prefix = ""
         if len(raw_string)>4:
             if raw_string[3] == "_":
-                if raw_string[:4].lower() == "rnd_":           # Random
+                if raw_string[:4].lower() == "rnd_":
+                    prefix = "Rnd"
                     raw_string = raw_string[4:]
                     data_type = tuple
                 elif raw_string[:4].lower() == "fkr_":
@@ -680,7 +550,11 @@ class TestDataGenerator:
         :param raw_data: string of list
         :return: Python list
         """
-        proccesed_datas = [data.strip() for data in raw_data[1:-1].split(",")]
+        if raw_data[0] == "[" and raw_data[-1] == "]":
+            data = raw_data[1:-1]
+        else:
+            data = raw_data
+        proccesed_datas = [data.strip() for data in data.split(",")]
         return proccesed_datas
 
     def check_usecount(self, data):

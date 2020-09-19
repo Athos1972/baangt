@@ -214,15 +214,10 @@ class HandleDatabase:
 
     def get_data_from_tdg(self, string):
         data = self.testDataGenerator.data_generators(string)
-        if self.testDataGenerator.usecount_dict[repr(data[0])]["limit"]:
-            data = [d for d in data if self.testDataGenerator.usecount_dict[repr(d)]["use"
-                                                                ] < self.testDataGenerator.usecount_dict[repr(d)]["limit"]]
-        if len(data) > 1:
-            data = data[randint(0, len(data) - 1)]
-        elif len(data) == 1:
-            data = data[0]
-        else:
-            raise BaseException(f"Not enough data for {string}, please verify if data is present or usecount limit" \
+        try:
+            data = data.return_random()
+        except BaseException:
+            raise BaseException(f"Not enough data {string}, please verify if data is present or usecount limit" \
                                 "has reached!!")
         return data
 
