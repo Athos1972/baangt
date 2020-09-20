@@ -32,8 +32,8 @@ class QuerySet:
     def length(self):
         return len(self.data)
 
-    def set(self, array):
-        self.data = array
+    def set(self, data):
+        self.data = list(data)
 
     def names(self):
         return {tr.testrunName for tr in self.data}
@@ -158,10 +158,8 @@ class ResultsBrowser:
         self.db = sessionmaker(bind=engine)()
         # result query set
         self.query_set = QuerySet()
-        # tag of the current query set
-        self.tags = None
-        # set of stages
-        self.stages = None
+        # query filters
+        self.filters = {}
         # path management
         self.managedPaths = ManagedPaths()
         logger.info(f'Initiated with DATABASE_URL: {db_url if db_url else DATABASE_URL}')
@@ -170,106 +168,106 @@ class ResultsBrowser:
         self.db.close()
 
     def name_list(self):
-        names = self.db.query(TestrunLog.testrunName).group_by(TestrunLog.testrunName).order_by(TestrunLog.testrunName).all()
+        names = self.db.query(TestrunLog.testrunName).group_by(TestrunLog.testrunName).order_by(TestrunLog.testrunName)
         return [x[0] for x in names]
 
     def stage_list(self):
         stages = self.db.query(GlobalAttribute.value).filter_by(name=GC.EXECUTION_STAGE)\
-            .group_by(GlobalAttribute.value).order_by(GlobalAttribute.value).all()
+            .group_by(GlobalAttribute.value).order_by(GlobalAttribute.value)
         return [x[0] for x in stages]
 
-    def query(self, name=None, stage=None, start_date=None, end_date=None):
+    def globals_names(self):
+        names = self.db.query(GlobalAttribute.name).group_by(GlobalAttribute.name).order_by(GlobalAttribute.name)
+        return [x[0] for x in names]
+
+    def globals_values(self, name):
+        values = self.db.query(GlobalAttribute.value).filter_by(name=name).group_by(GlobalAttribute.value).order_by(GlobalAttribute.value)
+        return [x[0] for x in values]
+
+    def query(self, name=None, stage=None, start_date=None, end_date=None, global_settings={}):
         #
-        # get TestrunLogs by name, stage and dates
+        # get TestrunLogs from db
         #
 
-        # format date
-        format_date = lambda date: date.strftime('%Y-%m-%d') if date else None
-
+        # store filters
+        self.filters = {
+            'name': name,
+            'stage': stage,
+            'start_date': start_date,
+            'end_date': end_date,
+            'globals': global_settings,
+        }
 
         # get records
-        records = []
-        logger.info(f'Quering: name={name}, stage={stage}, dates=[{format_date(start_date)} - {format_date(end_date)}]')
+        logger.info(f'Quering: name={name}, stage={stage}, dates=[{start_date} - {end_date}], globals={global_settings}')
+        records = self.db.query(TestrunLog).order_by(TestrunLog.startTime)
 
-        # filter by name and stage
-        if name and stage:
-            self.stages = {stage}
-            records = self.db.query(TestrunLog).order_by(TestrunLog.startTime).filter_by(testrunName=name)\
-                .filter(TestrunLog.globalVars.any(and_(GlobalAttribute.name==GC.EXECUTION_STAGE, GlobalAttribute.value==stage))).all()
-        
         # filter by name
-        elif name:
-            # get Testrun stages
-            stages = self.db.query(GlobalAttribute.value).filter(GlobalAttribute.testrun.has(TestrunLog.testrunName==name))\
-            .filter_by(name=GC.EXECUTION_STAGE).group_by(GlobalAttribute.value).order_by(GlobalAttribute.value).all()
-            self.stages = {x[0] for x in stages}
+        if name:
+            records = records.filter_by(testrunName=name)
 
-            for s in self.stages:
-                logs = self.db.query(TestrunLog).order_by(TestrunLog.startTime).filter_by(testrunName=name)\
-                    .filter(TestrunLog.globalVars.any(and_(GlobalAttribute.name==GC.EXECUTION_STAGE, GlobalAttribute.value==s))).all()
-                records.extend(logs)
+        # filter bay dates
+        if start_date:
+            records = records.filter(TestrunLog.startTime >= start_date)
 
-        # filter by stage
-        elif stage:
-            self.stages = {stage}
-            # get Testrun names
-            names = self.db.query(TestrunLog.testrunName)\
-            .filter(TestrunLog.globalVars.any(and_(GlobalAttribute.name==GC.EXECUTION_STAGE, GlobalAttribute.value==stage)))\
-            .group_by(TestrunLog.testrunName).order_by(TestrunLog.testrunName).all()
-            names = [x[0] for x in names]
+        if end_date:
+            records = records.filter(TestrunLog.endTime <= end_date)
 
-            for n in names:
-                logs = self.db.query(TestrunLog).order_by(TestrunLog.startTime).filter_by(testrunName=n)\
-                    .filter(TestrunLog.globalVars.any(and_(GlobalAttribute.name==GC.EXECUTION_STAGE, GlobalAttribute.value==stage))).all()
-                records.extend(logs)
+        # filter by globals
+        if stage:
+            records = records.filter(TestrunLog.globalVars.any(and_(
+                GlobalAttribute.name == GC.EXECUTION_STAGE,
+                GlobalAttribute.value == stage,
+            )))
 
-        # get all testruns ordered by name and stage
-        else:
-            # get Testrun names
-            names = self.db.query(TestrunLog.testrunName).group_by(TestrunLog.testrunName).order_by(TestrunLog.testrunName).all()
-            names = [x[0] for x in names]
-            
-            self.stages = set()
-            for n in names:
-                # get Testrun stages
-                stages = self.db.query(GlobalAttribute.value).filter(GlobalAttribute.testrun.has(TestrunLog.testrunName==n))\
-                .filter_by(name=GC.EXECUTION_STAGE).group_by(GlobalAttribute.value).order_by(GlobalAttribute.value).all()
-                stages = [x[0] for x in stages]
-                self.stages.update(stages)
+        for key, value in global_settings.items():
+            records = records.filter(TestrunLog.globalVars.any(and_(
+                GlobalAttribute.name == key,
+                GlobalAttribute.value == value,
+            )))
 
-                for s in stages:
-                    logs = self.db.query(TestrunLog).order_by(TestrunLog.startTime).filter_by(testrunName=n)\
-                        .filter(TestrunLog.globalVars.any(and_(GlobalAttribute.name==GC.EXECUTION_STAGE, GlobalAttribute.value==s))).all()
-                    records.extend(logs)
-            
-        # filter by dates
-        if start_date and end_date:
-            self.query_set.set([log for log in records if log.startTime > start_date and log.startTime < end_date])
-        elif start_date:
-            self.query_set.set([log for log in records if log.startTime >= start_date])
-        elif end_date:
-            self.query_set.set([log for log in records if log.startTime <= end_date])
-        else:
-            self.query_set.set(records)
-
-        # set the tags
-        self.tags = {
-            'Name': name or 'All',
-            'Stage': stage or 'All',
-            'Date from': format_date(start_date) or 'None',
-            'Date to': format_date(end_date or datetime.now()),
-        }
+        self.query_set.set(records)
 
         logger.info(f'Number of found records: {self.query_set.length}')
 
-        
+    def filter_to_str(self, key):
+        #
+        # get filter value as str
+        #
+
+        value = self.filters.get(key)
+        if value:
+            return str(value)
+
+        # undefined values
+        if key == 'end_date':
+            return datetime.now().strftime('%Y-%m-%d')
+        if key == 'start_date':
+            return 'None'
+        return 'All'
+
+    def filename(self, extention):
+        #
+        # generate filename for exports
+        #
+
+        filename = '_'.join([
+            'TestrunLogs',
+            self.filter_to_str('name'),
+            self.filter_to_str('stage'),
+            self.filter_to_str('start_date'),
+            self.filter_to_str('end_date'),
+            'globals' if self.filters.get('globals') else 'None',
+        ])
+        return f'{filename}.{extention}'
+            
     def export(self):
         #
         # exports the query set to xlsx
         #
 
         # initialize workbook
-        path_to_file = self.managedPaths.getOrSetDBExportPath().joinpath(f'TestrunLogs_{"_".join(list(map(str, self.tags.values())))}.xlsx')
+        path_to_file = self.managedPaths.getOrSetDBExportPath().joinpath(self.filename('xlsx'))
         workbook = Workbook(str(path_to_file))
 
         # set labels
@@ -279,6 +277,7 @@ class ResultsBrowser:
             'testcase': 'Test Case',
             'stage': 'Stage',
             'duration': 'Avg. Duration',
+            'globals': 'Global Settings',
         }
 
         # set output headers
@@ -320,19 +319,39 @@ class ResultsBrowser:
         time_start = time.time() # -------------------------> time tracker
         # title
         sheets['summary'].sheet.set_column(first_col=0, last_col=0, width=18)
+        sheets['summary'].sheet.set_column(first_col=1, last_col=1, width=10)
         sheets['summary'].header([f'{labels.get("testrun")}s Summary'])
         
         # parameters
-        for key, value in self.tags.items():
+        for key in self.filters:
+            if key != 'globals':
+                sheets['summary'].row([
+                    {
+                        'value': key,
+                        'format': cformats.get('font_bold'),
+                    },
+                    {
+                        'value': self.filter_to_str(key),
+                    },
+                ])
+        # global settings
+        if self.filters.get('globals'):
+            sheets['summary'].hr()
             sheets['summary'].row([
                 {
-                    'value': key,
+                    'value': f"{labels.get('globals')}:",
                     'format': cformats.get('font_bold'),
                 },
-                {
-                    'value': value,
-                }
             ])
+            for name, value in self.filters.get('globals').items():
+                sheets['summary'].row([
+                    {
+                        'value': name,
+                    },
+                    {
+                        'value': value,
+                    },
+                ])
 
         # write output titles
         sheets['output'].header(base_headers + base_fields)
@@ -424,9 +443,9 @@ class ResultsBrowser:
                     ).join(TestCaseField.testcase).join(TestCaseLog.testcase_sequence).join(TestCaseSequenceLog.testrun)\
                     .filter(and_(TestrunLog.id == tr.id, TestCaseSequenceLog.number == tcs_number)).order_by(TestCaseLog.number)
                     tc_id_cur = None
+                    tr_stage = None
                     for name, value, tc_index, tc_id in data.yield_per(500):
                         # summary data
-                        tr_stage = None
                         if name == GC.TESTCASESTATUS:
                             status_row.append({
                                 'value': value,
@@ -492,7 +511,8 @@ class ResultsBrowser:
 
         workbook.close()
 
-        logger.info(f'Query successfully exported to {path_to_file} in {time.time()-time_start} seconds')
+        execution_time = round(time.time()-time_start, 2)
+        logger.info(f'Query successfully exported to {path_to_file} in {execution_time} seconds')
 
         return path_to_file
     
@@ -502,7 +522,7 @@ class ResultsBrowser:
         # export to txt
         #
 
-        path_to_file = self.managedPaths.getOrSetDBExportPath().joinpath(f'TestrunLogs_{"_".join(list(map(str, self.tags.values())))}.txt')
+        path_to_file = self.managedPaths.getOrSetDBExportPath().joinpath(self.filename('txt'))
 
         # set labels
         labels = {
@@ -519,8 +539,8 @@ class ResultsBrowser:
             f.write(f'{labels.get("testrun")}s Summary\n\n')
             
             # parameters
-            for key, value in self.tags.items():
-                f.write(f'{key}\t{value}\n')
+            for key in self.filters:
+                f.write(f'{key}\t{self.filter_to_str(key)}\n')
 
             # testruns
             for tr_name in self.query_set.names():

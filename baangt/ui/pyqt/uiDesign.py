@@ -9,6 +9,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import logging
 
+GLOBALS_FILTER_NUMBER = 2
+
 
 class Ui_MainWindow(QtCore.QObject):
     def setupUi(self, MainWindow):
@@ -455,7 +457,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.queryTitleLabel.setFont(titleFont)
         self.queryTitleLabel.setMinimumSize(QtCore.QSize(0, 0))
         self.queryTitleLabel.setMaximumSize(QtCore.QSize(200, 15))
-        self.queryTitleLabel.setObjectName("stageComboBoxLabel")
+        self.queryTitleLabel.setObjectName("queryTitleLabel")
         self.queryMainLayout.addWidget(self.queryTitleLabel)
 
         # action layout
@@ -491,12 +493,19 @@ class Ui_MainWindow(QtCore.QObject):
         self.queryInputLayout.setColumnStretch(2, 2)
         self.queryInputLayout.setColumnStretch(3, 5)
 
+        self.queryGlobalsLayout = QtWidgets.QGridLayout()
+        self.queryGlobalsLayout.setObjectName("queryGlobalsLayout")
+        self.queryGlobalsLayout.setSpacing(5)
+        self.queryGlobalsLayout.setColumnStretch(0, 8)
+        self.queryGlobalsLayout.setColumnStretch(1, 8)
+
         self.queryButtonLayout = QtWidgets.QHBoxLayout()
         self.queryButtonLayout.setSizeConstraint(QtWidgets.QLayout.SetMaximumSize)
         self.queryButtonLayout.setContentsMargins(5, 5, 5, 10)
         self.queryButtonLayout.setSpacing(15)
 
         self.queryFormLayout.addLayout(self.queryInputLayout)
+        self.queryFormLayout.addLayout(self.queryGlobalsLayout)
         self.queryFormLayout.addLayout(self.queryButtonLayout)
 
         # name
@@ -547,6 +556,29 @@ class Ui_MainWindow(QtCore.QObject):
         self.dateToInput.setStyleSheet("color: rgb(46, 52, 54); background-color: rgb(255, 255, 255);")
         self.dateToInput.setObjectName("dateToInput")
         self.queryInputLayout.addWidget(self.dateToInput)
+
+        # Globals
+        # title
+        self.globalsTile = QtWidgets.QLabel(self.queryGroupBox)
+        self.globalsTile.setFont(labelFont)
+        self.globalsTile.setStyleSheet("color: rgb(32, 74, 135);")
+        self.globalsTile.setObjectName("globalsTile")
+        self.queryGlobalsLayout.addWidget(self.globalsTile, 0, 0)
+        # options
+        self.globalsOptions = []
+        for index in range(GLOBALS_FILTER_NUMBER):
+            # name
+            globalsNameComboBox = QtWidgets.QComboBox(self.queryGroupBox)
+            globalsNameComboBox.setStyleSheet("color: rgb(46, 52, 54); background-color: rgb(255, 255, 255);")
+            globalsNameComboBox.setObjectName(f"globalsNameComboBox{index}")
+            self.queryGlobalsLayout.addWidget(globalsNameComboBox, index+1, 0)
+            # value
+            globalsValueComboBox = QtWidgets.QComboBox(self.queryGroupBox)
+            globalsValueComboBox.setStyleSheet("color: rgb(46, 52, 54); background-color: rgb(255, 255, 255);")
+            globalsValueComboBox.setObjectName(f"globalsValueComboBox{index}")
+            self.queryGlobalsLayout.addWidget(globalsValueComboBox, index+1, 1)
+            # store
+            self.globalsOptions.append((globalsNameComboBox, globalsValueComboBox))
 
         # query buttons
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -601,7 +633,7 @@ class Ui_MainWindow(QtCore.QObject):
         # status message
         self.queryStatusLabel = QtWidgets.QLabel(self.queryGroupBox)
         self.queryStatusLabel.setAlignment(QtCore.Qt.AlignTop)
-        self.queryStatusLabel.setObjectName("stageComboBoxLabel")
+        self.queryStatusLabel.setObjectName("queryStatusLabel")
         self.queryMainLayout.addWidget(self.queryStatusLabel)
 
         # logo
@@ -973,6 +1005,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.stageComboBoxLabel.setText(_translate("MainWindow", "Stage"))
         self.dateFromInputLabel.setText(_translate("MainWindow", "Date from"))
         self.dateToInputLabel.setText(_translate("MainWindow", "Date to"))
+        self.globalsTile.setText(_translate("MainWindow", "Global Settings"))
         self.queryMakePushButton.setText(_translate("MainWindow", "Query"))
         self.queryExportPushButton.setText(_translate("MainWindow", "Export"))
         self.openExportPushButton.setText(_translate("MainWindow", "Open Recent"))
