@@ -18,7 +18,7 @@ def testStepMaster():
 
 @pytest.mark.parametrize("lComparison, value1, value2",[("=", True, True), ("=", "True", "None"), ("!=", True, True),
     ("!=", True, "None"), (">", 1, 2), (">", 2, 1), ("<", 1, 2), ("<", 2, 1), (">=", 1, 2), (">=", 2, 1), ("<=", 1, 2),
-    ("<=", 2, 1), ("!!", True, True), (None, True, True)])
+    ("<=", 2, 1), ("!!", True, True), ("", True, True)])
 def test_doComparison(lComparison, value1, value2, testStepMaster):
     if lComparison != "!!":
         result = testStepMaster._TestStepMaster__doComparisons(lComparison, value1, value2)
