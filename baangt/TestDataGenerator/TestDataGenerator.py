@@ -1,11 +1,9 @@
-import csv
 import itertools
-import xlsxwriter
 import errno
 import os
 import logging
 import faker
-from random import sample, choice
+from random import choice
 import baangt.base.GlobalConstants as GC
 import re
 import sys
@@ -16,51 +14,65 @@ import json
 logger = logging.getLogger("pyC")
 
 
-class PrefixData:
-    def __init__(self, dataList, prefix, tdg_object=None):
-        self.dataList = dataList
-        self.prefix = prefix
-        self.tdg_object = tdg_object
+class PrefixDataManager:
+    def __init__(self, dataList: list, prefix: str, tdg_object=None):
+        """
+        This class manages data list as per functionality of their prefix
+        :param dataList: List of data to be managed
+        :param prefix: RRE, RRD, FKR, RND are the prefixs managed by this class
+        :param tdg_object: TestDataGenerator object, only useful in RRE, RRD prefix to update usecount
+        """
+        self.dataList = dataList        # Iterable object to be managed
+        self.prefix = prefix            # Prefix data
+        self.tdg_object = tdg_object    # used to update usecount data, only for rre and rrd
         self.process()
 
     def process(self):
+        """
+        It processes the data list with respect to their prefix and save it in dataList attribute.
+        :return: 
+        """
         if self.prefix.lower() == "rrd" or self.prefix.lower() == "rre":
             self.dataList = [
-                data for data in self.dataList if not self.tdg_object.usecount_dict[repr(data)]["limit"] or \
-                self.tdg_object.usecount_dict[repr(data)]['use'] < self.tdg_object.usecount_dict[repr(data)]['limit']
-               ]
+                data for data in self.dataList if not self.tdg_object.usecountDataRecords[repr(data)]["limit"] or \
+                self.tdg_object.usecountDataRecords[repr(data)]['use'] < self.tdg_object.usecountDataRecords[repr(data)]['limit']
+               ]    # removing data with reached use limit
 
         elif self.prefix.lower() == "fkr":
-            fake = faker.Faker(self.dataList[1])
-            fake_lis = []
-            if len(self.dataList) == 3:
-                if int(self.dataList[2]) == 0:
-                    fake_lis.append([fake, self.dataList[0]])
-                    fake_lis = tuple(fake_lis)
+            fake = faker.Faker(self.dataList[1])               # Creating faker class object
+            fake_lis = []                                                       
+            if len(self.dataList) == 3:         # Checks if their is any predefined number of fake data to be generated
+                if int(self.dataList[2]) == 0:                 # if number of predefined data is 0 then we need to 
+                    fake_lis.append([fake, self.dataList[0]])  # generate new data for each call so the required info
+                    fake_lis = tuple(fake_lis)                 # is saved as tuple so program can distinguish
                 else:
-                    for x in range(int(self.dataList[2])):
-                        fake_lis.append(getattr(fake, self.dataList[0])())
+                    for x in range(int(self.dataList[2])):  # if greater than 0, list is created with defined number of data
+                        fake_lis.append(getattr(fake, self.dataList[0])())  # on every call random data is sent from list
             else:
-                for x in range(5):
-                    fake_lis.append(getattr(fake, self.dataList[0])())
+                for x in range(5):          # if their is no predefined number of data than a list of 5 fake data
+                    fake_lis.append(getattr(fake, self.dataList[0])())  # is generated
             self.dataList = fake_lis
 
     def return_random(self):
+        """
+        It returns data as per their prefix
+        :return: 
+        """
         if self.prefix == "rre" or self.prefix == "rrd":
             if not len(self.dataList):
                 raise BaseException(f"Not enough data, please verify if data is present or usecount limit" \
                                     "has reached!!")
             data = choice(self.dataList)
-            self.tdg_object.usecount_dict[repr(data)]['use'] += 1
-            if self.tdg_object.usecount_dict[repr(data)]['limit'] and \
-                self.tdg_object.usecount_dict[repr(data)]['use'] >= self.tdg_object.usecount_dict[repr(data)]['limit']:
-                self.dataList.remove(data)
+            self.tdg_object.usecountDataRecords[repr(data)]['use'] += 1  # updates usecount in TDG object
+            if self.tdg_object.usecountDataRecords[repr(data)]['limit'] and \
+                self.tdg_object.usecountDataRecords[repr(data)]['use'] >= self.tdg_object.usecountDataRecords[repr(data)]['limit']:
+                self.dataList.remove(data)  # checks usecount after using a data and removes if limit is reached
             return data
 
         elif self.prefix.lower() == "fkr":
-            if type(self.dataList) == tuple:
+            if type(self.dataList) == tuple:  # if type is tuple then we need generate new data on every call
                 return getattr(self.dataList[0][0], self.dataList[0][1])()
-            return choice(self.dataList)
+            return choice(self.dataList)  # else it is a list and we can send any random data from it
 
         elif self.prefix == 'rnd':
             return choice(self.dataList)
@@ -79,6 +91,8 @@ class TestDataGenerator:
     6. List of header    = ``[<title1>, <title2>, <title3>]``
     7. Faker Prefix      = ``FKR_(<type>, <locale>, <number_of_data>)``
     8. RRD Prefix        = ``RRD_(<sheetName>,<TargetData>,[<Header1>:[<Value1>],<Header2>:[<Value1>,<Value2>]])``
+    9. RRE Prefix        = ``RRE_(<fileName>,<sheetName>,<TargetData>,[<Header1>:[<Value1>],<Header2>:[<Value1>,<Value2>]])``
+    10. Renv Prefix      = ``RENV_(<environmentVariable>,<default>)
 
     :param rawExcelPath: Takes input path for xlsx file containing input data.
     :param sheetName: Name of sheet where all base data is located.
@@ -86,21 +100,20 @@ class TestDataGenerator:
     """
     def __init__(self, rawExcelPath=GC.TESTDATAGENERATOR_INPUTFILE, sheetName="",
                  from_handleDatabase=False, noUpdate=True):
-        self.path = os.path.abspath(rawExcelPath)
+        self.fileNameAndPath = os.path.abspath(rawExcelPath)
         self.sheet_name = sheetName
-        if not os.path.isfile(self.path):
-            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), self.path)
-        self.sheet_dict, self.raw_data_json = self.read_excel(self.path, self.sheet_name)
-        self.rre_sheets = {}
-        self.isUsecount = {}
-        self.usecount_dict = {}  # used to maintain usecount limit record and verify if that non of the data cross limit
-        self.done = {}
+        if not os.path.isfile(self.fileNameAndPath):
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), self.fileNameAndPath)
+        self.allDataFramesDict, self.mainDataFrame = self.read_excel(self.fileNameAndPath, self.sheet_name)
+        self.openedSheetsDataFrame = {}  # stores filenames which contains sheetname: sheetDataFrame
+        self.usecountHeaderName = {}   # contains filenames which contains sheetname: usecountHeaderName
+        self.usecountDataRecords = {}  # used to maintain usecount limit record and verify non of the data cross limit
+        self.rreRrdProcessedData = {}  # stores rre processed data with its criteria as key and used when same criteria
         self.noUpdateFiles = noUpdate
-        self.writers = {}
         if not from_handleDatabase:
-            self.processed_datas = self.__process_data(self.raw_data_json)
-            self.final_data = self.__generateFinalData(self.processed_datas)
-            if self.isUsecount:
+            self.processed_data = self.processDataFrame(self.mainDataFrame)
+            self.finalDataFrame = self.updatePrefixData(self.processed_data)
+            if self.usecountHeaderName:
                 if not self.noUpdateFiles:
                     self.save_usecount()  # saving source input file once everything is done
 
@@ -113,13 +126,13 @@ class TestDataGenerator:
         :return:
         """
         if batch_size > 0:
-            if len(self.final_data) > batch_size:
-                data_lis = self.final_data.sample(n=batch_size)
+            if len(self.finalDataFrame) > batch_size:
+                data_lis = self.finalDataFrame.sample(n=batch_size)
             else:
-                data_lis = self.final_data
+                data_lis = self.finalDataFrame
                 logger.debug("Total final data is smaller than batch size.")
         else:
-            data_lis = self.final_data
+            data_lis = self.finalDataFrame
 
         if OutputFormat.lower() == "xlsx":
             if outputfile == None:
@@ -136,7 +149,7 @@ class TestDataGenerator:
         else:
             logger.debug("Incorrect file format")
 
-    def __generateFinalData(self, processed_data):
+    def updatePrefixData(self, processed_data):
         """
 
         :param processed_data:
@@ -144,7 +157,7 @@ class TestDataGenerator:
         """
         for dic in processed_data:
             for key in dic.copy():
-                if type(dic[key]) == PrefixData:
+                if type(dic[key]) == PrefixDataManager:
                     data = dic[key].return_random()
                     if type(data) == dict:
                         del dic[key]
@@ -154,30 +167,28 @@ class TestDataGenerator:
         final_data = pd.DataFrame(processed_data)
         return final_data
 
-    def __process_data(self, raw_json):
+    def processDataFrame(self, dataFrame):
         """
         This method is used to Process all the raw unprocessed data read from the excel file.
 
-        It will first send the header to ``__data_generator`` so that if it is a list then it will get converted in
+        It will first send the header to ``__splitList`` so that if it is a list then it will get converted in
         individual header.
 
         Later it will process the values using ``__data_generator``.
 
-        It will then check returned iterable type, if it is a tuple that mean input value was with prefix, so, it will
-        further check if the tuple contains dict. If True than prefix was RRD_. In that case we will have to deal with
-        the original header of the input value. Because if the original value's header is not in the TargetData then this
-        header will contain no value in the output file and my cause errors too. So the header will added in
-        ``self.remove_header`` list which will be further used to remove it from main header list.
+        It will then check returned data type, and convert it into list if it is not already. Then from every row which
+        are dict contains value/values inside list it will use itertools to create all possible combination, now every
+        data in the value list is converted in a new row with value as string.
 
-        Finally it will return list of dictionarys. Each dictionary contains processed data of a row of input file.
-        Processed data are the raw data converted into python data type and iterables. Ranges are converted into list.
+        Finally it will return list of dictionary. Each dictionary contains processed data of a row of input file.
+        Processed data are the raw data converted into python data type and class. Ranges are converted into list.
 
-        :param raw_json:
+        :param dataFrame:
         :return:
         """
         processed_datas = []
-        raw_json = json.loads(raw_json.to_json(orient="records"))
-        for raw_data in raw_json:
+        json_df = json.loads(dataFrame.to_json(orient="records"))
+        for raw_data in json_df:
             if not list(raw_data.values())[0]:
                 continue
             processed_data = {}
@@ -204,10 +215,10 @@ class TestDataGenerator:
 
         Later according to the prefix of data and the data_type assigned it will convert them.
         Simple list and strings are converted in to ``list`` type.
-        Data with prefix will converted in to ``tuple`` type so further it will be helpful in distinguishing. Also it will
-        insert the prefix name in first value of tuple if the prefix is ``FKR_`` so it will be helpful in further process.
+        Data with prefix will be processed and the data list generated by them is used to create PrefixDataManager class
+        so later when we need to get the final data this class is used to get the data as per prefix and requirements.
 
-        Finally it will return the iterable for further process.
+        Finally it will return the data for further process.
 
         :param raw_data:
         :return: List or Tuple containing necessary data
@@ -229,17 +240,17 @@ class TestDataGenerator:
                 processed_datas = [x for x in range(int(start), int(end) + 1, int(step))]
             else:
                 processed_datas = self.__splitList(raw_data)
-            processed_datas = PrefixData(processed_datas, 'rnd')
+            processed_datas = PrefixDataManager(processed_datas, 'rnd')
 
         elif prefix == "Faker":
                 dataList = [data.strip() for data in raw_data[1:-1].split(",")]
-                processed_datas = PrefixData(dataList, prefix="fkr")
+                processed_datas = PrefixDataManager(dataList, prefix="fkr")
 
         elif prefix == "Rrd":
             sheet_name, data_looking_for, data_to_match = self.extractDataFromRrd(raw_data)
             try:
                 dataList = self.__processRrdRre(sheet_name, data_looking_for, data_to_match)
-                processed_datas = PrefixData(dataList, prefix='rrd', tdg_object=self)
+                processed_datas = PrefixDataManager(dataList, prefix='rrd', tdg_object=self)
             except KeyError:
                 sys.exit(f"Please check that source files contains all the headers mentioned in : {raw_data_old}")
 
@@ -248,7 +259,7 @@ class TestDataGenerator:
             sheet_name, data_looking_for, data_to_match = self.extractDataFromRrd(raw_data, index=1)
             try:
                 dataList = self.__processRrdRre(sheet_name, data_looking_for, data_to_match, filename=file_name)
-                processed_datas = PrefixData(dataList, prefix="rre", tdg_object=self)
+                processed_datas = PrefixDataManager(dataList, prefix="rre", tdg_object=self)
             except KeyError:
                 sys.exit(f"Please check that source files contains all the headers mentioned in : {raw_data_old}")
 
@@ -278,6 +289,12 @@ class TestDataGenerator:
         return processed_datas
 
     def extractDataFromRrd(self, raw_data, index=0):
+        """
+        Splits rrd/rre string and used them according to their position
+        :param raw_data:
+        :param index:
+        :return:
+        """
         first_value = raw_data[1:-1].split(',')[0+index].strip()
         second_value = raw_data[1:-1].split(',')[1+index].strip()
         if second_value[0] == "[":
@@ -299,32 +316,32 @@ class TestDataGenerator:
         return first_value, second_value, evaluated_dict
 
     def __processRrdRre(self, sheet_name, data_looking_for, data_to_match: dict, filename=None):
-        if filename:
-            filename = os.path.join(os.path.dirname(self.path), filename)
+        if filename:  # if filename than it is an rre file so we have to use filename instead of base file
+            filename = os.path.join(os.path.dirname(self.fileNameAndPath), filename)
             if not self.noUpdateFiles:
                 file_name = ".".join(filename.split(".")[:-1])
                 file_extension = filename.split(".")[-1]
                 file = file_name + "_baangt" + "." + file_extension
             else:
                 file = filename
-            if not file in self.rre_sheets:
+            if not file in self.openedSheetsDataFrame:
                 logger.debug(f"Creating clone file of: {filename}")
                 if not self.noUpdateFiles:
                     filename = CloneXls(filename).update_or_make_clone()
-                self.rre_sheets[filename] = {}
+                self.openedSheetsDataFrame[filename] = {}
             filename = file
-            if sheet_name in self.rre_sheets[filename]:
-                df = self.rre_sheets[filename][sheet_name]
+            if sheet_name in self.openedSheetsDataFrame[filename]:
+                df = self.openedSheetsDataFrame[filename][sheet_name]
             else:
                 df = pd.read_excel(filename, sheet_name, dtype=str)
                 df.fillna("", inplace=True)
-                self.rre_sheets[filename][sheet_name] = df
+                self.openedSheetsDataFrame[filename][sheet_name] = df
         else:
-            df = self.sheet_dict[sheet_name]
-            if not self.path in self.rre_sheets:
-                self.rre_sheets[self.path] = {}
-            if not sheet_name in self.rre_sheets[self.path]:
-                self.rre_sheets[self.path][sheet_name] = df
+            df = self.allDataFramesDict[sheet_name]
+            if not self.fileNameAndPath in self.openedSheetsDataFrame:
+                self.openedSheetsDataFrame[self.fileNameAndPath] = {}
+            if not sheet_name in self.openedSheetsDataFrame[self.fileNameAndPath]:
+                self.openedSheetsDataFrame[self.fileNameAndPath][sheet_name] = df
         df1 = df.copy()
         for key, value in data_to_match.items():
             if not isinstance(value, list):
@@ -335,9 +352,7 @@ class TestDataGenerator:
         if type(data_looking_for) == str:
             data_looking_for = data_looking_for.split(",")
         data_new_header = {}
-        data_looking_for_old = data_looking_for[:]
-        data_looking_for = []
-        for header in data_looking_for_old:
+        for header in data_looking_for:
             if ":" in header:
                 old_header = header.split(":")[0].strip()
                 new_header = header.split(":")[1].strip()
@@ -345,24 +360,23 @@ class TestDataGenerator:
                 old_header = header
                 new_header = header
             data_new_header[old_header] = new_header
-            data_looking_for.append(header)
 
         key_name = repr(sheet_name) + repr(data_looking_for) + repr(data_to_match) + repr(filename)
-        if key_name in self.done:
+        if key_name in self.rreRrdProcessedData:
             logger.debug(f"Data Gathered from previously saved data.")
-            return self.done[key_name]
+            return self.rreRrdProcessedData[key_name]
 
         usecount, limit, usecount_header = self.check_usecount(df.columns.values.tolist())
         if not filename:
-            if self.path not in self.isUsecount:
-                self.isUsecount[self.path] = usecount_header
-            if not self.isUsecount[self.path]:
-                self.isUsecount[self.path] = usecount_header
+            if self.fileNameAndPath not in self.usecountHeaderName:
+                self.usecountHeaderName[self.fileNameAndPath] = {}
+            if sheet_name not in self.usecountHeaderName[self.fileNameAndPath] and usecount_header:
+                self.usecountHeaderName[self.fileNameAndPath][sheet_name] = usecount_header
         else:
-            if filename not in self.isUsecount:
-                self.isUsecount[filename] = usecount_header
-            if not self.isUsecount[filename]:
-                self.isUsecount[filename] = usecount_header
+            if filename not in self.usecountHeaderName:
+                self.usecountHeaderName[filename] = {}
+            if sheet_name not in self.usecountHeaderName[filename]:
+                self.usecountHeaderName[filename][sheet_name] = usecount_header
         df1_dict = df1.to_dict(orient="index")
         for index in df1_dict:
             data = df1_dict[index]
@@ -378,14 +392,14 @@ class TestDataGenerator:
                 if usecount_header:
                     del data[usecount_header]
                 data_lis.append(data)
-                self.usecount_dict[repr(data)] = {
+                self.usecountDataRecords[repr(data)] = {
                     "use": used_limit, "limit": limit, "index": index,
                     "sheet_name": sheet_name, "file_name": filename
                 }
             else:
-                dt = {header: data[keys] for (keys, header) in zip(data_looking_for, data_looking_for_old)}
+                dt = {data_new_header[header]: data[header] for header in data_new_header}
                 data_lis.append(dt)
-                self.usecount_dict[repr(dt)] = {
+                self.usecountDataRecords[repr(dt)] = {
                     "use": used_limit, "limit": limit, "index": index,
                     "sheet_name": sheet_name, "file_name": filename
                 }
@@ -394,7 +408,7 @@ class TestDataGenerator:
             logger.info(f"No data matching: {data_to_match}")
             sys.exit(f"No data matching: {data_to_match}")
         logger.debug(f"New Data Gathered.")
-        self.done[key_name] = data_lis
+        self.rreRrdProcessedData[key_name] = data_lis
         return data_lis
 
     def __raw_data_string_process(self, raw_string):
@@ -452,6 +466,12 @@ class TestDataGenerator:
         return raw_string, prefix, data_type
 
     def get_str_sheet(self, excel, sheet):
+        """
+        Returns dataFrame with all data treated as string
+        :param excel:
+        :param sheet:
+        :return:
+        """
         columns = excel.parse(sheet).columns
         converters = {column: str for column in columns}
         data = excel.parse(sheet, converters=converters)
@@ -522,11 +542,15 @@ class TestDataGenerator:
         return usecount, limit, usecount_header
 
     def save_usecount(self):
+        """
+        Saves the excel file in which have usecount to be updated
+        :return:
+        """
         if self.noUpdateFiles:
             return 
-        for filename in self.isUsecount:
+        for filename in self.usecountHeaderName:
             logger.debug(f"Updating file {filename} with usecounts.")
-            sheet_dict = self.rre_sheets[filename]
+            sheet_dict = self.openedSheetsDataFrame[filename]
             ex = pd.ExcelFile(filename)
             for sheet in ex.sheet_names:
                 if sheet in sheet_dict:
@@ -540,17 +564,25 @@ class TestDataGenerator:
             logger.debug(f"File updated {filename}.")
 
     def update_usecount_in_source(self, data):
+        """
+        Updates usecount in the dataframe in correct position. These function only updates not save the file.
+        :param data:
+        :return:
+        """
         if self.noUpdateFiles:
             return 
-        filename = self.usecount_dict[repr(data)]["file_name"]
+        filename = self.usecountDataRecords[repr(data)]["file_name"]
+        sheetName = self.usecountDataRecords[repr(data)]["sheet_name"]
         if not filename:
-            filename = self.path
-        if filename not in self.isUsecount:
+            filename = self.fileNameAndPath
+        if filename not in self.usecountHeaderName:
             return
-        if not self.isUsecount[filename]:
+        elif sheetName not in self.usecountHeaderName[filename]:
             return
-        self.rre_sheets[filename][self.usecount_dict[repr(data)]["sheet_name"]][
-            self.isUsecount[filename]][self.usecount_dict[repr(data)]["index"]] = self.usecount_dict[repr(data)]["use"]
+        if not self.usecountHeaderName[filename][sheetName]:
+            return
+        self.openedSheetsDataFrame[filename][sheetName][self.usecountHeaderName[filename][sheetName]][
+            self.usecountDataRecords[repr(data)]["index"]] = self.usecountDataRecords[repr(data)]["use"]
 
     def __process_rrd_string(self, rrd_string):
         """
@@ -604,6 +636,11 @@ class TestDataGenerator:
 
     @staticmethod
     def get_env_variable(string):
+        """
+        Returns environment variable or the default value predefined.
+        :param string:
+        :return:
+        """
         variable = string[1:-1].strip().split(',')[0].strip()
         data = os.environ.get(variable)
         try:
@@ -616,6 +653,10 @@ class TestDataGenerator:
 
     @staticmethod
     def product_dict(**kwargs):
+        """
+        :param kwargs: Dictionary containing values in a list
+        :return: yield dictionaries with individual value in dictionary from value list
+        """
         keys = kwargs.keys()
         vals = kwargs.values()
         for instance in itertools.product(*vals):

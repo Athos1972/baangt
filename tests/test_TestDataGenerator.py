@@ -105,7 +105,7 @@ def test_rrd_no_data_to_match():
 def test_rre_simple_input():
     # Checks __processRrd to get dict to target data
     rrd_output_dict = testDataGenerator.data_generators(
-        "RRE_[examples/CompleteBaangtWebdemo.xlsx,CustomerData,[NameFirst,NameLast],[Stage:[Test]]]"
+        "RRE_[../../examples/CompleteBaangtWebdemo.xlsx,CustomerData,[NameFirst,NameLast],[Stage:[Test]]]"
     )
     assert len(rrd_output_dict.dataList) == 5
 
@@ -113,7 +113,7 @@ def test_rre_simple_input():
 def test_rre_target_data_all():
     # Checks __processRrd to get dict to for all data of matching values
     rrd_output_dict = testDataGenerator.data_generators(
-        "RRE_[examples/CompleteBaangtWebdemo.xlsx,CustomerData,*,[Stage:[Test]]]"
+        "RRE_[../../examples/CompleteBaangtWebdemo.xlsx,CustomerData,*,[Stage:[Test]]]"
     )
     assert len(rrd_output_dict.dataList) == 5
 
@@ -121,7 +121,7 @@ def test_rre_target_data_all():
 def test_rre_no_data_to_match():
     # Checks __processRrd to get dict to for all data of when no value of matching is given
     rrd_output_dict = testDataGenerator.data_generators(
-        "RRE_[examples/CompleteBaangtWebdemo.xlsx,CustomerData,*,[]"
+        "RRE_[../../examples/CompleteBaangtWebdemo.xlsx,CustomerData,*,[]"
     )
     assert len(rrd_output_dict.dataList) == 10
 

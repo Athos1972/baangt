@@ -185,7 +185,7 @@ class HandleDatabase:
                 if str(temp_dic[keys])[:4].upper() == "RRD_":
                     logger.debug(f"Processing rrd data - {temp_dic[keys]}")
                     rrd_data = self.get_data_from_tdg(temp_dic[keys])
-                    self.testDataGenerator.usecount_dict[repr(rrd_data)]["use"] += 1
+                    self.testDataGenerator.usecountDataRecords[repr(rrd_data)]["use"] += 1
                     self.testDataGenerator.update_usecount_in_source(rrd_data)
                     for data in rrd_data:
                         new_data_dic[data] = rrd_data[data]
@@ -193,7 +193,7 @@ class HandleDatabase:
                 elif str(temp_dic[keys])[:4].upper() == "RRE_":
                     logger.debug(f"Processing rre data - {temp_dic[keys]}")
                     rre_data = self.get_data_from_tdg(temp_dic[keys])
-                    self.testDataGenerator.usecount_dict[repr(rre_data)]["use"] += 1
+                    self.testDataGenerator.usecountDataRecords[repr(rre_data)]["use"] += 1
                     self.testDataGenerator.update_usecount_in_source(rre_data)
                     for data in rre_data:
                         new_data_dic[data] = rre_data[data]
