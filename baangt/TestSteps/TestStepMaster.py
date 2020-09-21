@@ -23,17 +23,16 @@ class TestStepMaster:
         self.anchorLocator = None
         self.anchorLocatorType = None
         self.testCaseStatus = None
-        self.ifActive = False
-        self.ifIsTrue = True
-        self.elseIsTrue = False
-        self.ifLis = [self.ifIsTrue]
-        self.elseLis = [self.elseIsTrue]
-        self.ifConditions = 0
-        self.repeatIsTrue = [False]
-        self.repeatDict = [] # used to store steps command of repeat data
-        self.repeatData = [] # used to store RLP_ data to be looped in repeat
-        self.repeatCount = [] # Used to store count of randomdata in loop
-        self.repeatActive = 0 # to sync active repeat counts with repeat done and will be execute when both are equal
+        self.ifIsTrue = True  # used to know if command is inside if condition and run command as per it
+        self.elseIsTrue = False  # used to know if command is inside else condition
+        self.ifLis = [self.ifIsTrue]  # useful in storing state of nested if conditions
+        self.elseLis = [self.elseIsTrue]  # useful in storing state of nested else conditions
+        self.ifConditions = 0  # use to verify endif
+        self.repeatIsTrue = False  # use to know if commands are running inside repeat loop
+        self.repeatCommands = []  # used to store steps command of repeat data
+        self.repeatReplaceDataDictionary = []  # used to store RLP_ data to be looped in repeat
+        self.repeatCount = []  # Used to store count of randomdata in loop
+        self.repeatActive = 0  # to sync active repeat counts with repeat done and will be execute when both are equal
         self.repeatDone = 0
         self.baangtFaker = None
         self.statistics = Statistic()
@@ -94,6 +93,12 @@ class TestStepMaster:
                 return
 
     def manageNestedCondition(self, condition="", ifis=False):
+        """
+        Manages if and else condition. Specially made to deal with nested conditions
+        :param condition:
+        :param ifis:
+        :return:
+        """
         if condition.upper() == "IF":
             self.ifConditions += 1
             self.ifLis.append(ifis)
@@ -110,6 +115,71 @@ class TestStepMaster:
         self.ifIsTrue = self.ifLis[-1]
         self.elseIsTrue = self.elseLis[-1]
 
+    def manageNestedLoops(self, command, commandNumber):
+        """
+        This method is used to deal with Repeat statements and nested repeat statements.
+        It is called on when a repeat statement comes then this method will take and store all the commands come after
+        it until it reaches repeat-done statement of same level i.e. when a repeat statement is present inside this
+        repeat statement then the first repeat-done came will be considered as repeat-done of the nested repeat and the
+        next one will be considered as the main.
+        :param command:
+        :param commandNumber:
+        :return:
+        """
+        if command["Activity"].upper() == "REPEAT":  # To sync active repeat with repeat done
+            self.repeatCommands[-1][commandNumber] = command  # storing nested repeat command
+            self.repeatActive += 1  # used to know the level of repeat and repeat done
+            return
+        if command["Activity"].upper() != "REPEAT-DONE":  # store command in repeatDict
+            self.repeatCommands[-1][commandNumber] = command
+            return
+        else:
+            self.repeatDone += 1  # to sync repeat done with active repeat
+            if self.repeatDone < self.repeatActive:  # if all repeat-done are not synced with repeat, store the data
+                self.repeatCommands[-1][commandNumber] = command
+                logger.info(command)
+                return
+            self.repeatIsTrue = False
+            if self.repeatReplaceDataDictionary[-1]:
+                data_list = []
+                if type(self.repeatReplaceDataDictionary[-1]) is list:
+                    for data_dic in self.repeatReplaceDataDictionary[-1]:
+                        keys, values = zip(*data_dic.items())
+                        final_values = []
+                        for value in values:  # coverting none list values to list. Useful in make all possible data using itertools
+                            if type(value) is not list:
+                                final_values.append([value])
+                            else:
+                                final_values.append(value)
+                        data_l = [dict(zip(keys, v)) for v in
+                                  itertools.product(*final_values)]  # itertools to make all possible combinations
+                        data_list.extend(data_l)
+                else:
+                    data_list = [self.repeatReplaceDataDictionary[-1]]
+                if len(self.repeatCount) > 0 and self.repeatCount[-1]:  # get random data from list of data
+                    try:
+                        data_list = random.sample(data_list, int(self.repeatCount[-1]))
+                    except:
+                        pass
+                for data in data_list:
+                    temp_dic = dict(self.repeatCommands[-1])
+                    processed_data = {}
+                    for key in temp_dic:
+                        try:
+                            processed_data = dict(temp_dic[key])
+                        except Exception as ex:
+                            logger.debug(ex)
+                        try:
+                            self.executeDirectSingle(key, processed_data, replaceFromDict=data)
+                        except Exception as ex:
+                            logger.info(ex)
+            del self.repeatCommands[-1]
+            del self.repeatReplaceDataDictionary[-1]
+            del self.repeatCount[-1]
+            self.repeatDone = 0
+            self.repeatActive = 0
+            return
+
     def executeDirectSingle(self, commandNumber, command, replaceFromDict=None):
         """
         This will execute a single instruction
@@ -123,58 +193,9 @@ class TestStepMaster:
                 return True
             if command["Activity"].upper() != "ELSE" and command["Activity"].upper() != "ENDIF":
                 return True
-        if self.repeatIsTrue[-1]: # If repeat statement is active then execute this
-            if command["Activity"].upper() == "REPEAT": # To sync active repeat with repeat done
-                self.repeatActive += 1
-            if command["Activity"].upper() != "REPEAT-DONE": # store command in repeatDict
-                self.repeatDict[-1][commandNumber] = command
-                return
-            else:
-                self.repeatDone += 1 # to sync repeat done with active repeat
-                if self.repeatDone < self.repeatActive: # if all repeat-done are not synced with repeat store the data
-                    self.repeatDict[-1][commandNumber] = command
-                    logger.info(command)
-                    return
-                self.repeatIsTrue[-1] = False
-                if self.repeatData[-1]:
-                    data_list = []
-                    if type(self.repeatData[-1]) is list:
-                        for data_dic in self.repeatData[-1]:
-                            keys, values = zip(*data_dic.items())
-                            final_values = []
-                            for value in values: # coverting none list values to list. Useful in make all possible data using itertools
-                                if type(value) is not list:
-                                    final_values.append([value])
-                                else:
-                                    final_values.append(value)
-                            data_l = [dict(zip(keys, v)) for v in itertools.product(*final_values)] # itertools to make all possible combinations
-                            data_list.extend(data_l)
-                    else:
-                        data_list = [self.repeatData[-1]]
-                    if len(self.repeatCount) > 0 and self.repeatCount[-1]: # get random data from list of data
-                        try:
-                            data_list = random.sample(data_list, int(self.repeatCount[-1]))
-                        except:
-                            pass
-                    for data in data_list:
-                        temp_dic = dict(self.repeatDict[-1])
-                        processed_data = {}
-                        for key in temp_dic:
-                            try:
-                                processed_data = dict(temp_dic[key])
-                            except Exception as ex:
-                                logger.debug(ex)
-                            try:
-                                self.executeDirectSingle(key, processed_data, replaceFromDict=data)
-                            except Exception as ex:
-                                logger.info(ex)
-                del self.repeatIsTrue[-1]
-                del self.repeatDict[-1]
-                del self.repeatData[-1]
-                del self.repeatCount[-1]
-                self.repeatDone -= 1
-                self.repeatActive -= 1
-                return
+        if self.repeatIsTrue:  # If repeat statement is active then execute this
+            self.manageNestedLoops(command, commandNumber)
+            return
 
         css, id, lActivity, lLocator, lLocatorType, xpath = self._extractAllSingleValues(command)
 
@@ -275,7 +296,7 @@ class TestStepMaster:
             logger.debug(f"IF-condition original Value: {original_value} (transformed: {lValue}) {lComparison} {lValue2} "
                          f"evaluated to: {self.ifIsTrue} ")
         elif lActivity == "ELSE":
-            if not self.ifIsTrue:
+            if not self.ifIsTrue:  # don't run else statement if "if" statement is true
                 self.manageNestedCondition(condition=lActivity)
                 logger.debug("Executing ELSE-condition")
             else:
@@ -284,12 +305,12 @@ class TestStepMaster:
             self.manageNestedCondition(condition=lActivity)
         elif lActivity == "REPEAT":
             self.repeatActive += 1
-            self.repeatIsTrue.append(True)
-            self.repeatDict.append({})
+            self.repeatIsTrue = True
+            self.repeatCommands.append({})
             if original_value not in self.testRunInstance.json_dict:
                 self.testRunInstance.json_dict[original_value] = []
             self.testRunInstance.json_dict[original_value].append(lValue)
-            self.repeatData.append(lValue)
+            self.repeatReplaceDataDictionary.append(lValue)
             self.repeatCount.append(lValue2)
         elif lActivity == 'GOBACK':
             self.browserSession.goBack()
@@ -579,7 +600,7 @@ class TestStepMaster:
             right_part = expression[len(left_part) + len(center) + 3:]
             centerValue = ""
 
-            if replaceFromDict: # json is supplied with repeat tag, that json is used here to get main data
+            if replaceFromDict:  # json is supplied with repeat tag, that json is used here to get main data
                     dic = replaceFromDict
                     for key in center.split('.')[-1:]:
                         dic = self.iterate_json(dic, key)
