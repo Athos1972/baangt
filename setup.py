@@ -6,7 +6,7 @@ if __name__ == '__main__':
 
     setuptools.setup(
         name="baangt",
-        version="1.1.20",
+        version="1.2.5",
         author="Bernhard Buhl",
         author_email="info@baangt.org",
         description="Open source Test Automation Suite for MacOS, Windows, Linux",
@@ -20,12 +20,12 @@ if __name__ == '__main__':
                           "dataclasses", "dataclasses-json",
                           "faker",  "gevent", "jinja2", "lxml",
                           "openpyxl",
-                          "Pillow", "pluggy", "pyperclip",  "pyQT5==5.14.2",
+                          "pandas", "Pillow", "pluggy", "pyperclip",  "pyQT5==5.14.2",
                           "requests", "requests-toolbelt",
                           "schwifty", "selenium", "sqlalchemy",
                           "urllib3", "psutil", "pymsteams", "slack-webhook",
                           "xl2dict", "xlrd3", "xlsxwriter", "atlassian-python-api",
-                          "icopy2xls"],
+                          "icopy2xls", "xlsclone"],
         classifiers=[
             "Programming Language :: Python :: 3",
             "License :: OSI Approved :: MIT License",

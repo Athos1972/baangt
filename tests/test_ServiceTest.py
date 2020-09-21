@@ -274,3 +274,10 @@ def test_NestedLoops_and_repeat():
     s = Session()
     data = s.query(TestrunLog).get(uuid.UUID(TestRunUUID).bytes)
     assert "textarea2" in json.loads(data.RLPJson)
+
+
+def test_JsonTestRun():
+    run_file = str(input_dir.joinpath("example_googleImages.json"))
+    execute(run_file, globals_file=Path(input_dir).joinpath("globals.json"))
+    new_file = folder_monitor.getNewFiles()
+    assert new_file

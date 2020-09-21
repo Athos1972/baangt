@@ -57,17 +57,21 @@ class TestStepMaster:
         self.testCase = self.testRunUtil.getTestCaseByNumber(lSequence, kwargs.get(GC.STRUCTURE_TESTCASE))
         self.testStep = self.testRunUtil.getTestStepByNumber(self.testCase, self.testStepNumber)
 
-        if self.testStep and len(self.testStep) > 1:
-            if not isinstance(self.testStep[1], str) and executeDirect:
-                # This TestStepMaster-Instance should actually do something - activitites are described
-                # in the TestExecutionSteps.
-                # Otherwise there's only a classname in TestStep[0]
-                self.executeDirect(self.testStep[1][GC.STRUCTURE_TESTSTEPEXECUTION])
+        try:
+            if self.testStep and len(self.testStep) > 1:
+                if not isinstance(self.testStep[1], str) and executeDirect:
+                    # This TestStepMaster-Instance should actually do something - activitites are described
+                    # in the TestExecutionSteps.
+                    # Otherwise there's only a classname in TestStep[0]
+                    self.executeDirect(self.testStep[1][GC.STRUCTURE_TESTSTEPEXECUTION])
 
-                # Teardown makes only sense, when we actually executed something directly in here
-                # Otherwise (if it was 1 or 2 Tab-stops more to the left) we'd take execution time without
-                # having done anything
-                self.teardown()
+                    # Teardown makes only sense, when we actually executed something directly in here
+                    # Otherwise (if it was 1 or 2 Tab-stops more to the left) we'd take execution time without
+                    # having done anything
+                    self.teardown()
+        except Exception as e:
+            logger.warning(f"Uncought exception {e}")
+            utils.traceback(exception_in=e)
 
         self.statistics.update_teststep_sequence()
 
@@ -152,33 +156,16 @@ class TestStepMaster:
                             data_list = random.sample(data_list, int(self.repeatCount[-1]))
                         except:
                             pass
-                    if data_list:
-                        for data in data_list:
-                            temp_dic = dict(self.repeatDict[-1])
-                            processed_data = {}
-                            for key in temp_dic:
-                                try:
-                                    processed_data = dict(temp_dic[key])
-                                except Exception as ex:
-                                    logger.debug(ex)
-                                try:
-                                    self.executeDirectSingle(key, processed_data, replaceFromDict=data)
-                                except Exception as ex:
-                                    logger.info(ex)
-                    else:
+                    for data in data_list:
                         temp_dic = dict(self.repeatDict[-1])
+                        processed_data = {}
                         for key in temp_dic:
                             try:
                                 processed_data = dict(temp_dic[key])
                             except Exception as ex:
                                 logger.debug(ex)
-                            for ky in processed_data:
-                                try:
-                                    processed_data[ky] = self.replaceVariables(processed_data[ky])
-                                except Exception as ex:
-                                    logger.info(ex)
                             try:
-                                self.executeDirectSingle(key, processed_data)
+                                self.executeDirectSingle(key, processed_data, replaceFromDict=data)
                             except Exception as ex:
                                 logger.info(ex)
                 del self.repeatIsTrue[-1]
@@ -225,9 +212,16 @@ class TestStepMaster:
             logger.debug(f"we skipped this line due to {lRelease} disqualifies according to {self.globalRelease} ")
             return
         if lActivity == "GOTOURL":
-            self.browserSession.goToUrl(lValue)
+            if lValue:
+                self.browserSession.goToUrl(lValue)
+            elif lLocator:
+                self.browserSession.goToUrl(lLocator)
+            else:
+                logger.critical("GotoURL without URL called. Aborting. "
+                                "Please provide URL either in Value or Locator columns")
         elif lActivity == "SETTEXT":
-            self.browserSession.findByAndSetText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout)
+            self.browserSession.findByAndSetText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout,
+                                                 optional=lOptional)
         elif lActivity == "SETTEXTIF":
             self.browserSession.findByAndSetTextIf(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout,
                                                    optional=lOptional)
@@ -238,6 +232,10 @@ class TestStepMaster:
             if lValue:
                 self.browserSession.findByAndForceText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout,
                                                        optional=lOptional)
+        elif lActivity == "FORCETEXTJS":
+            if lValue:
+                self.browserSession.findByAndForceViaJS(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout,
+                                                        optional=lOptional)
         elif lActivity == "SETANCHOR":
             if not lLocator:
                 self.anchor = None
@@ -261,9 +259,10 @@ class TestStepMaster:
                 lWindow = int(lWindow)
             self.browserSession.handleWindow(windowNumber=lWindow, timeout=lTimeout)
         elif lActivity == "CLICK":
-            self.browserSession.findByAndClick(xpath=xpath, css=css, id=id, timeout=lTimeout)
+            self.browserSession.findByAndClick(xpath=xpath, css=css, id=id, timeout=lTimeout, optional=lOptional)
         elif lActivity == "CLICKIF":
-            self.browserSession.findByAndClickIf(xpath=xpath, css=css, id=id, timeout=lTimeout, value=lValue)
+            self.browserSession.findByAndClickIf(xpath=xpath, css=css, id=id, timeout=lTimeout, value=lValue,
+                                                 optional=lOptional)
         elif lActivity == "PAUSE":
             self.browserSession.sleep(seconds=float(lValue))
         elif lActivity == "IF":
@@ -273,11 +272,14 @@ class TestStepMaster:
                                                     timeout=lTimeout)
 
             self.__doComparisons(lComparison=lComparison, value1=lValue, value2=lValue2)
-            logger.debug(f"IF-condition {lValue} {lComparison} {lValue2} evaluated to: {self.ifIsTrue} ")
+            logger.debug(f"IF-condition original Value: {original_value} (transformed: {lValue}) {lComparison} {lValue2} "
+                         f"evaluated to: {self.ifIsTrue} ")
         elif lActivity == "ELSE":
             if not self.ifIsTrue:
                 self.manageNestedCondition(condition=lActivity)
                 logger.debug("Executing ELSE-condition")
+            else:
+                self.ifIsTrue = False
         elif lActivity == "ENDIF":
             self.manageNestedCondition(condition=lActivity)
         elif lActivity == "REPEAT":
@@ -322,6 +324,7 @@ class TestStepMaster:
             value_found = self.browserSession.findByAndWaitForValue(xpath=xpath, css=css, id=id, optional=lOptional,
                                                                     timeout=lTimeout)
             if not self.__doComparisons(lComparison=lComparison, value1=value_found, value2=lValue):
+                logger.error(f"Condition {value_found} {lComparison} {lValue} was not met during assert.")
                 raise baangtTestStepException(f"Expected Value: {lValue}, Value found :{value_found} ")
         elif lActivity == 'IBAN':
             # Create Random IBAN. Value1 = Input-Parameter for IBAN-Function. Value2=Fieldname
@@ -381,7 +384,7 @@ class TestStepMaster:
             if len(lValue2) > 0:
                 lValue2 = self.replaceVariables(lValue2, replaceFromDict=replaceFromDict)
         except Exception as ex:
-            logger.info(ex)
+            logger.warning(f"During replacement of variables an error happened: {ex}")
         return lValue, lValue2
 
     def __getIBAN(self, lValue, lValue2):
@@ -480,13 +483,18 @@ class TestStepMaster:
         if value2 == 'None':
             value2 = None
 
+        logger.debug(f"Evaluating IF-Condition: Value1 = {value1}, comparison={lComparison}, value2={value2}")
+
         if lComparison == "=":
             if value1 == value2:
                 self.manageNestedCondition(condition="IF", ifis=True)
             else:
                 self.manageNestedCondition(condition="IF", ifis=False)
         elif lComparison == "!=":
-            self.ifIsTrue = False if value1 == value2 else True
+            if value1 != value2:
+                self.manageNestedCondition(condition="IF", ifis=True)
+            else:
+                self.manageNestedCondition(condition="IF", ifis=False)
         elif lComparison == ">":
             if value1 > value2:
                 self.manageNestedCondition(condition="IF", ifis=True)
@@ -494,6 +502,26 @@ class TestStepMaster:
                 self.manageNestedCondition(condition="IF", ifis=False)
         elif lComparison == "<":
             if value1 < value2:
+                self.manageNestedCondition(condition="IF", ifis=True)
+            else:
+                self.manageNestedCondition(condition="IF", ifis=False)
+        elif lComparison == ">=":
+            if value1 >= value2:
+                self.manageNestedCondition(condition="IF", ifis=True)
+            else:
+                self.manageNestedCondition(condition="IF", ifis=False)
+        elif lComparison == "<=":
+            if value1 <= value2:
+                self.manageNestedCondition(condition="IF", ifis=True)
+            else:
+                self.manageNestedCondition(condition="IF", ifis=False)
+        elif lComparison.upper() == "IP":     # Is Part of (Value 1 is part of Value 2)
+            if value1 in value2:
+                self.manageNestedCondition(condition="IF", ifis=True)
+            else:
+                self.manageNestedCondition(condition="IF", ifis=False)
+        elif lComparison.upper() == 'CO':      # COntains (Value 1 contains Value 2)
+            if value2 in value1:
                 self.manageNestedCondition(condition="IF", ifis=True)
             else:
                 self.manageNestedCondition(condition="IF", ifis=False)

@@ -121,7 +121,8 @@ class ExportResults:
                 self.statistics.send_statistics()
             except Exception as ex:
                 logger.debug(ex)
-        self.update_result_in_testrun()
+        if not self.testRunInstance.noCloneXls:
+            self.update_result_in_testrun()
 
     def __removeUnwantedFields(self):
         lListPasswordFieldNames = ["PASSWORD", "PASSWORT", "PASSW"]
@@ -161,7 +162,7 @@ class ExportResults:
         we shall take it from GlobalSettings. If also not there, take the default Value GC.EXECUTIN_STAGE_TEST
         :return:
         """
-        value = None
+        value = {}
         for key, value in self.dataRecords.items():
             break
         if not value.get(GC.EXECUTION_STAGE):
@@ -593,12 +594,17 @@ class ExportResults:
 
     def update_result_in_testrun(self):
         # To update source testrun file
-        testrun_column = self.dataRecords[0]["testcase_column"]
+        logger.debug("TestResult updating")
+        try:
+            testrun_column = self.dataRecords[0]["testcase_column"]
+        except:
+            return
         if testrun_column:  # if testrun_column is greater than 0 that means testresult header is present in source file
+            logger.debug(f'Header for result update is {self.dataRecords[0]["testcase_column"]} in sheet ' \
+                         f'{self.dataRecords[0]["testcase_sheet"]} of file {self.dataRecords[0]["testcase_file"]}')
             testrun_file = load_workbook(self.dataRecords[0]["testcase_file"])
             testrun_sheet = testrun_file.get_sheet_by_name(self.dataRecords[0]["testcase_sheet"])
             for key, value in self.dataRecords.items():
-                print(value)
                 data = f"TestCaseStatus: {value['TestCaseStatus']}\r\n" \
                        f"Timestamp: {self.testRun_end}\r\n" \
                        f"Duration: {value['Duration']}\r\n" \
@@ -607,8 +613,12 @@ class ExportResults:
                        f"TestCase_UUID: {str(self.testcase_uuids[key])}\r\n\r\n"
                 old_value = testrun_sheet.cell(value["testcase_row"] + 1, value["testcase_column"]).value or ""
                 testrun_sheet.cell(value["testcase_row"] + 1, value["testcase_column"]).value = data + old_value
+                logger.debug(f'Result written in row {value["testcase_row"]} column {value["testcase_column"]}')
+            logger.debug("Saving Source TestRun file.")
             testrun_file.save(self.dataRecords[0]["testcase_file"])
             logger.info(f"Source TestRun file {self.dataRecords[0]['testcase_file']} updated.")
+        else:
+            logger.debug(f"No TestResult column found")
 
     def __writeCell(self, line, cellNumber, testRecordDict, fieldName, strip=False):
         if fieldName in testRecordDict.keys() and testRecordDict[fieldName]:
@@ -755,8 +765,8 @@ class ExportNetWork:
                  testCasesEndDateTimes_2D: list, workbook: xlsxwriter.Workbook, sheet: xlsxwriter.worksheet):
 
         self.networkInfo = networkInfo
-        #self.testCasesEndDateTimes_1D = testCasesEndDateTimes_1D
-        #self.testCasesEndDateTimes_2D = testCasesEndDateTimes_2D
+        self.testCasesEndDateTimes_1D = testCasesEndDateTimes_1D
+        self.testCasesEndDateTimes_2D = testCasesEndDateTimes_2D
         self.workbook = workbook
         self.sheet = sheet
         header_style = self.get_header_style()
