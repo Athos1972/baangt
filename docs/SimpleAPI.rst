@@ -116,3 +116,51 @@ manually declaring them:
     * - ANSWER_CONTENT
       - Last content of an API-Call (Post, Get, etc.). Again you can access/extract/replace parts of this content using
         the "." like described in the line above (e.g. ``$(ANSWER_CONTENT.FRANZI)`` to refer to a content part ``FRANZI``.
+
+Random
+------
+Sometimes we need random values like string, name, integer, float, date, time now in such case we have ``random``
+functionality. It is used inside value column of and its structure is
+``$(random{"type":<Type>},"min":<Minimum>,"max"<Maximum>,"format":<Format>)``. Only ``type`` field is compulsory and
+every other fields are optional, also each fields are not useful in every type, e.g.- ``name`` type doesn't need any
+other optional fields as they are use less for it. You can see fields and types supporting them.
+
+
+.. list-table:: Fields supporting types
+   :widths: 25 75
+   :header-rows: 1
+
+   * - Field
+     - Type
+
+   * - type
+     - This field is compulsory and base of ``random`` funtionality.
+       string, name, int, float, date, time are the types currently supported
+
+   * - min
+     - string, int, float, date, time are the types supporting this field. Value of min will be with respect to its
+       type like value for string will be an integer containing minimum number of characters in string and for all other
+       it will be lower limit, for int it will be an integer & float for float, for date value will be a date e.g. -
+       "31/01/2020" and for time it would look like "20:30:59"
+
+   * - max
+     - string, int, float, date, time are the types supporting this field. Value of max will be same like in min,
+       value for string will be an integer containing maximum number of characters in string and for all other it
+       will be upper limit, for int it will be an integer & float for float, for date value will be a date e.g. -
+       "01/06/2020" and for time it would look like "13:10:30"
+
+   * - format
+     - date, time are the only types supporting format field. In above date examples date is in %d/%m/%Y format and
+       time is in %H:%M:%S format. Here "%d" stands for the day, "%m" stands for month, "%Y" stands for year including
+       century e.g.- 2020, if you want only year you can use "%y" e.g. 20. If you use min and max fields in date, time
+       then you must input its written format in format field, default will be ""%d/%m/%Y" for date. Now if you want
+       date with "-" as seperator you can write format as "%d-%m-%Y" so the output would be like "31-01-2020".
+
+       `examples`
+        $(random{"type":"name"})
+        $(random{"type":"string", "min":10, "max":100})
+        $(random{"type":"int", "min":10, "max":100})
+        $(random{"type":"float"})
+        $(random{"type":"date", "min":"20/1/2020", "max":"30/6/2020", "format":"%d/%m/%Y"})
+        $(random{"type":"time"})
+        $(random{"type":"time", "min":"10.30.00", "max":"15.00.00"}, "format": "%H.%M.%S")
