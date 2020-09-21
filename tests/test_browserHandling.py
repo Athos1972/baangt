@@ -253,7 +253,7 @@ def test_waitForPageLoadAfterButtonClick(getdriver):
 @pytest.mark.parametrize("function", [("close"), ("closeall-0"), ("")])
 def test_handleWindow(function, getdriver):
     getdriver.browserData = MagicMock()
-    getdriver.browserData.driver.window_handles = ["test"]
+    getdriver.browserData.driver.window_handles = ["test", "test"]
     if function == "":
         with pytest.raises(baangtTestStepException):
             getdriver.handleWindow(function=function)
@@ -299,3 +299,33 @@ def test_waitForElementChangeAfterButtonClick(mock_utils, getdriver):
     getdriver.element.id = "xxxx"
     id.id = "1234"
     getdriver.waitForElementChangeAfterButtonClick(timeout=0.1)
+    assert 1 == 1
+
+
+@pytest.mark.parametrize("css, xpath, id", [("x", None, None), (None, "x", None), (None, None, "x")])
+def test_findWaitNotVisible(css, xpath, id, getdriver):
+    getdriver.browserData = MagicMock()
+    getdriver.findWaitNotVisible(css, xpath, id, timeout=1)
+    assert 1 == 1
+
+
+def test_findByAndForceViaJS(getdriver):
+    getdriver.browserData = MagicMock()
+    getdriver.findByAndForceViaJS(xpath="Test")
+    assert 1 == 1
+
+
+def test_findByAndForceText(getdriver):
+    getdriver.findBy = MagicMock()
+    getdriver.findBy.return_value = False, True
+    getdriver.findByAndForceText()
+    assert 1 == 1
+
+
+def test_findByAndSetTextValidated(getdriver):
+    getdriver.findBy = MagicMock()
+    getdriver.findByAndForceText = MagicMock()
+    getdriver.findBy.return_value = MagicMock(), "def"
+    getdriver.findBy.return_value[0].text = "abc"
+    getdriver.findBy.return_value[0].get_property.return_value = "abc"
+    getdriver.findByAndSetTextValidated(value="123")

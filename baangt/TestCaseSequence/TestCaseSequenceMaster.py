@@ -148,7 +148,7 @@ class TestCaseSequenceMaster:
         testDataFile = utils.findFileAndPathFromPath(
             self.testSequenceData[GC.DATABASE_FILENAME],
             basePath=str(Path(self.testRunInstance.globalSettingsFileNameAndPath).parent))
-        if not self.testRunInstance.noCloneXls:
+        if not self.testRunInstance.noCloneXls and not "_baangt" in testDataFile:
             cloneXls = CloneXls(testDataFile)  # , logger=logger)
             testDataFile = cloneXls.update_or_make_clone(
                 ignore_headers=["TestResult", "UseCount"])

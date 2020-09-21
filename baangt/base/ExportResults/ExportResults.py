@@ -162,7 +162,7 @@ class ExportResults:
         we shall take it from GlobalSettings. If also not there, take the default Value GC.EXECUTIN_STAGE_TEST
         :return:
         """
-        value = None
+        value = {}
         for key, value in self.dataRecords.items():
             break
         if not value.get(GC.EXECUTION_STAGE):
@@ -595,7 +595,10 @@ class ExportResults:
     def update_result_in_testrun(self):
         # To update source testrun file
         logger.debug("TestResult updating")
-        testrun_column = self.dataRecords[0]["testcase_column"]
+        try:
+            testrun_column = self.dataRecords[0]["testcase_column"]
+        except:
+            return
         if testrun_column:  # if testrun_column is greater than 0 that means testresult header is present in source file
             logger.debug(f'Header for result update is {self.dataRecords[0]["testcase_column"]} in sheet ' \
                          f'{self.dataRecords[0]["testcase_sheet"]} of file {self.dataRecords[0]["testcase_file"]}')
@@ -762,8 +765,8 @@ class ExportNetWork:
                  testCasesEndDateTimes_2D: list, workbook: xlsxwriter.Workbook, sheet: xlsxwriter.worksheet):
 
         self.networkInfo = networkInfo
-        #self.testCasesEndDateTimes_1D = testCasesEndDateTimes_1D
-        #self.testCasesEndDateTimes_2D = testCasesEndDateTimes_2D
+        self.testCasesEndDateTimes_1D = testCasesEndDateTimes_1D
+        self.testCasesEndDateTimes_2D = testCasesEndDateTimes_2D
         self.workbook = workbook
         self.sheet = sheet
         header_style = self.get_header_style()

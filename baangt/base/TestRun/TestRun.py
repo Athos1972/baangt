@@ -387,10 +387,13 @@ class TestRun:
         @param TestRunNameInput: The complete File and Path of the TestRun definition (JSON or XLSX).
         @return: TestRunName and FileName (if definition of testrun comes from a file (JSON or XLSX)
         """
-        if ".XLSX" in TestRunNameInput.upper() or ".JSON" in TestRunNameInput.upper():
+        if ".XLSX" in TestRunNameInput.upper():
             cloneXls = CloneXls(TestRunNameInput)
             lFileName = cloneXls.update_or_make_clone(ignore_headers=["TestResult", "UseCount"], clone=direct)
             lRunName = utils.extractFileNameFromFullPath(lFileName)
+        elif ".JSON" in TestRunNameInput.upper():
+            lRunName = utils.extractFileNameFromFullPath(TestRunNameInput)
+            lFileName = TestRunNameInput
         else:
             lRunName = TestRunNameInput
             lFileName = None

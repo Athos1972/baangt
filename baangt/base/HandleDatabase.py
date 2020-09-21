@@ -185,7 +185,7 @@ class HandleDatabase:
                 if str(temp_dic[keys])[:4].upper() == "RRD_":
                     logger.debug(f"Processing rrd data - {temp_dic[keys]}")
                     rrd_data = self.get_data_from_tdg(temp_dic[keys])
-                    self.testDataGenerator.usecount_dict[repr(rrd_data)]["use"] += 1
+                    self.testDataGenerator.usecountDataRecords[repr(rrd_data)]["use"] += 1
                     self.testDataGenerator.update_usecount_in_source(rrd_data)
                     for data in rrd_data:
                         new_data_dic[data] = rrd_data[data]
@@ -193,7 +193,7 @@ class HandleDatabase:
                 elif str(temp_dic[keys])[:4].upper() == "RRE_":
                     logger.debug(f"Processing rre data - {temp_dic[keys]}")
                     rre_data = self.get_data_from_tdg(temp_dic[keys])
-                    self.testDataGenerator.usecount_dict[repr(rre_data)]["use"] += 1
+                    self.testDataGenerator.usecountDataRecords[repr(rre_data)]["use"] += 1
                     self.testDataGenerator.update_usecount_in_source(rre_data)
                     for data in rre_data:
                         new_data_dic[data] = rre_data[data]
@@ -214,15 +214,10 @@ class HandleDatabase:
 
     def get_data_from_tdg(self, string):
         data = self.testDataGenerator.data_generators(string)
-        if self.testDataGenerator.usecount_dict[repr(data[0])]["limit"]:
-            data = [d for d in data if self.testDataGenerator.usecount_dict[repr(d)]["use"
-                                                                ] < self.testDataGenerator.usecount_dict[repr(d)]["limit"]]
-        if len(data) > 1:
-            data = data[randint(0, len(data) - 1)]
-        elif len(data) == 1:
-            data = data[0]
-        else:
-            raise BaseException(f"Not enough data for {string}, please verify if data is present or usecount limit" \
+        try:
+            data = data.return_random()
+        except BaseException:
+            raise BaseException(f"Not enough data {string}, please verify if data is present or usecount limit" \
                                 "has reached!!")
         return data
 
