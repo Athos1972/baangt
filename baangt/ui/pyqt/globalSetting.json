@@ -176,7 +176,7 @@
             "hint": "Name of telegram channel where you want to send the report. If multiple channels then seperate them from comma.\nE.g. = channel_1, channel_2",
             "type": "text",
             "default": "",
-            "displayText": "Telgram Channel(s)"
+            "displayText": "Telegram Channel(s)"
         },
         "DeactivateStatistics": {
             "hint": "We send statistics to our server containing only type of run to know where we should focus & improve more.\nWe don't send any personal data. You can see the data sent to server in logs(debug) for further reference.\nTrue for deactivating it.",
@@ -191,6 +191,18 @@
             "default": "",
             "options": ["", "Debug", "Info", "Warning", "Error"],
             "displayText": "LogLevel"
+        },
+        "AR2BXLS": {
+            "hint": "Append output of this test run to one or more Base-Excel sheets, e.g. for statistics or input for other\ntest runs. <Fname>,<sheet>;<Fname2>,<sheet>",
+            "type": "text",
+            "default": "",
+            "displayText": "AppRes2BaseXLS"
+        },
+        "TC.RestartBrowserAfter": {
+            "hint": "Enter a number of Testcases, after that the browser shall be restartet. Valid: e.g. '2'. Instead of '1' you could set the flag RestartBrowser.",
+            "type": "text",
+            "default": "",
+            "displayText": "RestBrowserAfter"
         }
     }
 }

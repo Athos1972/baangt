@@ -25,18 +25,24 @@ from baangt.base.PathManagement import ManagedPaths
 from uuid import uuid4
 from baangt.base.FilesOpen import FilesOpen
 from baangt.base.RuntimeStatistics import Statistic
-from baangt.base.PathManagement import ManagedPaths
+#from baangt.base.PathManagement import ManagedPaths
 from baangt.base.DownloadFolderMonitoring import DownloadFolderMonitoring
 from baangt.base.Cleanup import Cleanup
-import xlrd
+from baangt.base.ResultsBrowser import ResultsBrowser
+import xlrd3 as xlrd
 from baangt.reports import Dashboard, Summary
 from baangt.TestDataGenerator.TestDataGenerator import TestDataGenerator
 from baangt.base.Utils import utils
 from threading import Thread
 from time import sleep
 import signal
+from datetime import datetime
+
 
 logger = logging.getLogger("pyC")
+
+NAME_PLACEHOLDER = '< Name >'
+VALUE_PLACEHOLDER = '< Value >'
 
 
 class PyqtKatalonUI(ImportKatalonRecorder):
@@ -90,6 +96,7 @@ class MainWindow(Ui_MainWindow):
         self.__log_file = ""
         self.__open_files = 0
         self.TDGResult = ""
+        self.dataFile = ""
 
         # self.refreshNew()
         # self.setupBasePath(self.directory)
@@ -129,6 +136,13 @@ class MainWindow(Ui_MainWindow):
         self.openLogFilePushButton_4.clicked.connect(self.openLogFile)
         self.openTestFilePushButton_4.clicked.connect(self.openTestFile)
         self.InputFileOpen.clicked.connect(self.openInputFile)
+
+        # Result Browser buttons
+        self.actionQuery.triggered.connect(self.showQueryPage)
+        self.queryMakePushButton.clicked.connect(self.makeResultQuery)
+        self.queryExportPushButton.clicked.connect(self.exportResultQuery)
+        self.openExportPushButton.clicked.connect(self.openRecentQueryResults)
+        self.queryExitPushButton.clicked.connect(self.mainPageView)
 
         # Quit Event
         self.actionExit.triggered.connect(self.quitApplication)
@@ -238,6 +252,7 @@ class MainWindow(Ui_MainWindow):
         logo_pixmap = QtGui.QPixmap(":/baangt/baangtlogo")
         logo_pixmap.scaled(300, 120, QtCore.Qt.KeepAspectRatio)
         self.logo_4.setPixmap(logo_pixmap)
+        self.queryLogo.setPixmap(logo_pixmap)
         icon = QtGui.QIcon()
         icon.addPixmap(
                 QtGui.QPixmap(":/baangt/baangticon"),
@@ -442,9 +457,8 @@ class MainWindow(Ui_MainWindow):
     def updateRunFile(self):
         """ this file will update the testRunFile selection
         """
-        self.testRunFile = os.path.join(self.directory,
-                                  self.testRunComboBox_4.currentText())
-        self.statusMessage("Test Run Changed to: {}".format(self.testRunFile))
+        self.testRunFile = self.testRunComboBox_4.currentText()
+        self.statusMessage("Test Run Changed to: {}".format(self.testRunFile), 3000)
         self.saveInteractiveGuiConfig()
 
     @pyqtSlot()
@@ -456,7 +470,7 @@ class MainWindow(Ui_MainWindow):
                                  self.settingComboBox_4.currentText())
 
         self.saveInteractiveGuiConfig()
-        self.statusMessage("Settings changed to: {}".format(self.configFile))
+        self.statusMessage("Settings changed to: {}".format(self.configFile), 3000)
         self.readContentofGlobals()
 
     @pyqtSlot()
@@ -464,7 +478,7 @@ class MainWindow(Ui_MainWindow):
         """ this file will update the testRunFile selection
         """
         self.selectedSheet = self.SheetCombo.currentText()
-        self.statusMessage("Selected Sheet: {}".format(self.selectedSheet))
+        self.statusMessage("Selected Sheet: {}".format(self.selectedSheet), 3000)
 
     def executeButtonClicked(self):
         self.__result_file = ""
@@ -516,7 +530,7 @@ class MainWindow(Ui_MainWindow):
                     str(self.run_process.readAllStandardError().data().decode('iso-8859-1'))))
             self.run_process.finished.connect(self.processFinished)
             self.run_process.start(runCmd)
-            self.statusbar.showMessage("Running.....")
+            self.statusbar.showMessage("Running.....",4000)
 
     @pyqtSlot()
     def stopButtonPressed(self):
@@ -533,6 +547,39 @@ class MainWindow(Ui_MainWindow):
             os.kill(self.run_process.processId(), signal.SIGINT)
             self.run_process.waitForFinished(3000)
             self.run_process.kill()
+
+    def update_datafile(self):
+        from baangt.base.TestRun.TestRun import TestRun
+        testRunFile = f"{Path(self.directory).joinpath(self.testRunFile)}"
+        globalsFile = self.configFile
+        uu = uuid4()
+        tr = TestRun(testRunFile, globalsFile, uuid=uu, executeDirect=False)
+        tr._initTestRunSettingsFromFile()
+        if "TC.TestDataFileName" in tr.globalSettings:
+            self.dataFile = tr.globalSettings["TC.TestDataFileName"]
+        else:
+            tr._loadJSONTestRunDefinitions()
+            tr._loadExcelTestRunDefinitions()
+            self.dataFile = self.findKeyFromDict(tr.testRunUtils.testRunAttributes, "TestDataFileName")
+
+    def findKeyFromDict(self, dic, key):
+        if isinstance(dic, list):
+            for data in dic:
+                if isinstance(dic, list) or isinstance(dic, dict):
+                    result = self.findKeyFromDict(data, key)
+                    if result:
+                        return result
+        elif isinstance(dic, dict):
+            for k in dic:
+                if k == key:
+                    return dic[k]
+                elif isinstance(dic[k], list) or isinstance(dic[k], dict):
+                    result = self.findKeyFromDict(dic[k], key)
+                    if result:
+                        return result
+        return ""
+
+
 
     def signalCtrl(self, qProcess, ctrlEvent=None):
         import win32console, win32process, win32api, win32con
@@ -629,7 +676,10 @@ class MainWindow(Ui_MainWindow):
                 else:
                     break
             if result_file[-5:] == ".xlsx":
-                self.__result_file =result_file
+                logger.debug(f"Found result_file in the logs: {result_file}")
+                self.__result_file = result_file
+        elif "Logfile used: " in text:
+            self.__log_file = text.split("used: ")[1].strip()
         if "||Statistic:" in text:
             lis = text.split('||')
             stat = lis[1][10:]
@@ -922,7 +972,7 @@ class MainWindow(Ui_MainWindow):
                 if self.directory:
                     fullpath = os.path.join(self.directory, self.configFile)
                 else:
-                    self.directory = os.getcwd()#.managedPaths.derivePathForOSAndInstallationOption()
+                    self.directory = os.getcwd()   # .managedPaths.derivePathForOSAndInstallationOption()
                     fullpath = os.path.join(self.directory, self.configFile)
 
             with open(fullpath, 'w') as f:
@@ -1205,6 +1255,7 @@ class MainWindow(Ui_MainWindow):
         """ Uses Files Open class to open Result file """
         try:
             if self.__result_file != "":
+                logger.debug(f"Opening ResultFile: {self.__result_file}")
                 filePathName = self.__result_file
                 fileName = os.path.basename(filePathName)
                 self.statusMessage(f"Opening file {fileName}", 3000)
@@ -1244,6 +1295,12 @@ class MainWindow(Ui_MainWindow):
             fileName = os.path.basename(filePathName)
             self.statusMessage(f"Opening file {fileName}", 3000)
             FilesOpen.openResultFile(filePathName)
+            self.update_datafile()
+            if self.dataFile:
+                self.statusMessage(f"Opening file {self.dataFile}", 3000)
+                PathName = f"{Path(self.directory).joinpath(self.dataFile)}"
+                Name = os.path.basename(PathName)
+                FilesOpen.openResultFile(PathName)
         except:
             self.statusMessage("No file found!", 3000)
 
@@ -1293,6 +1350,129 @@ class MainWindow(Ui_MainWindow):
             self.__open_files = 0
         self.saveInteractiveGuiConfig()
 
+
+    #
+    # Browse Results actions
+    #
+
+    @pyqtSlot()
+    def showQueryPage(self):
+        #
+        # display Query Page
+        #
+
+        # setup query object
+        self.queryResults = ResultsBrowser()
+
+        # setup combo box lists
+        self.nameComboBox.clear()
+        self.nameComboBox.addItems([''] + self.queryResults.name_list())
+        self.stageComboBox.clear()
+        self.stageComboBox.addItems([''] + self.queryResults.stage_list())
+        # globals
+        for nameComboBox, valueComboBox in self.globalsOptions:
+            nameComboBox.clear()
+            nameComboBox.addItems([NAME_PLACEHOLDER] + self.queryResults.globals_names())
+            nameComboBox.currentIndexChanged.connect(self.onGlobalsNameChange)
+            valueComboBox.clear()
+            valueComboBox.addItems([VALUE_PLACEHOLDER])
+
+        # show the page
+        self.stackedWidget.setCurrentIndex(4)
+        self.statusMessage("Query Page is triggered", 1000)
+
+
+    @pyqtSlot(int)
+    def onGlobalsNameChange(self, index):
+        #
+        # loads globals values on name changed
+        #
+
+        combo = self.sender()
+        for nameComboBox, valueComboBox in self.globalsOptions:
+            if combo == nameComboBox:
+                valueComboBox.clear()
+                valueComboBox.addItems([VALUE_PLACEHOLDER] + self.queryResults.globals_values(combo.currentText()))
+
+
+    @pyqtSlot()
+    def makeResultQuery(self):
+        #
+        # makes query to results db
+        #
+
+        # get field data
+        name = self.nameComboBox.currentText() or None
+        stage = self.stageComboBox.currentText() or None
+        #date_from = datetime.strptime(self.dateFromInput.date().toString("yyyyMMdd"), "%Y%m%d")
+        #date_to = datetime.strptime(self.dateToInput.date().toString("yyyyMMdd"), "%Y%m%d")
+        date_from = self.dateFromInput.date().toString("yyyy-MM-dd")
+        date_to = self.dateToInput.date().toString("yyyy-MM-dd")
+        # get globals
+        globals_value = lambda v: v if v != VALUE_PLACEHOLDER else None
+
+        global_settings = { 
+            nameComboBox.currentText(): globals_value(valueComboBox.currentText()) for nameComboBox, valueComboBox in filter(
+                lambda g: g[0].currentText() != NAME_PLACEHOLDER,
+                self.globalsOptions,
+            )
+        }
+
+        # make query
+        self.queryResults.query(
+            name=name,
+            stage=stage,
+            start_date=date_from,
+            end_date=date_to,
+            global_settings=global_settings,
+        )
+
+        # display status
+        if self.queryResults.query_set:
+            if self.queryResults.query_set.length > 1:
+                status = f'Found: {self.queryResults.query_set.length} records'
+            else:
+                status = f'Found: {self.queryResults.query_set.length} record'
+        else:
+            status = 'No record found'
+        self.queryStatusLabel.setText(QtCore.QCoreApplication.translate("MainWindow", status))
+
+
+    @pyqtSlot()
+    def exportResultQuery(self):
+        #
+        # exports query results
+        #
+
+        _translate = QtCore.QCoreApplication.translate
+
+        if self.queryResults.query_set:
+            #self.queryStatusLabel.setText(_translate("MainWindow", "Exporting results..."))
+            #sleep(1)
+            path_to_export = self.queryResults.export()
+            self.queryStatusLabel.setText(_translate("MainWindow", f"Exported to: {path_to_export}"))
+            FilesOpen.openResultFile(path_to_export)
+        else:
+            self.queryStatusLabel.setText(_translate("MainWindow", f"ERROR: No data to export"))
+
+    @pyqtSlot()
+    def openRecentQueryResults(self):
+        #
+        # opens recent query result file
+        #
+
+        try:
+            # get recent file
+            recent_export = max(
+                list(Path(self.managedPaths.getOrSetDBExportPath()).glob('*.xlsx')),
+                key=os.path.getctime,
+            )
+            FilesOpen.openResultFile(recent_export)
+        except Exception:
+            # no export file exists
+            self.statusMessage(f"No Result Export File to Show", 3000)
+
+
     @pyqtSlot()
     def cleanup_dialog(self):
         self.clean_dialog = QtWidgets.QDialog(self.centralwidget)
@@ -1307,6 +1487,9 @@ class MainWindow(Ui_MainWindow):
         self.cleanup_downloads = QtWidgets.QCheckBox()
         self.cleanup_downloads.setText("Downloads")
         self.cleanup_downloads.setChecked(True)
+        self.cleanup_reports = QtWidgets.QCheckBox() # cleanup reports
+        self.cleanup_reports.setText("Reports") # cleanup reports
+        self.cleanup_reports.setChecked(True) # cleanup reports
         hlay = QtWidgets.QHBoxLayout()
         label = QtWidgets.QLabel()
         label.setText("Days: ")
@@ -1321,6 +1504,7 @@ class MainWindow(Ui_MainWindow):
         vlay.addWidget(self.cleanup_logs)
         vlay.addWidget(self.cleanup_screenshots)
         vlay.addWidget(self.cleanup_downloads)
+        vlay.addWidget(self.cleanup_reports) # cleanup reports
         vlay.addLayout(hlay)
         vlay.addWidget(button)
         vlay.addWidget(self.cleanup_status)
@@ -1343,6 +1527,9 @@ class MainWindow(Ui_MainWindow):
             c.clean_screenshots()
         if self.cleanup_downloads.isChecked():
             c.clean_downloads()
+        # cleanup reports
+        if self.cleanup_reports.isChecked():
+            c.clean_reports()
         self.cleanup_status.showMessage("Cleaning Complete!")
 
     def showReport(self):

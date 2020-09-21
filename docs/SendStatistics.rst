@@ -13,6 +13,7 @@ Their are 4 different services where we can send test reports. They are:
 2. Ms Teams
 3. Slack
 4. Telegram
+5. Confluence
 
 Lets first discuss things we need to use this services in our program one by one.
 
@@ -125,3 +126,67 @@ Now as we can see the we have override Mail, Ms Teams & Slack settings. So now o
 and as the ``NotificationWithAttachment`` parameter is False it won't attach the xlsx file. ``MsWebHook`` & ``SlackWebHook``
 are empty so no report will be sent on those platforms. Here we haven't declared any setting for **Telegram** so the
 program will now look for those settings in ``mail.ini`` and send the report as per that settings.
+
+Confluence
+==========
+We also have functionality to update report in confluence. Reports are updated as page. Along with it we can also attach
+original report(.xlsx) file in main page. Main page can consist link to original file, data from "Summary" tab & data
+from "Output" tab. Their might also be cases when "Output" tab has too many datas, so we have solution for that too. We
+have given you an option to create subpages of data from "Output" tab. You can use this functionality with the help of
+global files. Lets see the keywords needed for global file in order to update the report in confluence.
+
+| **globals.json**
+| {
+|    "Confluence-Base-Url" : "",
+|    "Confluence-Space" : "",
+|    "Confluence-Username" : "",
+|    "Confluence-Password" : "",
+|    "Confluence-Rootpage" : "",
+|    "Confluence-Pagetitle" : "",
+|    "Confluence-Remove_Headers" : "",
+|    "Confluence-Uploadoriginalfile" : "",
+|    "Confluence-Createsubpagesforeachxxentries" : 0
+| }
+
+**Confluence-Base-Url**
+
+``Confluence-Base-Url`` contains the url for your confluence.
+
+**Confluence-Space**
+
+``Confluence-Space`` contains the name of space where page
+is to be created.
+
+**Confluence-Username**
+
+``Confluence-Username`` contains your username.
+
+**Confluence-Password**
+
+``Confluence-Password`` contains your password.
+
+**Confluence-Rootpage**
+
+``Confluence-Rootpage`` contains parent page id, this option is optional and in most of the case is not usable, you must
+use this option if you want to create the report page as a sub-page to another main page.
+
+**Confluence-Pagetitle**
+
+``Confluence-Pagetitle`` title for the report page.
+
+**Confluence-Remove_Headers**
+
+``Confluence-Remove_Headers`` contains headers from "Output" tab which are not to be considered
+while generating report page. Multiple headers should be sperated by comma, e.g. - "header1, header2, header3".
+
+**Confluence-Uploadoriginalfile**
+
+``Confluence-Uploadoriginalfile`` value must be true if you want to upload original xlsx file in main report page.
+
+**Confluence-Createsubpagesforeachxxentries**
+
+``Confluence-Createsubpagesforeachxxentries`` contain integer, when we want to create sub-pages for "Output" tab data
+we should input the number of rows present in a subpage, multiple sub-pages are created with the number of rows which
+are defined here. e.g. - "Confluence-Createsubpagesforeachxxentries" : 100, here we have given input of maximum 100 data
+in a sub-page and suppose if total number of data is 288, then their will be 3 pages containing 1-100, 101-200, 201-288
+data.

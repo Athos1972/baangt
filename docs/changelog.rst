@@ -1,7 +1,40 @@
 Change log
 ==========
 
-1.1.4
+1.2.x
+^^^^^
+
+New features:
++++++++++++++
+* Completely new concept for file handling. Original Excel-Files are not overwritten. Including TestDataGenerator.
+* ``Usecount`` columns will show, how often qualitifed test data was selected in all test runs.
+* ``TestResult``: if this column is in a test data sheet, we'll write the test result of each test run (condensed) into this cell
+* Change Log: In all copied files there's a sheet ``Change Log`` which shows per each timestamp, which changes were made to the original sheet. Incredibly helpful feature!
+* Teststeps: New comparison operators ``CO``ntains and ``IP`` (Is Part of) to compare strings
+
+Refactoring:
+++++++++++++
+* Great speed improvements with large files (read and write, also in remote read)
+* Teststeps: ``GoToURL`` parameter now also possible in ``Locator`` (makes more sense). ``Value`` still works fine.
+
+Bugfixing:
+++++++++++
+
+
+1.1.15
+^^^^^^^
+
+Summary:
+++++++++
+
+* Export (all channels): Passwords are replaced by ``*******``
+* ELSE-Activity and nested IF/ELSE/ENDIF-Activities
+* DataFiles: Nested data structures per line item (e.g. Sales order header --> Sales order item)
+* DataFiles and TestDataGenerator: Read remote data sources (e.g. other sheets or SQL-Databases)
+* Integration with Atlassian Confluence to export test run results into Confluence WIKI-Pages (and Sub-pages!)
+* Export results to multiple Excel-Sheets (e.g. when collecting reusable master data like customer master records)
+
+1.1.5
 ^^^^^^^
 This is the version, that was released as first publicly downloadable version.
 

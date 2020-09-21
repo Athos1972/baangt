@@ -26,6 +26,8 @@ from uuid import uuid4
 from baangt.base.RuntimeStatistics import Statistic
 from baangt.base.SendReports import Sender
 import signal
+from baangt.TestDataGenerator.TestDataGenerator import TestDataGenerator
+from CloneXls import CloneXls
 
 logger = logging.getLogger("pyC")
 
@@ -37,7 +39,7 @@ class TestRun:
     """
 
     def __init__(self, testRunName, globalSettingsFileNameAndPath=None,
-                 testRunDict=None, uuid=uuid4(), executeDirect=True):  # -- API support: testRunDict --
+                 testRunDict=None, uuid=uuid4(), executeDirect=True, noCloneXls=False):  # -- API support: testRunDict --
         """
         @param testRunName: The name of the TestRun to be executed.
         @param globalSettingsFileNameAndPath: from where to read the <globals>.json
@@ -49,7 +51,7 @@ class TestRun:
         self.testRunDict = testRunDict
         self.globalSettingsFileNameAndPath = globalSettingsFileNameAndPath
         self.testRunName, self.testRunFileName = \
-            self._sanitizeTestRunNameAndFileName(testRunName)
+            self._sanitizeTestRunNameAndFileName(testRunName, executeDirect)
 
         # Initialize everything else
         self.apiInstance = None
@@ -72,6 +74,7 @@ class TestRun:
         # from anywhere within your custom code base.
         self.additionalExportTabs = {}
         self.statistics = Statistic()
+        self.noCloneXls = noCloneXls
         signal.signal(signal.SIGINT, self.exit_signal_handler)
         signal.signal(signal.SIGTERM, self.exit_signal_handler)
 
@@ -99,7 +102,7 @@ class TestRun:
         try:
             Sender.send_all(self.results, self.globalSettings)
         except Exception as ex:
-            logger.debug(ex)
+            logger.error(f"Error from SendAll: {ex}")
 
     def append1DTestCaseEndDateTimes(self, dt):
         self.testCasesEndDateTimes_1D.append(dt)
@@ -322,13 +325,17 @@ class TestRun:
             if isinstance(value, str):
                 if value.lower() in ("false", "true", "no", "x"):
                     self.globalSettings[key] = utils.anything2Boolean(value)
-
+                elif "renv_" in value.lower():
+                    self.globalSettings[key] = TestDataGenerator.get_env_variable(value[5:])
             if isinstance(value, dict):
                 if "default" in value:
                     # This happens in the new UI, if a value was added manually,
                     # but is not part of the globalSetting.json. In this case there's the whole shebang in a dict. We
                     # are only interested in the actual value, which is stored in "default":
                     self.globalSettings[key] = value["default"]
+                    if isinstance(self.globalSettings[key], str):
+                        if "renv_" in self.globalSettings[key].lower():
+                            self.globalSettings[key] = TestDataGenerator.get_env_variable(self.globalSettings[key][5:])
                     continue
                 else:
                     # This could be the "old" way of the globals-file (with {"HEADLESS":"True"})
@@ -375,12 +382,16 @@ class TestRun:
         return utils.dynamicImportOfClasses(fullQualifiedImportName=fullQualifiedImportName)
 
     @staticmethod
-    def _sanitizeTestRunNameAndFileName(TestRunNameInput):
+    def _sanitizeTestRunNameAndFileName(TestRunNameInput, direct):
         """
         @param TestRunNameInput: The complete File and Path of the TestRun definition (JSON or XLSX).
         @return: TestRunName and FileName (if definition of testrun comes from a file (JSON or XLSX)
         """
-        if ".XLSX" in TestRunNameInput.upper() or ".JSON" in TestRunNameInput.upper():
+        if ".XLSX" in TestRunNameInput.upper():
+            cloneXls = CloneXls(TestRunNameInput)
+            lFileName = cloneXls.update_or_make_clone(ignore_headers=["TestResult", "UseCount"], clone=direct)
+            lRunName = utils.extractFileNameFromFullPath(lFileName)
+        elif ".JSON" in TestRunNameInput.upper():
             lRunName = utils.extractFileNameFromFullPath(TestRunNameInput)
             lFileName = TestRunNameInput
         else:

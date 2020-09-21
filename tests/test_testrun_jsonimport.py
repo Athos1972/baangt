@@ -10,11 +10,11 @@ def testrun_obj():
         which will be used by other test methods
     """
     from baangt.base.TestRun.TestRun import TestRun
-    return TestRun("SimpleTheInternet.xlsx", "globals.json", executeDirect=False)
+    return TestRun("examples/SimpleTheInternet.xlsx", "globals.json", executeDirect=False)
 
 
 def test_with_globalsHeadless(testrun_obj):
-    lTestRun = TestRun("SimpleTheInternet.xlsx",
+    lTestRun = TestRun("examples/SimpleTheInternet.xlsx",
                        globalSettingsFileNameAndPath= \
                            Path(os.getcwd()).joinpath("tests").joinpath("jsons").joinpath("globals_headless.json"),
                        executeDirect=False)
@@ -25,7 +25,7 @@ def test_with_globalsHeadless(testrun_obj):
 
 
 def test_with_globalsHeadlessVersion2(testrun_obj):
-    lTestRun = TestRun("SimpleTheInternet.xlsx",
+    lTestRun = TestRun("examples/SimpleTheInternet.xlsx",
                        globalSettingsFileNameAndPath= \
                            Path(os.getcwd()).joinpath("tests").joinpath("jsons").joinpath("globals_headless2.json"),
                        executeDirect=False)
@@ -36,7 +36,7 @@ def test_with_globalsHeadlessVersion2(testrun_obj):
     assert isinstance(lTestRun.globalSettings["TC.BrowserAttributes"], dict)
 
 def tests_with_fullGlobalsFile(testrun_obj):
-    lTestRun = TestRun("SimpleTheInternet.xlsx",
+    lTestRun = TestRun("examples/SimpleTheInternet.xlsx",
                        globalSettingsFileNameAndPath= \
                            Path(os.getcwd()).joinpath("tests").joinpath("jsons").joinpath("globalsFullExample.json"),
                        executeDirect=False)

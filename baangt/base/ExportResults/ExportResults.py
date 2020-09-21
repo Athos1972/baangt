@@ -4,6 +4,7 @@ import json
 import baangt.base.GlobalConstants as GC
 from baangt.base.Timing.Timing import Timing
 from baangt.base.Utils import utils
+from baangt.base.ExportResults.Append2BaseXLS import Append2BaseXLS
 from pathlib import Path
 from typing import Optional
 from xlsxwriter.worksheet import (
@@ -22,6 +23,7 @@ from uuid import uuid4
 from pathlib import Path
 from baangt.base.ExportResults.SendStatistics import Statistics
 from baangt.base.RuntimeStatistics import Statistic
+from openpyxl import load_workbook
 
 logger = logging.getLogger("pyC")
 
@@ -30,6 +32,7 @@ class ExportResults:
     def __init__(self, **kwargs):
         self.kwargs = kwargs
         self.testList = []
+        self.fileName = None
         self.testRunInstance = kwargs.get(GC.KWARGS_TESTRUNINSTANCE)
         self.testCasesEndDateTimes_1D = kwargs.get('testCasesEndDateTimes_1D')
         self.testCasesEndDateTimes_2D = kwargs.get('testCasesEndDateTimes_2D')
@@ -52,8 +55,21 @@ class ExportResults:
         except KeyError:
             self.exportFormat = GC.EXP_XLSX
 
-        self.fileName = self.__getOutputFileName()
+        try:
+            if kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.STRUCTURE_TESTCASESEQUENCE)[1][1].get(GC.EXPORT_FILENAME):
+                self.fileName = kwargs.get(GC.KWARGS_TESTRUNATTRIBUTES).get(GC.STRUCTURE_TESTCASESEQUENCE)[1][1].get(GC.EXPORT_FILENAME)
+        except Exception as e:
+            # fixme: I don't know, why this error came. When a Filename is set, then the above works.
+            #        No time now to debug.
+            pass
+
+        if not self.fileName:
+            self.fileName = self.__getOutputFileName()
+
         logger.info("Export-Sheet for results: " + self.fileName)
+
+        self.__removeUnwantedFields()  # Will remove Password-Contents AND fields from data records, that came from
+                                       # Globals-File.
 
         # export results to DB
         self.testcase_uuids = []
@@ -89,18 +105,45 @@ class ExportResults:
                                                    self.workbook,
                                                    self.networkSheet)
             self.closeExcel()
+
+            # Call functionality for potentially exporting data to other sheets/databases
+            Append2BaseXLS(self.testRunInstance, self.fileName)
+
         elif self.exportFormat == GC.EXP_CSV:
             self.export2CSV()
+
         if self.testRunInstance.globalSettings.get("DeactivateStatistics") == "True":
-            logger.debug("Send Statistics to server is deactive")
+            logger.debug("Send Statistics to server is deactivated. Not sending.")
         elif self.testRunInstance.globalSettings.get("DeactivateStatistics") is True:
-            logger.debug("Send Statistics to server is deactive")
+            logger.debug("Send Statistics to server is deactivated. Not sending.")
         else:
             try:
                 self.statistics.send_statistics()
             except Exception as ex:
                 logger.debug(ex)
-        #self.exportToDataBase()
+        if not self.testRunInstance.noCloneXls:
+            self.update_result_in_testrun()
+
+    def __removeUnwantedFields(self):
+        lListPasswordFieldNames = ["PASSWORD", "PASSWORT", "PASSW"]
+        if not self.testRunInstance.globalSettings.get("LetPasswords"):
+            # If there's a password in GlobalSettings, remove the value:
+            for key, value in self.testRunInstance.globalSettings.items():
+                if key.upper() in lListPasswordFieldNames:
+                    self.testRunInstance.globalSettings[key] = "*" * 8
+
+            # If there's a password in the datafile, remove the value
+            # Also remove all columns, that are anyway included in the global settings
+            for key, fields in self.dataRecords.items():
+                fieldsToPop = []
+                for field, value in fields.items():
+                    if field.upper() in lListPasswordFieldNames:
+                        self.dataRecords[key][field] = "*" * 8
+                    if field in self.testRunInstance.globalSettings.keys():
+                        fieldsToPop.append(field)
+                for field in fieldsToPop:
+                    if field != 'Screenshots' and field != 'Stage':   # Stage and Screenshot are needed in output file
+                        fields.pop(field)
 
     def exportAdditionalData(self):
         # Runs only, when KWARGS-Parameter is set.
@@ -119,7 +162,7 @@ class ExportResults:
         we shall take it from GlobalSettings. If also not there, take the default Value GC.EXECUTIN_STAGE_TEST
         :return:
         """
-        value = None
+        value = {}
         for key, value in self.dataRecords.items():
             break
         if not value.get(GC.EXECUTION_STAGE):
@@ -212,16 +255,17 @@ class ExportResults:
         self.__save_commit(session)
 
         # create testcase sequence instance
-        tcs_log = TestCaseSequenceLog(testrun=tr_log)
+        tcs_log = TestCaseSequenceLog(testrun=tr_log, number=1)
 
         # create testcases
-        for tc in self.dataRecords.values():
+        for tc_number, tc in enumerate(self.dataRecords.values(), 1):
             # get uuid
             uuid = uuid4()
             # create TestCaseLog instances
             tc_log = TestCaseLog(
                 id=uuid.bytes,
-                testcase_sequence=tcs_log
+                testcase_sequence=tcs_log,
+                number=tc_number,
             )
             # store uuid
             self.testcase_uuids.append(uuid)
@@ -422,6 +466,7 @@ class ExportResults:
         # Timing
         timing: Timing = self.testRunInstance.timing
         start, end, duration = timing.returnTimeSegment(GC.TIMING_TESTRUN)
+        self.testRun_end = end  # used while updating timestamp in source file
         self.statistics.update_attribute_with_value("Duration", duration)
         self.statistics.update_attribute_with_value("TestRunUUID", str(self.testRunInstance.uuid))
         self.__writeSummaryCell("Starttime", start, row=10)
@@ -435,6 +480,8 @@ class ExportResults:
         # Globals:
         self.__writeSummaryCell("Global settings for this testrun", "", format=self.cellFormatBold, row=15)
         for key, value in self.testRunInstance.globalSettings.items():
+            if key.upper() in ["PASSWORD", "PASSWORT", "CONFLUENCE-PASSWORD"]:
+                continue
             self.__writeSummaryCell(key, str(value))
             # get global data my
             self.testList.append(str(value))
@@ -545,6 +592,34 @@ class ExportResults:
         for n in range(0, len(self.fieldListExport)):
             ExcelSheetHelperFunctions.set_column_autowidth(self.worksheet, n)
 
+    def update_result_in_testrun(self):
+        # To update source testrun file
+        logger.debug("TestResult updating")
+        try:
+            testrun_column = self.dataRecords[0]["testcase_column"]
+        except:
+            return
+        if testrun_column:  # if testrun_column is greater than 0 that means testresult header is present in source file
+            logger.debug(f'Header for result update is {self.dataRecords[0]["testcase_column"]} in sheet ' \
+                         f'{self.dataRecords[0]["testcase_sheet"]} of file {self.dataRecords[0]["testcase_file"]}')
+            testrun_file = load_workbook(self.dataRecords[0]["testcase_file"])
+            testrun_sheet = testrun_file.get_sheet_by_name(self.dataRecords[0]["testcase_sheet"])
+            for key, value in self.dataRecords.items():
+                data = f"TestCaseStatus: {value['TestCaseStatus']}\r\n" \
+                       f"Timestamp: {self.testRun_end}\r\n" \
+                       f"Duration: {value['Duration']}\r\n" \
+                       f"TCErrorLog: {value['TCErrorLog']}\r\n" \
+                       f"TestRun_UUID: {str(self.testRunInstance.uuid)}\r\n" \
+                       f"TestCase_UUID: {str(self.testcase_uuids[key])}\r\n\r\n"
+                old_value = testrun_sheet.cell(value["testcase_row"] + 1, value["testcase_column"]).value or ""
+                testrun_sheet.cell(value["testcase_row"] + 1, value["testcase_column"]).value = data + old_value
+                logger.debug(f'Result written in row {value["testcase_row"]} column {value["testcase_column"]}')
+            logger.debug("Saving Source TestRun file.")
+            testrun_file.save(self.dataRecords[0]["testcase_file"])
+            logger.info(f"Source TestRun file {self.dataRecords[0]['testcase_file']} updated.")
+        else:
+            logger.debug(f"No TestResult column found")
+
     def __writeCell(self, line, cellNumber, testRecordDict, fieldName, strip=False):
         if fieldName in testRecordDict.keys() and testRecordDict[fieldName]:
             # Convert boolean for Output
@@ -552,8 +627,10 @@ class ExportResults:
                 testRecordDict[fieldName] = "True" if testRecordDict[fieldName] else "False"
 
             # Remove leading New-Line:
-            if '\n' in testRecordDict[fieldName][0:5] or strip:
-                testRecordDict[fieldName] = testRecordDict[fieldName].strip()
+            if isinstance(testRecordDict[fieldName], str):
+                if '\n' in testRecordDict[fieldName][0:5] or strip:
+                    testRecordDict[fieldName] = testRecordDict[fieldName].strip()
+
             # Do different stuff for Dicts and Lists:
             if isinstance(testRecordDict[fieldName], dict):
                 self.worksheet.write(line, cellNumber, testRecordDict[fieldName])
@@ -566,13 +643,13 @@ class ExportResults:
             else:
                 if fieldName == GC.TESTCASESTATUS:
                     if testRecordDict[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_SUCCESS:
-                        self.worksheet.write(line, cellNumber, testRecordDict[fieldName], self.cellFormatGreen)
+                        self.worksheet.write(line, cellNumber, str(testRecordDict[fieldName]), self.cellFormatGreen)
                     elif testRecordDict[GC.TESTCASESTATUS] == GC.TESTCASESTATUS_ERROR:
-                        self.worksheet.write(line, cellNumber, testRecordDict[fieldName], self.cellFormatRed)
+                        self.worksheet.write(line, cellNumber, str(testRecordDict[fieldName]), self.cellFormatRed)
                 elif fieldName == GC.SCREENSHOTS:
                     self.__attachScreenshotsToExcelCells(cellNumber, fieldName, line, testRecordDict)
                 else:
-                    self.worksheet.write(line, cellNumber, testRecordDict[fieldName])
+                    self.worksheet.write(line, cellNumber, str(testRecordDict[fieldName]))
 
     def __attachScreenshotsToExcelCells(self, cellNumber, fieldName, line, testRecordDict):
         # Place the screenshot images "on" the appropriate cell
@@ -688,8 +765,8 @@ class ExportNetWork:
                  testCasesEndDateTimes_2D: list, workbook: xlsxwriter.Workbook, sheet: xlsxwriter.worksheet):
 
         self.networkInfo = networkInfo
-        #self.testCasesEndDateTimes_1D = testCasesEndDateTimes_1D
-        #self.testCasesEndDateTimes_2D = testCasesEndDateTimes_2D
+        self.testCasesEndDateTimes_1D = testCasesEndDateTimes_1D
+        self.testCasesEndDateTimes_2D = testCasesEndDateTimes_2D
         self.workbook = workbook
         self.sheet = sheet
         header_style = self.get_header_style()

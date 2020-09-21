@@ -86,7 +86,7 @@ class BrowserDriver:
         self.takeTime("Browser Start")
         self.randomProxy = randomProxy
         self.browserName = browserName
-        self.bpid = []
+        self.browserProcessID = []
         lCurPath = Path(self.managedPaths.getOrSetDriverPath())
 
         if browserName in webDrv.BROWSER_DRIVERS:
@@ -99,14 +99,14 @@ class BrowserDriver:
             elif GC.BROWSER_FIREFOX == browserName:
                 self.browserData.driver = self._browserFirefoxRun(browserName, lCurPath, browserProxy, randomProxy, desiredCapabilities)
                 helper.browserHelper_startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance, browserProxy=browserProxy)
-                self.bpid.append(self.browserData.driver.capabilities.get("moz:processID"))
+                self.browserProcessID.append(self.browserData.driver.capabilities.get("moz:processID"))
             elif GC.BROWSER_CHROME == browserName:
                 self.browserData.driver = self._browserChromeRun(browserName, lCurPath, browserProxy, randomProxy, desiredCapabilities)
                 helper.browserHelper_startBrowsermobProxy(browserName=browserName, browserInstance=browserInstance, browserProxy=browserProxy)
                 try:
                     port = self.browserData.driver.capabilities['goog:chromeOptions']["debuggerAddress"].split(":")[1]
                     fp = os.popen(f"lsof -nP -iTCP:{port} | grep LISTEN")
-                    self.bpid.append(int(fp.readlines()[-1].split()[1]))
+                    self.browserProcessID.append(int(fp.readlines()[-1].split()[1]))
                 except Exception as ex:
                     logger.info(ex)
             elif GC.BROWSER_EDGE == browserName:
@@ -123,8 +123,8 @@ class BrowserDriver:
                                                         command_executor=GC.REMOTE_EXECUTE_URL,
                                                         desired_capabilities=desiredCapabilities)
             else:
-                # TODO add exception, this code should never be reached
-                pass
+                logger.critical(f"Browsername not found: {browserName}. Cancelling test run")
+                raise SystemError(f"Browsername not found: {browserName}. Cancelling test run")
         elif GC.BROWSER_REMOTE_V4 == browserName:
             desired_capabilities, seleniumGridIp, seleniumGridPort = helper.browserHelper_setSettingsRemoteV4(desiredCapabilities)
 
@@ -218,8 +218,8 @@ class BrowserDriver:
         try:
             if self.browserData.driver:
                 try:
-                    if len(self.bpid) > 0:
-                        for bpid in self.bpid:
+                    if len(self.browserProcessID) > 0:
+                        for bpid in self.browserProcessID:
                             os.kill(bpid, signal.SIGINT)
                 except:
                     pass
@@ -356,27 +356,29 @@ class BrowserDriver:
         returnValue = None
         start = time.time()
         duration = 0
+        retry = True
 
-        while not self.element and duration < timeout:
+        while retry and duration < timeout:
             self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout / 3,
                             optional=optional)
             time.sleep(0.5)
             duration = time.time() - start
 
-        if self.element:
-            try:
-                if len(self.element.text) > 0:
-                    returnValue = self.element.text
-                elif self.element.tag_name == 'input':
-                    #  element is of type <input />
-                    returnValue = self.element.get_property('value')
-                else:
-                    returnValue = None
-            except Exception as e:
-                logger.debug(f"Exception during findByAndWaitForValue, but continuing {str(e)}, "
-                             f"Locator: {self.browserData.locatorType} = {self.browserData.locator}")
-        else:
-            logger.info(f"Couldn't find value for element {self.browserData.locatorType}:{self.browserData.locator}")
+            if self.element:
+                try:
+                    if len(self.element.text) > 0:
+                        returnValue = self.element.text.strip()
+                    elif self.element.tag_name == 'input':
+                        #  element is of type <input />
+                        returnValue = self.element.get_property('value').strip()
+                except Exception as e:
+                    logger.debug(f"Exception during findByAndWaitForValue, but continuing {str(e)}, "
+                                 f"Locator: {self.browserData.locatorType} = {self.browserData.locator}")
+            else:
+                logger.info(f"Couldn't find value for element {self.browserData.locatorType}:{self.browserData.locator}")
+
+            if returnValue and len(returnValue.strip()) > 0:
+                return returnValue
 
         return returnValue
 
@@ -385,7 +387,7 @@ class BrowserDriver:
         """
         Please see documentation in findBy and __doSomething
         """
-        self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
+        self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout, optional=optional)
         if not self.element:
             return False
 
@@ -460,8 +462,8 @@ class BrowserDriver:
         @return wasSuccessful says, whether the element was found.
         """
 
-        self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout,
-                                    optional=optional)
+        self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe,
+                                              timeout=timeout, optional=optional)
 
         if not self.element:
             logger.debug("findBy didn't work in findByAndClick")
@@ -481,7 +483,7 @@ class BrowserDriver:
         isValid = False
         if not value:
             pass
-        elif len(value) == 0 or str(value) == "0":
+        elif len(str(value)) == 0 or str(value) == "0":
             pass
         else:
             isValid = True
@@ -500,7 +502,8 @@ class BrowserDriver:
         If value is evaluated to "True", the click-event is executed.
         """
         if self._isValidKeyValue(value):
-            return self.findByAndClick(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout, optional=optional)
+            return self.findByAndClick(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe,
+                                       timeout=timeout, optional=optional)
         else:
             return False
 
@@ -511,12 +514,38 @@ class BrowserDriver:
 
         """
 
-        self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe, timeout=timeout)
+        self.element, self.html = self.findBy(id=id, css=css, xpath=xpath, class_name=class_name, iframe=iframe,
+                                              timeout=timeout, optional=optional)
 
         if not self.element:
             return False
 
         return webDrv.webdriver_doSomething(GC.CMD_FORCETEXT, self.element, value=value, timeout=timeout, optional=optional, browserData = self.browserData)
+
+    def findByAndForceViaJS(self, id=None, css=None, xpath:str=None, class_name=None, value=None,
+                           iframe=None, timeout=60, optional=False):
+        """
+        Identifies the object via JS and set's the desired value via JS
+        """
+        # element, html = self.findBy(id=id ,css=css, xpath=xpath, class_name=class_name, iframe=iframe,
+        # timeout=timeout, optional=optional)
+        # didn't work to give the element to JavaScript-method
+
+        xpath = xpath.replace('"', "'")
+        xpath = xpath.replace("'", "\\'")
+        lJSText = "\n".join(
+            [f"var zzbaangt = document.evaluate('{xpath}', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);",
+             "if (zzbaangt.snapshotLength > 0) { ",
+             f"zzbaangt[0].value='{value}';",
+             "};",
+             f""
+            ]
+        )
+        logger.debug(f"Setting element using JS-Text: {lJSText}")
+
+        # lJSText = f"arguments[0].value='{value}';" --> Didn't work with Element.
+
+        self.javaScript(lJSText)
 
     def setBrowserWindowSize(self, browserWindowSize: str):
         """

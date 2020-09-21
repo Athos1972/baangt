@@ -13,6 +13,7 @@ import gevent
 import gevent.queue
 import gevent.pool
 from baangt.base.RuntimeStatistics import Statistic
+from CloneXls import CloneXls
 
 logger = logging.getLogger("pyC")
 
@@ -33,14 +34,20 @@ class TestCaseSequenceMaster:
         self.testCases = self.testSequenceData[GC.STRUCTURE_TESTCASE]
         self.kwargs = kwargs
         self.timingName = self.timing.takeTime(self.__class__.__name__, forceNew=True)
-        self.statistics = Statistic()
-        self.prepareExecution()
-        if int(self.testSequenceData.get(GC.EXECUTION_PARALLEL, 0)) > 1:
-            self.execute_parallel(self.testSequenceData.get(GC.EXECUTION_PARALLEL, 0))
-        else:
-            self.execute()
+
+        try:
+            self.statistics = Statistic()
+            self.prepareExecution()
+            if int(self.testSequenceData.get(GC.EXECUTION_PARALLEL, 0)) > 1:
+                self.execute_parallel(self.testSequenceData.get(GC.EXECUTION_PARALLEL, 0))
+            else:
+                self.execute()
+        except Exception as e:
+            logger.warning(f"Uncought exception {e}")
+            utils.traceback(exception_in=e)
 
     def prepareExecution(self):
+        logger.info("Preparing Test Records...")
         if self.testSequenceData.get(GC.DATABASE_FROM_LINE) and not self.testSequenceData.get(GC.DATABASE_LINES, None):
             # Change old line selection format into new format:
             self.testSequenceData[
@@ -57,6 +64,10 @@ class TestCaseSequenceMaster:
                 recordPointer -= 1
                 break
             recordPointer += 1
+        self.testdataDataBase.update_datarecords(self.dataRecords, fileName=utils.findFileAndPathFromPath(
+            self.testSequenceData[GC.DATABASE_FILENAME],
+            basePath=str(Path(self.testRunInstance.globalSettingsFileNameAndPath).parent)),
+            sheetName=self.testSequenceData[GC.DATABASE_SHEETNAME], noCloneXls=self.testRunInstance.noCloneXls)
         logger.info(f"{recordPointer + 1} test records read for processing")
         self.statistics.total_testcases(recordPointer + 1)
 
@@ -134,10 +145,16 @@ class TestCaseSequenceMaster:
         if not self.testdataDataBase:
             self.testdataDataBase = HandleDatabase(globalSettings=self.testRunInstance.globalSettings,
                                                    linesToRead=self.testSequenceData.get(GC.DATABASE_LINES))
-            self.testdataDataBase.read_excel(
-                fileName=utils.findFileAndPathFromPath(
-                    self.testSequenceData[GC.DATABASE_FILENAME],
-                    basePath=str(Path(self.testRunInstance.globalSettingsFileNameAndPath).parent)),
+        testDataFile = utils.findFileAndPathFromPath(
+            self.testSequenceData[GC.DATABASE_FILENAME],
+            basePath=str(Path(self.testRunInstance.globalSettingsFileNameAndPath).parent))
+        if not self.testRunInstance.noCloneXls and not "_baangt" in testDataFile:
+            cloneXls = CloneXls(testDataFile)  # , logger=logger)
+            testDataFile = cloneXls.update_or_make_clone(
+                ignore_headers=["TestResult", "UseCount"])
+        self.testSequenceData[GC.DATABASE_FILENAME] = testDataFile
+        self.testdataDataBase.read_excel(
+                fileName=testDataFile,
                 sheetName=self.testSequenceData[GC.DATABASE_SHEETNAME])
         return self.testdataDataBase
 

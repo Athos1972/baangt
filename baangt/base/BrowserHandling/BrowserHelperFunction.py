@@ -158,27 +158,38 @@ class BrowserHelperFunction:
         gecko = response.json()
         gecko = gecko['assets']
         gecko_length_results = len(gecko)
-        drivers_url_dict = []
+        drivers_urls = []
 
         for i in range(gecko_length_results):
-            drivers_url_dict.append(gecko[i]['browser_download_url'])
+            drivers_urls.append(gecko[i]['browser_download_url'])
 
+        # New approach August 2018
         isTarFile = True
-        zipbObj = zip(GC.OS_list, drivers_url_dict)
-        geckoDriversDict = dict(zipbObj)
-        if platform.system().lower() == GC.WIN_PLATFORM:
-            isTarFile = False
-            if ctypes.sizeof(ctypes.c_voidp) == GC.BIT_64:
-                url = geckoDriversDict[GC.OS_list[4]]
-            else:
-                url = geckoDriversDict[GC.OS_list[3]]
-        elif platform.system().lower() == GC.LINUX_PLATFORM:
-            if ctypes.sizeof(ctypes.c_voidp) == GC.BIT_64:
-                url = geckoDriversDict[GC.OS_list[1]]
-            else:
-                url = geckoDriversDict[GC.OS_list[0]]
+
+        if ctypes.sizeof(ctypes.c_voidp) == GC.BIT_64:
+            searchBits = '64'
         else:
-            url = geckoDriversDict[GC.OS_list[2]]
+            searchBits = '32'
+
+        searchString = None
+        if platform.system().lower() == GC.PLATFORM_WINDOWS:
+            searchString = f"win{searchBits}.zip"
+            isTarFile = False
+        elif platform.system().lower() == GC.PLATFORM_LINUX:
+            searchString = f"linux{searchBits}.tar.gz"
+        elif platform.system().lower() == GC.PLATFORM_MAC:
+            searchString = "macos.tar.gz"
+        else:
+            logger.critical(f"Don't know how to download drivers for this OS: {platform.system().lower()}. "
+                            f"Please download and put in folder /browserDrivers")
+            return None, None
+
+        url = [x for x in drivers_urls if searchString in x][0]
+        if not url:
+            logger.critical(f"Could not find driver for {searchString} in this "
+                            f"list of available drivers: {','.join(drivers_urls)}")
+
+        logger.debug(f"Downloading Geckodriver for Firefox from here {url}")
 
         return url, isTarFile
 
@@ -196,12 +207,14 @@ class BrowserHelperFunction:
 
         zipbObjChrome = zip(GC.OS_list, chromedriver_url_dict)
         chromeDriversDict = dict(zipbObjChrome)
-        if platform.system().lower() == GC.WIN_PLATFORM:
+        if platform.system().lower() == GC.PLATFORM_WINDOWS:
             url = chromeDriversDict[GC.OS_list[3]]
-        elif platform.system().lower() == GC.LINUX_PLATFORM:
+        elif platform.system().lower() == GC.PLATFORM_LINUX:
             url = chromeDriversDict[GC.OS_list[1]]
         else:
             url = chromeDriversDict[GC.OS_list[2]]
+
+        logger.debug(f"Downloading Chromedriver from here: {url}")
 
         return url
   
@@ -214,7 +227,7 @@ class BrowserHelperFunction:
         with zipfile.ZipFile(path_zip, 'r') as zip_ref:
             zip_ref.extractall(path)
 
-        if platform.system().lower() != GC.WIN_PLATFORM:
+        if platform.system().lower() != GC.PLATFORM_WINDOWS:
             file_path = path.joinpath(driverName.replace('.exe', ''))
             os.chmod(file_path, 0o777)
         os.remove(path_zip)

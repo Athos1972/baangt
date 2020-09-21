@@ -9,11 +9,14 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import logging
 
+GLOBALS_FILTER_NUMBER = 2
+
 
 class Ui_MainWindow(QtCore.QObject):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(920, 480)
+        MainWindow.setMinimumSize(900, 400)
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(11)
@@ -422,6 +425,235 @@ class Ui_MainWindow(QtCore.QObject):
         self.verticalLayout_9.addLayout(self.horizontalLayout_23)
         self.gridLayout_7.addWidget(self.groupBox, 0, 0, 1, 1)
         self.stackedWidget.addWidget(self.settingPage)
+
+        # query screen
+        self.queryPage = QtWidgets.QWidget()
+        self.queryPage.setObjectName("queryPage")
+
+        # fonts
+        titleFont = QtGui.QFont()
+        titleFont.setFamily("Arial")
+        titleFont.setPointSize(32)
+        titleFont.setBold(True)
+        titleFont.setItalic(False)
+        titleFont.setWeight(18)
+        titleFont.setKerning(False)
+
+        labelFont = QtGui.QFont()
+        labelFont.setFamily("Arial")
+        labelFont.setPointSize(11)
+        labelFont.setBold(False)
+        labelFont.setItalic(False)
+        labelFont.setWeight(9)
+        labelFont.setKerning(False)
+
+        # main layout
+        self.queryMainLayout = QtWidgets.QVBoxLayout(self.queryPage)
+        self.queryMainLayout.setObjectName("queryMainLayout")
+
+        # page title
+        self.queryTitleLabel = QtWidgets.QLabel(self.queryPage)
+        self.queryTitleLabel.setAlignment(QtCore.Qt.AlignTop)
+        self.queryTitleLabel.setFont(titleFont)
+        self.queryTitleLabel.setMinimumSize(QtCore.QSize(0, 0))
+        self.queryTitleLabel.setMaximumSize(QtCore.QSize(200, 15))
+        self.queryTitleLabel.setObjectName("queryTitleLabel")
+        self.queryMainLayout.addWidget(self.queryTitleLabel)
+
+        # action layout
+        self.queryActionLayout = QtWidgets.QHBoxLayout()
+        self.queryActionLayout.setSizeConstraint(QtWidgets.QLayout.SetMaximumSize)
+        #self.queryActionLayout.setContentsMargins(5, 5, 5, 5)
+        #self.queryActionLayout.setSpacing(15)
+        self.queryActionLayout.setObjectName("queryActionLayout")
+        self.queryMainLayout.addLayout(self.queryActionLayout)
+
+        # input group
+        self.queryGroupBox = QtWidgets.QGroupBox(self.queryPage)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.queryGroupBox.sizePolicy().hasHeightForWidth())
+        self.queryGroupBox.setSizePolicy(sizePolicy)
+        self.queryGroupBox.setMinimumSize(QtCore.QSize(500, 0))
+        self.queryGroupBox.setFlat(False)
+        self.queryGroupBox.setAlignment(QtCore.Qt.AlignTop)
+        self.queryGroupBox.setObjectName("queryGroupBox")
+        self.queryActionLayout.addWidget(self.queryGroupBox)
+
+        self.queryFormLayout = QtWidgets.QVBoxLayout(self.queryGroupBox)
+        self.queryFormLayout.setSpacing(15)
+        self.queryFormLayout.setObjectName("queryFormLayout")
+        
+        self.queryInputLayout = QtWidgets.QGridLayout()
+        self.queryInputLayout.setObjectName("queryInputLayout")
+        self.queryInputLayout.setSpacing(20)
+        self.queryInputLayout.setColumnStretch(0, 1)
+        self.queryInputLayout.setColumnStretch(1, 8)
+        self.queryInputLayout.setColumnStretch(2, 2)
+        self.queryInputLayout.setColumnStretch(3, 5)
+
+        self.queryGlobalsLayout = QtWidgets.QGridLayout()
+        self.queryGlobalsLayout.setObjectName("queryGlobalsLayout")
+        self.queryGlobalsLayout.setSpacing(5)
+        self.queryGlobalsLayout.setColumnStretch(0, 8)
+        self.queryGlobalsLayout.setColumnStretch(1, 8)
+
+        self.queryButtonLayout = QtWidgets.QHBoxLayout()
+        self.queryButtonLayout.setSizeConstraint(QtWidgets.QLayout.SetMaximumSize)
+        self.queryButtonLayout.setContentsMargins(5, 5, 5, 10)
+        self.queryButtonLayout.setSpacing(15)
+
+        self.queryFormLayout.addLayout(self.queryInputLayout)
+        self.queryFormLayout.addLayout(self.queryGlobalsLayout)
+        self.queryFormLayout.addLayout(self.queryButtonLayout)
+
+        # name
+        self.nameComboBoxLabel = QtWidgets.QLabel(self.queryGroupBox)
+        self.nameComboBoxLabel.setFont(labelFont)
+        self.nameComboBoxLabel.setStyleSheet("color: rgb(32, 74, 135);")
+        self.nameComboBoxLabel.setObjectName("nameComboBoxLabel")
+        self.queryInputLayout.addWidget(self.nameComboBoxLabel)
+        self.nameComboBox = QtWidgets.QComboBox(self.queryGroupBox)
+        self.nameComboBox.setStyleSheet("color: rgb(46, 52, 54); background-color: rgb(255, 255, 255);")
+        self.nameComboBox.setObjectName("nameComboBox")
+        #self.nameComboBox.addItems(["", "Debug", "Info", "Warning", "Error"])
+        self.queryInputLayout.addWidget(self.nameComboBox)
+
+        # date from
+        self.dateFromInputLabel = QtWidgets.QLabel(self.queryGroupBox)
+        self.dateFromInputLabel.setFont(labelFont)
+        self.dateFromInputLabel.setStyleSheet("color: rgb(32, 74, 135);")
+        self.dateFromInputLabel.setObjectName("dateFromInputLabel")
+        self.queryInputLayout.addWidget(self.dateFromInputLabel)
+        self.dateFromInput = QtWidgets.QDateEdit(self.queryGroupBox, calendarPopup=True)
+        self.dateFromInput.setDateTime(QtCore.QDateTime.currentDateTime())
+        self.dateFromInput.setDisplayFormat("dd.MM.yyyy")
+        self.dateFromInput.setStyleSheet("color: rgb(46, 52, 54); background-color: rgb(255, 255, 255);")
+        self.dateFromInput.setObjectName("dateFromInput")
+        self.queryInputLayout.addWidget(self.dateFromInput)
+
+        # stage
+        self.stageComboBoxLabel = QtWidgets.QLabel(self.queryGroupBox)
+        self.stageComboBoxLabel.setFont(labelFont)
+        self.stageComboBoxLabel.setStyleSheet("color: rgb(32, 74, 135);")
+        self.stageComboBoxLabel.setObjectName("stageComboBoxLabel")
+        self.queryInputLayout.addWidget(self.stageComboBoxLabel)
+        self.stageComboBox = QtWidgets.QComboBox(self.queryGroupBox)
+        self.stageComboBox.setStyleSheet("color: rgb(46, 52, 54); background-color: rgb(255, 255, 255);")
+        self.stageComboBox.setObjectName("stageComboBox")
+        self.queryInputLayout.addWidget(self.stageComboBox)
+
+        # date to
+        self.dateToInputLabel = QtWidgets.QLabel(self.queryGroupBox)
+        self.dateToInputLabel.setFont(labelFont)
+        self.dateToInputLabel.setStyleSheet("color: rgb(32, 74, 135);")
+        self.dateToInputLabel.setObjectName("dateToInputLabel")
+        self.queryInputLayout.addWidget(self.dateToInputLabel)
+        self.dateToInput = QtWidgets.QDateEdit(self.queryGroupBox, calendarPopup=True)
+        self.dateToInput.setDateTime(QtCore.QDateTime.currentDateTime())
+        self.dateToInput.setDisplayFormat("dd.MM.yyyy")
+        self.dateToInput.setStyleSheet("color: rgb(46, 52, 54); background-color: rgb(255, 255, 255);")
+        self.dateToInput.setObjectName("dateToInput")
+        self.queryInputLayout.addWidget(self.dateToInput)
+
+        # Globals
+        # title
+        self.globalsTile = QtWidgets.QLabel(self.queryGroupBox)
+        self.globalsTile.setFont(labelFont)
+        self.globalsTile.setStyleSheet("color: rgb(32, 74, 135);")
+        self.globalsTile.setObjectName("globalsTile")
+        self.queryGlobalsLayout.addWidget(self.globalsTile, 0, 0)
+        # options
+        self.globalsOptions = []
+        for index in range(GLOBALS_FILTER_NUMBER):
+            # name
+            globalsNameComboBox = QtWidgets.QComboBox(self.queryGroupBox)
+            globalsNameComboBox.setStyleSheet("color: rgb(46, 52, 54); background-color: rgb(255, 255, 255);")
+            globalsNameComboBox.setObjectName(f"globalsNameComboBox{index}")
+            self.queryGlobalsLayout.addWidget(globalsNameComboBox, index+1, 0)
+            # value
+            globalsValueComboBox = QtWidgets.QComboBox(self.queryGroupBox)
+            globalsValueComboBox.setStyleSheet("color: rgb(46, 52, 54); background-color: rgb(255, 255, 255);")
+            globalsValueComboBox.setObjectName(f"globalsValueComboBox{index}")
+            self.queryGlobalsLayout.addWidget(globalsValueComboBox, index+1, 1)
+            # store
+            self.globalsOptions.append((globalsNameComboBox, globalsValueComboBox))
+
+        # query buttons
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        #sizePolicy.setHeightForWidth(self.queryMakePushButton.sizePolicy().hasHeightForWidth())
+        # make query
+        self.queryMakePushButton = QtWidgets.QPushButton(self.queryGroupBox)
+        #sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        #sizePolicy.setHorizontalStretch(0)
+        #sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.queryMakePushButton.sizePolicy().hasHeightForWidth())
+        self.queryMakePushButton.setSizePolicy(sizePolicy)
+        self.queryMakePushButton.setMinimumSize(QtCore.QSize(120, 0))
+        self.queryMakePushButton.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(114, 159, 207);")
+        self.queryMakePushButton.setObjectName("queryMakePushButton")
+        self.queryButtonLayout.addWidget(self.queryMakePushButton)
+        # export results
+        self.queryExportPushButton = QtWidgets.QPushButton(self.queryGroupBox)
+        #sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        #sizePolicy.setHorizontalStretch(0)
+        #sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.queryExportPushButton.sizePolicy().hasHeightForWidth())
+        self.queryExportPushButton.setSizePolicy(sizePolicy)
+        self.queryExportPushButton.setMinimumSize(QtCore.QSize(120, 0))
+        self.queryExportPushButton.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(138, 226, 52);")
+        self.queryExportPushButton.setObjectName("queryExportPushButton")
+        self.queryButtonLayout.addWidget(self.queryExportPushButton)
+        # open recent export result file
+        self.openExportPushButton = QtWidgets.QPushButton(self.queryGroupBox)
+        #sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        #sizePolicy.setHorizontalStretch(0)
+        #sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.openExportPushButton.sizePolicy().hasHeightForWidth())
+        self.openExportPushButton.setSizePolicy(sizePolicy)
+        self.openExportPushButton.setMinimumSize(QtCore.QSize(120, 0))
+        self.openExportPushButton.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(138, 226, 52);")
+        self.openExportPushButton.setObjectName("openExportPushButton")
+        self.queryButtonLayout.addWidget(self.openExportPushButton)
+        # exit to main screen
+        self.queryExitPushButton = QtWidgets.QPushButton(self.queryGroupBox)
+        #sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        #sizePolicy.setHorizontalStretch(0)
+        #sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.queryExitPushButton.sizePolicy().hasHeightForWidth())
+        self.queryExitPushButton.setSizePolicy(sizePolicy)
+        self.queryExitPushButton.setMinimumSize(QtCore.QSize(120, 0))
+        self.queryExitPushButton.setStyleSheet("color: rgb(255, 255, 255); background-color: rgb(204, 0, 0);")
+        self.queryExitPushButton.setObjectName("queryExitPushButton")
+        self.queryButtonLayout.addWidget(self.queryExitPushButton)
+
+        # status message
+        self.queryStatusLabel = QtWidgets.QLabel(self.queryGroupBox)
+        self.queryStatusLabel.setAlignment(QtCore.Qt.AlignTop)
+        self.queryStatusLabel.setObjectName("queryStatusLabel")
+        self.queryMainLayout.addWidget(self.queryStatusLabel)
+
+        # logo
+        self.queryLogo = QtWidgets.QLabel(self.queryPage)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.queryLogo.sizePolicy().hasHeightForWidth())
+        self.queryLogo.setSizePolicy(sizePolicy)
+        self.queryLogo.setMinimumSize(QtCore.QSize(0, 0))
+        self.queryLogo.setMaximumSize(QtCore.QSize(300, 120))
+        self.queryLogo.setBaseSize(QtCore.QSize(600, 240))
+        self.queryLogo.setText("")
+        self.queryLogo.setScaledContents(True)
+        self.queryLogo.setObjectName("queryLogo")
+        self.queryActionLayout.addWidget(self.queryLogo)
+
+        # END of query screen
+
+
         self.katalonPage = QtWidgets.QWidget()
         self.katalonPage.setObjectName("katalonPage")
         self.gridLayout_8 = QtWidgets.QGridLayout(self.katalonPage)
@@ -484,6 +716,12 @@ class Ui_MainWindow(QtCore.QObject):
         self.actionImport_Katalon.setObjectName("actionImport_Katalon")
         self.actionImport_KatalonIcon = QtGui.QIcon(":/baangt/katalonicon")
         self.actionImport_Katalon.setIcon(self.actionImport_KatalonIcon)
+        # Browse Results
+        self.actionQuery = QtWidgets.QAction(MainWindow)
+        self.actionQuery.setObjectName("actionQuery")
+        self.actionQueryIcon = QtGui.QIcon(":/baangt/dbqueryicon")
+        self.actionQuery.setIcon(self.actionQueryIcon)
+        # END: Browse Results
         self.actionReport = QtWidgets.QAction(MainWindow)
         self.actionReport.setObjectName("actionReport")
         self.actionReportIcon = QtGui.QIcon(":/baangt/reporticon")
@@ -497,6 +735,7 @@ class Ui_MainWindow(QtCore.QObject):
         TestDataGenIcon = QtGui.QIcon(":/baangt/tdgicon")
         self.actionTestDataGen.setIcon(TestDataGenIcon)
         self.toolBar.addAction(self.actionImport_Katalon)
+        self.toolBar.addAction(self.actionQuery)
         self.toolBar.addAction(self.actionReport)
         self.toolBar.addAction(self.actionCleanup)
         self.toolBar.addAction(self.actionTestDataGen)
@@ -687,6 +926,9 @@ class Ui_MainWindow(QtCore.QObject):
         self.gridLayout_9.addLayout(self.verticalLayout_12, 0, 0, 1, 1)
         self.stackedWidget.addWidget(self.TDGPage)
 
+        # add query page
+        self.stackedWidget.addWidget(self.queryPage)
+
         self.retranslateUi(MainWindow)
         self.stackedWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -754,6 +996,21 @@ class Ui_MainWindow(QtCore.QObject):
         self.ResultLengthInput.setToolTip(_translate(
             "MainWindow", "Number of records output file\nSet 0 or blank for all possible records"))
         self.exitPushButton_4.setText(_translate("MainWindow", "Exit"))
+
+        # query page
+        self.actionQuery.setText(_translate("MainWindow", "Query Results"))
+        self.actionQuery.setToolTip(_translate("MainWindow", "Query Results"))
+        self.queryTitleLabel.setText(_translate("MainWindow","Browse Results"))
+        self.nameComboBoxLabel.setText(_translate("MainWindow", "Name"))
+        self.stageComboBoxLabel.setText(_translate("MainWindow", "Stage"))
+        self.dateFromInputLabel.setText(_translate("MainWindow", "Date from"))
+        self.dateToInputLabel.setText(_translate("MainWindow", "Date to"))
+        self.globalsTile.setText(_translate("MainWindow", "Global Settings"))
+        self.queryMakePushButton.setText(_translate("MainWindow", "Query"))
+        self.queryExportPushButton.setText(_translate("MainWindow", "Export"))
+        self.openExportPushButton.setText(_translate("MainWindow", "Open Recent"))
+        self.queryExitPushButton.setText(_translate("MainWindow", "Exit"))
+        self.queryStatusLabel.setText(_translate("MainWindow", "Make a query"))
 
 
 if __name__ == "__main__":

@@ -22,6 +22,7 @@ This image is an example input file. Different types of data types supported are
   8. ``FKR_`` prefix is used here with a new integer value 0 in end.
   9. ``RRD_`` prefix is used here.
   10. ``RRE_`` prefix is used here.
+  11. ``RENV_`` prefix is used here.
 
 Using these data type we will generate all possible values.
 Here is a simple example with simple value and value of list.
@@ -83,11 +84,14 @@ We will use the reference of above image and assigned number to learn about it i
      Now this will generate new email for every data in the output.
   9. ``RRD_`` is used when we have multiple sheets in a input file and we need to take value which are matching conditions
      from that sheet.
-     Format:- ``RRD_(<sheetName>,<TargetData>,[Header1:[Value1],Header2:[Value1,Value2]])``
+     Format:- ``RRD_(<sheetName>,<TargetData>,[Header1:[Value1],Header2:[Value1,Value2]])`` or
+              ``RRD_(<sheetName>,<TargetData>:<HeaderName>,[Header1:[Value1],Header2:[Value1,Value2]])``
      Here sheetName is the name of the sheet where our TargetData is located. A dictionary of TargetData is generated with all
      the data which are matching from our Header: Value pair. A header with multiple value list is than converted to all
      possible value as mentioned in above explanation. At last a random value is selected from TargetData dictionary for every
      output data.
+     If TargetData:HeaderName then the header of the targetdata from the target file will be replaced with HeaderName in
+        the output file. Same applies in ``RRE_`` prefix.
      If TargetData = ``*`` then all the values of the matched row will be treated as TargetData.
      If Header:Value List = ``[]`` then the defined TargetData will be collected from every row of the defined sheet.
      i.e.
@@ -100,9 +104,19 @@ We will use the reference of above image and assigned number to learn about it i
      i.e. First ``RRD_`` cell has value "x" for the header while selected randomly, then the second cell will select data
      randomly only from the rows which have "x" value for the same header.
   10. ``RRE_`` is same as ``RRD_`` only change is that in rrd we take data from same file and different sheet but, in
-     this ``RRE_`` prefix we can take data from another file. The only change in its structure is that filename comes
-     before sheetname.
-     i.e. ``RRE_[fileName,sheetName,Targetdata,[key:value]]``
+      this ``RRE_`` prefix we can take data from another file. The only change in its structure is that filename comes
+      before sheetname.
+      i.e. ``RRE_[fileName,sheetName,Targetdata,[key:value]]``
+  11. ``RENV_`` prefix is used to get environment varaible from your system. Their might be sometimes when you don't
+      want to input sensitive data like password, username, etc. directly inside TestRun file or Globals file, at that
+      time this prefix will be very useful and it will get the data from your system environment.
+      Its structure is ``RENV_(<env_variable>,<default>)`` here "<env_variable>" holds the place of variable name which
+      contains data and "<default>" holds the default value which is used in case given variable is not present in
+      environment. If "<default>" value is not supplied and given variable is also not present in environment then
+      it will raise an error.
+      e.g.- ``RENV(USERNAME, My_Pc)``
+      Here it will first look for "USERNAME" variable in environment, if it is not present then it will use "My_Pc"
+
 
 
 All Data Types Format
@@ -117,3 +131,4 @@ All Data Types Format
 7. Faker Prefix      = ``FKR_(<type>, <locale>, <number_of_data>)``
 8. RRD Prefix        = ``RRD_(<sheetName>,<TargetData>,[<Header1>:[<Value1>],<Header2>:[<Value1>,<Value2>]])``
 9. RRE Prefix        = ``RRE_(<fileName>,<sheetName>,<TargetData>,[<Header1>:[<Value1>],<Header2>:[<Value1>,<Value2>]])``
+10. RENV Prefix      = ``RENV_(<env_variable>,<default>)``

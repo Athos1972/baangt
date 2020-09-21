@@ -1,6 +1,7 @@
 import logging
 from baangt.TestSteps import Exceptions
 from baangt.base import GlobalConstants as GC
+from baangt.base.Utils import utils
 from datetime import datetime
 import time
 import gevent.queue
@@ -38,6 +39,7 @@ class TestCaseSequenceParallel:
 
         except Exceptions.baangtTestStepException as e:
             logger.critical(f"Unhandled Error happened in parallel run {parallelizationSequenceNumber}: " + str(e))
+            utils.traceback(exception_in=e)
             dataRecord[GC.TESTCASESTATUS] = GC.TESTCASESTATUS_ERROR
         finally:
             d_t = datetime.fromtimestamp(time.time())

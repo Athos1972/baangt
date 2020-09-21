@@ -5,6 +5,7 @@ from pathlib import Path
 from datetime import datetime
 from baangt.base.PathManagement import ManagedPaths
 from baangt.base.DownloadFolderMonitoring import DownloadFolderMonitoring
+from baangt.reports import Report
 
 logger = logging.getLogger("pyC")
 
@@ -93,7 +94,32 @@ class Cleanup:
         else:
             logger.info(f"{str(len(removed))} empty folder deleted")
 
+    def clean_reports(self):
+        #
+        # cleanup reports
+        #
+
+        logger.info(f"Removing reports older than {str(self.threshold)} days")
+        reports_dir = self.managedPaths.getOrSetReportPath()
+        files = Path(reports_dir).glob('**/*')
+        removed = []
+        for file in files:
+            timedelta = datetime.now() - datetime.fromtimestamp(DownloadFolderMonitoring.creation_date(file))
+            if timedelta.total_seconds()/86400 > self.threshold:
+                try:
+                    os.remove(str(file))
+                    removed.append(file)
+                except:
+                    logger.debug(f"Cannot remove {str(file)}")
+                    continue
+                logger.debug(f"{str(file)} deleted")
+        if len(removed) == 0:
+            logger.info(f"No report older than {str(self.threshold)} days found")
+        else:
+            logger.info(f"{str(len(removed))} reports deleted")
+
     def clean_all(self):
         self.clean_logs()
         self.clean_screenshots()
         self.clean_downloads()
+        self.clean_reports()

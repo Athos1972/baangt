@@ -9,6 +9,7 @@
         <file alias="katalonicon">katalon.svg</file>
         <file alias="reporticon">report.svg</file>
         <file alias="cleanupicon">cleanup.svg</file>
+        <file alias="dbqueryicon">queryresults.svg</file>
         <file alias="exiticon">exit.svg</file>
         <file alias="tdgicon">testdatagenerator.svg</file>
     </qresource>

@@ -3,6 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import desc, and_
 from baangt.base.DataBaseORM import engine, TestrunLog, GlobalAttribute, TestCaseLog, TestCaseSequenceLog, TestCaseField
 import baangt.base.GlobalConstants as GC
+from baangt.base.PathManagement import ManagedPaths
 from jinja2 import Environment, FileSystemLoader
 import json
 import os
@@ -21,11 +22,12 @@ class Report:
 
 	def __init__(self):
 		self.created = datetime.now()
+		self.managedPaths = ManagedPaths()
 		self.generate();
 
 	@property
 	def path(self):
-		return ''	
+		return ''
 
 	def generate(self):
 		#
@@ -47,7 +49,7 @@ class Report:
 		# returns jinja2 template
 		#
 
-		file_loader = FileSystemLoader(os.path.join(os.path.dirname(__file__), GC.REPORT_PATH, template_dir))
+		file_loader = FileSystemLoader(os.path.join(os.path.dirname(__file__), template_dir))
 		env = Environment(loader=file_loader)
 
 		return env.get_template(template_name)
@@ -306,11 +308,8 @@ class Dashboard(Report):
 		#
 		# path to report
 		#
-		return os.path.join(
-			os.path.dirname(__file__),
-			GC.REPORT_PATH,
-			self.created.strftime('dashboard-%Y%m%d-%H%M%S.html'),
-		)
+
+		return self.managedPaths.getOrSetReportPath().joinpath(self.created.strftime('dashboard-%Y%m%d-%H%M%S.html'))
 
 
 	def generate(self):
@@ -450,11 +449,8 @@ class Summary(Report):
 		#
 		# path to report
 		#
-		return os.path.join(
-			os.path.dirname(__file__),
-			GC.REPORT_PATH,
-			self.created.strftime('summary-%Y%m%d-%H%M%S.html'),
-		)
+
+		return self.managedPaths.getOrSetReportPath().joinpath(self.created.strftime('summary-%Y%m%d-%H%M%S.html'))
 
 	def generate(self):
 		#

@@ -1,6 +1,7 @@
 import logging
 from faker import Faker as FakerBase
 from random import randint
+from datetime import datetime
 
 logger = logging.getLogger("pyC")
 
@@ -19,6 +20,12 @@ class Faker:
         :return: the value, that was delivered by Faker.
         """
         lValue = None
+
+        if fakerMethod == "birthdate":
+            fakerMethod = 'date_between_dates'
+            kwargs["date_start"] = datetime(1960,1,1)
+            kwargs["date_end"] = datetime(2000,1,1)
+            # fake.date_between_dates(date_start=datetime(1960, 1, 1), date_end=datetime(2000, 1, 1))
         try:
             lCallFakerMethod = getattr(self.faker, fakerMethod)
             lValue = lCallFakerMethod(**kwargs)
@@ -26,3 +33,6 @@ class Faker:
             logging.error(f"Error during Faker-Call. Method was: {fakerMethod}, kwargs were: {kwargs}, Exception: {e}")
 
         return lValue
+
+    def fakerProxyIBAN(self, country_or_ListOfCountries):
+        return self.faker.Code.Iban.iban(country_or_ListOfCountries)
