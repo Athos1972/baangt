@@ -84,11 +84,14 @@ We will use the reference of above image and assigned number to learn about it i
      Now this will generate new email for every data in the output.
   9. ``RRD_`` is used when we have multiple sheets in a input file and we need to take value which are matching conditions
      from that sheet.
-     Format:- ``RRD_(<sheetName>,<TargetData>,[Header1:[Value1],Header2:[Value1,Value2]])``
+     Format:- ``RRD_(<sheetName>,<TargetData>,[Header1:[Value1],Header2:[Value1,Value2]])`` or
+              ``RRD_(<sheetName>,<TargetData>:<HeaderName>,[Header1:[Value1],Header2:[Value1,Value2]])``
      Here sheetName is the name of the sheet where our TargetData is located. A dictionary of TargetData is generated with all
      the data which are matching from our Header: Value pair. A header with multiple value list is than converted to all
      possible value as mentioned in above explanation. At last a random value is selected from TargetData dictionary for every
      output data.
+     If TargetData:HeaderName then the header of the targetdata from the target file will be replaced with HeaderName in
+        the output file. Same applies in ``RRE_`` prefix.
      If TargetData = ``*`` then all the values of the matched row will be treated as TargetData.
      If Header:Value List = ``[]`` then the defined TargetData will be collected from every row of the defined sheet.
      i.e.
