@@ -397,7 +397,6 @@ class MainWindow(Ui_MainWindow):
         if os.path.exists(filePath[0]):
             dirPath = filePath[0]
             self.InputFileEdit.setText(dirPath)
-            self.directory = dirPath
             self.getSheets(dirPath)
             self.OutputFileEdit.setText(os.path.dirname(dirPath))
             self.statusMessage("Current File: {} ".format(dirPath), 2000)
