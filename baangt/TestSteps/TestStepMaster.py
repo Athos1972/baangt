@@ -99,11 +99,11 @@ class TestStepMaster:
         :param ifis:
         :return:
         """
-        if condition.upper() == "IF":
+        if condition.upper() == "IF" or condition.upper() == "IF_":
             self.ifConditions += 1
             self.ifLis.append(ifis)
             self.elseLis.append(False)
-        elif condition.upper() == "ELSE":
+        elif condition.upper() == "ELSE" or condition.upper() == "ELSE_":
             self.elseLis[-1] = True
         elif condition.upper() == "ENDIF":
             self.ifConditions -= 1
