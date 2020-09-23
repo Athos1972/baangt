@@ -41,6 +41,9 @@ from datetime import datetime
 
 logger = logging.getLogger("pyC")
 
+NAME_PLACEHOLDER = '< Name >'
+VALUE_PLACEHOLDER = '< Value >'
+
 
 class PyqtKatalonUI(ImportKatalonRecorder):
     """ Subclass of ImportKatalonRecorder :
@@ -1365,10 +1368,30 @@ class MainWindow(Ui_MainWindow):
         self.nameComboBox.addItems([''] + self.queryResults.name_list())
         self.stageComboBox.clear()
         self.stageComboBox.addItems([''] + self.queryResults.stage_list())
+        # globals
+        for nameComboBox, valueComboBox in self.globalsOptions:
+            nameComboBox.clear()
+            nameComboBox.addItems([NAME_PLACEHOLDER] + self.queryResults.globals_names())
+            nameComboBox.currentIndexChanged.connect(self.onGlobalsNameChange)
+            valueComboBox.clear()
+            valueComboBox.addItems([VALUE_PLACEHOLDER])
 
         # show the page
         self.stackedWidget.setCurrentIndex(4)
         self.statusMessage("Query Page is triggered", 1000)
+
+
+    @pyqtSlot(int)
+    def onGlobalsNameChange(self, index):
+        #
+        # loads globals values on name changed
+        #
+
+        combo = self.sender()
+        for nameComboBox, valueComboBox in self.globalsOptions:
+            if combo == nameComboBox:
+                valueComboBox.clear()
+                valueComboBox.addItems([VALUE_PLACEHOLDER] + self.queryResults.globals_values(combo.currentText()))
 
 
     @pyqtSlot()
@@ -1380,11 +1403,28 @@ class MainWindow(Ui_MainWindow):
         # get field data
         name = self.nameComboBox.currentText() or None
         stage = self.stageComboBox.currentText() or None
-        date_from = datetime.strptime(self.dateFromInput.date().toString("yyyyMMdd"), "%Y%m%d")
-        date_to = datetime.strptime(self.dateToInput.date().toString("yyyyMMdd"), "%Y%m%d")
+        #date_from = datetime.strptime(self.dateFromInput.date().toString("yyyyMMdd"), "%Y%m%d")
+        #date_to = datetime.strptime(self.dateToInput.date().toString("yyyyMMdd"), "%Y%m%d")
+        date_from = self.dateFromInput.date().toString("yyyy-MM-dd")
+        date_to = self.dateToInput.date().toString("yyyy-MM-dd")
+        # get globals
+        globals_value = lambda v: v if v != VALUE_PLACEHOLDER else None
+
+        global_settings = { 
+            nameComboBox.currentText(): globals_value(valueComboBox.currentText()) for nameComboBox, valueComboBox in filter(
+                lambda g: g[0].currentText() != NAME_PLACEHOLDER,
+                self.globalsOptions,
+            )
+        }
 
         # make query
-        self.queryResults.query(name=name, stage=stage, start_date=date_from, end_date=date_to)
+        self.queryResults.query(
+            name=name,
+            stage=stage,
+            start_date=date_from,
+            end_date=date_to,
+            global_settings=global_settings,
+        )
 
         # display status
         if self.queryResults.query_set:

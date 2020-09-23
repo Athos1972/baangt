@@ -188,6 +188,8 @@ More details on Activities
      - Write the text given in column ``value`` to the element specified by ``locator``. Only rarely will you have fixed
        values. Usually you'll assign columns of the test data using variable replacement (e.g. ``$(POSTCODE)`` to set the
        text from column ``POSTCODE`` from the datafile into the destination element.
+       In some cases we need to write any random value in the field or we need random value like name, string, interger,
+       date, etc. for some other purpose for that we ``Random`` funtion. You will learn about it further in this document.
    * - setTextIF
      - Same as SetText, but will only do something in cases where there is a value in the datafile. Similarly to clickIF
        this little helper functionality can help you save hours and hours in creation and maintenance of rocksolid and
@@ -275,7 +277,8 @@ More details on Activities
          Default field-value: {'HouseNumber': '6', 'AdditionalData1': 'Near MahavirChowk', 'AdditionalData2': 'Opposite St. Marish Church', 'StreetName': 'GoreGaon', 'CityName': 'Ambala', 'PostalCode': '160055', 'CountryCode': 'India'} 
 
        These fields can be used as filter criteria in field value.
-       Example value= `{CountryCode:CY, PostlCode: 7}`. 
+       Example value= `{CountryCode:CY, PostlCode: 7}`.
+
 
 
        Resulted field-value :{'HouseNumber': '6', 'AdditionalData1': 'Near MahavirChowk', 'AdditionalData2': 'Opposite St. Marish Church', 'StreetName': 'GoreGaon', 'CityName': 'Ambala', 'PostalCode': '7', 'CountryCode': 'CY'}
@@ -284,3 +287,50 @@ More details on Activities
        If a prefix was povided in field Value2, the fieldnames will be concatenated with this prefix,
        e.g.if value2=`PremiumPayer_`, then the resulting field for CountryCode in testDataDict would become PremiumPayer_CountryCode.
 
+Random
+------
+Sometimes we need random values like string, name, integer, float, date, time now in such case we have ``random``
+functionality. It is used inside value column of and its structure is
+``$(random{"type":<Type>},"min":<Minimum>,"max"<Maximum>,"format":<Format>)``. Only ``type`` field is compulsory and
+every other fields are optional, also each fields are not useful in every type, e.g.- ``name`` type doesn't need any
+other optional fields as they are use less for it. You can see fields and types supporting them.
+
+
+.. list-table:: Fields supporting types
+   :widths: 25 75
+   :header-rows: 1
+
+   * - Field
+     - Type
+
+   * - type
+     - This field is compulsory and base of ``random`` funtionality.
+       string, name, int, float, date, time are the types currently supported
+
+   * - min
+     - string, int, float, date, time are the types supporting this field. Value of min will be with respect to its
+       type like value for string will be an integer containing minimum number of characters in string and for all other
+       it will be lower limit, for int it will be an integer & float for float, for date value will be a date e.g. -
+       "31/01/2020" and for time it would look like "20:30:59"
+
+   * - max
+     - string, int, float, date, time are the types supporting this field. Value of max will be same like in min,
+       value for string will be an integer containing maximum number of characters in string and for all other it
+       will be upper limit, for int it will be an integer & float for float, for date value will be a date e.g. -
+       "01/06/2020" and for time it would look like "13:10:30"
+
+   * - format
+     - date, time are the only types supporting format field. In above date examples date is in %d/%m/%Y format and
+       time is in %H:%M:%S format. Here "%d" stands for the day, "%m" stands for month, "%Y" stands for year including
+       century e.g.- 2020, if you want only year you can use "%y" e.g. 20. If you use min and max fields in date, time
+       then you must input its written format in format field, default will be ""%d/%m/%Y" for date. Now if you want
+       date with "-" as seperator you can write format as "%d-%m-%Y" so the output would be like "31-01-2020".
+
+       `examples`
+        $(random{"type":"name"})
+        $(random{"type":"string", "min":10, "max":100})
+        $(random{"type":"int", "min":10, "max":100})
+        $(random{"type":"float"})
+        $(random{"type":"date", "min":"20/1/2020", "max":"30/6/2020", "format":"%d/%m/%Y"})
+        $(random{"type":"time"})
+        $(random{"type":"time", "min":"10.30.00", "max":"15.00.00"}, "format": "%H.%M.%S")
