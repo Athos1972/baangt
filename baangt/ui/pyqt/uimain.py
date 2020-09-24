@@ -193,13 +193,7 @@ class MainWindow(Ui_MainWindow):
 
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-    def closeEvent(self, event):
-        print("closeevent")
-        self.close_obj.emit()
-        self.close()
-
     def close(self, event):
-        print("inside close")
         try:
             self.run_process.kill()
         except:
