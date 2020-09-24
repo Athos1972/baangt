@@ -75,16 +75,8 @@ class MainWindow(Ui_MainWindow):
         self.lTestRun = None
         self.configContents = None
         self.__log_state = 0
-
-    def setupUi(self, MainWindow, directory=None):
-        ''' Setup the UI for super class and Implement the
-        logic here we want to do with User Interface
-        '''
-        super().setupUi(MainWindow)
         self.managedPaths = ManagedPaths()
-        if directory == None:
-            directory = self.managedPaths.derivePathForOSAndInstallationOption()
-        self.directory = directory
+        self.directory = None
         self.configFile = None
         self.configFiles = []
         self.configContents = {}
@@ -97,7 +89,40 @@ class MainWindow(Ui_MainWindow):
         self.__open_files = 0
         self.TDGResult = ""
         self.dataFile = ""
+        self.Sheets = None
+        self.selectedSheet = None
+        self.__log_file_monitor = None
+        self.stopIcon = None
+        self.run_process = None
+        self.executeIcon = None
+        self.configInstance = None
+        self.katalonRecorder = None
+        self.statistics = Statistic()
+        self.checkBox1Label = None
+        self.checkBox1CheckBox = None
+        self.lineEdit1Label = None
+        self.lineEdit1LineEdit = None
+        self.comboBox1Label = None
+        self.comboBox1ComboBox = None
+        self.clean_dialog = None
+        self.cleanup_logs = None
+        self.cleanup_screenshots = None
+        self.cleanup_status = None
+        self.cleanup_days = None
+        self.cleanup_reports = None
+        self.cleanup_downloads = None
+        self.queryResults = None
+        self.clipboardText = None
 
+    def setupUi(self, MainWindow, directory=None):
+        ''' Setup the UI for super class and Implement the
+        logic here we want to do with User Interface
+        '''
+        super().setupUi(MainWindow)
+        if directory == None:
+            directory = self.managedPaths.derivePathForOSAndInstallationOption()
+        self.directory = directory
+        self.katalonRecorder = PyqtKatalonUI(self.directory)
         # self.refreshNew()
         # self.setupBasePath(self.directory)
         self.readConfig()
@@ -105,7 +130,6 @@ class MainWindow(Ui_MainWindow):
         self.show_hide_logs()
         self.openFilesSwitch.setChecked(self.__open_files)
 
-        self.katalonRecorder = PyqtKatalonUI(self.directory)
         # update logo and icon
         self.updateLogoAndIcon(MainWindow)
 
@@ -167,8 +191,6 @@ class MainWindow(Ui_MainWindow):
         self.logSwitch.clicked.connect(self.show_hide_logs)
         self.openFilesSwitch.clicked.connect(self.change_openFiles_state)
 
-        self.statistics = Statistic()
-
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def close(self, event):
@@ -200,7 +222,7 @@ class MainWindow(Ui_MainWindow):
             config.read(self.managedPaths.getOrSetIni().joinpath("baangt.ini"))
             self.directory = config["Default"]['path']
             self.testRunFile = config["Default"]['testrun']
-            self.configFile  = config["Default"]['globals']
+            self.configFile = config["Default"]['globals']
             if 'logstate' in config["Default"]:
                 self.__log_state = int(config["Default"]["logstate"])
             else:

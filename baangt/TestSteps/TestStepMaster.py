@@ -239,8 +239,8 @@ class TestStepMaster:
         if lActivity[0:3] == "ZZ_":
             # custom command. Do nothing and return
             return
-        elif lActivity.lower() == "if":
-            lActivity = "if_"
+        elif lActivity.lower() == "if":  # Activities with matching name as python keywords has "_" in the end of their
+            lActivity = "if_"            # function name to avoid conflict, so changing if in activity too
         elif lActivity.lower() == "else":
             lActivity = "else_"
         elif lActivity.lower() == "assert":
