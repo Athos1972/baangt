@@ -120,7 +120,9 @@ def run():
             QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Windows'))
         controller = MainController()
         controller.show_main()
-        sys.exit(app.exec_())
+        appExec = app.exec_() 
+        controller.close()
+        sys.exit(appExec)
 
 
 

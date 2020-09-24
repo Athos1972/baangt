@@ -68,7 +68,7 @@ class MainWindow(Ui_MainWindow):
     """
 
     switch_window = QtCore.pyqtSignal(str)
-
+    close_obj = QtCore.pyqtSignal()
     def __init__(self):
         ''' Init the super class '''
         super().__init__()
@@ -193,7 +193,13 @@ class MainWindow(Ui_MainWindow):
 
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+    def closeEvent(self, event):
+        print("closeevent")
+        self.close_obj.emit()
+        self.close()
+
     def close(self, event):
+        print("inside close")
         try:
             self.run_process.kill()
         except:
@@ -1583,7 +1589,17 @@ class MainController:
     def show_main(self):
         self.main = MainWindow()
         self.main.setupUi(self.window)
+        self.main.close_obj.connect(self.close)
         self.window.show()
+
+    def close(self):
+        self.window.deleteLater()
+        self.window.destroyed.connect(self.delVars)
+
+    def delVars(self):
+        del self.widget
+        del self.main
+        del self.window
 
 
 if __name__ == "__main__":
@@ -1591,4 +1607,6 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     controller = MainController()
     controller.show_main()
-    sys.exit(app.exec_())
+    appExec = app.exec_()
+    del controller
+    sys.exit(appExec)
