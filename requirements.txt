@@ -30,3 +30,4 @@ psutil>=5.7.2
 atlassian-python-api>=1.17.3
 icopy2xls>=0.0.4
 xlsclone>=0.0.7
+pywin32>=227

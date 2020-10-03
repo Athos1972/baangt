@@ -25,17 +25,16 @@ class TestStepMaster:
         self.anchorLocator = None
         self.anchorLocatorType = None
         self.testCaseStatus = None
-        self.ifActive = False
-        self.ifIsTrue = True
-        self.elseIsTrue = False
-        self.ifLis = [self.ifIsTrue]
-        self.elseLis = [self.elseIsTrue]
-        self.ifConditions = 0
-        self.repeatIsTrue = [False]
-        self.repeatDict = [] # used to store steps command of repeat data
-        self.repeatData = [] # used to store RLP_ data to be looped in repeat
-        self.repeatCount = [] # Used to store count of randomdata in loop
-        self.repeatActive = 0 # to sync active repeat counts with repeat done and will be execute when both are equal
+        self.ifIsTrue = True  # used to know if command is inside if condition and run command as per it
+        self.elseIsTrue = False  # used to know if command is inside else condition
+        self.ifLis = [self.ifIsTrue]  # useful in storing state of nested if conditions
+        self.elseLis = [self.elseIsTrue]  # useful in storing state of nested else conditions
+        self.ifConditions = 0  # use to verify endif
+        self.repeatIsTrue = False  # use to know if commands are running inside repeat loop
+        self.repeatCommands = []  # used to store steps command of repeat data
+        self.repeatReplaceDataDictionary = []  # used to store RLP_ data to be looped in repeat
+        self.repeatCount = []  # Used to store count of randomdata in loop
+        self.repeatActive = 0  # to sync active repeat counts with repeat done and will be execute when both are equal
         self.repeatDone = 0
         self.baangtFaker = None
         self.statistics = Statistic()
@@ -97,11 +96,17 @@ class TestStepMaster:
                 return
 
     def manageNestedCondition(self, condition="", ifis=False):
-        if condition.upper() == "IF":
+        """
+        Manages if and else condition. Specially made to deal with nested conditions
+        :param condition:
+        :param ifis:
+        :return:
+        """
+        if condition.upper() == "IF" or condition.upper() == "IF_":
             self.ifConditions += 1
             self.ifLis.append(ifis)
             self.elseLis.append(False)
-        elif condition.upper() == "ELSE":
+        elif condition.upper() == "ELSE" or condition.upper() == "ELSE_":
             self.elseLis[-1] = True
         elif condition.upper() == "ENDIF":
             self.ifConditions -= 1
@@ -112,6 +117,71 @@ class TestStepMaster:
         assert len(self.ifLis) == self.ifConditions + 1 and len(self.elseLis) == self.ifConditions + 1
         self.ifIsTrue = self.ifLis[-1]
         self.elseIsTrue = self.elseLis[-1]
+
+    def manageNestedLoops(self, command, commandNumber):
+        """
+        This method is used to deal with Repeat statements and nested repeat statements.
+        It is called on when a repeat statement comes then this method will take and store all the commands come after
+        it until it reaches repeat-done statement of same level i.e. when a repeat statement is present inside this
+        repeat statement then the first repeat-done came will be considered as repeat-done of the nested repeat and the
+        next one will be considered as the main.
+        :param command:
+        :param commandNumber:
+        :return:
+        """
+        if command["Activity"].upper() == "REPEAT":  # To sync active repeat with repeat done
+            self.repeatCommands[-1][commandNumber] = command  # storing nested repeat command
+            self.repeatActive += 1  # used to know the level of repeat and repeat done
+            return
+        if command["Activity"].upper() != "REPEAT-DONE":  # store command in repeatDict
+            self.repeatCommands[-1][commandNumber] = command
+            return
+        else:
+            self.repeatDone += 1  # to sync repeat done with active repeat
+            if self.repeatDone < self.repeatActive:  # if all repeat-done are not synced with repeat, store the data
+                self.repeatCommands[-1][commandNumber] = command
+                logger.info(command)
+                return
+            self.repeatIsTrue = False
+            if self.repeatReplaceDataDictionary[-1]:
+                data_list = []
+                if type(self.repeatReplaceDataDictionary[-1]) is list:
+                    for data_dic in self.repeatReplaceDataDictionary[-1]:
+                        keys, values = zip(*data_dic.items())
+                        final_values = []
+                        for value in values:  # coverting none list values to list. Useful in make all possible data using itertools
+                            if type(value) is not list:
+                                final_values.append([value])
+                            else:
+                                final_values.append(value)
+                        data_l = [dict(zip(keys, v)) for v in
+                                  itertools.product(*final_values)]  # itertools to make all possible combinations
+                        data_list.extend(data_l)
+                else:
+                    data_list = [self.repeatReplaceDataDictionary[-1]]
+                if len(self.repeatCount) > 0 and self.repeatCount[-1]:  # get random data from list of data
+                    try:
+                        data_list = random.sample(data_list, int(self.repeatCount[-1]))
+                    except:
+                        pass
+                for data in data_list:
+                    temp_dic = dict(self.repeatCommands[-1])
+                    processed_data = {}
+                    for key in temp_dic:
+                        try:
+                            processed_data = dict(temp_dic[key])
+                        except Exception as ex:
+                            logger.debug(ex)
+                        try:
+                            self.executeDirectSingle(key, processed_data, replaceFromDict=data)
+                        except Exception as ex:
+                            logger.info(ex)
+            del self.repeatCommands[-1]
+            del self.repeatReplaceDataDictionary[-1]
+            del self.repeatCount[-1]
+            self.repeatDone = 0
+            self.repeatActive = 0
+            return
 
     def executeDirectSingle(self, commandNumber, command, replaceFromDict=None):
         """
@@ -126,58 +196,9 @@ class TestStepMaster:
                 return True
             if command["Activity"].upper() != "ELSE" and command["Activity"].upper() != "ENDIF":
                 return True
-        if self.repeatIsTrue[-1]: # If repeat statement is active then execute this
-            if command["Activity"].upper() == "REPEAT": # To sync active repeat with repeat done
-                self.repeatActive += 1
-            if command["Activity"].upper() != "REPEAT-DONE": # store command in repeatDict
-                self.repeatDict[-1][commandNumber] = command
-                return
-            else:
-                self.repeatDone += 1 # to sync repeat done with active repeat
-                if self.repeatDone < self.repeatActive: # if all repeat-done are not synced with repeat store the data
-                    self.repeatDict[-1][commandNumber] = command
-                    logger.info(command)
-                    return
-                self.repeatIsTrue[-1] = False
-                if self.repeatData[-1]:
-                    data_list = []
-                    if type(self.repeatData[-1]) is list:
-                        for data_dic in self.repeatData[-1]:
-                            keys, values = zip(*data_dic.items())
-                            final_values = []
-                            for value in values: # coverting none list values to list. Useful in make all possible data using itertools
-                                if type(value) is not list:
-                                    final_values.append([value])
-                                else:
-                                    final_values.append(value)
-                            data_l = [dict(zip(keys, v)) for v in itertools.product(*final_values)] # itertools to make all possible combinations
-                            data_list.extend(data_l)
-                    else:
-                        data_list = [self.repeatData[-1]]
-                    if len(self.repeatCount) > 0 and self.repeatCount[-1]: # get random data from list of data
-                        try:
-                            data_list = random.sample(data_list, int(self.repeatCount[-1]))
-                        except:
-                            pass
-                    for data in data_list:
-                        temp_dic = dict(self.repeatDict[-1])
-                        processed_data = {}
-                        for key in temp_dic:
-                            try:
-                                processed_data = dict(temp_dic[key])
-                            except Exception as ex:
-                                logger.debug(ex)
-                            try:
-                                self.executeDirectSingle(key, processed_data, replaceFromDict=data)
-                            except Exception as ex:
-                                logger.info(ex)
-                del self.repeatIsTrue[-1]
-                del self.repeatDict[-1]
-                del self.repeatData[-1]
-                del self.repeatCount[-1]
-                self.repeatDone -= 1
-                self.repeatActive -= 1
-                return
+        if self.repeatIsTrue:  # If repeat statement is active then execute this
+            self.manageNestedLoops(command, commandNumber)
+            return
 
         css, id, lActivity, lLocator, lLocatorType, xpath = self._extractAllSingleValues(command)
 
@@ -214,141 +235,188 @@ class TestStepMaster:
         if not TestStepMaster.ifQualifyForExecution(self.globalRelease, lRelease):
             logger.debug(f"we skipped this line due to {lRelease} disqualifies according to {self.globalRelease} ")
             return
-        if lActivity == "GOTOURL":
-            if lValue:
-                self.browserSession.goToUrl(lValue)
-            elif lLocator:
-                self.browserSession.goToUrl(lLocator)
-            else:
-                logger.critical("GotoURL without URL called. Aborting. "
-                                "Please provide URL either in Value or Locator columns")
-        elif lActivity == "SETTEXT":
-            self.browserSession.findByAndSetText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout,
-                                                 optional=lOptional)
-        elif lActivity == "SETTEXTIF":
-            self.browserSession.findByAndSetTextIf(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout,
-                                                   optional=lOptional)
-        elif lActivity == "FORCETEXT":
-            self.browserSession.findByAndForceText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout,
-                                                   optional=lOptional)
-        elif lActivity == "FORCETEXTIF":
-            if lValue:
-                self.browserSession.findByAndForceText(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout,
-                                                       optional=lOptional)
-        elif lActivity == "FORCETEXTJS":
-            if lValue:
-                self.browserSession.findByAndForceViaJS(xpath=xpath, css=css, id=id, value=lValue, timeout=lTimeout,
-                                                        optional=lOptional)
-        elif lActivity == "SETANCHOR":
-            if not lLocator:
+        
+        if lActivity[0:3] == "ZZ_":
+            # custom command. Do nothing and return
+            return
+        elif lActivity.lower() == "if":  # Activities with matching name as python keywords has "_" in the end of their
+            lActivity = "if_"            # function name to avoid conflict, so changing if in activity too
+        elif lActivity.lower() == "else":
+            lActivity = "else_"
+        elif lActivity.lower() == "assert":
+            lActivity = "assert_"
+        try:
+            kwargs = locals()
+            del kwargs["self"]
+            getattr(self, lActivity.lower())(**kwargs)
+        except AttributeError:
+            raise BaseException(f"Unknown command in TestStep {lActivity}")
+        self.timing.takeTime(lTimingString)
+
+    def gotourl(self, **kwargs):
+        if kwargs["lValue"]:
+            self.browserSession.goToUrl(kwargs["lValue"])
+        elif kwargs["lLocator"]:
+            self.browserSession.goToUrl(kwargs["lLocator"])
+        else:
+            logger.critical("GotoURL without URL called. Aborting. "
+                            "Please provide URL either in Value or Locator columns")
+
+
+    def settext(self, **kwargs):
+            self.browserSession.findByAndSetText(xpath=kwargs["xpath"], css=kwargs["css"], id=kwargs["id"], value=kwargs["lValue"],
+                                                 timeout=kwargs["lTimeout"], optional=kwargs["lOptional"])
+
+    def settextif(self, **kwargs):
+            self.browserSession.findByAndSetTextIf(xpath=kwargs["xpath"], css=kwargs["css"], id=kwargs["id"], value=kwargs["lValue"],
+                                                   timeout=kwargs["lTimeout"], optional=kwargs["lOptional"])
+
+    def forcetext(self, **kwargs):
+            self.browserSession.findByAndForceText(xpath=kwargs["xpath"], css=kwargs["css"], id=kwargs["id"], value=kwargs["lValue"],
+                                                   timeout=kwargs["lTimeout"], optional=kwargs["lOptional"])
+
+    def forcetextif(self, **kwargs):
+            if kwargs["lValue"]:
+                self.browserSession.findByAndForceText(xpath=kwargs["xpath"], css=kwargs["css"], id=kwargs["id"], value=kwargs["lValue"],
+                                                       timeout=kwargs["lTimeout"], optional=kwargs["lOptional"])
+
+    def forcetextjs(self, **kwargs):
+            if kwargs["lValue"]:
+                self.browserSession.findByAndForceViaJS(xpath=kwargs["xpath"], css=kwargs["css"], id=kwargs["id"], value=kwargs["lValue"],
+                                                        timeout=kwargs["lTimeout"], optional=kwargs["lOptional"])
+
+    def setanchor(self, **kwargs):
+            if not kwargs["lLocator"]:
                 self.anchor = None
                 self.anchorLocator = None
                 self.anchorLocatorType = None
             else:
-                found = self.browserSession.findBy(xpath=xpath, css=css, id=id, timeout=lTimeout)
+                found = self.browserSession.findBy(xpath=kwargs["xpath"], css=kwargs["css"], id=kwargs["id"], timeout=kwargs["lTimeout"])
                 if found:
                     self.anchor = self.browserSession.element
-                    self.anchorLocator = lLocator
-                    self.anchorLocatorType = lLocatorType
-                    logger.debug(f"Anchor set: {lLocatorType} {lLocator}")
+                    self.anchorLocator = kwargs["lLocator"]
+                    self.anchorLocatorType = kwargs["lLocatorType"]
+                    logger.debug(f'Anchor set: {kwargs["lLocatorType"]} {kwargs["lLocator"]}')
                 else:
-                    logger.error(f"Anchor should be set, but can't be found in the current page: {lLocatorType}, {lLocator}")
-                    raise ValueError(f"Anchor should be set, but can't be found in the current page: {lLocatorType}, {lLocator}")
-        elif lActivity == 'HANDLEIFRAME':
-            self.browserSession.handleIframe(lLocator)
-        elif lActivity == 'SWITCHWINDOW':
-            lWindow = lValue
+                    logger.error(f'Anchor should be set, but can\'t be found in the current page: {kwargs["lLocatorType"]}, {kwargs["lLocator"]}')
+                    raise ValueError(f'Anchor should be set, but can\'t be found in the current page: {kwargs["lLocatorType"]}, {kwargs["lLocator"]}')
+
+    def handleiframe(self, **kwargs):
+            self.browserSession.handleIframe(kwargs["lLocator"])
+
+    def switchwindow(self, **kwargs):
+            lWindow = kwargs["lValue"]
             if lWindow.isnumeric():
                 lWindow = int(lWindow)
-            self.browserSession.handleWindow(windowNumber=lWindow, timeout=lTimeout)
-        elif lActivity == "CLICK":
-            self.browserSession.findByAndClick(xpath=xpath, css=css, id=id, timeout=lTimeout, optional=lOptional)
-        elif lActivity == "CLICKIF":
-            self.browserSession.findByAndClickIf(xpath=xpath, css=css, id=id, timeout=lTimeout, value=lValue,
-                                                 optional=lOptional)
-        elif lActivity == "PAUSE":
-            self.browserSession.sleep(seconds=float(lValue))
-        elif lActivity == "IF":
-            # Originally we had only Comparisons. Now we also want to check for existance of Field
-            if not lValue and lLocatorType and lLocator:
-                lValue = self.browserSession.findBy(xpath=xpath, css=css, id=id, optional=lOptional,
-                                                    timeout=lTimeout)
+            self.browserSession.handleWindow(windowNumber=lWindow, timeout=kwargs["lTimeout"])
 
-            self.__doComparisons(lComparison=lComparison, value1=lValue, value2=lValue2)
-            logger.debug(f"IF-condition original Value: {original_value} (transformed: {lValue}) {lComparison} {lValue2} "
-                         f"evaluated to: {self.ifIsTrue} ")
-        elif lActivity == "ELSE":
-            if not self.ifIsTrue:
-                self.manageNestedCondition(condition=lActivity)
+    def click(self, **kwargs):
+            self.browserSession.findByAndClick(xpath=kwargs["xpath"], css=kwargs["css"], id=kwargs["id"], 
+                                               timeout=kwargs["lTimeout"], optional=kwargs["lOptional"])
+
+    def clickif(self, **kwargs):
+            self.browserSession.findByAndClickIf(xpath=kwargs["xpath"], css=kwargs["css"], id=kwargs["id"], 
+                                    timeout=kwargs["lTimeout"], value=kwargs["lValue"], optional=kwargs["lOptional"])
+
+    def pause(self, **kwargs):
+            self.browserSession.sleep(seconds=float(kwargs["lValue"]))
+
+    def if_(self, **kwargs):
+            # Originally we had only Comparisons. Now we also want to check for existance of Field
+            if not kwargs["lValue"] and kwargs["lLocatorType"] and kwargs["lLocator"]:
+                kwargs["lValue"] = self.browserSession.findBy(xpath=kwargs["xpath"], css=kwargs["css"], id=kwargs["id"], optional=kwargs["lOptional"],
+                                                    timeout=kwargs["lTimeout"])
+
+            self.__doComparisons(kwargs["lComparison"], value1=kwargs["lValue"], value2=kwargs["lValue"])
+            logger.debug(f'IF-condition original Value: {kwargs["original_value"]} (transformed: {kwargs["lValue"]}) '
+                         f'{kwargs["lComparison"]} {kwargs["lValue"]} evaluated to: {self.ifIsTrue} ')
+
+    def else_(self, **kwargs):
+            if not self.ifIsTrue:  # don't run else statement if "if" statement is true
+                self.manageNestedCondition(condition=kwargs["lActivity"])
                 logger.debug("Executing ELSE-condition")
             else:
                 self.ifIsTrue = False
-        elif lActivity == "ENDIF":
-            self.manageNestedCondition(condition=lActivity)
-        elif lActivity == "REPEAT":
+
+    def endif(self, **kwargs):
+            self.manageNestedCondition(condition=kwargs["lActivity"])
+
+    def repeat(self, **kwargs):
             self.repeatActive += 1
-            self.repeatIsTrue.append(True)
-            self.repeatDict.append({})
-            if original_value not in self.testRunInstance.json_dict:
-                self.testRunInstance.json_dict[original_value] = []
-            self.testRunInstance.json_dict[original_value].append(lValue)
-            self.repeatData.append(lValue)
-            self.repeatCount.append(lValue2)
-        elif lActivity == 'GOBACK':
+            self.repeatIsTrue = True
+            self.repeatCommands.append({})
+            if kwargs["original_value"] not in self.testRunInstance.json_dict:
+                self.testRunInstance.json_dict[kwargs["original_value"]] = []
+            self.testRunInstance.json_dict[kwargs["original_value"]].append(kwargs["lValue"])
+            self.repeatReplaceDataDictionary.append(kwargs["lValue"])
+            self.repeatCount.append(kwargs["lValue"])
+
+    def goback(self, **kwargs):
             self.browserSession.goBack()
-        elif lActivity == 'APIURL':
-            self.apiSession.setBaseURL(lValue)
-        elif lActivity == 'ENDPOINT':
-            self.apiSession.setEndPoint(lValue)
-        elif lActivity == 'POST':
-            self.apiSession.postURL(content=lValue)
-        elif lActivity == 'GET':
+
+    def apiurl(self, **kwargs):
+            self.apiSession.setBaseURL(kwargs["lValue"])
+
+    def endpoint(self, **kwargs):
+            self.apiSession.setEndPoint(kwargs["lValue"])
+
+    def post(self, **kwargs):
+            self.apiSession.postURL(content=kwargs["lValue"])
+
+    def get(self, **kwargs):
             self.apiSession.getURL()
-        elif lActivity == 'HEADER':
-            self.apiSession.setHeaders(setHeaderData=lValue)
-        elif lActivity == 'SAVE':
-            self.doSaveData(lValue, lValue2, lLocatorType, lLocator)
-        elif lActivity == 'CLEAR':
+
+    def header(self, **kwargs):
+            self.apiSession.setHeaders(setHeaderData=kwargs["lValue"])
+
+    def save(self, **kwargs):
+            self.doSaveData(kwargs["lValue"], kwargs["lValue"], kwargs["lLocatorType"], kwargs["lLocator"])
+
+    def clear(self, **kwargs):
             # Clear a variable:
-            if self.testcaseDataDict.get(lValue):
-                del self.testcaseDataDict[lValue]
-        elif lActivity == 'SAVETO':
+            if self.testcaseDataDict.get(kwargs["lValue"]):
+                del self.testcaseDataDict[kwargs["lValue"]]
+
+    def saveto(self, **kwargs):
             # In this case, we need to parse the real field, not the representation of the replaced field value
-            self.doSaveData(command['Value'], lValue2, lLocatorType, lLocator)
-        elif lActivity == 'SUBMIT':
+            self.doSaveData(kwargs["command"]['Value'], kwargs["lValue"], kwargs["lLocatorType"], kwargs["lLocator"])
+
+    def submit(self, **kwargs):
             self.browserSession.submit()
-        elif lActivity == "ADDRESS_CREATE":
-            # Create Address with option lValue and lValue2
-            AddressCreate(lValue, lValue2)
+
+    def address_create(self, **kwargs):
+            # Create Address with option kwargs["lValue"] and kwargs["lValue"]
+            AddressCreate(kwargs["lValue"], kwargs["lValue"])
             # Update testcaseDataDict with addressDict returned from
             AddressCreate.returnAddress()
             self.testcaseDataDict.update(AddressCreate.returnAddress())
-        elif lActivity == 'ASSERT':
-            value_found = self.browserSession.findByAndWaitForValue(xpath=xpath, css=css, id=id, optional=lOptional,
-                                                                    timeout=lTimeout)
-            if not self.__doComparisons(lComparison=lComparison, value1=value_found, value2=lValue):
-                logger.error(f"Condition {value_found} {lComparison} {lValue} was not met during assert.")
-                raise baangtTestStepException(f"Expected Value: {lValue}, Value found :{value_found} ")
-        elif lActivity == 'IBAN':
-            # Create Random IBAN. Value1 = Input-Parameter for IBAN-Function. Value2=Fieldname
-            self.__getIBAN(lValue, lValue2)
-        elif lActivity == 'PDFCOMPARE':
-            self.doPDFComparison(lValue)
-        elif lActivity == 'CHECKLINKS':
-            self.checkLinks()
-        elif lActivity == 'ALERTIF':
-            self.browserSession.confirmAlertIfAny()
-        elif lActivity == GC.TESTCASESTATUS_STOP.upper():
-            self.testcaseDataDict[GC.TESTCASESTATUS_STOP] = "X"              # will stop the test case
-        elif lActivity == GC.TESTCASESTATUS_STOPERROR.upper():
-            self.testcaseDataDict[GC.TESTCASESTATUS_STOPERROR] = "X"         # will stop the test case and set error
-        elif lActivity[0:3] == "ZZ_":
-            # custom command. Do nothing and return
-            return
-        else:
-            raise BaseException(f"Unknown command in TestStep {lActivity}")
 
-        self.timing.takeTime(lTimingString)
+    def assert_(self, **kwargs):
+            value_found = self.browserSession.findByAndWaitForValue(xpath=kwargs["xpath"], css=kwargs["css"], id=kwargs["id"],
+                                                            optional=kwargs["lOptional"], timeout=kwargs["lTimeout"])
+            if not self.__doComparisons(kwargs["lComparison"], value1=value_found, value2=kwargs["lValue"]):
+                logger.error(f'Condition {value_found} {kwargs["lComparison"]} {kwargs["lValue"]} was not met during assert.')
+                raise baangtTestStepException(f'Expected Value: {kwargs["lValue"]}, Value found :{value_found} ')
+
+    def iban(self, **kwargs):
+            # Create Random IBAN. Value1 = Input-Parameter for IBAN-Function. Value2=Fieldname
+            self.__getIBAN(kwargs["lValue"], kwargs["lValue2"])
+
+    def pdfcompare(self, **kwargs):
+            self.doPDFComparison(kwargs["lValue"])
+
+    def checklinks(self, **kwargs):
+            self.checkLinks()
+
+    def alertif(self, **kwargs):
+            self.browserSession.confirmAlertIfAny()
+
+    def tcstoptestcase(self, **kwargs):
+            self.testcaseDataDict[GC.TESTCASESTATUS_STOP] = "X"              # will stop the test case
+
+    def tcstoptestcaseerror(self, **kwargs):
+            self.testcaseDataDict[GC.TESTCASESTATUS_STOPERROR] = "X"         # will stop the test case and set error
+
 
     def _extractAllSingleValues(self, command):
         lActivity = command["Activity"].upper()
@@ -582,7 +650,7 @@ class TestStepMaster:
             right_part = expression[len(left_part) + len(center) + 3:]
             centerValue = ""
 
-            if replaceFromDict: # json is supplied with repeat tag, that json is used here to get main data
+            if replaceFromDict:  # json is supplied with repeat tag, that json is used here to get main data
                     dic = replaceFromDict
                     for key in center.split('.')[-1:]:
                         dic = self.iterate_json(dic, key)
